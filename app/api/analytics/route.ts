@@ -14,6 +14,9 @@ export async function POST(request: Request) {
   }
   const parsed = event.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Invalid event" }, { status: 400 });
+  const path = parsed.data.path;
+  if (!/^\/$|^\/(shop(?:\/[a-z0-9-]+)?|product\/[a-z0-9-]+|support|contact|privacy|terms|wishlist|checkout)\/?$/.test(path))
+    return NextResponse.json({ error: "Invalid event" }, { status: 400 });
   const { error } = await adminDb().from("site_events").insert({
     event_name: parsed.data.eventName, page_path: parsed.data.path,
   });
