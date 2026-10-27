@@ -97,7 +97,7 @@ IGNYTE_BACKUP_DIR=/home/internetremovals/.local/share/ignyte-backups \
   --env-file=/home/internetremovals/.config/ignyte/build.env scripts/backup-store.mjs
 ```
 
-The export includes business tables and the `product-media` bucket, including private order and contact data. Keep the directory mode `700`, do not commit it, and test restoration before relying on it. This is **not a full PostgreSQL dump or an Auth backup**. Configure a full database backup and off-machine encrypted copy before the store takes live payments. Supabase Free does not provide automatic daily database backups. Run the export under a daily systemd timer or cron job after testing it once; monitor failures and available disk space.
+The export includes business tables and the `product-media` bucket, including private order and contact data. Keep the directory mode `700`, do not commit it, and test restoration before relying on it. This is **not a full PostgreSQL dump or an Auth backup**. Configure a full database backup and off-machine encrypted copy before the store takes live payments. Supabase Free does not provide automatic daily database backups. The build machine runs `deploy/run-backup.sh` from a stable checkout at 03:00 server time daily; monitor its log, failures and available disk space.
 
 - Review the copied concept catalogue in the admin. It remains unpublished until the team activates products and variants with verified stock.
 - Configure Supabase and verified inventory before testing order requests. Add Australian shipping rates, email notifications, and tested payment collection before fulfilling orders.
