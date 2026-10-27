@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { categories, type Category } from "@/lib/catalog";
+import { type Category } from "@/lib/catalog";
 import { useStore } from "./store-provider";
 import ProductCard from "./product-card";
 
 export default function ShopView({ category }: { category: Category }) {
-  const { products, catalogPreview } = useStore();
+  const { products, categories, catalogPreview } = useStore();
   const [sort, setSort] = useState("featured");
   const [colors, setColors] = useState<string[]>([]);
   const [filterOpen, setFilterOpen] = useState(false);

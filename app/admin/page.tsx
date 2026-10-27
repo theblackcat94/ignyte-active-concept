@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { browserDb, commerceConfigured, type StoreProduct, type StoreVariant } from "@/lib/commerce";
+import { browserDb, commerceConfigured, type StoreCategory, type StoreProduct, type StoreVariant } from "@/lib/commerce";
 import "./admin.css";
 
 type EditableVariant = Omit<StoreVariant, "id"> & { id?: string };
@@ -19,6 +19,7 @@ const blank: EditableProduct = {
 export default function AdminPage() {
   const [token, setToken] = useState<string | null>(null);
   const [products, setProducts] = useState<StoreProduct[]>([]);
+  const [categories, setCategories] = useState<StoreCategory[]>([]);
   const [selected, setSelected] = useState<EditableProduct | null>(null);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
@@ -42,6 +43,8 @@ export default function AdminPage() {
     if (!response.ok) { setMessage(response.status === 403 ? "This account does not have team access." : "Could not load products."); return null; }
     const refreshed = await response.json() as StoreProduct[];
     setProducts(refreshed);
+    const categoryResponse = await fetch("/api/admin/categories", { headers: { Authorization: `Bearer ${accessToken}` } });
+    if (categoryResponse.ok) setCategories(await categoryResponse.json() as StoreCategory[]);
     setMessage("");
     return refreshed;
   }
@@ -55,7 +58,7 @@ export default function AdminPage() {
     setSelected(current => current ? { ...current, [field]: value } : current);
   }
 
-  function changeVariant(index: number, field: keyof EditableVariant, value: string | number | boolean) {
+  function changeVariant(index: number, field: keyof EditableVariant, value: string | number | boolean | null) {
     setSelected(current => current ? { ...current, variants: current.variants.map((variant, i) =>
       i === index ? { ...variant, [field]: value } : variant) } : current);
   }
@@ -78,8 +81,8 @@ export default function AdminPage() {
     const { id, variants, ...product } = selected;
     const response = await fetch(id ? `/api/admin/products/${id}` : "/api/admin/products", {
       method: id ? "PUT" : "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ ...product, variants: variants.map(({ id: variantId, sku, size, price_cents, stock_on_hand, stock_revision, active }) =>
-        ({ id: variantId, sku, size, price_cents, stock_on_hand, stock_revision, active })) }),
+      body: JSON.stringify({ ...product, variants: variants.map(({ id: variantId, sku, size, price_cents, sale_price_cents, stock_on_hand, stock_revision, active }) =>
+        ({ id: variantId, sku, size, price_cents, sale_price_cents, stock_on_hand, stock_revision, active })) }),
     });
     const result = await response.json();
     setBusy(false);
@@ -95,20 +98,20 @@ export default function AdminPage() {
 
   if (!commerceConfigured) return <div className="admin-page section-wrap"><h1>PRODUCT MANAGER</h1><p>Connect the new store database to use the team editor.</p></div>;
   if (!token) return <div className="admin-page section-wrap"><h1>PRODUCT MANAGER</h1><p>Sign in with a team account to manage products.</p><Link className="button button-dark" href="/account">GO TO ACCOUNT</Link></div>;
-  return <div className="admin-page section-wrap"><div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><span>ADMIN</span></div><div className="admin-title"><div><span className="eyebrow">IGNYTE / INTERNAL</span><h1>PRODUCT MANAGER<span>.</span></h1><Link className="text-link" href="/admin/orders">VIEW ORDERS ↗</Link></div><button className="button button-dark" onClick={() => setSelected({ ...blank })}>NEW PRODUCT +</button></div>
+  return <div className="admin-page section-wrap"><div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><span>ADMIN</span></div><div className="admin-title"><div><span className="eyebrow">IGNYTE / INTERNAL</span><h1>PRODUCT MANAGER<span>.</span></h1><div className="admin-title-links"><Link className="text-link" href="/admin/orders">VIEW ORDERS ↗</Link><Link className="text-link" href="/admin/categories">MANAGE CATEGORIES ↗</Link></div></div><button className="button button-dark" onClick={() => setSelected({ ...blank, category: categories.find(category => category.active)?.slug ?? "tops" })}>NEW PRODUCT +</button></div>
     {message && <p role="status" className="admin-message">{message}</p>}
     <div className="admin-layout"><div className="admin-list">{products.map(product => <button key={product.id} className={selected?.id === product.id ? "active" : ""} onClick={() => edit(product)}><img src={product.image_path} alt="" /><span><strong>{product.name}</strong><small>{product.color} · {product.status.toUpperCase()}</small></span></button>)}</div>
       {selected ? <div className="admin-editor"><h2>{selected.id ? "EDIT PRODUCT" : "NEW PRODUCT"}</h2><div className="admin-fields">
         <label>NAME<input value={selected.name} onChange={event => change("name", event.target.value)} /></label>
         <label>SLUG<input value={selected.slug} onChange={event => change("slug", event.target.value)} /></label>
-        <label>CATEGORY<select value={selected.category} onChange={event => change("category", event.target.value as EditableProduct["category"])}><option value="sports-bras">Sports bras</option><option value="tops">Tops</option><option value="leggings">Leggings</option><option value="shorts">Shorts</option></select></label>
+        <label>CATEGORY<select value={selected.category} onChange={event => change("category", event.target.value)}>{categories.filter(category => category.active || category.slug === selected.category).map(category => <option value={category.slug} key={category.slug}>{category.name}</option>)}</select></label>
         <label>COLOUR<input value={selected.color} onChange={event => change("color", event.target.value)} /></label>
         <label>STATUS<select value={selected.status} onChange={event => change("status", event.target.value as EditableProduct["status"])}><option value="draft">Draft</option><option value="active">Active</option><option value="archived">Archived</option></select></label>
         <label>LABEL<input value={selected.label ?? ""} onChange={event => change("label", event.target.value || null)} /></label>
         <label className="wide">DESCRIPTION<textarea rows={5} value={selected.description} onChange={event => change("description", event.target.value)} /></label>
         <label className="wide">MAIN IMAGE URL OR LOCAL PATH<input value={selected.image_path} onChange={event => change("image_path", event.target.value)} /><input type="file" accept="image/jpeg,image/png,image/webp" onChange={event => { const file = event.target.files?.[0]; if (file) void upload(file); }} /></label>
       </div><h3>GALLERY</h3>{selected.gallery.map((item, index) => <div className="admin-gallery" key={index}><input aria-label="Image URL" value={item.image} onChange={event => change("gallery", selected.gallery.map((entry, i) => i === index ? { ...entry, image: event.target.value } : entry))} /><input aria-label="Image description" value={item.alt} onChange={event => change("gallery", selected.gallery.map((entry, i) => i === index ? { ...entry, alt: event.target.value } : entry))} /><input type="file" accept="image/jpeg,image/png,image/webp" onChange={event => { const file = event.target.files?.[0]; if (file) void upload(file, index); }} /><button onClick={() => change("gallery", selected.gallery.filter((_, i) => i !== index))}>REMOVE</button></div>)}<button className="admin-secondary" onClick={() => change("gallery", [...selected.gallery, { image: "", alt: "" }])}>+ ADD GALLERY IMAGE</button>
-      <h3>SIZE VARIANTS</h3><div className="admin-variants"><div className="variant-head"><span>SKU</span><span>SIZE</span><span>PRICE AUD</span><span>STOCK</span><span>ON SALE</span></div>{selected.variants.map((variant, index) => <div className="variant-row" key={variant.id ?? index}><input aria-label="SKU" value={variant.sku} onChange={event => changeVariant(index, "sku", event.target.value)} /><input aria-label="Size" value={variant.size} onChange={event => changeVariant(index, "size", event.target.value)} /><input aria-label="Price in AUD" type="number" min="0" step="0.01" value={(variant.price_cents / 100).toFixed(2)} onChange={event => changeVariant(index, "price_cents", Math.round(Number(event.target.value) * 100))} /><input aria-label="Stock on hand" type="number" min="0" value={variant.stock_on_hand} onChange={event => changeVariant(index, "stock_on_hand", Number(event.target.value))} /><input aria-label="On sale" type="checkbox" checked={variant.active} onChange={event => changeVariant(index, "active", event.target.checked)} /></div>)}</div><button className="admin-secondary" onClick={() => change("variants", [...selected.variants, { product_id: selected.id ?? "", sku: "", size: "", price_cents: 0, stock_on_hand: 0, stock_revision: 0, active: false }])}>+ ADD SIZE</button>
+      <div className="admin-variant-title"><h3>SIZE VARIANTS</h3><button className="admin-secondary" type="button" onClick={() => change("variants", selected.variants.map(variant => ({ ...variant, stock_on_hand: 20, active: true })))}>SET EACH SIZE TO 20 &amp; AVAILABLE</button></div><div className="admin-variants"><div className="variant-head"><span>SKU</span><span>SIZE</span><span>REGULAR AUD</span><span>STOCK</span><span>AVAILABLE</span><span>ON SALE</span><span>SALE AUD</span></div>{selected.variants.map((variant, index) => <div className="variant-row" key={variant.id ?? index}><input aria-label="SKU" value={variant.sku} onChange={event => changeVariant(index, "sku", event.target.value)} /><input aria-label="Size" value={variant.size} onChange={event => changeVariant(index, "size", event.target.value)} /><input aria-label="Regular price in AUD" type="number" min="0" step="0.01" value={(variant.price_cents / 100).toFixed(2)} onChange={event => changeVariant(index, "price_cents", Math.round(Number(event.target.value) * 100))} /><input aria-label="Stock on hand" type="number" min="0" value={variant.stock_on_hand} onChange={event => changeVariant(index, "stock_on_hand", Number(event.target.value))} /><input aria-label="Available for sale" type="checkbox" checked={variant.active} onChange={event => changeVariant(index, "active", event.target.checked)} /><input aria-label="On sale" type="checkbox" checked={variant.sale_price_cents !== null} onChange={event => changeVariant(index, "sale_price_cents", event.target.checked ? 0 : null)} /><input aria-label="Sale price in AUD" type="number" min="0.01" step="0.01" required={variant.sale_price_cents !== null} disabled={variant.sale_price_cents === null} value={variant.sale_price_cents === null ? "" : variant.sale_price_cents ? (variant.sale_price_cents / 100).toFixed(2) : ""} onChange={event => changeVariant(index, "sale_price_cents", Math.round(Number(event.target.value) * 100))} /></div>)}</div><button className="admin-secondary" onClick={() => change("variants", [...selected.variants, { product_id: selected.id ?? "", sku: "", size: "", price_cents: 0, sale_price_cents: null, stock_on_hand: 0, stock_revision: 0, active: false }])}>+ ADD SIZE</button>
       <div className="admin-save"><button className="button button-orange" disabled={busy} onClick={save}>{busy ? "SAVING…" : "SAVE PRODUCT"}</button><span>Publishing requires a valid price, size and stock for each active variant.</span></div></div> : <div className="admin-empty">Select a product to edit it, or create a new one.</div>}</div>
   </div>;
 }

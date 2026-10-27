@@ -6,16 +6,9 @@ import { useState } from "react";
 import { asset } from "@/lib/asset";
 import { useStore } from "./store-provider";
 
-const nav = [
-  ["SHOP ALL", "/shop"],
-  ["SPORTS BRAS", "/shop/sports-bras"],
-  ["TOPS", "/shop/tops"],
-  ["LEGGINGS", "/shop/leggings"],
-  ["SHORTS", "/shop/shorts"],
-];
-
 export default function Header() {
-  const { products, bag, setBagOpen, searchOpen, setSearchOpen, wishlist } = useStore();
+  const { products, categories, bag, setBagOpen, searchOpen, setSearchOpen, wishlist } = useStore();
+  const nav = categories.map(category => [category.label.toUpperCase(), category.id === "all" ? "/shop" : `/shop/${category.id}`]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
   const pathname = usePathname();

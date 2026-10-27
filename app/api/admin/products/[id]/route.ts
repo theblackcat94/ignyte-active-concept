@@ -19,8 +19,8 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
   const { error } = await db.rpc("save_product", {
     p_product_id: id,
     p_product: product,
-    p_variants: variants.map(({ id: variantId, sku, size, price_cents, stock_on_hand, stock_revision, active }) =>
-      ({ id: variantId, sku, size, price_cents, stock_on_hand, stock_revision, active })),
+    p_variants: variants.map(({ id: variantId, sku, size, price_cents, sale_price_cents, stock_on_hand, stock_revision, active }) =>
+      ({ id: variantId, sku, size, price_cents, sale_price_cents, stock_on_hand, stock_revision, active })),
   });
   return error ? NextResponse.json({ error: error.message }, { status: 400 }) : NextResponse.json({ ok: true });
 }

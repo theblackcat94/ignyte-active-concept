@@ -5,7 +5,7 @@ export type StoreProduct = {
   id: string;
   slug: string;
   name: string;
-  category: "sports-bras" | "tops" | "leggings" | "shorts";
+  category: string;
   color: string;
   description: string;
   status: "draft" | "active" | "archived";
@@ -21,10 +21,13 @@ export type StoreVariant = {
   sku: string;
   size: string;
   price_cents: number;
+  sale_price_cents: number | null;
   stock_on_hand: number;
   stock_revision: number;
   active: boolean;
 };
+
+export type StoreCategory = { slug: string; name: string; cover_path: string; sort_order: number; active: boolean };
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -68,15 +71,27 @@ export function browserDb() {
 
 export function toDisplayProduct(product: StoreProduct): Product {
   const variants = product.product_variants.filter(variant => variant.active)
-    .map(variant => ({ id: variant.id, size: variant.size, price: variant.price_cents / 100,
+    .map(variant => ({ id: variant.id, size: variant.size,
+      price: (variant.sale_price_cents ?? variant.price_cents) / 100,
+      originalPrice: variant.sale_price_cents == null ? undefined : variant.price_cents / 100,
       stock: variant.stock_on_hand }));
+  const cheapest = variants.length ? [...variants].sort((a, b) => a.price - b.price)[0] : undefined;
   return {
     slug: product.slug, name: product.name, category: product.category,
     color: product.color, description: product.description,
     image: product.image_path, gallery: product.gallery ?? [], label: product.label ?? undefined,
-    price: variants.length ? Math.min(...variants.map(variant => variant.price)) : 0,
+    price: cheapest?.price ?? 0, originalPrice: cheapest?.originalPrice,
     variants,
   };
+}
+
+export async function activeCategories(): Promise<StoreCategory[]> {
+  const db = publicDb();
+  if (!db) return [];
+  const { data, error } = await db.from("categories").select("slug,name,cover_path,sort_order,active")
+    .eq("active", true).order("sort_order").order("name");
+  if (error) throw error;
+  return data as StoreCategory[];
 }
 
 export async function activeProducts(): Promise<Product[]> {

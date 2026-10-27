@@ -6,7 +6,7 @@ const image = z.string().trim().min(1).max(1000).refine(value =>
 export const productInput = z.object({
   slug: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/).max(120),
   name: z.string().trim().min(1).max(160),
-  category: z.enum(["sports-bras", "tops", "leggings", "shorts"]),
+  category: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/).max(80),
   color: z.string().trim().min(1).max(80),
   description: z.string().trim().max(5000),
   status: z.enum(["draft", "active", "archived"]),
@@ -18,8 +18,10 @@ export const productInput = z.object({
     sku: z.string().trim().min(1).max(120),
     size: z.string().trim().min(1).max(40),
     price_cents: z.number().int().min(0).max(10000000),
+    sale_price_cents: z.number().int().positive().max(10000000).nullable(),
     stock_on_hand: z.number().int().min(0).max(1000000),
     stock_revision: z.number().int().min(0).optional(),
     active: z.boolean(),
-  })).max(50),
+  }).refine(variant => variant.sale_price_cents === null || variant.sale_price_cents < variant.price_cents,
+    "Sale price must be lower than the regular price")).max(50),
 });

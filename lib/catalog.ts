@@ -1,17 +1,18 @@
 import { asset } from "./asset";
 
-export type Category = "all" | "sports-bras" | "tops" | "leggings" | "shorts";
+export type Category = string;
 export type Product = {
   slug: string;
   name: string;
-  category: Exclude<Category, "all">;
+  category: string;
   price: number;
   color: string;
   image: string;
   gallery: { image: string; alt: string }[];
   label?: string;
   description: string;
-  variants?: { id: string; size: string; price: number; stock: number }[];
+  originalPrice?: number;
+  variants?: { id: string; size: string; price: number; originalPrice?: number; stock: number }[];
 };
 
 const catalogImage = (name: string) => asset(`/images/catalog/${name}`);

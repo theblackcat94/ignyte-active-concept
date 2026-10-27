@@ -23,8 +23,8 @@ export async function POST(request: Request) {
   const { data, error } = await db.rpc("save_product", {
     p_product_id: null,
     p_product: product,
-    p_variants: variants.map(({ sku, size, price_cents, stock_on_hand, active }) =>
-      ({ sku, size, price_cents, stock_on_hand, active })),
+    p_variants: variants.map(({ sku, size, price_cents, sale_price_cents, stock_on_hand, active }) =>
+      ({ sku, size, price_cents, sale_price_cents, stock_on_hand, active })),
   });
   return error ? NextResponse.json({ error: error.message }, { status: 400 })
     : NextResponse.json({ id: data }, { status: 201 });

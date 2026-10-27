@@ -12,6 +12,6 @@ export default function ProductCard({ product, index = 0 }: { product: Product; 
   return <article className="product-card" style={{ animationDelay: `${index * 65}ms` }}>
     <div className="product-image"><Link href={`/product/${product.slug}`} aria-label={`View ${product.name}`}><img src={product.image} alt={`${product.name} in ${product.color}`} loading="lazy" /></Link>{product.label && <span className="product-badge">{product.label}</span>}<button className={`product-heart ${liked ? "liked" : ""}`} aria-label={liked ? "Remove from wishlist" : "Add to wishlist"} onClick={() => toggleWishlist(product.slug)}>{liked ? "♥" : "♡"}</button>{quickSize && <button className="quick-add" onClick={() => addToBag(product.slug, quickSize)}>QUICK ADD — {quickSize} <span>↗</span></button>}</div>
     <div className="product-meta"><span>{product.category.replace("-", " ").toUpperCase()}</span><span>{product.color.toUpperCase()}</span></div>
-    <div className="product-name"><Link href={`/product/${product.slug}`}>{product.name}</Link><strong>{money(product.price)}</strong></div>
+    <div className="product-name"><Link href={`/product/${product.slug}`}>{product.name}</Link><span className={product.originalPrice ? "sale-price" : ""}>{product.originalPrice && <del>{money(product.originalPrice)}</del>}<strong>{money(product.price)}</strong></span></div>
   </article>;
 }

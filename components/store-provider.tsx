@@ -3,12 +3,13 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { legacyProductSlugs, money, products as conceptProducts, type Product } from "@/lib/catalog";
-import { activeProducts, commerceConfigured } from "@/lib/commerce";
+import { categories as conceptCategories, legacyProductSlugs, money, products as conceptProducts, type Product } from "@/lib/catalog";
+import { activeCategories, activeProducts, commerceConfigured } from "@/lib/commerce";
 
 type BagItem = { slug: string; size: string; quantity: number };
 type Store = {
   products: Product[];
+  categories: { id: string; label: string; cover: string }[];
   catalogPreview: boolean;
   bag: BagItem[];
   bagOpen: boolean;
@@ -27,6 +28,7 @@ const StoreContext = createContext<Store | null>(null);
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>(conceptProducts);
+  const [categories, setCategories] = useState(conceptCategories);
   const [catalogPreview, setCatalogPreview] = useState(true);
   const [bag, setBag] = useState<BagItem[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
@@ -40,6 +42,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     void activeProducts().then(active => {
       if (active.length) { setProducts(active); setCatalogPreview(false); }
     }).catch(() => setCheckoutMessage("Products could not be loaded. Please refresh."));
+    void activeCategories().then(active => {
+      if (active.length) setCategories([
+        conceptCategories[0],
+        ...active.map(category => ({ id: category.slug, label: category.name, cover: category.cover_path })),
+      ]);
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -80,7 +88,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, 0);
 
   return (
-    <StoreContext.Provider value={{ products, catalogPreview, bag, bagOpen, setBagOpen, addToBag, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
+    <StoreContext.Provider value={{ products, categories, catalogPreview, bag, bagOpen, setBagOpen, addToBag, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
       {children}
       {bagOpen && <div className="drawer-backdrop" onClick={() => setBagOpen(false)} />}
       <aside className={`bag-drawer ${bagOpen ? "is-open" : ""}`} aria-label="Shopping bag" aria-hidden={!bagOpen}>
