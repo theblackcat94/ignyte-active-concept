@@ -28,6 +28,13 @@ export default function CheckoutPage() {
   const [couponMessage, setCouponMessage] = useState("");
   const [shippingQuote, setShippingQuote] = useState<{ state: string; subtotalCents: number; amount: number | null } | null>(null);
   const request = useRef<{ id: string; fingerprint: string } | null>(null);
+  const previousView = useRef<string | null>(null);
+
+  useEffect(() => {
+    const view = orderId ? "confirmation" : step;
+    if (previousView.current !== null && previousView.current !== view) window.scrollTo(0, 0);
+    previousView.current = view;
+  }, [step, orderId]);
 
   useEffect(() => {
     if (!commerceConfigured) return;
@@ -107,7 +114,7 @@ export default function CheckoutPage() {
 
   return <div className="checkout-page section-wrap">
     <div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><span>CHECKOUT</span></div>
-    <span className="eyebrow">IGNYTE / YOUR ORDER</span><h1>CHECKOUT<span>.</span></h1><div className="checkout-steps"><span className={step === "delivery" ? "active" : ""}>01 DELIVERY</span><span className={step === "payment" ? "active" : ""}>02 PAYMENT</span></div>
+    <span className="eyebrow">IGNYTE / YOUR ORDER</span><h1>CHECKOUT<span>.</span></h1><div className="checkout-steps" aria-label="Checkout steps"><button type="button" className={step === "delivery" ? "active" : ""} aria-current={step === "delivery" ? "step" : undefined} onClick={() => setStep("delivery")}>01 DELIVERY</button><button type="button" className={step === "payment" ? "active" : ""} aria-current={step === "payment" ? "step" : undefined} disabled={step === "delivery"} onClick={() => setStep("payment")}>02 PAYMENT</button></div>
     {!commerceConfigured ? <div className="checkout-panel"><h2>Store setup in progress</h2><p>Order requests will open when the store database is connected.</p><Link className="text-link" href="/shop">CONTINUE SHOPPING ↗</Link></div>
       : !bag.length ? <div className="checkout-panel"><h2>Your bag is empty</h2><Link className="text-link" href="/shop">SHOP THE COLLECTION ↗</Link></div>
       : <div className="checkout-grid"><form id="order-request" className="checkout-form" onSubmit={submit}>
