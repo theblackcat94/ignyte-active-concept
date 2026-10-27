@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { asset } from "@/lib/asset";
 
 type Rates = { date: string; rates: Record<string, number> };
 const choices = [
-  { code: "AUD", icon: "🇦🇺", label: "Australian dollar" },
-  { code: "USD", icon: "🇺🇸", label: "US dollar" },
-  { code: "EUR", icon: "🇪🇺", label: "Euro" },
-  { code: "GBP", icon: "🇬🇧", label: "British pound" },
-  { code: "NZD", icon: "🇳🇿", label: "New Zealand dollar" },
-  { code: "CAD", icon: "🇨🇦", label: "Canadian dollar" },
-  { code: "SGD", icon: "🇸🇬", label: "Singapore dollar" },
-  { code: "JPY", icon: "🇯🇵", label: "Japanese yen" },
+  { code: "AUD", icon: "au", label: "Australian dollar" },
+  { code: "USD", icon: "us", label: "US dollar" },
+  { code: "EUR", icon: "eu", label: "Euro" },
+  { code: "GBP", icon: "gb", label: "British pound" },
+  { code: "NZD", icon: "nz", label: "New Zealand dollar" },
+  { code: "CAD", icon: "ca", label: "Canadian dollar" },
+  { code: "SGD", icon: "sg", label: "Singapore dollar" },
+  { code: "JPY", icon: "jp", label: "Japanese yen" },
 ] as const;
 let cached: Rates | null = null;
 function subscribe(callback: () => void) { window.addEventListener("ignyte-currency-change", callback); return () => window.removeEventListener("ignyte-currency-change", callback); }
@@ -32,8 +33,8 @@ export function CurrencySelector() {
     return () => { document.removeEventListener("pointerdown", outside); document.removeEventListener("keydown", escape); };
   }, [open]);
   return <div className="currency-selector" ref={root}>
-    <button type="button" className="currency-trigger" aria-label={`Currency display: ${selected.label}. Prices and checkout are in Australian dollars.`} aria-expanded={open} aria-haspopup="menu" onClick={() => setOpen(value => !value)}><span aria-hidden="true">{selected.icon}</span><span>{selected.code}</span><span aria-hidden="true">⌄</span></button>
-    {open && <div className="currency-menu" role="menu" aria-label="Choose display currency"><p>Currency display</p><small>Checkout is in AUD. Other prices are estimates.</small>{choices.map(choice => <button type="button" role="menuitemradio" aria-checked={choice.code === currency} key={choice.code} onClick={() => { localStorage.setItem("ignyte_display_currency", choice.code); window.dispatchEvent(new Event("ignyte-currency-change")); setOpen(false); }}><span className="currency-flag" aria-hidden="true">{choice.icon}</span><span>{choice.label}</span><strong>{choice.code}</strong></button>)}</div>}
+    <button type="button" className="currency-trigger" aria-label={`Currency display: ${selected.label}. Prices and checkout are in Australian dollars.`} aria-expanded={open} aria-haspopup="menu" onClick={() => setOpen(value => !value)}><img src={asset(`/icons/flags/${selected.icon}.svg`)} alt="" /><span>{selected.code}</span><span aria-hidden="true">⌄</span></button>
+    {open && <div className="currency-menu" role="menu" aria-label="Choose display currency"><p>Currency display</p><small>Checkout is in AUD. Other prices are estimates.</small>{choices.map(choice => <button type="button" role="menuitemradio" aria-checked={choice.code === currency} key={choice.code} onClick={() => { localStorage.setItem("ignyte_display_currency", choice.code); window.dispatchEvent(new Event("ignyte-currency-change")); setOpen(false); }}><img className="currency-flag" src={asset(`/icons/flags/${choice.icon}.svg`)} alt="" /><span>{choice.label}</span><strong>{choice.code}</strong></button>)}</div>}
   </div>;
 }
 
