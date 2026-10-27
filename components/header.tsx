@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { products } from "@/lib/catalog";
 import { asset } from "@/lib/asset";
 import { useStore } from "./store-provider";
 
@@ -16,7 +15,7 @@ const nav = [
 ];
 
 export default function Header() {
-  const { bag, setBagOpen, searchOpen, setSearchOpen, wishlist } = useStore();
+  const { products, bag, setBagOpen, searchOpen, setSearchOpen, wishlist } = useStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
   const pathname = usePathname();
@@ -30,6 +29,7 @@ export default function Header() {
       <Link className="brand brand-image" href="/" aria-label="Ignyte home"><img src={asset("/images/ignyte-logo.png")} alt="Ignyte" /></Link>
       <nav className="desktop-nav" aria-label="Main navigation">{nav.map(([label, href]) => <Link className={pathname === href ? "active" : ""} href={href} key={href}>{label}</Link>)}</nav>
       <div className="header-actions">
+        <Link className="header-icon" href="/account" aria-label="Your account"><Icon name="account" /></Link>
         <button className="header-icon search-trigger" aria-label="Search" onClick={() => setSearchOpen(true)}><Icon name="search" /></button>
         <Link className="header-icon wishlist-trigger" href="/wishlist" aria-label={`Wishlist with ${wishlist.length} items`}><Icon name="heart" />{wishlist.length > 0 && <sup>{wishlist.length}</sup>}</Link>
         <button className="header-icon bag-trigger" aria-label={`Bag with ${bag.length} items`} onClick={() => setBagOpen(true)}><Icon name="bag" /><sup>{bag.reduce((sum, item) => sum + item.quantity, 0)}</sup></button>
@@ -40,7 +40,8 @@ export default function Header() {
   </>;
 }
 
-function Icon({ name }: { name: "search" | "heart" | "bag" }) {
+function Icon({ name }: { name: "search" | "heart" | "bag" | "account" }) {
+  if (name === "account") return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.5-4.2 3-6.3 7.5-6.3s7 2.1 7.5 6.3"/></svg>;
   if (name === "search") return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>;
   if (name === "heart") return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M20.8 8.4c0 5-8.8 11.1-8.8 11.1S3.2 13.4 3.2 8.4a4.4 4.4 0 0 1 8.8-.4 4.4 4.4 0 0 1 8.8.4Z"/></svg>;
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M4.5 8.5h15l-1 12h-13l-1-12Z"/><path d="M8.5 9V6a3.5 3.5 0 0 1 7 0v3"/></svg>;

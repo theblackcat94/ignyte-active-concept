@@ -1,4 +1,4 @@
-# IGNYTE storefront concept
+# IGNYTE custom storefront
 
 A responsive Next.js concept for Ignyte Active, built in the brand's charcoal, cream and flame orange palette. It draws on the shopping patterns of activewear stores while using original layout, copy and concept imagery.
 
@@ -13,29 +13,41 @@ npm run dev
 
 Open `http://127.0.0.1:3000`. The dev server binds to `127.0.0.1` only.
 
-To generate the static site:
+To build and run the self hosted application locally:
 
 ```powershell
 npm run build
+npm run start
 ```
 
-The exported files are written to `out/`.
+The server binds to `127.0.0.1:3000`. A production host needs HTTPS and a reverse proxy.
 
-## GitHub Pages
+## Existing GitHub Pages preview
 
-The project statically exports to `out/`. The GitHub Actions workflow builds it for the `ignyte-active-concept` repository path and deploys on pushes to `main`. Set the repository's **Settings → Pages → Build and deployment → Source** to **GitHub Actions**. The public concept URL is `https://theblackcat94.github.io/ignyte-active-concept/`.
+The existing concept on `main` remains at `https://theblackcat94.github.io/ignyte-active-concept/`. This commerce branch uses server API routes and cannot run on GitHub Pages. Do not merge it into `main` until the new hosting and launch plan is ready.
+
+## New store setup
+
+1. Create a **new** Supabase project for this custom store. Run [the migration](supabase/migrations/202610270001_commerce.sql), then [the concept catalogue seed](supabase/seed.sql) in its SQL editor. The six copied products are unpublished drafts, all variants are inactive, and stock is zero. Review real sizes, SKUs, prices and stock in the admin before publishing.
+2. Set the Supabase Auth site URL and allowed redirect URLs for the chosen HTTPS domain, including `/account` and `/account/reset`. Email confirmation should remain enabled. Create a team user through `/account`, then grant their role from the Supabase SQL editor with `insert into public.staff_members (user_id, role) select id, 'admin' from auth.users where email = 'team-member@example.com';`. Replace the example email. Never expose the secret key to a browser.
+3. In Stripe **test mode**, create a fixed Australian shipping rate, configure a webhook for `/api/stripe/webhook` with `checkout.session.completed` and `checkout.session.expired`, and collect its signing secret. The checkout currently limits delivery to Australia and supports card payments. Product prices are treated as GST inclusive. Confirm shipping charges and tax invoice treatment before live payments.
+4. Copy [.env.example](.env.example) to `.env.local` and enter the Supabase project URL and publishable key, Supabase secret key, Stripe test secret key, webhook signing secret, Stripe shipping rate ID, and the local site URL. Keep `.env.local` private; never commit or paste the secret values into chat. The checkout returns a service unavailable response until the required settings are present.
+5. Run `npm install`, `npm run build`, then `npm run start`. Test account confirmation, password reset, team editing, image upload, variant stock, payment success, payment cancellation, session expiry, and order history with Stripe test payments. Configure the production host and HTTPS before replacing test keys with live keys.
+6. Run `npm run reconcile:orders` on a scheduled job every few minutes on the server. It checks old pending Stripe sessions, completes paid orders, and releases stock from expired sessions. Orders with no linked Stripe session or unusual payment details require manual review; do not blindly release their stock.
+
+Product and order data live in the new Supabase Postgres database. Account credentials are managed by Supabase Auth. Product images uploaded in the editor live in a public Supabase Storage bucket. Payment card details stay with Stripe. Server API routes validate team roles and payment webhooks before changing products or orders.
 
 ## Included
 
 - Responsive homepage with campaign hero, category discovery, product edit, brand story, and footer
 - Category routes, filtering and sorting, search, wishlist and product detail routes
-- Demo bag with size selection and local browser storage
+- Bag and wishlist with local browser storage; account and order history with Supabase Auth
 - Original AI-generated campaign and product concept imagery under `public/images`
 
 ## Before launch
 
-- Replace `lib/catalog.ts` with approved catalogue data, product images, colourways, size availability and listing rules. The current data is illustrative.
-- Connect the shop to the chosen commerce backend for real stock, prices, accounts, payments and checkout. Checkout is deliberately disabled in this concept.
+- Review the copied concept catalogue in the admin. It remains unpublished until the team activates products and variants with verified stock.
+- Configure Supabase, Stripe test mode and Australian shipping before testing checkout. Select a production host before launch.
 - Connect newsletter signup to the approved email platform.
 - Replace the concept campaign and product imagery with client-approved assets.
 - Confirm shipping, returns, support, accessibility and privacy copy. Support currently links to the live contact page.

@@ -1,7 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import ProductCard from "@/components/product-card";
 import HomeHeroSlider from "@/components/home-hero-slider";
-import { products } from "@/lib/catalog";
+import { useStore } from "@/components/store-provider";
 import { asset } from "@/lib/asset";
 import "./home.css";
 
@@ -14,6 +16,7 @@ const collections = [
 ];
 
 export default function Home() {
+  const { products } = useStore();
   return <div className="home-page" id="top">
     <HomeHeroSlider />
     <section className="home-products home-container" aria-labelledby="new-arrivals-title">

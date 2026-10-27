@@ -11,6 +11,7 @@ export type Product = {
   gallery: { image: string; alt: string }[];
   label?: string;
   description: string;
+  variants?: { id: string; size: string; price: number; stock: number }[];
 };
 
 const catalogImage = (name: string) => asset(`/images/catalog/${name}`);
@@ -59,4 +60,4 @@ export const categories: { id: Category; label: string; cover: string }[] = [
   { id: "shorts", label: "Shorts", cover: coverImage("Ignyte-Shorts.jpg") }
 ];
 
-export const money = (value: number) => `$${value.toFixed(0)}`;
+export const money = (value: number) => new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD" }).format(value);
