@@ -11,7 +11,7 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
   if (!z.string().uuid().safeParse(id).success) return NextResponse.json({ error: "Invalid product" }, { status: 400 });
   const parsed = productInput.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
-  const { variants, ...product } = parsed.data;
+  const { variants, pdp_content, ...product } = parsed.data;
   if (product.status === "active" && !variants.some(variant => variant.active && variant.price_cents > 0)) {
     return NextResponse.json({ error: "An active product needs an active, priced variant." }, { status: 400 });
   }
@@ -22,5 +22,8 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
     p_variants: variants.map(({ id: variantId, sku, size, price_cents, sale_price_cents, stock_on_hand, stock_revision, active }) =>
       ({ id: variantId, sku, size, price_cents, sale_price_cents, stock_on_hand, stock_revision, active })),
   });
-  return error ? NextResponse.json({ error: error.message }, { status: 400 }) : NextResponse.json({ ok: true });
+  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  const { error: contentError } = await db.from("products").update({ pdp_content }).eq("id", id);
+  return contentError ? NextResponse.json({ error: "Product saved, but PDP content could not be saved. Apply the product content migration." }, { status: 500 })
+    : NextResponse.json({ ok: true });
 }

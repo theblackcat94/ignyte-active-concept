@@ -1,7 +1,8 @@
 .product-media{min-width:0;align-self:start}
 .product-media-stage{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.product-media-stage.single{grid-template-columns:minmax(0,1fr);max-width:420px}
-.product-media-stage img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;background:#e5e3df}
+.product-media-stage.single{grid-template-columns:minmax(0,1fr);max-width:620px}
+.product-media-stage>img,.product-media-video video{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;background:#e5e3df}
+.product-media-video{position:relative;min-width:0}.product-media-video span{position:absolute;left:10px;top:10px;background:#111;color:#fff;padding:7px 9px;font-size:9px;font-weight:800;letter-spacing:.1em}
 .product-media-navigation{margin-top:18px}
 .product-media-heading{display:flex;justify-content:space-between;gap:20px;margin-bottom:11px;font:800 10px/1.3 var(--font-ignyte-mono),"Courier New",monospace;letter-spacing:.12em}
 .product-media-controls{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;gap:8px;align-items:center}
@@ -9,6 +10,7 @@
 .product-media-arrow:hover,.product-media-arrow:focus-visible{background:#111;color:#fff}
 .product-media-thumbnails{display:flex;gap:8px;min-width:0;overflow-x:auto;scrollbar-width:thin;scroll-snap-type:x proximity;padding:2px 1px 7px}
 .product-media-thumbnails button{flex:none;width:68px;height:68px;padding:0;border:2px solid transparent;background:#e5e3df;cursor:pointer;scroll-snap-align:start}
+.product-media-thumbnails button{position:relative}.product-media-thumbnails button span{position:absolute;inset:0;display:grid;place-items:center;color:#fff;text-shadow:0 1px 5px #000;font-size:23px}
 .product-media-thumbnails button.selected,.product-media-thumbnails button:focus-visible{border-color:#111}
 .product-media-thumbnails img{display:block;width:100%;height:100%;object-fit:cover}
 @media(max-width:520px){.product-media-stage{gap:5px}.product-media-navigation{margin-top:14px}.product-media-controls{grid-template-columns:36px minmax(0,1fr) 36px;gap:5px}.product-media-arrow{height:36px}.product-media-thumbnails{gap:5px}.product-media-thumbnails button{width:54px;height:54px}}

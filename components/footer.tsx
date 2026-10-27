@@ -8,6 +8,8 @@ const footerLinks = [
   { title: "HELP & SUPPORT", items: [
     { label: "Support & FAQ", href: "/support" },
     { label: "Contact", href: "/contact" },
+    { label: "Size guide", href: "/size-guide" },
+    { label: "Returns policy", href: "/returns" },
     { label: "Privacy policy", href: "/privacy" },
     { label: "Terms of service", href: "/terms" },
   ] },

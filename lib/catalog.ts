@@ -1,5 +1,6 @@
 import { asset } from "./asset";
 import prepared from "@/data/jacob-catalog-2026-10-27.json";
+import { pdpFor, type PdpContent } from "@/data/pdp-planner";
 
 export type Category = string;
 export type Product = {
@@ -14,6 +15,7 @@ export type Product = {
   description: string;
   originalPrice?: number;
   variants?: { id: string; size: string; price: number; originalPrice?: number; stock: number }[];
+  pdp: PdpContent;
 };
 
 const coverImage = (name: string) => asset(`/images/collection-covers/${name}`);
@@ -23,6 +25,7 @@ const featuredSlugs = ["aura-halter-lavender", "seamless-legging-lavender", "sea
 export const products: Product[] = prepared.products.map(item => ({
   slug: item.slug, name: item.name, category: item.category, color: item.color,
   description: item.description, image: asset(item.image_path),
+  pdp: pdpFor(item.name, null, item.slug),
   gallery: item.gallery.map(entry => ({ image: asset(entry.image), alt: entry.alt })),
   price: Math.min(...item.variants.map(variant => variant.price_cents)) / 100,
   variants: item.variants.map(variant => ({ id: variant.sku, size: variant.size,
@@ -43,9 +46,9 @@ export const categories: { id: Category; label: string; cover: string }[] = [
   { id: "all", label: "Shop all", cover: coverImage("Ignyte-Shop-All.jpg") },
   { id: "sports-bras", label: "Sports bras", cover: coverImage("Ignyte-Sports-Bras.jpg") },
   { id: "tops", label: "Tops", cover: coverImage("Ignyte-Tops.jpg") },
-  { id: "leggings", label: "Leggings", cover: coverImage("Ignyte-Leggings.jpg") },
+  { id: "leggings", label: "Leggings", cover: coverImage("Ignyte-Leggings-2.jpg") },
   { id: "shorts", label: "Shorts", cover: coverImage("Ignyte-Shorts.jpg") },
-  { id: "accessories", label: "Accessories", cover: asset(prepared.products.find(item => item.category === "accessories")!.image_path) }
+  { id: "accessories", label: "Accessories", cover: coverImage("Ignyte-Accessories.jpg") }
 ];
 
 export const money = (value: number) => new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD" }).format(value);

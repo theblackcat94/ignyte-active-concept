@@ -13,6 +13,18 @@ export const productInput = z.object({
   label: z.string().trim().max(80).nullable(),
   image_path: image,
   gallery: z.array(z.object({ image, alt: z.string().trim().max(200) })).max(12),
+  pdp_content: z.object({
+    features: z.array(z.string().trim().min(1).max(300)).max(25),
+    activities: z.array(z.string().trim().min(1).max(50)).max(12),
+    fit: z.string().trim().max(500),
+    fabric: z.string().trim().max(1500),
+    model_details: z.string().trim().max(1500),
+    show_brand_story: z.boolean(),
+    video_url: z.string().trim().max(1000).refine(value => !value || value.startsWith("/images/") || value.startsWith("https://")),
+    video_poster: z.string().trim().max(1000).refine(value => !value || value.startsWith("/images/") || value.startsWith("https://")),
+    oeko_certificate: z.string().trim().max(120),
+    oeko_certified: z.boolean(),
+  }),
   variants: z.array(z.object({
     id: z.string().uuid().optional(),
     sku: z.string().trim().min(1).max(120),

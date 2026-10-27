@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Product } from "@/lib/catalog";
+import { pdpFor, type PdpContent } from "@/data/pdp-planner";
 
 export type StoreProduct = {
   id: string;
@@ -12,6 +13,7 @@ export type StoreProduct = {
   label: string | null;
   image_path: string;
   gallery: { image: string; alt: string }[];
+  pdp_content?: Partial<PdpContent>;
   product_variants: StoreVariant[];
 };
 
@@ -80,6 +82,7 @@ export function toDisplayProduct(product: StoreProduct): Product {
     slug: product.slug, name: product.name, category: product.category,
     color: product.color, description: product.description,
     image: product.image_path, gallery: product.gallery ?? [], label: product.label ?? undefined,
+    pdp: pdpFor(product.name, product.pdp_content, product.slug),
     price: cheapest?.price ?? 0, originalPrice: cheapest?.originalPrice,
     variants,
   };

@@ -3,7 +3,7 @@ import { cache } from "react";
 import type { Metadata } from "next";
 import { legacyProductSlugs, products } from "@/lib/catalog";
 import { activeProducts, commerceConfigured } from "@/lib/commerce";
-import ProductDetail from "@/components/product-detail";
+import ProductDetail from "@/components/product-detail-v2";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ignyte.theblackcat94.com";
 const findProduct = cache(async (slug: string) => {
