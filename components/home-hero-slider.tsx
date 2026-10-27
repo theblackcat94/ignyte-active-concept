@@ -9,7 +9,7 @@ type Slide = { file: string; mobileFile?: string; alt: string; kicker: string; t
 const slides: Slide[] = [
   { file: "Ignyte-Video-Website-Hero-Low-Res.mp4", mobileFile: "Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4", poster: "Home-Hero-Video-Fallback.jpg", alt: "Ignyte training campaign video", kicker: "HIGH-PERFORMANCE ACTIVEWEAR_", title: "Built for the burn", href: "/shop", action: "SHOP ALL", video: true },
   { file: "Home-Hero-1.jpg", alt: "Blonde athlete training with battle ropes", kicker: "SPORTS BRAS_", title: "Support every move.", href: "/shop/sports-bras", action: "SHOP SPORTS BRAS" },
-  { file: "Home-Hero-Alt-6.jpg", alt: "Athlete wearing an Ignyte brown top", kicker: "TOPS_", title: "Made to move.", href: "/shop/tops", action: "SHOP TOPS" },
+  { file: "Home-Hero-Alt-3.jpg", alt: "Athlete training in an Ignyte brown top", kicker: "TOPS_", title: "Made to move.", href: "/shop/tops", action: "SHOP TOPS" },
   { file: "Home-Hero-Alt-4.jpg", alt: "Two athletes training on ergs", kicker: "SHORTS_", title: "Move your way.", href: "/shop/shorts", action: "SHOP SHORTS" },
   { file: "Home-Hero-Alt-2-v2.jpg", alt: "Two Ignyte athletes posing in the gym", kicker: "ABOUT IGNYTE_", title: "Bring your fire.", href: "/about", action: "OUR STORY" },
 ];
@@ -28,7 +28,7 @@ export default function HomeHeroSlider() {
   }, []);
   const move = (direction: number) => setActive(index => (index + direction + slides.length) % slides.length);
 
-  return <section className="home-hero home-slider" aria-label="Ignyte home media carousel" aria-roledescription="carousel" onTouchStart={event => { const touch = event.touches[0]; touchStart.current = { x: touch.clientX, y: touch.clientY }; }} onTouchEnd={event => { const start = touchStart.current; touchStart.current = null; if (!start) return; const touch = event.changedTouches[0]; const dx = touch.clientX - start.x; const dy = touch.clientY - start.y; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4) move(dx < 0 ? 1 : -1); }}>
+  return <section className={`home-hero home-slider ${slide.video ? "home-slide-video" : "home-slide-photo"}`} aria-label="Ignyte home media carousel" aria-roledescription="carousel" onTouchStart={event => { const touch = event.touches[0]; touchStart.current = { x: touch.clientX, y: touch.clientY }; }} onTouchEnd={event => { const start = touchStart.current; touchStart.current = null; if (!start) return; const touch = event.changedTouches[0]; const dx = touch.clientX - start.x; const dy = touch.clientY - start.y; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4) move(dx < 0 ? 1 : -1); }}>
     <div className="home-slide-media" key={`${slide.file}-${mobile}`}>
       {slide.video ? <video src={asset(`/images/home/${mobile && slide.mobileFile ? slide.mobileFile : slide.file}`)} poster={asset(`/images/home/${slide.poster}`)} autoPlay muted playsInline loop preload="metadata" aria-label={slide.alt} /> : <img src={asset(`/images/home/${slide.file}`)} alt={slide.alt} loading={active === 0 ? "eager" : "lazy"} />}
     </div>
