@@ -26,6 +26,16 @@ The server binds to `127.0.0.1:3000`. A production host needs HTTPS and a revers
 
 The existing concept on `main` remains at `https://theblackcat94.github.io/ignyte-active-concept/`. This commerce branch uses server API routes and cannot run on GitHub Pages. Do not merge it into `main` until the new hosting and launch plan is ready.
 
+## Build machine deployment preview
+
+The custom site is built on `internetremovals@100.120.9.34` and deployed to the separate Linode at `172.105.186.242`. The Linode already hosts another site on port 3000; Ignyte uses its own systemd service on `127.0.0.1:3210`. The build machine and Linode both run Ubuntu 24.04, so the package includes the build machine's Node 20 executable instead of changing the Linode's system Node 18.
+
+The build checkout is `/home/internetremovals/SERVER/NEXT/IGNYTE`. Fetch the release ref, create a clean detached temporary worktree at the exact commit, then run `bash deploy/build-and-deploy.sh <full-commit-sha>` from it. The script builds a Next.js standalone package, rejects credential-like files, transfers it over the existing build-machine SSH path, installs an isolated release, and probes the local app. The Linode's `/opt/ignyte/current` symlink supports rollback if the new release fails its health check.
+
+For the first deployment only, transfer `deploy/ignyte.nginx.conf` to `/tmp/ignyte.nginx.conf` on the Linode and run `deploy/bootstrap-nginx.sh` there. It creates a dedicated host for `ignyte.theblackcat94.com`, requests HTTPS with Certbot, and verifies the public site. Existing NGINX hosts are left alone.
+
+Without Supabase public settings at build time, this is a **preview** using the current concept catalogue; accounts and checkout remain unavailable. When Supabase is ready, store only `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and `NEXT_PUBLIC_SITE_URL` in `/home/internetremovals/.config/ignyte/build.env` on the build machine, and rebuild. Put the same public Supabase settings and server-only secrets in `/etc/ignyte/production.env` on the Linode, readable only by root and the `ignyte` service group. Never place credentials in Git, deployment archives, command arguments, or chat.
+
 ## New store setup
 
 1. Create a **new** Supabase project for this custom store. Run [the migration](supabase/migrations/202610270001_commerce.sql), then [the concept catalogue seed](supabase/seed.sql) in its SQL editor. The six copied products are unpublished drafts, all variants are inactive, and stock is zero. Review real sizes, SKUs, prices and stock in the admin before publishing.
