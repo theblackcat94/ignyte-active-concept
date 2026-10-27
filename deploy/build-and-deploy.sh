@@ -37,6 +37,16 @@ if [[ -n "${NEXT_PUBLIC_SUPABASE_URL:-}" && -z "${NEXT_PUBLIC_SUPABASE_PUBLISHAB
   exit 1
 fi
 
+# Ignyte carries its own Node binary to the Linode. Keep it on a version
+# supported by the Supabase SDK without changing the build machine's Node.
+ignyte_node_dir=/home/internetremovals/.local/opt/node-v22.23.4-linux-x64/bin
+if [[ ! -x "$ignyte_node_dir/node" ]]; then
+  echo "Install the pinned Ignyte Node with deploy/install-build-node.sh first" >&2
+  exit 1
+fi
+export PATH="$ignyte_node_dir:$PATH"
+test "$(node --version)" = v22.23.4
+
 npm ci
 BUILD_STANDALONE=true npm run build
 test -f .next/standalone/server.js

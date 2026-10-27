@@ -28,7 +28,7 @@ The existing concept on `main` remains at `https://theblackcat94.github.io/ignyt
 
 ## Build machine deployment preview
 
-The custom site is built on `internetremovals@100.120.9.34` and deployed to the separate Linode at `172.105.186.242`. The Linode already hosts another site on port 3000; Ignyte uses its own systemd service on `127.0.0.1:3210`. The build machine and Linode both run Ubuntu 24.04, so the package includes the build machine's Node 20 executable instead of changing the Linode's system Node 18.
+The custom site is built on `internetremovals@100.120.9.34` and deployed to the separate Linode at `172.105.186.242`. The Linode already hosts another site on port 3000; Ignyte uses its own systemd service on `127.0.0.1:3210`. The build machine and Linode both run Ubuntu 24.04. Run `bash deploy/install-build-node.sh` once on the build machine to install a checksum-verified, app-only Node 22.23.4 binary. The deployment package includes that binary instead of changing either server's system Node.
 
 The build checkout is `/home/internetremovals/SERVER/NEXT/IGNYTE`. Fetch the release ref, create a clean detached temporary worktree at the exact commit, then run `bash deploy/build-and-deploy.sh <full-commit-sha>` from it. The script builds a Next.js standalone package, rejects credential-like files, transfers it over the existing build-machine SSH path, installs an isolated release, and probes the local app. The Linode's `/opt/ignyte/current` symlink supports rollback if the new release fails its health check.
 
