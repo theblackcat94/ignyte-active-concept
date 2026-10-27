@@ -2,12 +2,41 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { asset } from "@/lib/asset";
+
+const footerLinks = [
+  { title: "HELP & SUPPORT", items: [
+    { label: "Contact", href: "https://ignyteactive.com/contact/" },
+    { label: "Privacy policy", href: "https://ignyteactive.com/privacy-policy" },
+    { label: "Terms of service", href: "https://ignyteactive.com/terms-conditions" },
+  ] },
+  { title: "SHOP", items: [
+    { label: "Shop all", href: "/shop" },
+    { label: "Sports bras", href: "/shop/sports-bras" },
+    { label: "Tops", href: "/shop/tops" },
+    { label: "Leggings", href: "/shop/leggings" },
+    { label: "Shorts", href: "/shop/shorts" },
+  ] },
+  { title: "EXPLORE", items: [
+    { label: "Our story", href: "/#story" },
+    { label: "Collections", href: "/#collections" },
+    { label: "Wishlist", href: "/wishlist" },
+  ] },
+  { title: "CONNECT", items: [
+    { label: "Instagram ↗", href: "https://www.instagram.com/ignyteactive" },
+  ] },
+];
+
+function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return href.startsWith("http") ? <a href={href} target="_blank" rel="noreferrer">{children}</a> : <Link href={href}>{children}</Link>;
+}
 
 export default function Footer() {
   const [signupAttempted, setSignupAttempted] = useState(false);
-  return <footer className="site-footer" id="footer">
-    <div className="footer-top"><div><span className="eyebrow">THE IGNITION POINT</span><h2>BRING THE FIRE<br /><em>EVERYWHERE.</em></h2></div><div className="newsletter"><p>Training notes, new drops and everything in between.</p><form onSubmit={e => { e.preventDefault(); setSignupAttempted(true); }}><input type="email" required placeholder="YOUR EMAIL ADDRESS" aria-label="Email address" /><button type="submit" aria-label="Join newsletter">↗</button></form><small>{signupAttempted ? "This preview cannot collect emails yet." : "Newsletter signup is a concept preview."}</small></div></div>
-    <div className="footer-main"><div className="footer-brand"><Link className="brand" href="/"><span className="brand-flame">◢</span><span>IGNYTE</span></Link><p>High-performance activewear for women who bring the fire.</p><a href="https://www.instagram.com/ignyteactive" target="_blank" rel="noreferrer">INSTAGRAM ↗</a></div><div><h3>SHOP</h3><Link href="/shop">Shop all</Link><Link href="/shop/sports-bras">Sports bras</Link><Link href="/shop/tops">Tops</Link><Link href="/shop/leggings">Leggings</Link><Link href="/shop/shorts">Shorts</Link></div><div><h3>EXPLORE</h3><Link href="/#story">Our story</Link><Link href="/#collections">Collections</Link><Link href="/wishlist">Wishlist</Link></div><div><h3>HELP & SUPPORT</h3><a href="https://ignyteactive.com/contact/" target="_blank" rel="noreferrer">Contact</a><a href="https://ignyteactive.com/privacy-policy" target="_blank" rel="noreferrer">Privacy policy</a><a href="https://ignyteactive.com/terms-conditions" target="_blank" rel="noreferrer">Terms of service</a></div></div>
-    <div className="footer-bottom"><span>© 2026 IGNYTE ACTIVE</span><span>CONCEPT STOREFRONT · CHECKOUT NOT CONNECTED</span><a href="#top">BACK TO TOP ↑</a></div>
+  return <footer className="pdf-footer" id="footer">
+    <div className="pdf-footer-signup"><div className="pdf-footer-signup-inner"><div><span className="pdf-footer-eyebrow">SIGN UP ↘</span><h2>Bring the fire to your inbox</h2><p>Training notes, new drops and everything in between.</p></div><div className="pdf-footer-signup-form"><form onSubmit={event => { event.preventDefault(); setSignupAttempted(true); }}><input type="email" required placeholder="YOUR EMAIL..." aria-label="Email address" /><button type="submit" aria-label="Join newsletter">»</button></form><small>{signupAttempted ? "This preview cannot collect emails yet." : "Newsletter signup is a concept preview."}</small></div></div></div>
+    <div className="pdf-footer-perks"><Link href="/shop"><span aria-hidden="true">↗</span><strong>DISCOVER THE<br />COLLECTION</strong></Link><Link href="/wishlist"><span aria-hidden="true">♡</span><strong>SAVE YOUR<br />FAVOURITES</strong></Link><a href="https://ignyteactive.com/contact/" target="_blank" rel="noreferrer"><span aria-hidden="true">✉</span><strong>NEED HELP?<br />CONTACT US</strong></a><div><span aria-hidden="true">✓</span><strong>CONCEPT SHOP<br />PREVIEW</strong></div></div>
+    <div className="pdf-footer-main"><div className="pdf-footer-brand"><Link href="/" aria-label="Ignyte home"><img src={asset("/images/ignyte-logo.png")} alt="IGNYTE" /></Link><h3>BUILT FOR THE BURN™</h3><p>High-performance activewear<br />for women who bring the fire.</p><a className="pdf-footer-social" href="https://www.instagram.com/ignyteactive" target="_blank" rel="noreferrer" aria-label="Ignyte Instagram">◎</a></div>{footerLinks.map(group => <div className="pdf-footer-column" key={group.title}><h3>{group.title}</h3>{group.items.map(item => <FooterLink href={item.href} key={item.href}>{item.label}</FooterLink>)}</div>)}</div>
+    <div className="pdf-footer-bottom"><span>© 2026 Ignyte Active / All Rights Reserved / Bring The Fire</span><div><a href="https://ignyteactive.com/privacy-policy" target="_blank" rel="noreferrer">Privacy Policy</a><a href="https://ignyteactive.com/terms-conditions" target="_blank" rel="noreferrer">Terms of Service</a></div></div>
   </footer>;
 }

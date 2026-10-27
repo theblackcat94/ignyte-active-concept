@@ -1,17 +1,11 @@
 import Link from "next/link";
 import ProductCard from "@/components/product-card";
+import HomeHeroSlider from "@/components/home-hero-slider";
 import { products } from "@/lib/catalog";
 import { asset } from "@/lib/asset";
 import "./home.css";
 
 const homeImage = (name: string) => asset(`/images/home/${name}`);
-const liveProductBase = "https://ignyteactive.com/media/catalog/product/cache/2a6b0744b87cbe1990f7a65c1fd3659e/";
-const featuredProducts = [
-  { ...products[0], image: `${liveProductBase}a/u/aura_halter_jac_2.jpeg` },
-  { ...products[1], image: `${liveProductBase}s/e/seamless_leggings_jac_2.jpeg` },
-  { ...products[2], image: `${liveProductBase}s/e/seamless_shorts_brown_2.jpeg` },
-  { ...products[3], image: `${liveProductBase}s/e/seamless_sports_bra_brown_2.jpeg` },
-];
 const collections = [
   { label: "Sports bras", href: "/shop/sports-bras", image: "Ignyte-Sports-Bras-Vertical.jpg" },
   { label: "Tops", href: "/shop/tops", image: "Ignyte-Tops-Vertical.jpg" },
@@ -21,15 +15,10 @@ const collections = [
 
 export default function Home() {
   return <div className="home-page" id="top">
-    <section className="home-hero" aria-label="Ignyte activewear campaign">
-      <img src={homeImage("Home-Hero-1.jpg")} alt="Athlete training in Ignyte activewear" />
-      <div className="home-hero-shade" />
-      <div className="home-hero-content"><span className="home-kicker">HIGH-PERFORMANCE ACTIVEWEAR_</span><h1>Built for the burn.</h1><Link href="/shop" className="home-pill">SHOP BEST SELLERS <span>↗</span></Link></div>
-      <span className="home-hero-plus" aria-hidden="true">+</span>
-    </section>
+    <HomeHeroSlider />
     <section className="home-products home-container" aria-labelledby="new-arrivals-title">
       <div className="home-section-head"><h2 id="new-arrivals-title">SHOP NEW ARRIVALS_</h2><Link href="/shop">View all ↗</Link></div>
-      <div className="home-products-grid">{featuredProducts.map((product, index) => <ProductCard key={product.slug} product={product} index={index} />)}</div>
+      <div className="home-products-grid">{products.slice(0, 4).map((product, index) => <ProductCard key={product.slug} product={product} index={index} />)}</div>
     </section>
     <section className="home-feature" aria-labelledby="bras-title">
       <img src={homeImage("Ignyte-Support-Bras.jpg")} alt="Athlete wearing a supportive Ignyte sports bra" loading="lazy" />

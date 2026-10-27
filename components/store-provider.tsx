@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { products, type Product } from "@/lib/catalog";
+import { legacyProductSlugs, products, type Product } from "@/lib/catalog";
 
 type BagItem = { slug: string; size: string; quantity: number };
 type Store = {
@@ -26,8 +26,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     try {
-      setBag(JSON.parse(localStorage.getItem("ignyte-concept-bag") || "[]"));
-      setWishlist(JSON.parse(localStorage.getItem("ignyte-concept-wishlist") || "[]"));
+      setBag((JSON.parse(localStorage.getItem("ignyte-concept-bag") || "[]") as BagItem[]).map(item => ({ ...item, slug: legacyProductSlugs[item.slug] || item.slug })).filter(item => products.some(product => product.slug === item.slug)));
+      setWishlist((JSON.parse(localStorage.getItem("ignyte-concept-wishlist") || "[]") as string[]).map(slug => legacyProductSlugs[slug] || slug).filter(slug => products.some(product => product.slug === slug)));
     } catch { /* A fresh bag is safe if browser storage is unavailable. */ }
   }, []);
   useEffect(() => { localStorage.setItem("ignyte-concept-bag", JSON.stringify(bag)); }, [bag]);
