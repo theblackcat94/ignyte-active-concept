@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   title: "Ignyte Active",
   applicationName: "Ignyte Active",
   icons: { icon: { url: asset("/favicon.png"), type: "image/png" } },
-  description: "A new activewear storefront concept for Ignyte Active. Built for women who bring the fire.",
+  description: "High-performance activewear for women who bring the fire. Shop Ignyte Active.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
