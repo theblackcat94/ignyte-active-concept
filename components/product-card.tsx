@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { type Product, money } from "@/lib/catalog";
+import { commerceConfigured } from "@/lib/commerce";
 import { useStore } from "./store-provider";
 
 export default function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   const { wishlist, toggleWishlist, addToBag } = useStore();
   const liked = wishlist.includes(product.slug);
-  const quickSize = product.variants ? product.variants.find(variant => variant.stock > 0)?.size : "M";
+  const quickSize = product.variants ? product.variants.find(variant => variant.stock > 0)?.size : commerceConfigured ? undefined : "M";
   return <article className="product-card" style={{ animationDelay: `${index * 65}ms` }}>
     <div className="product-image"><Link href={`/product/${product.slug}`} aria-label={`View ${product.name}`}><img src={product.image} alt={`${product.name} in ${product.color}`} loading="lazy" /></Link>{product.label && <span className="product-badge">{product.label}</span>}<button className={`product-heart ${liked ? "liked" : ""}`} aria-label={liked ? "Remove from wishlist" : "Add to wishlist"} onClick={() => toggleWishlist(product.slug)}>{liked ? "♥" : "♡"}</button>{quickSize && <button className="quick-add" onClick={() => addToBag(product.slug, quickSize)}>QUICK ADD — {quickSize} <span>↗</span></button>}</div>
     <div className="product-meta"><span>{product.category.replace("-", " ").toUpperCase()}</span><span>{product.color.toUpperCase()}</span></div>

@@ -9,6 +9,7 @@ import { activeProducts, commerceConfigured } from "@/lib/commerce";
 type BagItem = { slug: string; size: string; quantity: number };
 type Store = {
   products: Product[];
+  catalogPreview: boolean;
   bag: BagItem[];
   bagOpen: boolean;
   setBagOpen: (open: boolean) => void;
@@ -25,7 +26,8 @@ const StoreContext = createContext<Store | null>(null);
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [products, setProducts] = useState<Product[]>(commerceConfigured ? [] : conceptProducts);
+  const [products, setProducts] = useState<Product[]>(conceptProducts);
+  const [catalogPreview, setCatalogPreview] = useState(true);
   const [bag, setBag] = useState<BagItem[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [bagOpen, setBagOpen] = useState(false);
@@ -35,7 +37,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!commerceConfigured) return;
-    void activeProducts().then(setProducts).catch(() => setCheckoutMessage("Products could not be loaded. Please refresh."));
+    void activeProducts().then(active => {
+      if (active.length) { setProducts(active); setCatalogPreview(false); }
+    }).catch(() => setCheckoutMessage("Products could not be loaded. Please refresh."));
   }, []);
 
   useEffect(() => {
@@ -76,7 +80,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, 0);
 
   return (
-    <StoreContext.Provider value={{ products, bag, bagOpen, setBagOpen, addToBag, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
+    <StoreContext.Provider value={{ products, catalogPreview, bag, bagOpen, setBagOpen, addToBag, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
       {children}
       {bagOpen && <div className="drawer-backdrop" onClick={() => setBagOpen(false)} />}
       <aside className={`bag-drawer ${bagOpen ? "is-open" : ""}`} aria-label="Shopping bag" aria-hidden={!bagOpen}>

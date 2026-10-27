@@ -16,11 +16,12 @@ const collections = [
 ];
 
 export default function Home() {
-  const { products } = useStore();
+  const { products, catalogPreview } = useStore();
   return <div className="home-page" id="top">
     <HomeHeroSlider />
     <section className="home-products home-container" aria-labelledby="new-arrivals-title">
       <div className="home-section-head"><h2 id="new-arrivals-title">SHOP NEW ARRIVALS_</h2><Link href="/shop">View all ↗</Link></div>
+      {catalogPreview && <p className="catalog-preview-note">Collection preview. Ordering opens when product sizes and stock are confirmed.</p>}
       <div className="home-products-grid">{products.slice(0, 4).map((product, index) => <ProductCard key={product.slug} product={product} index={index} />)}</div>
     </section>
     <section className="home-feature" aria-labelledby="bras-title">

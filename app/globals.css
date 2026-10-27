@@ -21,6 +21,7 @@
 .detail-gallery .detail-second:last-child{grid-column:1/-1;height:390px}
 .detail-gallery .detail-second:last-child img{aspect-ratio:auto;height:100%;object-fit:cover}
 .swatch.lavender{background:#aeb3e8}
+.catalog-preview-note{font-size:13px;line-height:1.5;color:#5a514c;margin:0 0 24px}
 @media(max-width:520px){.detail-gallery .detail-second:last-child{height:240px}}
 
 .site-header .brand-image img{width:200px;height:auto}
