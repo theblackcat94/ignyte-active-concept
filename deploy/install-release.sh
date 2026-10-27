@@ -7,8 +7,13 @@ if [[ ! "$sha" =~ ^[0-9a-f]{40}$ ]]; then
   exit 1
 fi
 archive="/tmp/ignyte-$sha.tar.gz"
+env_stage="/tmp/ignyte-env-$sha"
+env_target=/etc/ignyte/production.env
+env_backup="/etc/ignyte/.production.env.rollback-$sha"
 release="/opt/ignyte/releases/$sha"
 current="/opt/ignyte/current"
+cleanup() { rm -f -- "$env_stage" "$env_backup"; }
+trap cleanup EXIT
 test -f "$archive"
 if tar -tzf "$archive" | grep -Eq '(^/|(^|/)\.\.(/|$)|(^|/)\.env($|\.)|(^|/)[^/]+\.(pem|key)$)'; then
   echo "Unsafe package entry" >&2
@@ -59,21 +64,40 @@ fi
 
 previous=""
 if [[ -L "$current" ]]; then previous="$(readlink -f "$current")"; fi
+synced_env=false
+had_env=false
+if [[ -f "$env_stage" ]]; then
+  if [[ -f "$env_target" ]]; then
+    cp -p -- "$env_target" "$env_backup"
+    had_env=true
+  fi
+  install -o root -g ignyte -m 0640 "$env_stage" "$env_target.next"
+  mv -Tf "$env_target.next" "$env_target"
+  synced_env=true
+fi
 ln -sfn "$release" /opt/ignyte/current.next
 mv -Tf /opt/ignyte/current.next "$current"
 systemctl daemon-reload
 systemctl enable ignyte.service >/dev/null
-systemctl restart ignyte.service
 healthy=false
-for attempt in {1..20}; do
-  if curl --silent --show-error --fail --max-time 2 http://127.0.0.1:3210/ >/dev/null; then
-    healthy=true
-    break
-  fi
-  sleep 1
-done
+if systemctl restart ignyte.service; then
+  for attempt in {1..20}; do
+    if curl --silent --show-error --fail --max-time 2 http://127.0.0.1:3210/ >/dev/null; then
+      healthy=true
+      break
+    fi
+    sleep 1
+  done
+fi
 if [[ "$healthy" != true ]]; then
   echo "Ignyte health check failed" >&2
+  if [[ "$synced_env" == true ]]; then
+    if [[ "$had_env" == true ]]; then
+      mv -Tf "$env_backup" "$env_target"
+    else
+      rm -f -- "$env_target"
+    fi
+  fi
   if [[ -n "$previous" && "$previous" == /opt/ignyte/releases/* ]]; then
     ln -sfn "$previous" /opt/ignyte/current.next
     mv -Tf /opt/ignyte/current.next "$current"

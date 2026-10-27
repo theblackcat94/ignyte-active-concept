@@ -16,24 +16,40 @@ if [[ -n "$(git status --porcelain --untracked-files=normal)" ]]; then
   exit 1
 fi
 
-# Only public browser settings are accepted in this optional file.
+# The build machine keeps one owner-only env file. Only public values are
+# exported to Next.js; the full file is streamed to the Linode over SSH.
 build_env_file="${BUILD_ENV_FILE:-/home/internetremovals/.config/ignyte/build.env}"
 if [[ -f "$build_env_file" ]]; then
+  if [[ -L "$build_env_file" || ! -O "$build_env_file" ]]; then
+    echo "Ignyte build env must be a regular file owned by the build user" >&2
+    exit 1
+  fi
+  chmod 0600 "$build_env_file"
+  has_secret_key=false
   while IFS= read -r line || [[ -n "$line" ]]; do
     [[ -z "$line" || "$line" == \#* ]] && continue
+    if [[ "$line" != *=* || "$line" == *$'\r'* ]]; then
+      echo "Invalid Ignyte build setting line" >&2
+      exit 1
+    fi
     name="${line%%=*}"
     value="${line#*=}"
     case "$name" in
       NEXT_PUBLIC_SUPABASE_URL|NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY|NEXT_PUBLIC_SITE_URL)
         export "$name=$value" ;;
+      SUPABASE_SECRET_KEY)
+        [[ -n "$value" ]] && has_secret_key=true ;;
       *) echo "Unexpected build setting name: $name" >&2; exit 1 ;;
     esac
   done < "$build_env_file"
+  unset line name value
 fi
 export NEXT_PUBLIC_SITE_URL="${NEXT_PUBLIC_SITE_URL:-https://ignyte.theblackcat94.com}"
-if [[ -n "${NEXT_PUBLIC_SUPABASE_URL:-}" && -z "${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:-}" ]] ||
-   [[ -z "${NEXT_PUBLIC_SUPABASE_URL:-}" && -n "${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:-}" ]]; then
-  echo "Supabase URL and publishable key must both be present or both absent" >&2
+if [[ -f "$build_env_file" ]] &&
+   { [[ -z "${NEXT_PUBLIC_SUPABASE_URL:-}" ]] ||
+     [[ -z "${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:-}" ]] ||
+     [[ "$has_secret_key" != true ]]; }; then
+  echo "Ignyte build env requires Supabase URL, publishable key and secret key" >&2
   exit 1
 fi
 
@@ -69,6 +85,10 @@ fi
 archive="$stage/ignyte-$expected_sha.tar.gz"
 tar -C "$stage/app" -czf "$archive" .
 scp -o BatchMode=yes -o StrictHostKeyChecking=yes "$archive" "root@172.105.186.242:/tmp/ignyte-$expected_sha.tar.gz"
+if [[ -f "$build_env_file" ]]; then
+  ssh -o BatchMode=yes -o StrictHostKeyChecking=yes root@172.105.186.242 \
+    "umask 077; cat > /tmp/ignyte-env-$expected_sha" < "$build_env_file"
+fi
 ssh -o BatchMode=yes -o StrictHostKeyChecking=yes root@172.105.186.242 \
   bash -s -- "$expected_sha" < deploy/install-release.sh
 echo "Deployed commit $expected_sha to the Ignyte Linode app service"

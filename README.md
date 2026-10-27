@@ -34,17 +34,18 @@ The build checkout is `/home/internetremovals/SERVER/NEXT/IGNYTE`. Fetch the rel
 
 For the first deployment only, transfer `deploy/ignyte.nginx.conf` to `/tmp/ignyte.nginx.conf` on the Linode and run `deploy/bootstrap-nginx.sh` there. It creates a dedicated host for `ignyte.theblackcat94.com`, requests HTTPS with Certbot, and verifies the public site. Existing NGINX hosts are left alone.
 
-Without Supabase public settings at build time, this is a **preview** using the current concept catalogue; accounts and order submission remain unavailable. When Supabase is ready, store only `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and `NEXT_PUBLIC_SITE_URL` in `/home/internetremovals/.config/ignyte/build.env` on the build machine, and rebuild. Put the same public Supabase settings and `SUPABASE_SECRET_KEY` in `/etc/ignyte/production.env` on the Linode, readable only by root and the `ignyte` service group. The publishable key must be present during the build; changing only the Linode file will not enable browser accounts. Never place credentials in Git, deployment archives, command arguments, or chat.
+Without Supabase settings at build time, this is a **preview** using the current concept catalogue; accounts and order submission remain unavailable. The build machine uses one owner-only `/home/internetremovals/.config/ignyte/build.env` file. Deployment exports only its public values to the Next.js build, then streams the complete file over SSH to `/etc/ignyte/production.env` on the Linode. The server-only key never enters the build environment or deployment archive. The publishable key must be present during the build to enable browser accounts. Never place credentials in Git, deployment archives, command arguments, or chat.
 
-The project URL is `https://pyoskepqciqhnpgujtbs.supabase.co`. Get the **publishable key** and **secret/service role key** from Supabase Project Settings → API Keys. Create the build file on the build machine with `mkdir -p ~/.config/ignyte`, `umask 077`, then `nano ~/.config/ignyte/build.env`. It should contain exactly:
+The project URL is `https://pyoskepqciqhnpgujtbs.supabase.co`. Get the **publishable key** and **secret/service role key** from Supabase Project Settings → API Keys. Create the build file on the build machine with `mkdir -p /home/internetremovals/.config/ignyte`, `umask 077`, then `nano /home/internetremovals/.config/ignyte/build.env`. It should contain exactly:
 
 ```text
 NEXT_PUBLIC_SUPABASE_URL=https://pyoskepqciqhnpgujtbs.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<publishable key>
+SUPABASE_SECRET_KEY=<secret key>
 NEXT_PUBLIC_SITE_URL=https://ignyte.theblackcat94.com
 ```
 
-On the Linode, edit `/etc/ignyte/production.env` as root with the same three lines and `SUPABASE_SECRET_KEY=<secret key>`. Then run `chown root:ignyte /etc/ignyte/production.env` and `chmod 640 /etc/ignyte/production.env`. Run [the initial migration](supabase/migrations/202610270001_commerce.sql), [the unpaid order migration](supabase/migrations/202610270002_unpaid_orders.sql), and [the seed](supabase/seed.sql) in that order in the Supabase SQL Editor. Keep the seed's products as drafts with zero stock until real stock and pricing are verified. After the files and schema are ready, redeploy the exact commit from a clean build-machine worktree and test account confirmation and an order request with verified inventory. Do not send keys or the database password through chat.
+The deployment script sets this file to mode `600` before use and installs the Linode copy as `root:ignyte` mode `640`, with rollback if the app fails its health check. Run [the initial migration](supabase/migrations/202610270001_commerce.sql), [the unpaid order migration](supabase/migrations/202610270002_unpaid_orders.sql), and [the seed](supabase/seed.sql) in that order in the Supabase SQL Editor. Keep the seed's products as drafts with zero stock until real stock and pricing are verified. After the file and schema are ready, redeploy the exact commit from a clean build-machine worktree and test account confirmation and an order request with verified inventory. Do not send keys or the database password through chat.
 
 ## New store setup
 
