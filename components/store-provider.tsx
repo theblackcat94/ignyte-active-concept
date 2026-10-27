@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { legacyProductSlugs, money, products as conceptProducts, type Product } from "@/lib/catalog";
-import { activeProducts, browserDb, commerceConfigured } from "@/lib/commerce";
+import { activeProducts, commerceConfigured } from "@/lib/commerce";
 
 type BagItem = { slug: string; size: string; quantity: number };
 type Store = {
@@ -31,7 +31,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [bagOpen, setBagOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [checkoutMessage, setCheckoutMessage] = useState("");
-  const [checkingOut, setCheckingOut] = useState(false);
   const [storageReady, setStorageReady] = useState(false);
 
   useEffect(() => {
@@ -76,27 +75,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     return sum + (product?.variants?.find(variant => variant.size === item.size)?.price ?? product?.price ?? 0) * item.quantity;
   }, 0);
 
-  async function checkout() {
-    if (!commerceConfigured || checkingOut) return;
-    setCheckoutMessage("");
-    if (validBag.length !== bag.length || !validBag.length) { setCheckoutMessage("An item in your bag is unavailable. Remove it and try again."); return; }
-    const { data: { session } } = await browserDb().auth.getSession();
-    if (!session) { router.push("/account"); return; }
-    setCheckingOut(true);
-    try {
-      const response = await fetch("/api/checkout", { method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
-        body: JSON.stringify({ items: validBag.map(item => ({
-          variantId: products.find(product => product.slug === item.slug)?.variants?.find(variant => variant.size === item.size)?.id,
-          quantity: item.quantity,
-        })) }),
-      });
-      const result = await response.json();
-      if (!response.ok || !result.url) throw new Error(result.error || "Checkout is unavailable.");
-      window.location.assign(result.url);
-    } catch (error) { setCheckoutMessage(error instanceof Error ? error.message : "Checkout is unavailable."); setCheckingOut(false); }
-  }
-
   return (
     <StoreContext.Provider value={{ products, bag, bagOpen, setBagOpen, addToBag, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
       {children}
@@ -112,7 +90,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             <div><strong>{product.name}</strong><span>{product.color} / {item.size}</span><span>Qty {item.quantity} · {money(price * item.quantity)}</span><button className="text-button" onClick={() => removeFromBag(item.slug, item.size)}>Remove</button></div>
           </div>;
         })}</div> : <div className="empty-bag"><span>✳</span><h3>Nothing in your bag yet.</h3><p>Find your next training favourite.</p><Link href="/shop" className="button button-dark" onClick={() => setBagOpen(false)}>SHOP THE COLLECTION <span>↗</span></Link></div>}
-        <div className="drawer-foot"><div><span>SUBTOTAL</span><strong>{money(subtotal)}</strong></div><p>{commerceConfigured ? "Shipping is calculated at checkout. Australian addresses only." : "Concept preview only. Checkout is not connected."}</p>{checkoutMessage && <p role="status">{checkoutMessage}</p>}<button className="button button-orange" disabled={!commerceConfigured || !validBag.length || checkingOut} onClick={checkout}>{commerceConfigured ? checkingOut ? "OPENING CHECKOUT…" : "CHECKOUT" : "CHECKOUT COMING SOON"}</button></div>
+        <div className="drawer-foot"><div><span>SUBTOTAL</span><strong>{money(subtotal)}</strong></div><p>Australian delivery only. Shipping is quoted after your order request; no payment is taken at checkout.</p>{checkoutMessage && <p role="status">{checkoutMessage}</p>}<button className="button button-orange" disabled={!validBag.length} onClick={() => { setBagOpen(false); router.push("/checkout"); }}>CHECKOUT ↗</button></div>
       </aside>
     </StoreContext.Provider>
   );
