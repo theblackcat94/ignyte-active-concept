@@ -55,17 +55,18 @@ export default function CheckoutPage() {
 
   const subtotalCents = Math.round(subtotal * 100);
   const appliedCoupon = coupon?.subtotalCents === subtotalCents ? coupon : null;
-  const quotedShipping = shippingQuote?.state === shipping.state && shippingQuote.subtotalCents === subtotalCents ? shippingQuote.amount : null;
+  const shippingBasisCents = subtotalCents - (appliedCoupon?.discountCents ?? 0);
+  const quotedShipping = shippingQuote?.state === shipping.state && shippingQuote.subtotalCents === shippingBasisCents ? shippingQuote.amount : null;
 
   useEffect(() => {
     if (!shipping.state || !commerceConfigured) return;
     let cancelled = false;
     void fetch("/api/shipping/quote", { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ state: shipping.state, subtotalCents }) })
-      .then(response => response.json()).then(result => { if (!cancelled) setShippingQuote({ state: shipping.state, subtotalCents, amount: result.configured ? result.shippingCents : null }); })
-      .catch(() => { if (!cancelled) setShippingQuote({ state: shipping.state, subtotalCents, amount: null }); });
+      body: JSON.stringify({ state: shipping.state, subtotalCents: shippingBasisCents }) })
+      .then(response => response.json()).then(result => { if (!cancelled) setShippingQuote({ state: shipping.state, subtotalCents: shippingBasisCents, amount: result.configured ? result.shippingCents : null }); })
+      .catch(() => { if (!cancelled) setShippingQuote({ state: shipping.state, subtotalCents: shippingBasisCents, amount: null }); });
     return () => { cancelled = true; };
-  }, [shipping.state, subtotalCents]);
+  }, [shipping.state, shippingBasisCents]);
 
   async function applyCoupon() {
     setCoupon(null); setCouponMessage("");

@@ -13,6 +13,7 @@
 .pdf-footer-perks>a,.pdf-footer-perks>div{min-height:130px;border-right:1px solid #ddd;display:flex;align-items:center;justify-content:center;gap:24px}
 .pdf-footer-perks>*:last-child{border-right:0}
 .pdf-footer-perks span{font-size:32px;line-height:1;font-weight:300}
+.pdf-footer-perks svg{width:30px;height:30px;flex:none}
 .pdf-footer-perks strong{font-family:var(--font-ignyte-mono),"Courier New",monospace;font-size:13px;line-height:1.4;letter-spacing:.05em;font-weight:400}
 .pdf-footer-perks a:hover{color:#ff4938}
 .pdf-footer-main{width:min(100% - 88px,1500px);margin:auto;display:grid;grid-template-columns:1.55fr repeat(4,1fr);gap:5%;padding:105px 0 95px}

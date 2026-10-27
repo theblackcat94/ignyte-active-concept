@@ -6,6 +6,7 @@ import { useState } from "react";
 import { asset } from "@/lib/asset";
 import { useStore } from "./store-provider";
 import { CurrencySelector } from "./currency-estimate";
+import HeartIcon from "./heart-icon";
 
 export default function Header() {
   const { products, categories, bag, setBagOpen, searchOpen, setSearchOpen, wishlist } = useStore();
@@ -38,6 +39,6 @@ export default function Header() {
 function Icon({ name }: { name: "search" | "heart" | "bag" | "account" }) {
   if (name === "account") return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.5-4.2 3-6.3 7.5-6.3s7 2.1 7.5 6.3"/></svg>;
   if (name === "search") return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>;
-  if (name === "heart") return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M20.8 8.4c0 5-8.8 11.1-8.8 11.1S3.2 13.4 3.2 8.4a4.4 4.4 0 0 1 8.8-.4 4.4 4.4 0 0 1 8.8.4Z"/></svg>;
+  if (name === "heart") return <HeartIcon />;
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M4.5 8.5h15l-1 12h-13l-1-12Z"/><path d="M8.5 9V6a3.5 3.5 0 0 1 7 0v3"/></svg>;
 }

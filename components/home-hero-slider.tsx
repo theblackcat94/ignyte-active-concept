@@ -4,26 +4,18 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { asset } from "@/lib/asset";
 
-type Slide = { file: string; mobileFile?: string; alt: string; kicker: string; title: string; href: string; action: string; portrait?: boolean; video?: boolean; poster?: string };
+type Slide = { file: string; mobileFile?: string; alt: string; kicker: string; title: string; href: string; action: string; video?: boolean; poster?: string };
 
 const slides: Slide[] = [
-  { file: "Ignyte-Video-Website-Hero-Low-Res.mp4", mobileFile: "Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4", poster: "Home-Hero-Video-Fallback.jpg", alt: "Ignyte training campaign video", kicker: "BRING THE FIRE_", title: "Move with purpose.", href: "/shop", action: "SHOP THE COLLECTION", video: true },
-  { file: "Home-Hero-1.jpg", alt: "Athlete training with battle ropes", kicker: "HIGH-PERFORMANCE ACTIVEWEAR_", title: "Built for the burn.", href: "/shop", action: "SHOP BEST SELLERS" },
-  { file: "Home-Hero-Alt-2.jpg", alt: "Two Ignyte athletes in the gym", kicker: "MADE FOR MOVEMENT_", title: "Train your way.", href: "/shop", action: "EXPLORE IGNYTE" },
-  { file: "Home-Hero-Alt-3.jpg", alt: "Athlete training in Ignyte activewear", kicker: "BRING THE FIRE_", title: "Show up strong.", href: "/shop", action: "SHOP ALL" },
-  { file: "Ignyte-Collections.jpg", alt: "Ignyte activewear collection campaign", kicker: "THE COLLECTION_", title: "Find your fit.", href: "/shop", action: "SHOP ALL", portrait: true },
-  { file: "Ignyte-Support-Bras.jpg", alt: "Athlete wearing an Ignyte support bra", kicker: "SPORTS BRAS_", title: "Feel supported.", href: "/shop/sports-bras", action: "SHOP BRAS", portrait: true },
-  { file: "Ignyte-Tops-Vertical.jpg", alt: "Ignyte activewear top", kicker: "TOPS_", title: "Made to move.", href: "/shop/tops", action: "SHOP TOPS", portrait: true },
-  { file: "Ignyte-Shorts-Vertical.jpg", alt: "Ignyte activewear shorts", kicker: "SHORTS_", title: "Move freely.", href: "/shop/shorts", action: "SHOP SHORTS", portrait: true },
-  { file: "Home-Hero-Video-Fallback.jpg", alt: "Ignyte athlete in training", kicker: "BUILT FOR THE BURN_", title: "Own the moment.", href: "/shop", action: "SHOP ALL" },
-  { file: "Ignyte-Leggings-Vertical.jpg", alt: "Ignyte activewear leggings", kicker: "LEGGINGS_", title: "Every rep counts.", href: "/shop/leggings", action: "SHOP LEGGINGS", portrait: true },
-  { file: "Ignyte-Accessories-Vertical.jpg", alt: "Ignyte socks and training shoes", kicker: "ACCESSORIES_", title: "The final detail.", href: "/shop", action: "SHOP ALL", portrait: true },
-  { file: "Ignyte-Sports-Bras-Vertical.jpg", alt: "Ignyte sports bra", kicker: "SPORTS BRAS_", title: "Train with fire.", href: "/shop/sports-bras", action: "SHOP BRAS", portrait: true },
+  { file: "Ignyte-Video-Website-Hero-Low-Res.mp4", mobileFile: "Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4", poster: "Home-Hero-Video-Fallback.jpg", alt: "Ignyte training campaign video", kicker: "HIGH-PERFORMANCE ACTIVEWEAR_", title: "Built for the burn", href: "/shop", action: "SHOP ALL", video: true },
+  { file: "Home-Hero-1.jpg", alt: "Blonde athlete training with battle ropes", kicker: "SPORTS BRAS_", title: "Support every move.", href: "/shop/sports-bras", action: "SHOP SPORTS BRAS" },
+  { file: "Home-Hero-Alt-6.jpg", alt: "Athlete wearing an Ignyte brown top", kicker: "TOPS_", title: "Made to move.", href: "/shop/tops", action: "SHOP TOPS" },
+  { file: "Home-Hero-Alt-4.jpg", alt: "Two athletes training on ergs", kicker: "SHORTS_", title: "Move your way.", href: "/shop/shorts", action: "SHOP SHORTS" },
+  { file: "Home-Hero-Alt-2-v2.jpg", alt: "Two Ignyte athletes posing in the gym", kicker: "ABOUT IGNYTE_", title: "Bring your fire.", href: "/about", action: "OUR STORY" },
 ];
 
 export default function HomeHeroSlider() {
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [mobile, setMobile] = useState(false);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const slide = slides[active];
@@ -34,14 +26,9 @@ export default function HomeHeroSlider() {
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
   }, []);
-  useEffect(() => {
-    if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const timer = window.setTimeout(() => setActive(index => (index + 1) % slides.length), slide.video ? 14000 : 6500);
-    return () => window.clearTimeout(timer);
-  }, [active, paused, slide.video]);
   const move = (direction: number) => setActive(index => (index + direction + slides.length) % slides.length);
 
-  return <section className={`home-hero home-slider ${slide.portrait ? "home-slide-portrait" : ""}`} aria-label="Ignyte home media carousel" aria-roledescription="carousel" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node)) setPaused(false); }} onTouchStart={event => { const touch = event.touches[0]; touchStart.current = { x: touch.clientX, y: touch.clientY }; setPaused(true); }} onTouchEnd={event => { const start = touchStart.current; touchStart.current = null; setPaused(false); if (!start) return; const touch = event.changedTouches[0]; const dx = touch.clientX - start.x; const dy = touch.clientY - start.y; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4) move(dx < 0 ? 1 : -1); }}>
+  return <section className="home-hero home-slider" aria-label="Ignyte home media carousel" aria-roledescription="carousel" onTouchStart={event => { const touch = event.touches[0]; touchStart.current = { x: touch.clientX, y: touch.clientY }; }} onTouchEnd={event => { const start = touchStart.current; touchStart.current = null; if (!start) return; const touch = event.changedTouches[0]; const dx = touch.clientX - start.x; const dy = touch.clientY - start.y; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4) move(dx < 0 ? 1 : -1); }}>
     <div className="home-slide-media" key={`${slide.file}-${mobile}`}>
       {slide.video ? <video src={asset(`/images/home/${mobile && slide.mobileFile ? slide.mobileFile : slide.file}`)} poster={asset(`/images/home/${slide.poster}`)} autoPlay muted playsInline loop preload="metadata" aria-label={slide.alt} /> : <img src={asset(`/images/home/${slide.file}`)} alt={slide.alt} loading={active === 0 ? "eager" : "lazy"} />}
     </div>

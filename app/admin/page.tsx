@@ -126,6 +126,7 @@ export default function AdminPage() {
         <label>FABRIC<input value={selected.pdp_content.fabric} onChange={event => changePdp("fabric", event.target.value)} /></label>
         <label className="wide">MODEL DETAILS — OPTIONAL<textarea rows={4} placeholder="Model name, measurements and size worn" value={selected.pdp_content.model_details} onChange={event => changePdp("model_details", event.target.value)} /></label>
         <label>SHOW BRAND STORY<input type="checkbox" checked={selected.pdp_content.show_brand_story} onChange={event => changePdp("show_brand_story", event.target.checked)} /></label>
+        <label>FEATURE IN HOME BEST SELLERS<input type="checkbox" checked={selected.pdp_content.featured_best_seller} onChange={event => changePdp("featured_best_seller", event.target.checked)} /></label>
         <label>OEKO-TEX CERTIFICATE NUMBER — OPTIONAL<input value={selected.pdp_content.oeko_certificate} onChange={event => changePdp("oeko_certificate", event.target.value)} /></label>
         <label>SHOW OEKO-TEX FABRIC CLAIM<input type="checkbox" checked={selected.pdp_content.oeko_certified} onChange={event => changePdp("oeko_certified", event.target.checked)} /></label>
         <label className="wide">PRODUCT VIDEO URL OR LOCAL PATH<input value={selected.pdp_content.video_url} onChange={event => changePdp("video_url", event.target.value)} /></label>

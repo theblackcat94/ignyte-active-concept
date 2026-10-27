@@ -24,6 +24,7 @@ export const productInput = z.object({
     video_poster: z.string().trim().max(1000).refine(value => !value || value.startsWith("/images/") || value.startsWith("https://")),
     oeko_certificate: z.string().trim().max(120),
     oeko_certified: z.boolean(),
+    featured_best_seller: z.boolean(),
   }),
   variants: z.array(z.object({
     id: z.string().uuid().optional(),

@@ -11,9 +11,10 @@ export type PdpContent = {
   video_poster: string;
   oeko_certificate: string;
   oeko_certified: boolean;
+  featured_best_seller: boolean;
 };
 
-const shared = { model_details: "", show_brand_story: true, video_url: "", video_poster: "", oeko_certificate: "", oeko_certified: true };
+const shared = { model_details: "", show_brand_story: true, video_url: "", video_poster: "", oeko_certificate: "", oeko_certified: true, featured_best_seller: false };
 
 export const plannerPdp: Record<string, PdpContent> = {
   "Aura Halter Top": { ...shared, features: ["Flattering neckline", "Sculpted fit", "Body-hugging design", "Extended length", "Versatile styling"], activities: ["Yoga", "Pilates", "Everyday"], fit: "True to size", fabric: "90% polyamide, 10% elastane" },
@@ -28,11 +29,12 @@ export const plannerPdp: Record<string, PdpContent> = {
 };
 
 export const emptyPdp: PdpContent = { ...shared, oeko_certified: false, features: [], activities: [], fit: "", fabric: "" };
+export const homeBestSellerSlugs = ["aura-halter-lavender", "motion-sports-bra-black", "seamless-legging-lavender", "all-in-motion-shorts-black", "vyper-sports-bra-mauve", "sculpt-shorts-mauve"];
 
 export function pdpFor(name: string, content?: Partial<PdpContent> | null, slug?: string): PdpContent {
   const demoVideo = slug === "motion-sports-bra-black" ? {
     video_url: "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4",
     video_poster: "/images/home/Home-Hero-Video-Fallback.jpg",
   } : {};
-  return { ...(plannerPdp[name] ?? emptyPdp), ...demoVideo, ...content };
+  return { ...(plannerPdp[name] ?? emptyPdp), featured_best_seller: Boolean(slug && homeBestSellerSlugs.includes(slug)), ...demoVideo, ...content };
 }

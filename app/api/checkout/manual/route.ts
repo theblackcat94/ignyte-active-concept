@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createHash, createHmac } from "node:crypto";
 import { adminDb, verifiedUser } from "@/lib/commerce";
+import { qualifiesForFreeShipping } from "@/lib/shipping-policy";
 
 export const runtime = "nodejs";
 
@@ -66,8 +67,8 @@ export async function POST(request: Request) {
   const { data: rate, error: rateError } = await db.from("shipping_rates").select("rate_cents,free_threshold_cents,active").eq("state", shipping.state).maybeSingle();
   if (rateError) console.error("Could not load shipping rate", rateError.message);
   let shippingCents: number | null = null;
-  if (rate?.active && order) {
-    const calculated = rate.free_threshold_cents != null && order.subtotal_cents >= rate.free_threshold_cents ? 0 : rate.rate_cents;
+  if (order && (qualifiesForFreeShipping(order.subtotal_cents, order.discount_cents) || rate?.active)) {
+    const calculated = qualifiesForFreeShipping(order.subtotal_cents, order.discount_cents) ? 0 : rate!.rate_cents;
     const { error: totalError } = await db.from("orders").update({ shipping_cents: calculated,
       total_cents: order.subtotal_cents - order.discount_cents + calculated }).eq("id", orderId);
     shippingCents = calculated;

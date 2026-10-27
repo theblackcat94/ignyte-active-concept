@@ -37,7 +37,7 @@ export default function ProductDetail({ product }: { product: Product }) {
     if (label === "FIT & FABRIC") return <div className="pdp-fit-fabric">{pdp.fit && <p><strong>Fit:</strong> {pdp.fit}</p>}{pdp.fabric && <p><strong>Fabric:</strong> {pdp.fabric}</p>}{pdp.oeko_certified && <div className="pdp-oeko"><strong>OEKO-TEX® STANDARD 100</strong><p>Made with OEKO-TEX® STANDARD 100 certified fabrics, tested for harmful substances so you can feel confident in what’s against your skin.</p>{pdp.oeko_certificate && <a href="https://www.oeko-tex.com/en/label-check" target="_blank" rel="noreferrer">Check certificate {pdp.oeko_certificate} ↗</a>}</div>}</div>;
     if (label === "MODEL DETAILS") return <p className="pdp-model-details">{pdp.model_details}</p>;
     if (label === "SIZE GUIDE") return <><SizeGuideContent /><Link className="text-link" href="/size-guide">OPEN FULL SIZE GUIDE ↗</Link></>;
-    return <div className="pdp-delivery"><p>Australia only. Delivery is calculated at checkout when approved rates are available. Free shipping over $100 and free return labels are being reviewed with the fulfilment team.</p><Link className="text-link" href="/returns">VIEW RETURNS POLICY ↗</Link></div>;
+    return <div className="pdp-delivery"><p>Australia only. Free shipping on orders of $100 or more. Delivery rates for smaller orders and prepaid return labels are being confirmed with the fulfilment team.</p><Link className="text-link" href="/returns">VIEW RETURNS POLICY ↗</Link></div>;
   }
 
   return <div className="product-page section-wrap">
