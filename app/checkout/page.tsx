@@ -21,6 +21,8 @@ export default function CheckoutPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [orderId, setOrderId] = useState("");
+  const [step, setStep] = useState<"delivery" | "payment">("delivery");
+  const [amountDueCents, setAmountDueCents] = useState<number | null>(null);
   const [couponCode, setCouponCode] = useState("");
   const [coupon, setCoupon] = useState<{ code: string; discountCents: number; subtotalCents: number } | null>(null);
   const [couponMessage, setCouponMessage] = useState("");
@@ -71,6 +73,7 @@ export default function CheckoutPage() {
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     if (busy || !valid) return;
+    if (step === "delivery") { setStep("payment"); return; }
     setBusy(true);
     setError("");
     try {
@@ -89,6 +92,7 @@ export default function CheckoutPage() {
       if (!response.ok || !result.orderId) throw new Error(result.error || "Your order could not be placed.");
       setOrderId(result.orderId);
       setGuestOrder(Boolean(result.guest));
+      setAmountDueCents(result.amountDueCents ?? null);
       clearBag();
     } catch (cause) {
       request.current = null;
@@ -97,19 +101,17 @@ export default function CheckoutPage() {
   }
 
   if (orderId) return <div className="checkout-page section-wrap checkout-confirmation">
-    <span className="eyebrow">ORDER RECEIVED</span><h1>THANK YOU<span>.</span></h1>
-    <p>Your order request <strong>{orderId}</strong> has been saved. No payment has been taken.</p>
-    <p>Shipping charges and payment details will be confirmed before your order is fulfilled.{guestOrder ? " Stock will be confirmed when our team reviews your request." : ""}</p>
-    <Link className="button button-dark" href={guestOrder ? `/guest/orders/${orderId}` : `/account/orders/${orderId}`}>VIEW ORDER DETAILS ↗</Link>
+    <span className="eyebrow">CHECKOUT / PAYMENT</span><h1>PAYMENT PENDING<span>.</span></h1>
+    <div className="checkout-panel"><h2>Order saved</h2><p>Order <strong>{orderId}</strong> is ready for payment. {amountDueCents === null ? "Shipping is awaiting a final quote." : `Estimated total including delivery: ${money(amountDueCents / 100)}.`}</p><div className="checkout-payment-notice"><strong>Card payment is being connected</strong><p>No card details are collected here and your order has not been charged. The Ignyte team will confirm the amount and payment method before fulfilment.</p></div>{guestOrder && <p>Stock for guest orders will be confirmed by the team.</p>}<Link className="button button-dark" href={guestOrder ? `/guest/orders/${orderId}` : `/account/orders/${orderId}`}>VIEW ORDER & PAYMENT STATUS ↗</Link></div>
   </div>;
 
   return <div className="checkout-page section-wrap">
     <div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><span>CHECKOUT</span></div>
-    <span className="eyebrow">IGNYTE / YOUR ORDER</span><h1>CHECKOUT<span>.</span></h1>
+    <span className="eyebrow">IGNYTE / YOUR ORDER</span><h1>CHECKOUT<span>.</span></h1><div className="checkout-steps"><span className={step === "delivery" ? "active" : ""}>01 DELIVERY</span><span className={step === "payment" ? "active" : ""}>02 PAYMENT</span></div>
     {!commerceConfigured ? <div className="checkout-panel"><h2>Store setup in progress</h2><p>Order requests will open when the store database is connected.</p><Link className="text-link" href="/shop">CONTINUE SHOPPING ↗</Link></div>
       : !bag.length ? <div className="checkout-panel"><h2>Your bag is empty</h2><Link className="text-link" href="/shop">SHOP THE COLLECTION ↗</Link></div>
       : <div className="checkout-grid"><form id="order-request" className="checkout-form" onSubmit={submit}>
-        <h2>Australian delivery</h2><p>Check out as a guest or use your account. No payment is collected today.</p>
+        {step === "delivery" ? <><h2>Australian delivery</h2><p>Check out as a guest or use your account. Enter your address to calculate delivery where rates are available.</p>
         <div className="checkout-fields">
           <label className="wide">EMAIL ADDRESS<input required type="email" autoComplete="email" maxLength={254} value={email} readOnly={signedIn} onChange={event => setEmail(event.target.value)} /></label>
           <label>FULL NAME<input required autoComplete="name" maxLength={120} value={shipping.name} onChange={event => setShipping({ ...shipping, name: event.target.value })} /></label>
@@ -122,8 +124,9 @@ export default function CheckoutPage() {
           <label>COUNTRY<input readOnly value="Australia" /></label>
         </div>
         <p className="checkout-email">{signedIn ? "Your order will also appear in your account." : "Guest orders can be viewed in this browser after submission. Please save the order number."}</p>
+        <button className="button button-orange" disabled={!valid}>CONTINUE TO PAYMENT ↗</button></> : <><h2>Review &amp; payment</h2><p>Deliver to {shipping.name}, {shipping.line1}, {shipping.city} {shipping.state} {shipping.postal_code}.</p><button type="button" className="checkout-edit" onClick={() => setStep("delivery")}>EDIT DELIVERY ADDRESS ↗</button><div className="checkout-payment-notice"><span className="eyebrow">SECURE PAYMENT</span><h3>Card payments coming soon</h3><p>The merchant connection is being prepared. Do not enter card details on this site. Save your order below and the team will confirm delivery and payment before fulfilment.</p></div>
         {error && <p className="checkout-error" role="alert">{error}</p>}
-        <button className="button button-orange" disabled={!valid || busy}>{busy ? "PLACING ORDER…" : "PLACE ORDER REQUEST ↗"}</button>
+        <button className="button button-orange" disabled={!valid || busy}>{busy ? "SAVING ORDER…" : "SAVE ORDER FOR PAYMENT ↗"}</button></>}
       </form><aside className="checkout-summary"><h2>YOUR ORDER</h2>
         {lines.map(item => <div className="checkout-item" key={`${item.slug}-${item.size}`}>
           {item.product && <img src={item.product.image} alt={item.product.name} />}
@@ -135,7 +138,8 @@ export default function CheckoutPage() {
         <div className="checkout-coupon"><label htmlFor="coupon-code">DISCOUNT CODE</label><div><input id="coupon-code" value={couponCode} maxLength={30} onChange={event => { setCouponCode(event.target.value.toUpperCase()); setCoupon(null); setCouponMessage(""); }} placeholder="Enter code" /><button type="button" onClick={() => void applyCoupon()}>APPLY</button></div>{couponMessage && <small role="status">{couponMessage}</small>}</div>
         {appliedCoupon && <div className="checkout-total"><span>DISCOUNT ({appliedCoupon.code})</span><strong>−{money(appliedCoupon.discountCents / 100)}</strong></div>}
         <div className="checkout-total"><span>SHIPPING</span><strong>{quotedShipping === null ? "To be quoted" : money(quotedShipping / 100)}</strong></div>
-        <p>Prices and order requests are in AUD and include GST. Shipping rates are estimates until confirmed by the team. No payment is taken when you submit this request.</p>
+        {quotedShipping !== null && <div className="checkout-total checkout-grand"><span>ESTIMATED TOTAL</span><strong>{money((subtotalCents - (appliedCoupon?.discountCents ?? 0) + quotedShipping) / 100)}</strong></div>}
+        <p>Prices are in AUD and include GST. {quotedShipping === null ? "Delivery rates for your state are pending; the team will quote shipping before payment." : "Delivery is estimated from your state and order value; the team confirms the final amount before payment."}</p>
       </aside></div>}
   </div>;
 }

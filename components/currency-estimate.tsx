@@ -1,18 +1,45 @@
 "use client";
-import { useEffect, useState, useSyncExternalStore } from "react";
+
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+
 type Rates = { date: string; rates: Record<string, number> };
-const choices = ["AUD", "USD", "EUR", "GBP", "NZD", "CAD", "SGD", "JPY"];
+const choices = [
+  { code: "AUD", icon: "🇦🇺", label: "Australian dollar" },
+  { code: "USD", icon: "🇺🇸", label: "US dollar" },
+  { code: "EUR", icon: "🇪🇺", label: "Euro" },
+  { code: "GBP", icon: "🇬🇧", label: "British pound" },
+  { code: "NZD", icon: "🇳🇿", label: "New Zealand dollar" },
+  { code: "CAD", icon: "🇨🇦", label: "Canadian dollar" },
+  { code: "SGD", icon: "🇸🇬", label: "Singapore dollar" },
+  { code: "JPY", icon: "🇯🇵", label: "Japanese yen" },
+] as const;
 let cached: Rates | null = null;
 function subscribe(callback: () => void) { window.addEventListener("ignyte-currency-change", callback); return () => window.removeEventListener("ignyte-currency-change", callback); }
-function selectedCurrency() { const saved = localStorage.getItem("ignyte_display_currency"); return saved && choices.includes(saved) ? saved : "AUD"; }
+function selectedCurrency() { const saved = localStorage.getItem("ignyte_display_currency"); return choices.some(choice => choice.code === saved) ? saved! : "AUD"; }
 function useCurrency() { return useSyncExternalStore(subscribe, selectedCurrency, () => "AUD"); }
+
 export function CurrencySelector() {
   const currency = useCurrency();
-  return <label className="currency-selector">DISPLAY <select aria-label="Display currency estimate" value={currency} onChange={event => { localStorage.setItem("ignyte_display_currency", event.target.value); window.dispatchEvent(new Event("ignyte-currency-change")); }}>{choices.map(code => <option key={code}>{code}</option>)}</select></label>;
+  const [open, setOpen] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  const selected = choices.find(choice => choice.code === currency) ?? choices[0];
+  useEffect(() => {
+    if (!open) return;
+    const outside = (event: PointerEvent) => { if (!root.current?.contains(event.target as Node)) setOpen(false); };
+    const escape = (event: KeyboardEvent) => { if (event.key === "Escape") setOpen(false); };
+    document.addEventListener("pointerdown", outside);
+    document.addEventListener("keydown", escape);
+    return () => { document.removeEventListener("pointerdown", outside); document.removeEventListener("keydown", escape); };
+  }, [open]);
+  return <div className="currency-selector" ref={root}>
+    <button type="button" className="currency-trigger" aria-label={`Currency display: ${selected.label}. Prices and checkout are in Australian dollars.`} aria-expanded={open} aria-haspopup="menu" onClick={() => setOpen(value => !value)}><span aria-hidden="true">{selected.icon}</span><span>{selected.code}</span><span aria-hidden="true">⌄</span></button>
+    {open && <div className="currency-menu" role="menu" aria-label="Choose display currency"><p>Currency display</p><small>Checkout is in AUD. Other prices are estimates.</small>{choices.map(choice => <button type="button" role="menuitemradio" aria-checked={choice.code === currency} key={choice.code} onClick={() => { localStorage.setItem("ignyte_display_currency", choice.code); window.dispatchEvent(new Event("ignyte-currency-change")); setOpen(false); }}><span className="currency-flag" aria-hidden="true">{choice.icon}</span><span>{choice.label}</span><strong>{choice.code}</strong></button>)}</div>}
+  </div>;
 }
+
 export function CurrencyEstimate({ aud }: { aud: number }) {
   const currency = useCurrency(); const [rates, setRates] = useState<Rates | null>(cached);
   useEffect(() => { if (currency === "AUD" || rates) return; let cancelled = false; void fetch("/api/currency").then(async response => { if (!response.ok) throw Error(); const data = await response.json() as Rates; cached = data; if (!cancelled) setRates(data); }).catch(() => {}); return () => { cancelled = true; }; }, [currency, rates]);
   if (currency === "AUD" || !rates?.rates[currency]) return null;
-  return <small className="currency-estimate" title={`Estimated using ${rates.date} reference rates; checkout is in AUD`}>≈ {new Intl.NumberFormat("en-AU", { style: "currency", currency }).format(aud * rates.rates[currency])} estimate</small>;
+  return <small className="currency-estimate" title={`Estimated using ${rates.date} reference rates; checkout is in AUD`}>≈ {new Intl.NumberFormat("en-AU", { style: "currency", currency }).format(aud * rates.rates[currency])}</small>;
 }

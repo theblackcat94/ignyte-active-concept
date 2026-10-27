@@ -61,8 +61,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "That discount code is no longer available. Please review your order and try again." }, { status: 400 });
     }
   }
+  const { data: order, error: orderError } = await db.from("orders").select("subtotal_cents,discount_cents").eq("id", orderId).single();
+  if (orderError) console.error("Could not load order total", orderError.message);
+  const { data: rate, error: rateError } = await db.from("shipping_rates").select("rate_cents,free_threshold_cents,active").eq("state", shipping.state).maybeSingle();
+  if (rateError) console.error("Could not load shipping rate", rateError.message);
+  let shippingCents: number | null = null;
+  if (rate?.active && order) {
+    const calculated = rate.free_threshold_cents != null && order.subtotal_cents >= rate.free_threshold_cents ? 0 : rate.rate_cents;
+    const { error: totalError } = await db.from("orders").update({ shipping_cents: calculated,
+      total_cents: order.subtotal_cents - order.discount_cents + calculated }).eq("id", orderId);
+    shippingCents = calculated;
+    if (totalError) { console.error("Could not save order total", totalError.message); shippingCents = null; }
+  }
   await db.from("site_events").insert({ event_name: "order_requested", page_path: "/checkout/" });
-  const response = NextResponse.json({ orderId, status: "awaiting_payment", guest: !user });
+  const response = NextResponse.json({ orderId, status: "awaiting_payment", guest: !user, shippingCents,
+    amountDueCents: shippingCents === null || !order ? null : order.subtotal_cents - order.discount_cents + shippingCents });
   if (guestToken) response.cookies.set(`ignyte_guest_order_${orderId.replaceAll("-", "")}`, guestToken, {
     httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax",
     path: "/", maxAge: 60 * 60 * 24 * 30,
