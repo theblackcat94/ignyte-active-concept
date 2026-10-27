@@ -1,9 +1,9 @@
-import { loadEnvConfig } from "@next/env";
+import nextEnv from "@next/env";
 import { createClient } from "@supabase/supabase-js";
 import { mkdir, writeFile, chmod } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
-loadEnvConfig(process.cwd());
+nextEnv.loadEnvConfig(process.cwd());
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const secret = process.env.SUPABASE_SECRET_KEY;
 const target = process.env.IGNYTE_BACKUP_DIR;
