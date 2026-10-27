@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { money } from "@/lib/catalog";
 import { browserDb, commerceConfigured } from "@/lib/commerce";
 import { useStore } from "@/components/store-provider";
@@ -13,10 +12,11 @@ const emptyShipping: Shipping = { name: "", phone: "", line1: "", line2: "", cit
 const states = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"];
 
 export default function CheckoutPage() {
-  const router = useRouter();
   const { bag, products, clearBag } = useStore();
   const [shipping, setShipping] = useState<Shipping>(emptyShipping);
   const [email, setEmail] = useState("");
+  const [signedIn, setSignedIn] = useState(false);
+  const [guestOrder, setGuestOrder] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [orderId, setOrderId] = useState("");
@@ -24,7 +24,10 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (!commerceConfigured) return;
-    void browserDb().auth.getUser().then(({ data }) => setEmail(data.user?.email ?? ""));
+    void browserDb().auth.getUser().then(({ data }) => {
+      setEmail(data.user?.email ?? "");
+      setSignedIn(Boolean(data.user?.email));
+    });
   }, []);
 
   const lines = bag.map(item => {
@@ -42,18 +45,20 @@ export default function CheckoutPage() {
     setError("");
     try {
       const { data: { session } } = await browserDb().auth.getSession();
-      if (!session) { router.push("/account?next=checkout"); return; }
       const items = lines.map(item => ({ variantId: item.variant!.id, quantity: item.quantity }));
-      const fingerprint = JSON.stringify({ items, shipping });
+      const fingerprint = JSON.stringify({ items, shipping, email });
       if (request.current?.fingerprint !== fingerprint) request.current = { id: crypto.randomUUID(), fingerprint };
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (session?.access_token) headers.Authorization = `Bearer ${session.access_token}`;
       const response = await fetch("/api/checkout/manual", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
-        body: JSON.stringify({ requestId: request.current.id, shipping, items }),
+        headers,
+        body: JSON.stringify({ requestId: request.current.id, shipping, items, email }),
       });
       const result = await response.json();
       if (!response.ok || !result.orderId) throw new Error(result.error || "Your order could not be placed.");
       setOrderId(result.orderId);
+      setGuestOrder(Boolean(result.guest));
       clearBag();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Your order could not be placed.");
@@ -63,8 +68,8 @@ export default function CheckoutPage() {
   if (orderId) return <div className="checkout-page section-wrap checkout-confirmation">
     <span className="eyebrow">ORDER RECEIVED</span><h1>THANK YOU<span>.</span></h1>
     <p>Your order request <strong>{orderId}</strong> has been saved. No payment has been taken.</p>
-    <p>Shipping charges and payment details will be confirmed before your order is fulfilled.</p>
-    <Link className="button button-dark" href={`/account/orders/${orderId}`}>VIEW ORDER DETAILS ↗</Link>
+    <p>Shipping charges and payment details will be confirmed before your order is fulfilled.{guestOrder ? " Stock will be confirmed when our team reviews your request." : ""}</p>
+    <Link className="button button-dark" href={guestOrder ? `/guest/orders/${orderId}` : `/account/orders/${orderId}`}>VIEW ORDER DETAILS ↗</Link>
   </div>;
 
   return <div className="checkout-page section-wrap">
@@ -73,8 +78,9 @@ export default function CheckoutPage() {
     {!commerceConfigured ? <div className="checkout-panel"><h2>Store setup in progress</h2><p>Order requests will open when the store database is connected.</p><Link className="text-link" href="/shop">CONTINUE SHOPPING ↗</Link></div>
       : !bag.length ? <div className="checkout-panel"><h2>Your bag is empty</h2><Link className="text-link" href="/shop">SHOP THE COLLECTION ↗</Link></div>
       : <div className="checkout-grid"><form id="order-request" className="checkout-form" onSubmit={submit}>
-        <h2>Australian delivery</h2><p>Sign in to place an order request. No payment is collected today.</p>
+        <h2>Australian delivery</h2><p>Check out as a guest or use your account. No payment is collected today.</p>
         <div className="checkout-fields">
+          <label className="wide">EMAIL ADDRESS<input required type="email" autoComplete="email" maxLength={254} value={email} readOnly={signedIn} onChange={event => setEmail(event.target.value)} /></label>
           <label>FULL NAME<input required autoComplete="name" maxLength={120} value={shipping.name} onChange={event => setShipping({ ...shipping, name: event.target.value })} /></label>
           <label>PHONE<input required type="tel" autoComplete="tel" minLength={8} maxLength={30} value={shipping.phone} onChange={event => setShipping({ ...shipping, phone: event.target.value })} /></label>
           <label className="wide">ADDRESS LINE 1<input required autoComplete="address-line1" maxLength={150} value={shipping.line1} onChange={event => setShipping({ ...shipping, line1: event.target.value })} /></label>
@@ -84,8 +90,7 @@ export default function CheckoutPage() {
           <label>POSTCODE<input required inputMode="numeric" pattern="[0-9]{4}" autoComplete="postal-code" value={shipping.postal_code} onChange={event => setShipping({ ...shipping, postal_code: event.target.value })} /></label>
           <label>COUNTRY<input readOnly value="Australia" /></label>
         </div>
-        {email && <p className="checkout-email">Order updates for <strong>{email}</strong></p>}
-        {!email && <p className="checkout-email">You’ll be asked to sign in or create an account before placing the order.</p>}
+        <p className="checkout-email">{signedIn ? "Your order will also appear in your account." : "Guest orders can be viewed in this browser after submission. Please save the order number."}</p>
         {error && <p className="checkout-error" role="alert">{error}</p>}
         <button className="button button-orange" disabled={!valid || busy}>{busy ? "PLACING ORDER…" : "PLACE ORDER REQUEST ↗"}</button>
       </form><aside className="checkout-summary"><h2>YOUR ORDER</h2>

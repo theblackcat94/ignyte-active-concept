@@ -24,6 +24,7 @@ const ignyteMono = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://ignyte.theblackcat94.com"),
   title: "Ignyte Active",
   applicationName: "Ignyte Active",
   icons: { icon: { url: asset("/favicon.png"), type: "image/png" } },

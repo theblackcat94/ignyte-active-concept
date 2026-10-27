@@ -1,6 +1,7 @@
 export type OrderDetail = {
   id: string;
   user_id: string | null;
+  stock_reserved: boolean;
   status: string;
   customer_email: string | null;
   subtotal_cents: number;
@@ -30,4 +31,4 @@ export type OrderDetail = {
   }[];
 };
 
-export const orderSelect = "id,user_id,status,customer_email,subtotal_cents,shipping_cents,total_cents,created_at,paid_at,shipping_details,order_items(product_name,sku,size,quantity,unit_price_cents)";
+export const orderSelect = "id,user_id,stock_reserved,status,customer_email,subtotal_cents,shipping_cents,total_cents,created_at,paid_at,shipping_details,order_items(product_name,sku,size,quantity,unit_price_cents)";
