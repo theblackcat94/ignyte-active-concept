@@ -1,0 +1,742 @@
+{
+  "source": "Jacob Cass approved MEDIA READY image package, 2026-10-27",
+  "products": [
+    {
+      "slug": "aura-halter-espresso",
+      "name": "Aura Halter Top",
+      "category": "tops",
+      "color": "Espresso",
+      "description": "Our seamless halter top hugs every curve with zero seams and zero irritation. Soft stretch fabric, open-back design, and all-day comfort. perfect from studio to street.",
+      "image_path": "/images/jacob-2026-10/ign-halt-drkbrn/ign-halt-drkbrn-aura-halter-top-espresso-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-halt-drkbrn/ign-halt-drkbrn-aura-halter-top-espresso-gallery-02.jpg",
+          "alt": "Aura Halter Top in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-halt-drkbrn/ign-halt-drkbrn-aura-halter-top-espresso-gallery-03.jpg",
+          "alt": "Aura Halter Top in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-halt-drkbrn/ign-halt-drkbrn-aura-halter-top-espresso-gallery-04.jpg",
+          "alt": "Aura Halter Top in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-halt-drkbrn/ign-halt-drkbrn-aura-halter-top-espresso-gallery-05.jpg",
+          "alt": "Aura Halter Top in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-halt-drkbrn/ign-halt-drkbrn-aura-halter-top-espresso-gallery-06.jpg",
+          "alt": "Aura Halter Top in Espresso — gallery view"
+        }
+      ],
+      "source_family": "IGN-HALT-DRKBRN",
+      "variants": [
+        {
+          "sku": "IGN-HALT-DRKBRN-S",
+          "size": "S",
+          "price_cents": 7000
+        },
+        {
+          "sku": "IGN-HALT-DRKBRN-M",
+          "size": "M",
+          "price_cents": 7000
+        },
+        {
+          "sku": "IGN-HALT-DRKBRN-L",
+          "size": "L",
+          "price_cents": 7000
+        }
+      ]
+    },
+    {
+      "slug": "aura-halter-lavender",
+      "name": "Aura Halter Top",
+      "category": "tops",
+      "color": "Jacaranda",
+      "description": "Our seamless halter top hugs every curve with zero seams and zero irritation. Soft stretch fabric, open-back design, and all-day comfort. perfect from studio to street.",
+      "image_path": "/images/jacob-2026-10/ign-halt-jac/ign-halt-jac-aura-halter-top-jacaranda-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-halt-jac/ign-halt-jac-aura-halter-top-jacaranda-gallery-02.jpg",
+          "alt": "Aura Halter Top in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-halt-jac/ign-halt-jac-aura-halter-top-jacaranda-gallery-03.jpg",
+          "alt": "Aura Halter Top in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-halt-jac/ign-halt-jac-aura-halter-top-jacaranda-gallery-04.jpg",
+          "alt": "Aura Halter Top in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-halt-jac/ign-halt-jac-aura-halter-top-jacaranda-gallery-05.jpg",
+          "alt": "Aura Halter Top in Jacaranda — gallery view"
+        }
+      ],
+      "source_family": "IGN-HALT-JAC",
+      "variants": [
+        {
+          "sku": "IGN-HALT-JAC-S",
+          "size": "S",
+          "price_cents": 6000
+        },
+        {
+          "sku": "IGN-HALT-JAC-M",
+          "size": "M",
+          "price_cents": 6000
+        },
+        {
+          "sku": "IGN-HALT-JAC-L",
+          "size": "L",
+          "price_cents": 6000
+        }
+      ]
+    },
+    {
+      "slug": "seamless-legging-espresso",
+      "name": "Seamless Leggings",
+      "category": "leggings",
+      "color": "Espresso",
+      "description": "Seamless high-waist leggings. soft full-length style with a smooth, compressive fit and wide supportive waistband. Seamless construction for a second-skin feel that moves with you from workouts to everyday wear.",
+      "image_path": "/images/jacob-2026-10/ign-lgs-drkbrn/ign-lgs-drkbrn-seamless-leggings-espresso-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-lgs-drkbrn/ign-lgs-drkbrn-seamless-leggings-espresso-gallery-02.jpg",
+          "alt": "Seamless Leggings in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lgs-drkbrn/ign-lgs-drkbrn-seamless-leggings-espresso-gallery-03.jpg",
+          "alt": "Seamless Leggings in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lgs-drkbrn/ign-lgs-drkbrn-seamless-leggings-espresso-gallery-04.jpg",
+          "alt": "Seamless Leggings in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lgs-drkbrn/ign-lgs-drkbrn-seamless-leggings-espresso-gallery-05.jpg",
+          "alt": "Seamless Leggings in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lgs-drkbrn/ign-lgs-drkbrn-seamless-leggings-espresso-gallery-06.jpg",
+          "alt": "Seamless Leggings in Espresso — gallery view"
+        }
+      ],
+      "source_family": "IGN-LGS-DRKBRN",
+      "variants": [
+        {
+          "sku": "IGN-LGS-DRKBRN-S",
+          "size": "S",
+          "price_cents": 7500
+        },
+        {
+          "sku": "IGN-LGS-DRKBRN-M",
+          "size": "M",
+          "price_cents": 7500
+        },
+        {
+          "sku": "IGN-LGS-DRKBRN-L",
+          "size": "L",
+          "price_cents": 7500
+        }
+      ]
+    },
+    {
+      "slug": "seamless-legging-lavender",
+      "name": "Seamless Leggings",
+      "category": "leggings",
+      "color": "Jacaranda",
+      "description": "Seamless high-waist leggings. soft full-length style with a smooth, compressive fit and wide supportive waistband. Seamless construction for a second-skin feel that moves with you from workouts to everyday wear.",
+      "image_path": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-jacaranda-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-jacaranda-gallery-02.jpg",
+          "alt": "Seamless Leggings in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-jacaranda-gallery-03.jpg",
+          "alt": "Seamless Leggings in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-jacaranda-gallery-04.jpg",
+          "alt": "Seamless Leggings in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-jacaranda-gallery-05.jpg",
+          "alt": "Seamless Leggings in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-jacaranda-gallery-06.jpg",
+          "alt": "Seamless Leggings in Jacaranda — gallery view"
+        }
+      ],
+      "source_family": "IGN-LGS-JAC",
+      "variants": [
+        {
+          "sku": "IGN-LGS-JAC-S",
+          "size": "S",
+          "price_cents": 7500
+        },
+        {
+          "sku": "IGN-LGS-JAC-M",
+          "size": "M",
+          "price_cents": 7500
+        },
+        {
+          "sku": "IGN-LGS-JAC-L",
+          "size": "L",
+          "price_cents": 7500
+        }
+      ]
+    },
+    {
+      "slug": "seamless-sports-bra-espresso",
+      "name": "Seamless Sports Bra",
+      "category": "sports-bras",
+      "color": "Espresso",
+      "description": "A fitted sports bra with narrow straps, a scoop neckline and a straight back band. Draft from supplied photos.",
+      "image_path": "/images/jacob-2026-10/ign-lvr-bra-drkbrwn/ign-lvr-bra-drkbrwn-seamless-sports-bra-espresso-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-lvr-bra-drkbrwn/ign-lvr-bra-drkbrwn-seamless-sports-bra-espresso-gallery-02.jpg",
+          "alt": "Seamless Sports Bra in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lvr-bra-drkbrwn/ign-lvr-bra-drkbrwn-seamless-sports-bra-espresso-gallery-03.jpg",
+          "alt": "Seamless Sports Bra in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lvr-bra-drkbrwn/ign-lvr-bra-drkbrwn-seamless-sports-bra-espresso-gallery-04.jpg",
+          "alt": "Seamless Sports Bra in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lvr-bra-drkbrwn/ign-lvr-bra-drkbrwn-seamless-sports-bra-espresso-gallery-05.jpg",
+          "alt": "Seamless Sports Bra in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lvr-bra-drkbrwn/ign-lvr-bra-drkbrwn-seamless-sports-bra-espresso-gallery-06.jpg",
+          "alt": "Seamless Sports Bra in Espresso — gallery view"
+        }
+      ],
+      "source_family": "IGN-LVR-BRA-DRKBRWN",
+      "variants": [
+        {
+          "sku": "IGN-LVR-BRA-DRKBRWN-S",
+          "size": "S",
+          "price_cents": 6000
+        },
+        {
+          "sku": "IGN-LVR-BRA-DRKBRWN-M",
+          "size": "M",
+          "price_cents": 6000
+        }
+      ]
+    },
+    {
+      "slug": "seamless-sports-bra-jacaranda",
+      "name": "Seamless Sports Bra",
+      "category": "sports-bras",
+      "color": "Jacaranda",
+      "description": "A fitted sports bra with narrow straps, a scoop neckline and a straight back band. Draft from supplied photos.",
+      "image_path": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-jacaranda-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-jacaranda-gallery-02.jpg",
+          "alt": "Seamless Sports Bra in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-jacaranda-gallery-03.jpg",
+          "alt": "Seamless Sports Bra in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-jacaranda-gallery-04.jpg",
+          "alt": "Seamless Sports Bra in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-jacaranda-gallery-05.jpg",
+          "alt": "Seamless Sports Bra in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-jacaranda-gallery-06.jpg",
+          "alt": "Seamless Sports Bra in Jacaranda — gallery view"
+        }
+      ],
+      "source_family": "IGN-LVR-BRA-JAC",
+      "variants": [
+        {
+          "sku": "IGN-LVR-BRA-JAC-S",
+          "size": "S",
+          "price_cents": 6000
+        },
+        {
+          "sku": "IGN-LVR-BRA-JAC-M",
+          "size": "M",
+          "price_cents": 6000
+        },
+        {
+          "sku": "IGN-LVR-BRA-JAC-L",
+          "size": "L",
+          "price_cents": 6000
+        }
+      ]
+    },
+    {
+      "slug": "seamless-short-espresso",
+      "name": "Seamless Shorts",
+      "category": "shorts",
+      "color": "Espresso",
+      "description": "Seamless high-waist shorts. soft short leg style with a smooth, compressive fit and wide supportive waistband. Seamless construction for a second-skin feel that moves with you from workouts to everyday wear.",
+      "image_path": "/images/jacob-2026-10/ign-lvr-shts-brn/ign-lvr-shts-brn-seamless-shorts-espresso-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-lvr-shts-brn/ign-lvr-shts-brn-seamless-shorts-espresso-gallery-02.jpg",
+          "alt": "Seamless Shorts in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lvr-shts-brn/ign-lvr-shts-brn-seamless-shorts-espresso-gallery-03.jpg",
+          "alt": "Seamless Shorts in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lvr-shts-brn/ign-lvr-shts-brn-seamless-shorts-espresso-gallery-04.jpg",
+          "alt": "Seamless Shorts in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lvr-shts-brn/ign-lvr-shts-brn-seamless-shorts-espresso-gallery-05.jpg",
+          "alt": "Seamless Shorts in Espresso — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-lvr-shts-brn/ign-lvr-shts-brn-seamless-shorts-espresso-gallery-06.jpg",
+          "alt": "Seamless Shorts in Espresso — gallery view"
+        }
+      ],
+      "source_family": "IGN-LVR-SHTS-BRN",
+      "variants": [
+        {
+          "sku": "IGN-LVR-SHTS-BRN-S",
+          "size": "S",
+          "price_cents": 7000
+        },
+        {
+          "sku": "IGN-LVR-SHTS-BRN-M",
+          "size": "M",
+          "price_cents": 7000
+        },
+        {
+          "sku": "IGN-LVR-SHTS-BRN-L",
+          "size": "L",
+          "price_cents": 7000
+        }
+      ]
+    },
+    {
+      "slug": "vyper-sports-bra-black",
+      "name": "Vyper Sports Bra",
+      "category": "sports-bras",
+      "color": "Black",
+      "description": "Multi-strap criss-cross sports bra. soft design with an intricate lattice of intersecting straps and open back. Smooth supportive band and stretch fabric for secure comfort during movement.",
+      "image_path": "/images/jacob-2026-10/ign-momsbr-blk/ign-momsbr-blk-vyper-sports-bra-black-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-momsbr-blk/ign-momsbr-blk-vyper-sports-bra-black-gallery-02.jpg",
+          "alt": "Vyper Sports Bra in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-momsbr-blk/ign-momsbr-blk-vyper-sports-bra-black-gallery-03.jpg",
+          "alt": "Vyper Sports Bra in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-momsbr-blk/ign-momsbr-blk-vyper-sports-bra-black-gallery-04.jpg",
+          "alt": "Vyper Sports Bra in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-momsbr-blk/ign-momsbr-blk-vyper-sports-bra-black-gallery-05.jpg",
+          "alt": "Vyper Sports Bra in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-momsbr-blk/ign-momsbr-blk-vyper-sports-bra-black-gallery-06.jpg",
+          "alt": "Vyper Sports Bra in Black — gallery view"
+        }
+      ],
+      "source_family": "IGN-MOMSBR-BLK",
+      "variants": [
+        {
+          "sku": "IGN-MOMSBR-BLK-S",
+          "size": "S",
+          "price_cents": 7000
+        },
+        {
+          "sku": "IGN-MOMSBR-BLK-M",
+          "size": "M",
+          "price_cents": 7000
+        },
+        {
+          "sku": "IGN-MOMSBR-BLK-L",
+          "size": "L",
+          "price_cents": 7000
+        }
+      ]
+    },
+    {
+      "slug": "vyper-sports-bra-mauve",
+      "name": "Vyper Sports Bra",
+      "category": "sports-bras",
+      "color": "Mauve",
+      "description": "Multi-strap criss-cross sports bra. soft design with an intricate lattice of intersecting straps and open back. Smooth supportive band and stretch fabric for secure comfort during movement.",
+      "image_path": "/images/jacob-2026-10/ign-momsbr-brn/ign-momsbr-brn-vyper-sports-bra-mauve-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-momsbr-brn/ign-momsbr-brn-vyper-sports-bra-mauve-gallery-02.jpg",
+          "alt": "Vyper Sports Bra in Mauve — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-momsbr-brn/ign-momsbr-brn-vyper-sports-bra-mauve-gallery-03.jpg",
+          "alt": "Vyper Sports Bra in Mauve — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-momsbr-brn/ign-momsbr-brn-vyper-sports-bra-mauve-gallery-04.jpg",
+          "alt": "Vyper Sports Bra in Mauve — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-momsbr-brn/ign-momsbr-brn-vyper-sports-bra-mauve-gallery-05.jpg",
+          "alt": "Vyper Sports Bra in Mauve — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-momsbr-brn/ign-momsbr-brn-vyper-sports-bra-mauve-gallery-06.jpg",
+          "alt": "Vyper Sports Bra in Mauve — gallery view"
+        }
+      ],
+      "source_family": "IGN-MOMSBR-BRN",
+      "variants": [
+        {
+          "sku": "IGN-MOMSBR-BRN-S",
+          "size": "S",
+          "price_cents": 7000
+        },
+        {
+          "sku": "IGN-MOMSBR-BRN-M",
+          "size": "M",
+          "price_cents": 7000
+        },
+        {
+          "sku": "IGN-MOMSBR-BRN-L",
+          "size": "L",
+          "price_cents": 7000
+        }
+      ]
+    },
+    {
+      "slug": "motion-sports-bra-black",
+      "name": "Motion Sports Bra",
+      "category": "sports-bras",
+      "color": "Black",
+      "description": "Criss-cross back sports bra with intersecting straps, breathable mesh panels, and an open back for full mobility. Smooth, supportive fit with a secure band, ideal for workouts and everyday wear.",
+      "image_path": "/images/jacob-2026-10/ign-motsbr-blk/ign-motsbr-blk-motion-sports-bra-black-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-motsbr-blk/ign-motsbr-blk-motion-sports-bra-black-gallery-02.jpg",
+          "alt": "Motion Sports Bra in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motsbr-blk/ign-motsbr-blk-motion-sports-bra-black-gallery-03.jpg",
+          "alt": "Motion Sports Bra in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motsbr-blk/ign-motsbr-blk-motion-sports-bra-black-gallery-04.jpg",
+          "alt": "Motion Sports Bra in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motsbr-blk/ign-motsbr-blk-motion-sports-bra-black-gallery-05.jpg",
+          "alt": "Motion Sports Bra in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motsbr-blk/ign-motsbr-blk-motion-sports-bra-black-gallery-06.jpg",
+          "alt": "Motion Sports Bra in Black — gallery view"
+        }
+      ],
+      "source_family": "IGN-MOTSBR-BLK",
+      "variants": [
+        {
+          "sku": "IGN-MOTSBR-BLK-S",
+          "size": "S",
+          "price_cents": 6500
+        },
+        {
+          "sku": "IGN-MOTSBR-BLK-M",
+          "size": "M",
+          "price_cents": 6500
+        },
+        {
+          "sku": "IGN-MOTSBR-BLK-L",
+          "size": "L",
+          "price_cents": 6500
+        }
+      ]
+    },
+    {
+      "slug": "motion-sports-bra-jacaranda",
+      "name": "Motion Sports Bra",
+      "category": "sports-bras",
+      "color": "Jacaranda",
+      "description": "Criss-cross back sports bra with intersecting straps, breathable mesh panels, and an open back for full mobility. Smooth, supportive fit with a secure band, ideal for workouts and everyday wear.",
+      "image_path": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-jacaranda-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-jacaranda-gallery-02.jpg",
+          "alt": "Motion Sports Bra in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-jacaranda-gallery-03.jpg",
+          "alt": "Motion Sports Bra in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-jacaranda-gallery-04.jpg",
+          "alt": "Motion Sports Bra in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-jacaranda-gallery-05.jpg",
+          "alt": "Motion Sports Bra in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-jacaranda-gallery-06.jpg",
+          "alt": "Motion Sports Bra in Jacaranda — gallery view"
+        }
+      ],
+      "source_family": "IGN-MOTSBR-JAC",
+      "variants": [
+        {
+          "sku": "IGN-MOTSBR-JAC-S",
+          "size": "S",
+          "price_cents": 6500
+        },
+        {
+          "sku": "IGN-MOTSBR-JAC-M",
+          "size": "M",
+          "price_cents": 6500
+        },
+        {
+          "sku": "IGN-MOTSBR-JAC-L",
+          "size": "L",
+          "price_cents": 6500
+        }
+      ]
+    },
+    {
+      "slug": "all-in-motion-shorts-black",
+      "name": "All In Motion Shorts",
+      "category": "shorts",
+      "color": "Black",
+      "description": "Featuring a wide, comfortable waistband, curved side hems and a relaxed silhouette, these shorts are designed to give you freedom to move without compromising on style.",
+      "image_path": "/images/jacob-2026-10/ign-motshts-blk/ign-motshts-blk-all-in-motion-shorts-black-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-motshts-blk/ign-motshts-blk-all-in-motion-shorts-black-gallery-02.jpg",
+          "alt": "All In Motion Shorts in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motshts-blk/ign-motshts-blk-all-in-motion-shorts-black-gallery-03.jpg",
+          "alt": "All In Motion Shorts in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motshts-blk/ign-motshts-blk-all-in-motion-shorts-black-gallery-04.jpg",
+          "alt": "All In Motion Shorts in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motshts-blk/ign-motshts-blk-all-in-motion-shorts-black-gallery-05.jpg",
+          "alt": "All In Motion Shorts in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motshts-blk/ign-motshts-blk-all-in-motion-shorts-black-gallery-06.jpg",
+          "alt": "All In Motion Shorts in Black — gallery view"
+        }
+      ],
+      "source_family": "IGN-MOTSHTS-BLK",
+      "variants": [
+        {
+          "sku": "IGN-MOTSHTS-BLK-S",
+          "size": "S",
+          "price_cents": 8000
+        },
+        {
+          "sku": "IGN-MOTSHTS-BLK-M",
+          "size": "M",
+          "price_cents": 8000
+        },
+        {
+          "sku": "IGN-MOTSHTS-BLK-L",
+          "size": "L",
+          "price_cents": 8000
+        }
+      ]
+    },
+    {
+      "slug": "all-in-motion-shorts-jacaranda",
+      "name": "All In Motion Shorts",
+      "category": "shorts",
+      "color": "Jacaranda",
+      "description": "Featuring a wide, comfortable waistband, curved side hems and a relaxed silhouette, these shorts are designed to give you freedom to move without compromising on style.",
+      "image_path": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-jacaranda-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-jacaranda-gallery-02.jpg",
+          "alt": "All In Motion Shorts in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-jacaranda-gallery-03.jpg",
+          "alt": "All In Motion Shorts in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-jacaranda-gallery-04.jpg",
+          "alt": "All In Motion Shorts in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-jacaranda-gallery-05.jpg",
+          "alt": "All In Motion Shorts in Jacaranda — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-jacaranda-gallery-06.jpg",
+          "alt": "All In Motion Shorts in Jacaranda — gallery view"
+        }
+      ],
+      "source_family": "IGN-MOTSHTS-JAC",
+      "variants": [
+        {
+          "sku": "IGN-MOTSHTS-JAC-S",
+          "size": "S",
+          "price_cents": 8000
+        },
+        {
+          "sku": "IGN-MOTSHTS-JAC-M",
+          "size": "M",
+          "price_cents": 8000
+        },
+        {
+          "sku": "IGN-MOTSHTS-JAC-L",
+          "size": "L",
+          "price_cents": 8000
+        }
+      ]
+    },
+    {
+      "slug": "ignyte-socks-white",
+      "name": "IGNYTE Socks",
+      "category": "accessories",
+      "color": "White",
+      "description": "White crew socks with ribbed cuffs and IGNYTE branding. On-model product photos supplied as crops.",
+      "image_path": "/images/jacob-2026-10/ign-socks-onesize/ign-socks-onesize-ignyte-socks-white-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-socks-onesize/ign-socks-onesize-ignyte-socks-white-gallery-02.jpg",
+          "alt": "IGNYTE Socks in White — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-socks-onesize/ign-socks-onesize-ignyte-socks-white-gallery-03.jpg",
+          "alt": "IGNYTE Socks in White — gallery view"
+        }
+      ],
+      "source_family": "IGN-SOCKS-ONESIZE",
+      "variants": [
+        {
+          "sku": "IGN-SOCKS-ONESIZE",
+          "size": "One Size",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "slug": "sculpt-shorts-black",
+      "name": "Sculpt Shorts",
+      "category": "shorts",
+      "color": "Black",
+      "description": "Crossover-waist bike shorts with a high waist and a flattering V-shaped wrap waistband and form-fitting. Soft stretch fabric that stays put during movement, perfect for workouts",
+      "image_path": "/images/jacob-2026-10/ign-vsclp-blk/ign-vsclp-blk-sculpt-shorts-black-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-vsclp-blk/ign-vsclp-blk-sculpt-shorts-black-gallery-02.jpg",
+          "alt": "Sculpt Shorts in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-vsclp-blk/ign-vsclp-blk-sculpt-shorts-black-gallery-03.jpg",
+          "alt": "Sculpt Shorts in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-vsclp-blk/ign-vsclp-blk-sculpt-shorts-black-gallery-04.jpg",
+          "alt": "Sculpt Shorts in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-vsclp-blk/ign-vsclp-blk-sculpt-shorts-black-gallery-05.jpg",
+          "alt": "Sculpt Shorts in Black — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-vsclp-blk/ign-vsclp-blk-sculpt-shorts-black-gallery-06.jpg",
+          "alt": "Sculpt Shorts in Black — gallery view"
+        }
+      ],
+      "source_family": "IGN-VSCLP-BLK",
+      "variants": [
+        {
+          "sku": "IGN-VSCLP-BLK-S",
+          "size": "S",
+          "price_cents": 6000
+        },
+        {
+          "sku": "IGN-VSCLP-BLK-M",
+          "size": "M",
+          "price_cents": 6000
+        },
+        {
+          "sku": "IGN-VSCLP-BLK-L",
+          "size": "L",
+          "price_cents": 6000
+        }
+      ]
+    },
+    {
+      "slug": "sculpt-shorts-mauve",
+      "name": "Sculpt Shorts",
+      "category": "shorts",
+      "color": "Mauve",
+      "description": "Crossover-waist bike shorts with a high waist and a flattering V-shaped wrap waistband and form-fitting. Soft stretch fabric that stays put during movement, perfect for workouts",
+      "image_path": "/images/jacob-2026-10/ign-vsclp-brn/ign-vsclp-brn-sculpt-shorts-mauve-main-01.jpg",
+      "gallery": [
+        {
+          "image": "/images/jacob-2026-10/ign-vsclp-brn/ign-vsclp-brn-sculpt-shorts-mauve-gallery-02.jpg",
+          "alt": "Sculpt Shorts in Mauve — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-vsclp-brn/ign-vsclp-brn-sculpt-shorts-mauve-gallery-03.jpg",
+          "alt": "Sculpt Shorts in Mauve — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-vsclp-brn/ign-vsclp-brn-sculpt-shorts-mauve-gallery-04.jpg",
+          "alt": "Sculpt Shorts in Mauve — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-vsclp-brn/ign-vsclp-brn-sculpt-shorts-mauve-gallery-05.jpg",
+          "alt": "Sculpt Shorts in Mauve — gallery view"
+        },
+        {
+          "image": "/images/jacob-2026-10/ign-vsclp-brn/ign-vsclp-brn-sculpt-shorts-mauve-gallery-06.jpg",
+          "alt": "Sculpt Shorts in Mauve — gallery view"
+        }
+      ],
+      "source_family": "IGN-VSCLP-BRN",
+      "variants": [
+        {
+          "sku": "IGN-VSCLP-BRN-S",
+          "size": "S",
+          "price_cents": 6000
+        },
+        {
+          "sku": "IGN-VSCLP-BRN-M",
+          "size": "M",
+          "price_cents": 6000
+        },
+        {
+          "sku": "IGN-VSCLP-BRN-L",
+          "size": "L",
+          "price_cents": 6000
+        }
+      ]
+    }
+  ]
+}

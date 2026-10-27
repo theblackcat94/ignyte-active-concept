@@ -1,4 +1,5 @@
 import { asset } from "./asset";
+import prepared from "@/data/jacob-catalog-2026-10-27.json";
 
 export type Category = string;
 export type Product = {
@@ -15,37 +16,22 @@ export type Product = {
   variants?: { id: string; size: string; price: number; originalPrice?: number; stock: number }[];
 };
 
-const catalogImage = (name: string) => asset(`/images/catalog/${name}`);
-const productImage = (name: string) => asset(`/images/product/${name}`);
 const coverImage = (name: string) => asset(`/images/collection-covers/${name}`);
 
-// Concept catalogue. Prices, sizes and descriptions still need approval before commerce launch.
-export const products: Product[] = [
-  { slug: "aura-halter-lavender", name: "Aura Halter", category: "tops", price: 60, color: "Lavender", image: catalogImage("aura-halter-jac.jpeg"), gallery: [
-    { image: productImage("Ignyte-Material.jpg"), alt: "Ignyte activewear fabric detail" },
-    { image: productImage("Ingyte-Express.jpg"), alt: "Ignyte training editorial" },
-  ], label: "BEST SELLER", description: "A sleek halter silhouette for the sessions you show up for." },
-  { slug: "seamless-legging-lavender", name: "Seamless Legging", category: "leggings", price: 70, color: "Lavender", image: catalogImage("seamless-legging-jac.jpeg"), gallery: [
-    { image: coverImage("Ignyte-Leggings.jpg"), alt: "Ignyte leggings collection detail" },
-    { image: productImage("Ignyte-Built-for-the-Burn.jpg"), alt: "Ignyte training editorial" },
-  ], label: "NEW", description: "A second-skin feel with a confident, supportive fit." },
-  { slug: "seamless-short-espresso", name: "Seamless Short", category: "shorts", price: 60, color: "Espresso", image: catalogImage("seamless-short-espresso.jpeg"), gallery: [
-    { image: coverImage("Ignyte-Shorts.jpg"), alt: "Ignyte shorts collection detail" },
-    { image: productImage("Ignyte-Movement.jpg"), alt: "Ignyte movement editorial" },
-  ], description: "Freedom to move, from warm-up to the last rep." },
-  { slug: "seamless-sports-bra-espresso", name: "Seamless Sports Bra", category: "sports-bras", price: 55, color: "Espresso", image: catalogImage("seamless-bra-espresso.jpeg"), gallery: [
-    { image: coverImage("Ignyte-Sports-Bras.jpg"), alt: "Ignyte sports bras collection" },
-    { image: productImage("Ignyte-Training.jpg"), alt: "Ignyte training editorial" },
-  ], label: "POPULAR", description: "Steady support for training days and everything after." },
-  { slug: "aura-halter-espresso", name: "Aura Halter", category: "tops", price: 60, color: "Espresso", image: catalogImage("aura-halter-espresso.jpeg"), gallery: [
-    { image: coverImage("Ignyte-Tops.jpg"), alt: "Ignyte tops collection detail" },
-    { image: productImage("Ignyte-Material-Alt.jpg"), alt: "Ignyte activewear fabric detail" },
-  ], description: "A streamlined training layer with a bold feel." },
-  { slug: "seamless-legging-espresso", name: "Seamless Legging", category: "leggings", price: 70, color: "Espresso", image: catalogImage("seamless-legging-espresso.jpeg"), gallery: [
-    { image: coverImage("Ignyte-Leggings.jpg"), alt: "Ignyte leggings collection detail" },
-    { image: productImage("Ignyte-Movement.jpg"), alt: "Ignyte movement editorial" },
-  ], description: "Made to move with you through every session." }
-];
+// Local preview mirrors the approved media set. Live prices and stock come from Supabase.
+const featuredSlugs = ["aura-halter-lavender", "seamless-legging-lavender", "seamless-short-espresso", "seamless-sports-bra-espresso"];
+export const products: Product[] = prepared.products.map(item => ({
+  slug: item.slug, name: item.name, category: item.category, color: item.color,
+  description: item.description, image: asset(item.image_path),
+  gallery: item.gallery.map(entry => ({ image: asset(entry.image), alt: entry.alt })),
+  price: Math.min(...item.variants.map(variant => variant.price_cents)) / 100,
+  variants: item.variants.map(variant => ({ id: variant.sku, size: variant.size,
+    price: variant.price_cents / 100, stock: 0 })),
+})).sort((a, b) => {
+  const aIndex = featuredSlugs.indexOf(a.slug);
+  const bIndex = featuredSlugs.indexOf(b.slug);
+  return (aIndex < 0 ? 100 : aIndex) - (bIndex < 0 ? 100 : bIndex) || a.name.localeCompare(b.name);
+});
 
 export const legacyProductSlugs: Record<string, string> = {
   "seamless-legging-black": "seamless-legging-lavender",
@@ -58,7 +44,8 @@ export const categories: { id: Category; label: string; cover: string }[] = [
   { id: "sports-bras", label: "Sports bras", cover: coverImage("Ignyte-Sports-Bras.jpg") },
   { id: "tops", label: "Tops", cover: coverImage("Ignyte-Tops.jpg") },
   { id: "leggings", label: "Leggings", cover: coverImage("Ignyte-Leggings.jpg") },
-  { id: "shorts", label: "Shorts", cover: coverImage("Ignyte-Shorts.jpg") }
+  { id: "shorts", label: "Shorts", cover: coverImage("Ignyte-Shorts.jpg") },
+  { id: "accessories", label: "Accessories", cover: asset(prepared.products.find(item => item.category === "accessories")!.image_path) }
 ];
 
 export const money = (value: number) => new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD" }).format(value);
