@@ -64,7 +64,7 @@ export default function CheckoutPage() {
     <span className="eyebrow">ORDER RECEIVED</span><h1>THANK YOU<span>.</span></h1>
     <p>Your order request <strong>{orderId}</strong> has been saved. No payment has been taken.</p>
     <p>Shipping charges and payment details will be confirmed before your order is fulfilled.</p>
-    <Link className="button button-dark" href="/account">VIEW YOUR ORDERS ↗</Link>
+    <Link className="button button-dark" href={`/account/orders/${orderId}`}>VIEW ORDER DETAILS ↗</Link>
   </div>;
 
   return <div className="checkout-page section-wrap">
