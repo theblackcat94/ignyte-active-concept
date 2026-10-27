@@ -7,6 +7,7 @@ import "./footer.css";
 import { StoreProvider } from "@/components/store-provider";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import AnalyticsTracker from "@/components/analytics-tracker";
 
 const ignyteSans = localFont({
   src: [
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" data-scroll-behavior="smooth">
       <body className={`${ignyteSans.variable} ${ignyteMono.variable}`}>
         <StoreProvider>
+          <AnalyticsTracker />
           <Header />
           <main>{children}</main>
           <Footer />

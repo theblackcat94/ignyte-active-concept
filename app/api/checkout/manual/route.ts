@@ -7,6 +7,7 @@ export const runtime = "nodejs";
 
 const schema = z.object({
   requestId: z.string().uuid(),
+  couponCode: z.string().trim().toUpperCase().regex(/^[A-Z0-9_-]{3,30}$/).optional(),
   email: z.email().trim().toLowerCase().optional(),
   items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1).max(20) })).min(1).max(20),
   shipping: z.object({
@@ -53,6 +54,14 @@ export async function POST(request: Request) {
     console.error("Order request failed", error?.message ?? "No order ID returned");
     return NextResponse.json({ error: "An item may be unavailable, or too many orders were placed recently. Please review your bag and try again." }, { status: 409 });
   }
+  if (parsed.data.couponCode) {
+    const { error: couponError } = await db.rpc("apply_coupon_to_order", { p_order_id: orderId, p_code: parsed.data.couponCode });
+    if (couponError) {
+      await db.rpc("release_order", { p_order_id: orderId });
+      return NextResponse.json({ error: "That discount code is no longer available. Please review your order and try again." }, { status: 400 });
+    }
+  }
+  await db.from("site_events").insert({ event_name: "order_requested", page_path: "/checkout/" });
   const response = NextResponse.json({ orderId, status: "awaiting_payment", guest: !user });
   if (guestToken) response.cookies.set(`ignyte_guest_order_${orderId.replaceAll("-", "")}`, guestToken, {
     httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax",

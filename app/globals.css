@@ -29,3 +29,4 @@
 .mobile-menu-head img{width:180px;height:auto}
 @media(max-width:800px){.site-header .brand-image img{width:165px}}
 @media(max-width:520px){.site-header .brand-image img{width:145px}.mobile-menu-head img{width:150px}}
+.currency-selector{display:flex;align-items:center;gap:4px;font-size:9px;font-weight:700;letter-spacing:.05em}.currency-selector select{border:0;background:transparent;font:inherit;color:inherit;cursor:pointer}.currency-estimate{display:block;font-size:10px;font-weight:400;color:#716d68;white-space:nowrap}

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { asset } from "@/lib/asset";
 
 type Slide = { file: string; mobileFile?: string; alt: string; kicker: string; title: string; href: string; action: string; portrait?: boolean; video?: boolean; poster?: string };
@@ -25,6 +25,7 @@ export default function HomeHeroSlider() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [mobile, setMobile] = useState(false);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
   const slide = slides[active];
   useEffect(() => {
     const query = window.matchMedia("(max-width: 800px)");
@@ -40,7 +41,7 @@ export default function HomeHeroSlider() {
   }, [active, paused, slide.video]);
   const move = (direction: number) => setActive(index => (index + direction + slides.length) % slides.length);
 
-  return <section className={`home-hero home-slider ${slide.portrait ? "home-slide-portrait" : ""}`} aria-label="Ignyte home media carousel" aria-roledescription="carousel" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node)) setPaused(false); }}>
+  return <section className={`home-hero home-slider ${slide.portrait ? "home-slide-portrait" : ""}`} aria-label="Ignyte home media carousel" aria-roledescription="carousel" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node)) setPaused(false); }} onTouchStart={event => { const touch = event.touches[0]; touchStart.current = { x: touch.clientX, y: touch.clientY }; setPaused(true); }} onTouchEnd={event => { const start = touchStart.current; touchStart.current = null; setPaused(false); if (!start) return; const touch = event.changedTouches[0]; const dx = touch.clientX - start.x; const dy = touch.clientY - start.y; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4) move(dx < 0 ? 1 : -1); }}>
     <div className="home-slide-media" key={`${slide.file}-${mobile}`}>
       {slide.video ? <video src={asset(`/images/home/${mobile && slide.mobileFile ? slide.mobileFile : slide.file}`)} poster={asset(`/images/home/${slide.poster}`)} autoPlay muted playsInline loop preload="metadata" aria-label={slide.alt} /> : <img src={asset(`/images/home/${slide.file}`)} alt={slide.alt} loading={active === 0 ? "eager" : "lazy"} />}
     </div>

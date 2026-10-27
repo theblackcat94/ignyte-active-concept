@@ -77,6 +77,28 @@ In `/admin`, edit each size's stock and availability. **Set each size to 20 & av
 
 ## Before launch
 
+### Operations added October 2026
+
+- `/admin/analytics` shows anonymous first-party event counts for the last 30 days. It does not identify visitors or replace a consent-aware analytics platform. The event table is capped at 10,000 rows in the dashboard view.
+- `/admin/promotions` lets an admin configure discount codes. Checkout quotes the saving and the database validates/redemptions atomically on an order request. No live payment is taken.
+- `/admin/shipping` configures Australian state rates and optional free-shipping thresholds. All rates start inactive; checkout says “to be quoted” until approved rates are enabled. Even with a displayed estimate, the team confirms the final shipping charge before payment.
+- A display-currency selector shows reference-rate estimates from Frankfurter. The actual product price and order request remain in AUD and Australian delivery only. The estimate is informational and can differ from card rates.
+- `/support`, `/contact`, `/privacy`, and `/terms` belong to this site. The contact form stores messages for `/admin/support`; staff must monitor and reply by email until outbound notifications are connected. Custom legal copy is pending approval and the policy pages link to the existing Ignyte policies.
+- `/admin/marketing` lists the steps to connect a provider. The footer email form remains disabled until a provider, consent wording, and unsubscribe process are approved.
+
+The Git repository and release archives protect application code. **They do not back up Supabase.** On the build machine, run a daily owner-only business-data export after deployment:
+
+```bash
+umask 077
+mkdir -p /home/internetremovals/.local/share/ignyte-backups
+cd /home/internetremovals/SERVER/NEXT/IGNYTE
+IGNYTE_BACKUP_DIR=/home/internetremovals/.local/share/ignyte-backups \
+  /home/internetremovals/.local/opt/node-v22.23.4-linux-x64/bin/node \
+  --env-file=/home/internetremovals/.config/ignyte/build.env scripts/backup-store.mjs
+```
+
+The export includes business tables and the `product-media` bucket, including private order and contact data. Keep the directory mode `700`, do not commit it, and test restoration before relying on it. This is **not a full PostgreSQL dump or an Auth backup**. Configure a full database backup and off-machine encrypted copy before the store takes live payments. Supabase Free does not provide automatic daily database backups. Run the export under a daily systemd timer or cron job after testing it once; monitor failures and available disk space.
+
 - Review the copied concept catalogue in the admin. It remains unpublished until the team activates products and variants with verified stock.
 - Configure Supabase and verified inventory before testing order requests. Add Australian shipping rates, email notifications, and tested payment collection before fulfilling orders.
 - Connect newsletter signup to the approved email platform.

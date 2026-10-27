@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { browserDb, commerceConfigured, type StoreCategory, type StoreProduct, type StoreVariant } from "@/lib/commerce";
+import AdminToolsNav from "@/components/admin-tools-nav";
 import "./admin.css";
+import "./operations.css";
 
 type EditableVariant = Omit<StoreVariant, "id"> & { id?: string };
 type EditableProduct = Omit<StoreProduct, "id" | "product_variants"> & {
@@ -99,6 +101,7 @@ export default function AdminPage() {
   if (!commerceConfigured) return <div className="admin-page section-wrap"><h1>PRODUCT MANAGER</h1><p>Connect the new store database to use the team editor.</p></div>;
   if (!token) return <div className="admin-page section-wrap"><h1>PRODUCT MANAGER</h1><p>Sign in with a team account to manage products.</p><Link className="button button-dark" href="/account">GO TO ACCOUNT</Link></div>;
   return <div className="admin-page section-wrap"><div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><span>ADMIN</span></div><div className="admin-title"><div><span className="eyebrow">IGNYTE / INTERNAL</span><h1>PRODUCT MANAGER<span>.</span></h1><div className="admin-title-links"><Link className="text-link" href="/admin/orders">VIEW ORDERS ↗</Link><Link className="text-link" href="/admin/categories">MANAGE CATEGORIES ↗</Link></div></div><button className="button button-dark" onClick={() => setSelected({ ...blank, category: categories.find(category => category.active)?.slug ?? "tops" })}>NEW PRODUCT +</button></div>
+    <AdminToolsNav />
     {message && <p role="status" className="admin-message">{message}</p>}
     <div className="admin-layout"><div className="admin-list">{products.map(product => <button key={product.id} className={selected?.id === product.id ? "active" : ""} onClick={() => edit(product)}><img src={product.image_path} alt="" /><span><strong>{product.name}</strong><small>{product.color} · {product.status.toUpperCase()}</small></span></button>)}</div>
       {selected ? <div className="admin-editor"><h2>{selected.id ? "EDIT PRODUCT" : "NEW PRODUCT"}</h2><div className="admin-fields">

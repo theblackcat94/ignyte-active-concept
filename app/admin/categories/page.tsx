@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { browserDb, commerceConfigured, type StoreCategory } from "@/lib/commerce";
+import AdminToolsNav from "@/components/admin-tools-nav";
 import "../admin.css";
+import "../operations.css";
 
 const blank: StoreCategory = { slug: "", name: "", cover_path: "/images/collection-covers/", sort_order: 50, active: true };
 
@@ -53,6 +55,7 @@ export default function CategoriesPage() {
 
   return <div className="admin-page section-wrap"><div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><Link href="/admin">ADMIN</Link><span>/</span><span>CATEGORIES</span></div>
     <div className="admin-title"><div><span className="eyebrow">IGNYTE / INTERNAL</span><h1>CATEGORIES<span>.</span></h1><p>Manage collection names, covers and navigation order.</p></div><button className="button button-dark" onClick={() => { setSelected({ ...blank }); setExisting(false); setMessage(""); }}>NEW CATEGORY +</button></div>
+    <AdminToolsNav />
     {message && <p className="admin-message" role="status">{message}</p>}
     <div className="admin-layout"><div className="admin-list">{categories.map(category => <button key={category.slug} className={existing && selected.slug === category.slug ? "active" : ""} onClick={() => { setSelected({ ...category }); setExisting(true); setMessage(""); }}><img src={category.cover_path} alt="" /><span><strong>{category.name}</strong><small>/{category.slug} · {category.active ? "VISIBLE" : "HIDDEN"}</small></span></button>)}</div>
       <form className="admin-editor" onSubmit={save}><h2>{existing ? "EDIT CATEGORY" : "NEW CATEGORY"}</h2><div className="admin-fields">

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { categories as conceptCategories, legacyProductSlugs, money, products as conceptProducts, type Product } from "@/lib/catalog";
 import { activeCategories, activeProducts, commerceConfigured } from "@/lib/commerce";
+import { track } from "@/lib/analytics-client";
 
 type BagItem = { slug: string; size: string; quantity: number };
 type Store = {
@@ -75,6 +76,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         : [...current, { slug, size, quantity: 1 }];
     });
     setBagOpen(true);
+    track("add_to_bag", `/product/${slug}/`);
   };
   const removeFromBag = (slug: string, size: string) => setBag(current => current.filter(item => !(item.slug === slug && item.size === size)));
   const clearBag = useCallback(() => setBag([]), []);
