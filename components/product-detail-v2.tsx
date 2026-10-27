@@ -9,6 +9,7 @@ import ProductCard from "./product-card";
 import ProductGallery from "./product-gallery";
 import SizeGuideContent from "./size-guide-content";
 import { CurrencyEstimate } from "./currency-estimate";
+import { productColourHex } from "@/lib/product-colors";
 import "@/app/product-detail-v2.css";
 
 export default function ProductDetail({ product }: { product: Product }) {
@@ -17,6 +18,8 @@ export default function ProductDetail({ product }: { product: Product }) {
   const [guideOpen, setGuideOpen] = useState(false);
   const { products, addToBag, wishlist, toggleWishlist } = useStore();
   const related = products.filter(p => p.slug !== product.slug).slice(0, 4);
+  const colours = [product, ...products.filter(p => p.slug !== product.slug && p.name === product.name && p.category === product.category)]
+    .filter((item, index, all) => all.findIndex(candidate => candidate.color.toLowerCase() === item.color.toLowerCase()) === index);
   const sizes: NonNullable<Product["variants"]> = product.variants ? product.variants : (product.slug.includes("socks") ? ["ONE SIZE"] : ["XS", "S", "M", "L", "XL"]).map(value => ({ id: value, size: value, price: product.price, stock: commerceConfigured ? 0 : 1 }));
   const selectedVariant = sizes.find(variant => variant.size === size);
   const canAdd = Boolean(size && selectedVariant && selectedVariant.stock > 0);
@@ -45,7 +48,13 @@ export default function ProductDetail({ product }: { product: Product }) {
     <div className="detail-grid"><ProductGallery product={product} /><div className="detail-info"><span className="eyebrow">IGNYTE / {product.category.toUpperCase().replace("-", " ")}</span><h1>{product.name.toUpperCase()}<em>.</em></h1>
       <div className="detail-price">{(selectedVariant?.originalPrice ?? product.originalPrice) && <del>{money((selectedVariant?.originalPrice ?? product.originalPrice)!)}</del>}<span>{money(selectedVariant?.price ?? product.price)}<CurrencyEstimate aud={selectedVariant?.price ?? product.price} /></span></div>
       <p className="detail-description">{product.description}</p>{commerceConfigured && !product.variants && <p className="catalog-preview-note">Preview item. Available to order after sizes and stock are confirmed.</p>}
-      <div className="detail-color">COLOUR: <strong>{product.color.toUpperCase()}</strong><span className={`swatch ${product.color.toLowerCase()}`} /></div>
+      <div className="detail-color">COLOUR: <strong>{product.color.toUpperCase()}</strong></div>
+      <div className="pdp-colour-options" aria-label={`Available ${product.name} colours`}>
+        {colours.map(option => <Link key={option.slug} href={`/product/${option.slug}/`} className={`pdp-colour-option ${option.slug === product.slug ? "selected" : ""}`} aria-label={`${option.color}${option.slug === product.slug ? ", selected" : ""}`} aria-current={option.slug === product.slug ? "page" : undefined} title={option.color}>
+          <span className={`pdp-colour-swatch ${option.color.toLowerCase() === "white" ? "is-white" : ""}`} style={{ backgroundColor: productColourHex(option.color) ?? "#D6D1CB" }} />
+          <span>{option.color.toUpperCase()}</span>
+        </Link>)}
+      </div>
       <div className="size-heading"><span>SELECT SIZE</span><button type="button" onClick={() => setGuideOpen(true)}>SIZE GUIDE ↗</button></div>
       <div className="size-grid">{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} onClick={() => setSize(variant.size)} key={variant.id}>{variant.size}</button>)}</div>
       <button type="button" className="button button-orange detail-add" onClick={() => size && addToBag(product.slug, size)} disabled={!canAdd}>{addLabel}<span>↗</span></button>

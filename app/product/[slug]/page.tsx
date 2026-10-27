@@ -47,5 +47,5 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       itemOffered: { "@type": "Product", name: `${product.name} / ${variant.size}` },
     })) } : {}),
   };
-  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} /><ProductDetail product={product} /></>;
+  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} /><ProductDetail key={product.slug} product={product} /></>;
 }

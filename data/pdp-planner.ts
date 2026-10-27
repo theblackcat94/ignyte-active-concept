@@ -32,9 +32,10 @@ export const emptyPdp: PdpContent = { ...shared, oeko_certified: false, features
 export const homeBestSellerSlugs = ["aura-halter-lavender", "motion-sports-bra-black", "seamless-legging-lavender", "all-in-motion-shorts-black", "vyper-sports-bra-mauve", "sculpt-shorts-mauve"];
 
 export function pdpFor(name: string, content?: Partial<PdpContent> | null, slug?: string): PdpContent {
-  const demoVideo = slug === "motion-sports-bra-black" ? {
-    video_url: "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4",
-    video_poster: "/images/home/Home-Hero-Video-Fallback.jpg",
-  } : {};
-  return { ...(plannerPdp[name] ?? emptyPdp), featured_best_seller: Boolean(slug && homeBestSellerSlugs.includes(slug)), ...demoVideo, ...content };
+  const merged = { ...(plannerPdp[name] ?? emptyPdp), featured_best_seller: Boolean(slug && homeBestSellerSlugs.includes(slug)), ...content };
+  return {
+    ...merged,
+    video_url: merged.video_url || "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4",
+    video_poster: merged.video_poster || "/images/home/Home-Hero-Video-Fallback.jpg",
+  };
 }
