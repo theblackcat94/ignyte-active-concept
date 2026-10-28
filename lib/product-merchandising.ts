@@ -22,7 +22,7 @@ export function bagRecommendations(slugs: string[], catalog: Product[]): Product
   const excluded = new Set(slugs);
   const candidates = slugs.flatMap(slug => {
     const pairing = productPairing(slug);
-    return [...pairing.related, pairing.upsell, pairing.crossSell];
+    return [pairing.crossSell, ...pairing.related, pairing.upsell];
   });
   const seen = new Set<string>();
   return candidates.flatMap(slug => {
