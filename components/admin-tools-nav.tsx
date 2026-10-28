@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const tools = [
   ["Products", "/admin"], ["Categories", "/admin/categories"],
-  ["Orders", "/admin/orders"], ["Analytics", "/admin/analytics"], ["Announcement", "/admin/announcement"], ["Homepage", "/admin/home-hero"],
+  ["Orders", "/admin/orders"], ["Analytics", "/admin/analytics"], ["Announcement", "/admin/announcement"], ["Homepage", "/admin/home-hero"], ["Instagram", "/admin/pdp-social"],
   ["Promotions", "/admin/promotions"], ["Shipping", "/admin/shipping"],
   ["Size guide", "/admin/size-guide"],
   ["Newsletter", "/admin/marketing"], ["Enquiries", "/admin/support"],

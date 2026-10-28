@@ -1,0 +1,19 @@
+.pdp-social-admin{display:grid;gap:18px}
+.pdp-social-admin h2{margin:0}
+.pdp-social-admin>p{max-width:850px;line-height:1.5}
+.pdp-social-admin-toggle{display:flex;align-items:center;gap:10px;font-size:11px;font-weight:800;letter-spacing:.08em;cursor:pointer}
+.pdp-social-admin-toggle input{width:20px;height:20px;accent-color:var(--orange)}
+.pdp-social-admin-post{border:1px solid #d2cdc5;background:#fff;padding:20px}
+.pdp-social-admin-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:20px}
+.pdp-social-admin-head h3{margin:0;font-size:13px;letter-spacing:.1em}
+.pdp-social-admin-head>div{display:flex;gap:7px}
+.pdp-social-admin-head button{min-width:35px;min-height:35px;border:1px solid #d2cdc5;background:#fff;font-size:12px;font-weight:800}
+.pdp-social-admin-head button:disabled{opacity:.35}
+.pdp-social-admin-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.pdp-social-admin-fields label:not(.pdp-social-admin-toggle):not(.pdp-social-admin-upload){display:grid;gap:7px;font-size:10px;font-weight:800;letter-spacing:.08em}
+.pdp-social-admin-fields .wide{grid-column:1/-1}
+.pdp-social-admin-fields input:not([type="checkbox"]):not([type="file"]){min-width:0;width:100%;height:42px;border:1px solid #cfcac2;padding:9px;font:inherit;font-size:13px;font-weight:400;letter-spacing:0}
+.pdp-social-admin-upload{display:inline-flex;align-items:center;justify-content:center;border:1px solid #0B1020;padding:10px 14px;font-size:10px;font-weight:800;letter-spacing:.08em;cursor:pointer}
+.pdp-social-admin-upload input{position:absolute;width:1px;height:1px;opacity:0}
+.pdp-social-admin-preview{width:min(200px,100%);aspect-ratio:1;object-fit:cover;margin-top:20px}
+@media(max-width:700px){.pdp-social-admin-fields{grid-template-columns:1fr}.pdp-social-admin-fields .wide{grid-column:auto}.pdp-social-admin-post{padding:14px}}
