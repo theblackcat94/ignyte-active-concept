@@ -10,7 +10,7 @@ export type PdpSocialPost = {
   productSlugs: string[];
 };
 
-export type PdpSocialSettings = { enabled: boolean; posts: PdpSocialPost[] };
+export type PdpSocialSettings = { enabled: boolean; posts: PdpSocialPost[]; coversVersion?: number };
 
 // Supplied covers, kept in the same order as the linked Instagram posts.
 export const socialCoverImages = [
@@ -40,9 +40,10 @@ const instagramGrid = [
 // Posts shown on @ignyteactive's public profile on 29 October 2026. Admin can curate them later.
 export const defaultPdpSocialSettings: PdpSocialSettings = {
   enabled: true,
+  coversVersion: 1,
   posts: instagramGrid.map(([kind, code], index) => ({
     id: `instagram-${code}`, enabled: true, embed: true,
-    href: `https://www.instagram.com/${index === 6 ? "cara.mel95/" : index === 8 ? "train_withsis/" : "ignyteactive/"}${kind}/${code}/`, image: "",
+    href: `https://www.instagram.com/${index === 6 ? "cara.mel95/" : index === 8 ? "train_withsis/" : "ignyteactive/"}${kind}/${code}/`, image: socialCoverImages[index],
     alt: `Ignyte Active Instagram ${kind === "reel" ? "reel" : "post"} ${index + 1}`,
     caption: kind === "reel" ? "WATCH REEL" : "VIEW POST", productSlugs: [],
   })),

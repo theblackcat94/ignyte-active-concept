@@ -30,7 +30,7 @@ export default function PdpSocialStrip({ productSlug }: { productSlug?: string }
     <div className="pdp-social-track" ref={trackRef}>{posts.map((post, index) => {
       const cover = post.image || suppliedSocialCovers[post.href.match(/\/(?:p|reel)\/([^/]+)/)?.[1] || ""] || socialCoverImages[index % socialCoverImages.length];
       const imageSrc = cover.startsWith("/images/") ? asset(cover) : cover;
-      const isReel = /instagram\.com\/reel\//.test(post.href);
+      const isReel = /\/reel\//.test(post.href);
       return <article className={`pdp-social-card ${post.href.includes("DdvnCY3ii41") ? "is-landscape" : ""}`} key={post.id}>
         {post.video ? <div className="pdp-social-media"><video src={post.video} poster={imageSrc} controls playsInline preload="none" aria-label={post.alt} /></div> : <a className="pdp-social-media" href={post.href} target="_blank" rel="noopener noreferrer" aria-label={`${post.alt} — open on Instagram`}><img src={imageSrc} alt={post.image ? post.alt : "Ignyte campaign image"} loading="lazy" /><span className="pdp-social-media-shade" aria-hidden="true" /><span className="pdp-social-media-mark" aria-hidden="true">{isReel ? "▶" : "↗"}</span></a>}
         <div className="pdp-social-card-foot"><span><small>{isReel ? "REEL" : "POST"}</small></span><a href={post.href} target="_blank" rel="noopener noreferrer">{post.caption || (isReel ? "WATCH REEL" : "VIEW POST")} ↗</a></div>

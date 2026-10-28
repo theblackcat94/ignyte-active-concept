@@ -2,7 +2,7 @@ import "server-only";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { z } from "zod";
-import { defaultPdpSocialSettings } from "@/data/pdp-social";
+import { defaultPdpSocialSettings, suppliedSocialCovers } from "@/data/pdp-social";
 
 function approvedInstagramLink(value: string) {
   try {
@@ -41,7 +41,7 @@ const postSchema = z.object({
   productSlugs: z.array(z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)).max(100),
 }).refine(value => !value.image || approvedImage(value.image), "Upload a thumbnail or use a supplied brand cover.");
 
-export const pdpSocialSettingsSchema = z.object({ enabled: z.boolean(), posts: z.array(postSchema).max(12) })
+export const pdpSocialSettingsSchema = z.object({ enabled: z.boolean(), posts: z.array(postSchema).max(12), coversVersion: z.number().int().optional() })
   .refine(value => new Set(value.posts.map(post => post.id)).size === value.posts.length, "Post IDs must be unique.");
 
 const stateDir = process.env.IGNYTE_STATE_DIR ?? (process.env.NODE_ENV === "production" ? "/var/lib/ignyte" : path.join(process.cwd(), ".local-data"));
@@ -51,12 +51,14 @@ export async function readPdpSocialSettings() {
   try {
     const settings = pdpSocialSettingsSchema.parse(JSON.parse(await readFile(configPath, "utf8")));
     // Upgrade only the original seed links; preserve any destination edited by the team.
-    return { ...settings, posts: settings.posts.map(post => {
+    const upgraded = { ...settings, coversVersion: 1, posts: settings.posts.map(post => {
       const code = post.id.startsWith("instagram-") ? post.id.slice("instagram-".length) : "";
       const original = defaultPdpSocialSettings.posts.find(item => item.id === post.id);
-      if (original && post.href === `https://www.instagram.com/${original.href.includes("/reel/") ? "reel" : "p"}/${code}/`) return { ...post, href: original.href };
-      return post;
+      const href = original && post.href === `https://www.instagram.com/${original.href.includes("/reel/") ? "reel" : "p"}/${code}/` ? original.href : post.href;
+      return { ...post, href, image: !settings.coversVersion && original ? suppliedSocialCovers[code] : post.image };
     }) };
+    if (!settings.coversVersion) await writePdpSocialSettings(upgraded);
+    return upgraded;
   }
   catch (error) {
     if (error && typeof error === "object" && "code" in error && error.code === "ENOENT") return defaultPdpSocialSettings;
