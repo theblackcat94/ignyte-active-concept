@@ -55,7 +55,7 @@ export async function readPdpSocialSettings() {
       const code = post.id.startsWith("instagram-") ? post.id.slice("instagram-".length) : "";
       const original = defaultPdpSocialSettings.posts.find(item => item.id === post.id);
       const href = original && post.href === `https://www.instagram.com/${original.href.includes("/reel/") ? "reel" : "p"}/${code}/` ? original.href : post.href;
-      return { ...post, href, image: !settings.coversVersion && original ? suppliedSocialCovers[code] : post.image };
+      return { ...post, href, image: !settings.coversVersion && original ? suppliedSocialCovers[code] ?? post.image : post.image };
     }) };
     if (!settings.coversVersion) await writePdpSocialSettings(upgraded);
     return upgraded;

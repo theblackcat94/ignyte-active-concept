@@ -27,7 +27,7 @@ export const socialCoverImages = [
 ] as const;
 
 export const suppliedSocialCovers: Record<string, string> = Object.fromEntries(
-  socialCoverImages.map(image => [image.split("_").at(-1)!.replace(".jpg", ""), image]),
+  socialCoverImages.map(image => [image.split("/").at(-1)!.replace(/^\d+_/, "").replace(/\.jpg$/, ""), image]),
 );
 
 const instagramGrid = [
