@@ -26,10 +26,10 @@ const ignyteMono = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://ignyte.theblackcat94.com"),
-  title: "Ignyte Active",
+  title: "Ignyte Active | High-Performance Activewear for Women",
   applicationName: "Ignyte Active",
   icons: { icon: { url: asset("/favicon.png"), type: "image/png" } },
-  description: "High-performance activewear for women who bring the fire. Shop Ignyte Active.",
+  description: "High-performance activewear for women who train with purpose. Shop leggings, sports bras, tops, shorts and socks made for movement and self-expression.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

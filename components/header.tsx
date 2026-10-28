@@ -6,6 +6,7 @@ import { useState } from "react";
 import { asset } from "@/lib/asset";
 import { useStore } from "./store-provider";
 import HeartIcon from "./heart-icon";
+import AnnouncementBar from "./announcement-bar";
 
 export default function Header() {
   const { products, categories, bag, setBagOpen, searchOpen, setSearchOpen, wishlist } = useStore();
@@ -17,7 +18,7 @@ export default function Header() {
   const results = query.trim() ? products.filter(p => `${p.name} ${p.color} ${p.category}`.toLowerCase().includes(query.toLowerCase())).slice(0, 5) : [];
 
   return <>
-    <div className="announcement"><span>BUILT FOR THE BURN™</span><span className="announcement-center">MOVE WITH PURPOSE. TRAIN WITH FIRE.</span><span>IGNYTE ACTIVE © 2026</span></div>
+    <AnnouncementBar />
     <header className="site-header">
       <button className="header-icon mobile-menu-toggle" aria-label="Open menu" onClick={() => setMenuOpen(true)}><span className="hamburger"><i /><i /></span></button>
       <Link className="brand brand-image" href="/" aria-label="Ignyte home"><img src={asset("/images/ignyte-logo.png")} alt="Ignyte" /></Link>

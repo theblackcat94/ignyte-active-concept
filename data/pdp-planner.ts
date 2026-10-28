@@ -9,6 +9,7 @@ export type PdpContent = {
   model_details: string;
   show_model_details: boolean;
   show_brand_story: boolean;
+  care_approved?: boolean;
   video_url: string;
   video_poster: string;
   oeko_certificate: string;
@@ -16,7 +17,7 @@ export type PdpContent = {
   featured_best_seller: boolean;
 };
 
-const shared = { model_details: "", show_model_details: true, show_brand_story: true, video_url: "", video_poster: "", oeko_certificate: "", oeko_certified: true, featured_best_seller: false };
+const shared = { model_details: "", show_model_details: true, show_brand_story: true, care_approved: false, video_url: "", video_poster: "", oeko_certificate: "", oeko_certified: true, featured_best_seller: false };
 
 export const plannerPdp: Record<string, PdpContent> = {
   "Aura Halter Top": { ...shared, features: ["Flattering neckline", "Sculpted fit", "Body-hugging design", "Extended length", "Versatile styling"], activities: ["Yoga", "Pilates", "Everyday"], fit: "True to size", fabric: "90% polyamide, 10% elastane" },

@@ -4,6 +4,7 @@ const tools = [
   ["Products", "/admin"], ["Categories", "/admin/categories"],
   ["Orders", "/admin/orders"], ["Analytics", "/admin/analytics"],
   ["Promotions", "/admin/promotions"], ["Shipping", "/admin/shipping"],
+  ["Size guide", "/admin/size-guide"],
   ["Newsletter", "/admin/marketing"], ["Enquiries", "/admin/support"],
 ] as const;
 
