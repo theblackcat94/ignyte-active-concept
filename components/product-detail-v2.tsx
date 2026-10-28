@@ -8,13 +8,14 @@ import { commerceConfigured } from "@/lib/commerce";
 import { useStore } from "./store-provider";
 import ProductCard from "./product-card";
 import ProductGallery from "./product-gallery";
+import StackedProductGallery from "./stacked-product-gallery";
 import SizeGuideContent from "./size-guide-content";
 import { CurrencyEstimate } from "./currency-estimate";
 import { productColourHex } from "@/lib/product-colors";
 import { pairedProducts } from "@/lib/product-merchandising";
 import "@/app/product-detail-v2.css";
 
-export default function ProductDetail({ product }: { product: Product }) {
+export default function ProductDetail({ product, galleryLayout = "carousel" }: { product: Product; galleryLayout?: "carousel" | "stacked" }) {
   const [size, setSize] = useState("");
   const [openInfo, setOpenInfo] = useState<string | null>("FEATURES");
   const [guideOpen, setGuideOpen] = useState(false);
@@ -47,9 +48,9 @@ export default function ProductDetail({ product }: { product: Product }) {
     return <div className="pdp-delivery"><p>Australia only. Free shipping on orders of $100 or more. Delivery rates for smaller orders and prepaid return labels are being confirmed with the fulfilment team.</p><Link className="text-link" href="/returns">VIEW RETURNS POLICY ↗</Link></div>;
   }
 
-  return <div className="product-page section-wrap">
+  return <div className={`product-page section-wrap${galleryLayout === "stacked" ? " pdp-stack-preview" : ""}`}>
     <div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><Link href={`/shop/${product.category}`}>{product.category.toUpperCase().replace("-", " ")}</Link><span>/</span><span>{product.name.toUpperCase()}</span></div>
-    <div className="detail-grid"><ProductGallery product={product} /><div className="detail-info"><span className="eyebrow">IGNYTE / {product.category.toUpperCase().replace("-", " ")}</span><h1>{product.name.toUpperCase()}<em>.</em></h1>
+    <div className="detail-grid">{galleryLayout === "stacked" ? <StackedProductGallery product={product} /> : <ProductGallery product={product} />}<div className="detail-info"><span className="eyebrow">IGNYTE / {product.category.toUpperCase().replace("-", " ")}</span><h1>{product.name.toUpperCase()}<em>.</em></h1>
       <div className="detail-price">{(selectedVariant?.originalPrice ?? product.originalPrice) && <del>{money((selectedVariant?.originalPrice ?? product.originalPrice)!)}</del>}<span>{money(selectedVariant?.price ?? product.price)}<CurrencyEstimate aud={selectedVariant?.price ?? product.price} /></span></div>
       <p className="detail-description">{product.description}</p>{commerceConfigured && !product.variants && <p className="catalog-preview-note">Preview item. Available to order after sizes and stock are confirmed.</p>}
       <div className="detail-color">COLOUR: <strong>{product.color.toUpperCase()}</strong></div>
