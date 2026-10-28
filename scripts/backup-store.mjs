@@ -23,18 +23,18 @@ for (const table of tables) {
   }
   await writeFile(join(directory, `${table}.json`), JSON.stringify(rows), { mode: 0o600 });
 }
-async function storageFolder(prefix = "") {
+async function storageFolder(bucket, prefix = "") {
   let offset = 0;
   for (;;) {
-    const { data, error } = await db.storage.from("product-media").list(prefix, { limit: 100, offset });
+    const { data, error } = await db.storage.from(bucket).list(prefix, { limit: 100, offset });
     if (error) throw Error(`Media list failed: ${error.message}`);
     for (const item of data ?? []) {
       const path = prefix ? `${prefix}/${item.name}` : item.name;
-      if (item.id === null) await storageFolder(path);
+      if (item.id === null) await storageFolder(bucket, path);
       else {
-        const { data: blob, error: downloadError } = await db.storage.from("product-media").download(path);
+        const { data: blob, error: downloadError } = await db.storage.from(bucket).download(path);
         if (downloadError || !blob) throw Error(`Media download failed: ${path}`);
-        const destination = join(directory, "product-media", ...path.split("/"));
+        const destination = join(directory, bucket, ...path.split("/"));
         await mkdir(resolve(destination, ".."), { recursive: true, mode: 0o700 });
         await writeFile(destination, Buffer.from(await blob.arrayBuffer()), { mode: 0o600 });
       }
@@ -43,6 +43,10 @@ async function storageFolder(prefix = "") {
     offset += 100;
   }
 }
-await storageFolder();
-await writeFile(join(directory, "manifest.json"), JSON.stringify({ created_at: new Date().toISOString(), tables, bucket: "product-media", note: "Business-data export; not a full Postgres or Supabase Auth backup" }, null, 2), { mode: 0o600 });
+const buckets = ["product-media"];
+const homeMedia = await db.storage.getBucket("home-media");
+if (homeMedia.data) buckets.push("home-media");
+else if (homeMedia.error && !/not found/i.test(homeMedia.error.message)) throw homeMedia.error;
+for (const bucket of buckets) await storageFolder(bucket);
+await writeFile(join(directory, "manifest.json"), JSON.stringify({ created_at: new Date().toISOString(), tables, buckets, note: "Business-data export; not a full Postgres or Supabase Auth backup" }, null, 2), { mode: 0o600 });
 console.log(`Store backup completed at ${directory}`);
