@@ -17,7 +17,7 @@ export default function StackedProductGallery({ product }: { product: Product })
       {photos.map((photo, index) => <figure className="pdp-stack-tile" key={`${photo.image}-${index}`}>
         <button type="button" className="pdp-stack-photo" onClick={() => setOpenIndex(index)} aria-label={`Enlarge photo ${index + 1} of ${photos.length}: ${photo.alt}`}>
           <img src={photo.image} alt={photo.alt} loading={index === 0 ? "eager" : "lazy"} />
-          <span className="pdp-stack-zoom-cue" aria-hidden="true">＋</span>
+          <span className="pdp-stack-zoom-cue" aria-hidden="true"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></svg></span>
         </button>
       </figure>)}
       {product.pdp.video_url && <figure className="pdp-stack-tile pdp-stack-video">
