@@ -4,7 +4,7 @@ const tools = [
   ["Products", "/admin"], ["Categories", "/admin/categories"],
   ["Orders", "/admin/orders"], ["Analytics", "/admin/analytics"],
   ["Promotions", "/admin/promotions"], ["Shipping", "/admin/shipping"],
-  ["Marketing", "/admin/marketing"], ["Support", "/admin/support"],
+  ["Newsletter", "/admin/marketing"], ["Enquiries", "/admin/support"],
 ] as const;
 
 export default function AdminToolsNav() {
