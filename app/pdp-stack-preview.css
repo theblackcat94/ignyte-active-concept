@@ -1,15 +1,32 @@
 .pdp-layout-preview-banner{display:flex;justify-content:space-between;align-items:center;gap:18px;padding-top:28px;padding-bottom:10px;font-size:11px;font-weight:800;letter-spacing:.1em}
 .pdp-layout-preview-banner span{color:#FF4533}
 .pdp-layout-preview-banner a{text-decoration:underline;text-underline-offset:4px}
-.product-page.pdp-stack-preview .detail-grid{grid-template-columns:minmax(0,1.55fr) minmax(350px,.7fr);align-items:start;gap:clamp(24px,3vw,60px)}
+.product-page.pdp-stack-preview .detail-grid{grid-template-columns:minmax(0,1.8fr) minmax(300px,.62fr);align-items:start;gap:clamp(22px,2.3vw,42px)}
 .pdp-stack-media{min-width:0}
-.pdp-stack-heading{display:flex;justify-content:space-between;gap:12px;margin-bottom:14px;font-size:10px;font-weight:800;letter-spacing:.12em}
 .pdp-stack-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .pdp-stack-tile{position:relative;margin:0;min-width:0;background:#e8e5df;overflow:hidden}
 .pdp-stack-tile img,.pdp-stack-tile video{display:block;width:100%;aspect-ratio:3/4;object-fit:cover}
+.pdp-stack-photo{display:block;width:100%;padding:0;border:0;background:transparent;text-align:left;cursor:zoom-in;overflow:hidden}
+.pdp-stack-photo img{transition:transform .3s ease}
+.pdp-stack-photo:hover img{transform:scale(1.06)}
+.pdp-stack-photo:focus-visible{outline:3px solid #FF4533;outline-offset:-3px}
+.pdp-stack-zoom-cue{position:absolute;right:12px;bottom:12px;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#0B1020;color:#fff;font-size:20px;pointer-events:none}
 .pdp-stack-video{background:#0B1020}
 .pdp-stack-video video{object-fit:contain}
 .pdp-stack-video figcaption{position:absolute;top:12px;left:12px;background:#0B1020;color:#fff;padding:7px 9px;font-size:9px;font-weight:800;letter-spacing:.1em;pointer-events:none}
 .pdp-stack-swipe{display:none}
+.pdp-zoom-backdrop{position:fixed;inset:0;z-index:200;background:rgba(11,16,32,.94);padding:clamp(10px,2vw,28px);display:grid;place-items:center}
+.pdp-zoom-dialog{width:min(100%,1500px);height:100%;display:flex;flex-direction:column;color:#fff}
+.pdp-zoom-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:46px;font-size:12px;font-weight:800;letter-spacing:.1em}
+.pdp-zoom-actions{display:flex;align-items:center;gap:8px}
+.pdp-zoom-actions button,.pdp-zoom-stage button{display:grid;place-items:center;min-width:42px;min-height:42px;border:1px solid #ffffff66;background:#0B1020;color:#fff;font-size:22px;cursor:pointer}
+.pdp-zoom-actions button:disabled{opacity:.35;cursor:default}
+.pdp-zoom-actions span{min-width:55px;text-align:center}
+.pdp-zoom-actions button:focus-visible,.pdp-zoom-stage button:focus-visible{outline:2px solid #FF4533;outline-offset:2px}
+.pdp-zoom-stage{position:relative;flex:1;min-height:0;overflow:hidden;display:grid;place-items:center}
+.pdp-zoom-stage img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;touch-action:none;user-select:none}
+.pdp-zoom-stage button{position:absolute;top:50%;z-index:1;transform:translateY(-50%)}
+.pdp-zoom-prev{left:0}.pdp-zoom-next{right:0}
+.pdp-zoom-dialog>p{margin:8px 0 0;text-align:center;font-size:11px;letter-spacing:.05em}
 @media(max-width:900px){.product-page.pdp-stack-preview .detail-grid{grid-template-columns:1fr}.pdp-stack-grid{display:grid;grid-auto-flow:column;grid-auto-columns:min(78vw,400px);grid-template-columns:none;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-inline:contain;scrollbar-width:thin;padding-bottom:8px}.pdp-stack-tile{scroll-snap-align:start}.pdp-stack-swipe{display:block;text-align:center;font-size:10px;font-weight:800;letter-spacing:.12em;margin:10px 0 0}}
-@media(max-width:520px){.pdp-layout-preview-banner{align-items:flex-start;flex-direction:column;padding-top:18px}.pdp-stack-grid{grid-auto-columns:84vw}}
+@media(max-width:520px){.pdp-layout-preview-banner{align-items:flex-start;flex-direction:column;padding-top:18px}.pdp-stack-grid{grid-auto-columns:84vw}.pdp-zoom-backdrop{padding:8px}.pdp-zoom-stage button{min-width:36px;min-height:36px}.pdp-zoom-dialog>p{font-size:10px}}

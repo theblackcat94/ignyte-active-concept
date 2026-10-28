@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import type { Product } from "@/lib/catalog";
 
-function GalleryVideo({ src, poster, alt, active }: { src: string; poster?: string; alt: string; active: boolean }) {
+function GalleryVideo({ src, poster, alt }: { src: string; poster: string; alt: string }) {
   const video = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
-  useEffect(() => { if (!active) { video.current?.pause(); return; } void video.current?.play().catch(() => setPlaying(false)); }, [active]);
-  return <div className="product-media-video"><video ref={video} src={src} poster={poster} controls muted playsInline preload="metadata" aria-label={alt} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} />{!playing && <button type="button" className="product-media-play" onClick={() => void video.current?.play()} aria-label="Play product film">▶</button>}<span>IGNYTE BRAND FILM</span></div>;
+  return <div className="product-media-video"><video ref={video} src={src} poster={poster} controls muted playsInline preload="none" aria-label={alt} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} />{!playing && <button type="button" className="product-media-play" onClick={() => void video.current?.play()} aria-label="Play product film">▶</button>}<span>IGNYTE BRAND FILM</span></div>;
 }
 
 export default function ProductGallery({ product }: { product: Product }) {
@@ -26,7 +25,7 @@ export default function ProductGallery({ product }: { product: Product }) {
     <div className={`product-media-stage ${visible.length === 1 ? "single" : ""}`}
       onTouchStart={event => { touchStart.current = event.touches[0]?.clientX ?? null; }}
       onTouchEnd={event => { if (touchStart.current === null || event.target instanceof HTMLVideoElement) return; const delta = event.changedTouches[0]?.clientX - touchStart.current; if (Math.abs(delta) > 45) move(delta < 0 ? 1 : -1); touchStart.current = null; }}>
-      {visible.map((item, index) => item.kind === "video" ? <GalleryVideo key={`${item.src}-${index}`} src={item.src} poster={product.pdp.video_poster || undefined} alt={item.alt} active={index === 0} /> : <img key={`${item.src}-${index}`} src={item.src} alt={item.alt} loading={index === 0 ? "eager" : "lazy"} />)}
+      {visible.map((item, index) => item.kind === "video" ? <GalleryVideo key={`${item.src}-${index}`} src={item.src} poster={product.pdp.video_poster} alt={item.alt} /> : <img key={`${item.src}-${index}`} src={item.src} alt={item.alt} loading={index === 0 ? "eager" : "lazy"} />)}
     </div>
     {media.length > 2 && <div className="product-media-navigation">
       <div className="product-media-heading"><span>EXPLORE THE DETAILS</span><span aria-live="polite">{String(current + 1).padStart(2, "0")} / {String(media.length).padStart(2, "0")}</span></div>
