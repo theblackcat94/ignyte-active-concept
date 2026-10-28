@@ -11,3 +11,4 @@
 .pdp-story{grid-template-columns:repeat(2,1fr)}
 .pdp-care{padding:0 0 16px}.pdp-care>strong{display:block;margin-bottom:9px}.pdp-care p{padding:0 0 8px}
 @media(max-width:700px){.pdp-brand-callout{grid-template-columns:1fr;margin:45px 0 30px}.pdp-brand-callout>div{padding:42px 25px}.pdp-brand-callout h2{font-size:clamp(45px,11vw,70px)}.pdp-brand-callout>img{height:420px}.pdp-story{grid-template-columns:1fr}}
+.pdp-size-guide-link{padding:20px 0 28px}
