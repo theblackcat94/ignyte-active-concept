@@ -1,6 +1,6 @@
 # IGNYTE email designs
 
-These are review drafts. The site now requests Supabase Auth confirmation mail during account creation and offers a resend action, but the branded Auth HTML below must be installed in Supabase before it is sent. The transactional designs in `lib/email-templates.ts` are not connected to site events or SES yet.
+These are review drafts. The site delegates account creation to Supabase Auth and offers a confirmation resend action when Auth requires email verification. Whether a confirmation is sent depends on the Supabase project settings; the branded Auth HTML below must be installed in Supabase before it is sent. The transactional designs in `lib/email-templates.ts` are not connected to site events or SES yet.
 
 | Message | Trigger | Subject | Source |
 | --- | --- | --- | --- |
