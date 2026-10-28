@@ -25,7 +25,7 @@ export default function Home() {
   return <div className="home-page" id="top">
     <HomeHeroSlider />
     <section className="home-products home-container" aria-labelledby="new-arrivals-title">
-      <div className="home-section-head"><h2 id="new-arrivals-title">SHOP NEW ARRIVALS_</h2><Link href="/shop">VIEW ALL ↗</Link></div>
+      <div className="home-section-head"><h2 id="new-arrivals-title">SHOP NEW ARRIVALS_</h2><Link href="/shop">SHOP ALL ↗</Link></div>
       {catalogPreview && <p className="catalog-preview-note">Collection preview. Ordering opens when product sizes and stock are confirmed.</p>}
       <HomeProductCarousel products={apparel.slice(0, 8)} label="New arrivals" />
     </section>
@@ -37,6 +37,6 @@ export default function Home() {
     <section className="home-values home-container" aria-label="Why Ignyte"><div><span>01</span><h3>No distractions</h3><p>Designed to stay put, feel secure, and let you focus on the work.</p></div><div><span>02</span><h3>Moves with you</h3><p>Flexible support that responds to every rep, hold, stretch, and session.</p></div><div><span>03</span><h3>Tested in real training</h3><p>Built for sweat, pressure, and repeat wear.</p></div></section>
     <section className="home-collections home-container" id="collections"><div className="home-section-head"><h2>FIND YOUR FIRE_</h2><Link href="/shop">SHOP ALL ↗</Link></div><div className="home-collection-grid">{collections.map((collection) => <Link href={`/shop/${collection.id}`} className="home-collection" key={collection.id}><img src={featuredCover[collection.id] ? homeImage(featuredCover[collection.id]) : collection.cover} alt={`${collection.label} collection`} loading="lazy" /><div><h3>{collection.label}</h3><span>SHOP NOW ↗</span></div></Link>)}</div></section>
     <section className="home-bottom" aria-labelledby="bottom-title"><img src={homeImage("Home-Hero-Alt-2-v2.jpg")} alt="Ignyte athletes training together" loading="lazy" /><div><span className="home-kicker">BRING THE FIRE_</span><h2 id="bottom-title">Your next move starts here.</h2><Link href="/shop" className="home-pill">SHOP THE COLLECTION <span>↗</span></Link></div></section>
-    {bestSellers.length > 0 && <section className="home-products home-container" aria-labelledby="best-sellers-title"><div className="home-section-head"><h2 id="best-sellers-title">THE IGNYTE EDIT_</h2><Link href="/shop">VIEW ALL ↗</Link></div><HomeProductCarousel products={bestSellers} label="The Ignyte Edit" /></section>}
+    {bestSellers.length > 0 && <section className="home-products home-container" aria-labelledby="best-sellers-title"><div className="home-section-head"><h2 id="best-sellers-title">THE IGNYTE EDIT_</h2><Link href="/shop">SHOP ALL ↗</Link></div><HomeProductCarousel products={bestSellers} label="The Ignyte Edit" /></section>}
   </div>;
 }
