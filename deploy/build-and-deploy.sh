@@ -16,9 +16,19 @@ if [[ -n "$(git status --porcelain --untracked-files=normal)" ]]; then
   exit 1
 fi
 
-# The build machine keeps one owner-only env file. Only public values are
-# exported to Next.js; the full file is streamed to the Linode over SSH.
+# The build machine keeps owner-only env files. Only public values are
+# exported to Next.js; the full selected file is streamed to the target over SSH.
 build_env_file="${BUILD_ENV_FILE:-/home/internetremovals/.config/ignyte/build.env}"
+deploy_target="${DEPLOY_SSH_TARGET:-root@172.105.186.242}"
+deploy_remote_prefix="${DEPLOY_REMOTE_PREFIX:-}"
+if [[ "$deploy_remote_prefix" != "" && "$deploy_remote_prefix" != "sudo" ]]; then
+  echo "DEPLOY_REMOTE_PREFIX must be empty or sudo" >&2
+  exit 1
+fi
+remote_install=(bash -s -- "$expected_sha")
+if [[ "$deploy_remote_prefix" == "sudo" ]]; then
+  remote_install=(sudo "${remote_install[@]}")
+fi
 if [[ -f "$build_env_file" ]]; then
   if [[ -L "$build_env_file" || ! -O "$build_env_file" ]]; then
     echo "Ignyte build env must be a regular file owned by the build user" >&2
@@ -84,11 +94,11 @@ fi
 
 archive="$stage/ignyte-$expected_sha.tar.gz"
 tar -C "$stage/app" -czf "$archive" .
-scp -o BatchMode=yes -o StrictHostKeyChecking=yes "$archive" "root@172.105.186.242:/tmp/ignyte-$expected_sha.tar.gz"
+scp -o BatchMode=yes -o StrictHostKeyChecking=yes "$archive" "$deploy_target:/tmp/ignyte-$expected_sha.tar.gz"
 if [[ -f "$build_env_file" ]]; then
-  ssh -o BatchMode=yes -o StrictHostKeyChecking=yes root@172.105.186.242 \
+  ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$deploy_target" \
     "umask 077; cat > /tmp/ignyte-env-$expected_sha" < "$build_env_file"
 fi
-ssh -o BatchMode=yes -o StrictHostKeyChecking=yes root@172.105.186.242 \
-  bash -s -- "$expected_sha" < deploy/install-release.sh
-echo "Deployed commit $expected_sha to the Ignyte Linode app service"
+ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$deploy_target" \
+  "${remote_install[@]}" < deploy/install-release.sh
+echo "Deployed commit $expected_sha to $deploy_target"

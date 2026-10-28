@@ -51,7 +51,6 @@ WorkingDirectory=/opt/ignyte/current
 Environment=HOSTNAME=127.0.0.1
 Environment=PORT=3210
 Environment=NODE_ENV=production
-Environment=NEXT_PUBLIC_SITE_URL=https://ignyte.theblackcat94.com
 EnvironmentFile=-/etc/ignyte/production.env
 ExecStart=/opt/ignyte/current/node /opt/ignyte/current/server.js
 Restart=always
