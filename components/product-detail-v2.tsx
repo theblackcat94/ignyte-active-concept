@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { showDraftCareGuide } from "@/data/storefront-flags";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { type Product, money } from "@/lib/catalog";
 import { commerceConfigured } from "@/lib/commerce";
 import { useStore } from "./store-provider";
@@ -18,6 +18,9 @@ export default function ProductDetail({ product }: { product: Product }) {
   const [size, setSize] = useState("");
   const [openInfo, setOpenInfo] = useState<string | null>("FEATURES");
   const [guideOpen, setGuideOpen] = useState(false);
+  const [showMobilePurchase, setShowMobilePurchase] = useState(false);
+  const purchaseRef = useRef<HTMLButtonElement>(null);
+  const sizeRef = useRef<HTMLDivElement>(null);
   const { products, addToBag, wishlist, toggleWishlist } = useStore();
   const related = pairedProducts(product.slug, products, "related");
   const upsells = pairedProducts(product.slug, products, "upsell");
@@ -34,6 +37,17 @@ export default function ProductDetail({ product }: { product: Product }) {
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, [guideOpen]);
+  useEffect(() => {
+    const purchase = purchaseRef.current;
+    if (!purchase) return;
+    const observer = new IntersectionObserver(([entry]) => setShowMobilePurchase(!entry.isIntersecting), { threshold: 0.1 });
+    observer.observe(purchase);
+    return () => observer.disconnect();
+  }, [product.slug]);
+  function mobilePurchase() {
+    if (!canAdd) { sizeRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+    addToBag(product.slug, size);
+  }
   const sections = ["FEATURES", "DESIGNED FOR", "FIT & FABRIC", "MODEL DETAILS", "SIZE GUIDE", "CARE GUIDE", "DELIVERY & RETURNS"].filter(label =>
     label === "FEATURES" ? pdp.features.length : label === "DESIGNED FOR" ? pdp.activities.length : label === "FIT & FABRIC" ? Boolean(pdp.fit || pdp.fabric || pdp.oeko_certified) : label === "MODEL DETAILS" ? Boolean(pdp.show_model_details && pdp.model_details.trim()) : label === "CARE GUIDE" ? product.category !== "accessories" && (Boolean(pdp.care_approved) || showDraftCareGuide) : true);
 
@@ -60,8 +74,8 @@ export default function ProductDetail({ product }: { product: Product }) {
         </Link>)}
       </div>
       <div className="size-heading"><span>SELECT SIZE</span><button type="button" onClick={() => setGuideOpen(true)}>SIZE GUIDE ↗</button></div>
-      <div className="size-grid">{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} disabled={variant.stock <= 0} onClick={() => setSize(variant.size)} key={variant.id}>{variant.size}</button>)}</div>
-      <button type="button" className="button button-orange detail-add" onClick={() => size && addToBag(product.slug, size)} disabled={!canAdd}>{addLabel}<span>↗</span></button>
+      <div className="size-grid" ref={sizeRef}>{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} disabled={variant.stock <= 0} onClick={() => setSize(variant.size)} key={variant.id}>{variant.size}</button>)}</div>
+      <button ref={purchaseRef} type="button" className="button button-orange detail-add" onClick={() => size && addToBag(product.slug, size)} disabled={!canAdd}>{addLabel}<span>↗</span></button>
       <button type="button" className="wishlist-button" onClick={() => toggleWishlist(product.slug)}>{wishlist.includes(product.slug) ? "♥ SAVED TO WISHLIST" : "♡ ADD TO WISHLIST"}</button>
       <div className="detail-accordions">{sections.map(label => <div key={label}><button type="button" aria-expanded={openInfo === label} onClick={() => setOpenInfo(openInfo === label ? null : label)}>{label}<span>{openInfo === label ? "−" : "+"}</span></button>{openInfo === label && content(label)}</div>)}</div>
     </div></div>
@@ -69,6 +83,7 @@ export default function ProductDetail({ product }: { product: Product }) {
     {pdp.show_brand_story && <div className="pdp-story"><section><span className="eyebrow">THE IGNYTE APPROACH ↘</span><h2>Made for movement.</h2><p>Fit, feel and freedom of movement guide the details, from warm-up to final rep.</p></section><section><span className="eyebrow">THE DETAILS ↘</span><h2>Tested in real training.</h2><p>Built for sweat, pressure, and repeat wear.</p><ul>{(pdp.features.length ? pdp.features : ["Explore the fit and fabric details in the product information above."]).slice(0, 4).map(feature => <li key={feature}>{feature}</li>)}</ul></section></div>}
     {related.length > 0 && <div className="related-section"><div className="section-heading"><div><span className="eyebrow">COMPLETE YOUR EDIT</span><h2>PAIR IT <em>WITH.</em></h2></div><Link href="/shop" className="text-link">SHOP ALL ↗</Link></div><div className="products-grid">{related.map((p, i) => <ProductCard product={p} index={i} key={p.slug} />)}</div></div>}
     {upsells.length > 0 && <div className="related-section"><div className="section-heading"><div><span className="eyebrow">ANOTHER WAY TO MOVE</span><h2>CONSIDER <em>THIS.</em></h2></div></div><div className="products-grid">{upsells.map((p, i) => <ProductCard product={p} index={i} key={p.slug} />)}</div></div>}
+    {showMobilePurchase && !guideOpen && <div className="pdp-mobile-purchase"><div><strong>{product.name}</strong><span>{size ? `SIZE ${size}` : "CHOOSE A SIZE"} · {money(selectedVariant?.price ?? product.price)}</span></div><button type="button" onClick={mobilePurchase} disabled={!sizes.some(variant => variant.stock > 0)}>{size ? "ADD TO BAG ↗" : "SELECT SIZE ↑"}</button></div>}
     {guideOpen && <div className="pdp-guide-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setGuideOpen(false); }}><div className="pdp-guide-dialog" role="dialog" aria-modal="true" aria-label="Size guide"><div className="pdp-guide-head"><h2>FIND YOUR FIT.</h2><button type="button" onClick={() => setGuideOpen(false)} aria-label="Close size guide">×</button></div><SizeGuideContent productCategory={product.category} /><Link href="/size-guide" className="text-link">OPEN FULL SIZE GUIDE ↗</Link></div></div>}
   </div>;
 }
