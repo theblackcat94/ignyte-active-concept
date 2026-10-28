@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { categories as conceptCategories, legacyProductSlugs, money, products as conceptProducts, type Product } from "@/lib/catalog";
@@ -8,7 +8,7 @@ import { activeCategories, activeProducts, commerceConfigured } from "@/lib/comm
 import { track } from "@/lib/analytics-client";
 import { bagRecommendations } from "@/lib/product-merchandising";
 import "@/app/bag-recommendations.css";
-import { FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping-policy";
+import FreeShippingProgress from "./free-shipping-progress";
 
 type BagItem = { slug: string; size: string; quantity: number };
 type Store = {
@@ -42,6 +42,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [checkoutMessage, setCheckoutMessage] = useState("");
   const [storageReady, setStorageReady] = useState(false);
   const [recommendationSizes, setRecommendationSizes] = useState<Record<string, string>>({});
+  const [actionNotice, setActionNotice] = useState<{ message: string; id: number } | null>(null);
+  const noticeSequence = useRef(0);
+
+  useEffect(() => {
+    if (!actionNotice) return;
+    const timer = window.setTimeout(() => setActionNotice(null), 2800);
+    return () => window.clearTimeout(timer);
+  }, [actionNotice]);
 
   useEffect(() => {
     if (!commerceConfigured) return;
@@ -83,6 +91,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         : [...current, { slug, size, quantity: 1 }];
     });
     setBagOpen(true);
+    setActionNotice({ message: `${product?.name ?? "Item"} added to your bag`, id: ++noticeSequence.current });
     track("add_to_bag", `/product/${slug}/`);
   };
   const removeFromBag = (slug: string, size: string) => setBag(current => current.filter(item => !(item.slug === slug && item.size === size)));
@@ -98,7 +107,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }));
   };
   const clearBag = useCallback(() => setBag([]), []);
-  const toggleWishlist = (slug: string) => setWishlist(current => current.includes(slug) ? current.filter(item => item !== slug) : [...current, slug]);
+  const toggleWishlist = (slug: string) => {
+    const product = products.find(item => item.slug === slug);
+    const saved = wishlist.includes(slug);
+    setWishlist(current => saved ? current.filter(item => item !== slug) : [...current, slug]);
+    setActionNotice({ message: `${product?.name ?? "Item"} ${saved ? "removed from" : "saved to"} your wishlist`, id: ++noticeSequence.current });
+  };
 
   const validBag = bag.filter(item => products.some(product => product.slug === item.slug &&
     (!commerceConfigured || product.variants?.some(variant => variant.size === item.size && variant.stock >= item.quantity))));
@@ -111,6 +125,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   return (
     <StoreContext.Provider value={{ products, categories, catalogPreview, bag, bagOpen, setBagOpen, addToBag, changeBagQuantity, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
       {children}
+      {actionNotice && <div key={actionNotice.id} className="store-action-toast" role="status" aria-live="polite"><span aria-hidden="true">✦</span>{actionNotice.message}</div>}
       {bagOpen && <div className="drawer-backdrop" onClick={() => setBagOpen(false)} />}
       <aside className={`bag-drawer ${bagOpen ? "is-open" : ""}`} aria-label="Shopping bag" aria-hidden={!bagOpen}>
         <div className="drawer-head"><div><span className="eyebrow">YOUR EDIT</span><h2>YOUR BAG ({bag.reduce((sum, item) => sum + item.quantity, 0)})</h2></div><button className="icon-button" onClick={() => setBagOpen(false)} aria-label="Close bag">×</button></div>
@@ -127,7 +142,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           const variants = product.variants ?? [];
           return <div className="bag-recommendation" key={product.slug}><Link href={`/product/${product.slug}`} onClick={() => setBagOpen(false)}><img src={product.image} alt="" /></Link><div><Link href={`/product/${product.slug}`} onClick={() => setBagOpen(false)}><strong>{product.name}</strong></Link><span>{product.color} · {money(product.price)}</span><div className="bag-recommendation-sizes" aria-label={`Choose ${product.name} size`}>{variants.map(variant => <button type="button" key={variant.id} disabled={variant.stock <= 0} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} aria-pressed={chosen === variant.size} onClick={() => setRecommendationSizes(current => ({ ...current, [product.slug]: variant.size }))}>{variant.size}</button>)}</div><button type="button" className="bag-recommendation-add" disabled={!variants.some(variant => variant.size === chosen && variant.stock > 0)} onClick={() => { addToBag(product.slug, chosen); setRecommendationSizes(current => ({ ...current, [product.slug]: "" })); }}>ADD TO BAG ↗</button></div></div>;
         })}</section>}</div> : <div className="empty-bag"><svg className="empty-bag-mark" viewBox="0 0 80 80" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" aria-hidden="true"><path d="M40 5v70M5 40h70M15 15l50 50M65 15 15 65" /></svg><h3>Nothing in your bag yet.</h3><p>Find your next training favourite.</p><Link href="/shop" className="button button-dark" onClick={() => setBagOpen(false)}>SHOP THE COLLECTION <span>↗</span></Link></div>}
-        <div className="drawer-foot">{validBag.length > 0 && <div className="bag-shipping-progress"><strong>{subtotal * 100 >= FREE_SHIPPING_THRESHOLD_CENTS ? "You’ve unlocked free shipping!" : `You’re ${money((FREE_SHIPPING_THRESHOLD_CENTS / 100) - subtotal)} AUD away from free shipping.`}</strong><div className="bag-shipping-track" role="progressbar" aria-label="Progress toward free Australian shipping" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.min(100, Math.round(subtotal * 10000 / FREE_SHIPPING_THRESHOLD_CENTS))}><span style={{ width: `${Math.min(100, subtotal * 10000 / FREE_SHIPPING_THRESHOLD_CENTS)}%` }} /></div><small>Australian orders; eligibility is calculated again after discounts at checkout.</small></div>}<div><span>SUBTOTAL</span><strong>{money(subtotal)}</strong></div><p>Australian delivery only. Shipping is quoted after your order request; no payment is taken at checkout.</p>{checkoutMessage && <p role="status">{checkoutMessage}</p>}<button className="button button-orange" disabled={!validBag.length} onClick={() => { setBagOpen(false); router.push("/checkout"); }}>CHECKOUT ↗</button></div>
+        <div className="drawer-foot">{validBag.length > 0 && <FreeShippingProgress amountCents={Math.round(subtotal * 100)} />}<div><span>SUBTOTAL</span><strong>{money(subtotal)}</strong></div><p>Australian delivery only. Shipping is quoted after your order request; no payment is taken at checkout.</p>{checkoutMessage && <p role="status">{checkoutMessage}</p>}<button className="button button-orange" disabled={!validBag.length} onClick={() => { setBagOpen(false); router.push("/checkout"); }}>CHECKOUT ↗</button></div>
       </aside>
     </StoreContext.Provider>
   );

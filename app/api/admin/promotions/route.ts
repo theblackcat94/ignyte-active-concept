@@ -17,7 +17,15 @@ const coupon = z.object({
 export async function GET(request: Request) {
   if (!await verifiedStaff(request)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const { data, error } = await adminDb().from("coupons").select("*").order("created_at", { ascending: false });
-  return error ? NextResponse.json({ error: "Could not load coupons" }, { status: 503 }) : NextResponse.json(data);
+  if (error) return NextResponse.json({ error: "Could not load coupons" }, { status: 503 });
+  const usage = await Promise.all((data ?? []).map(async item => {
+    const { count, error: countError } = await adminDb().from("orders")
+      .select("id", { count: "exact", head: true })
+      .eq("coupon_code", item.code).in("status", ["awaiting_payment", "paid"]);
+    if (countError || count == null) throw Error("Could not load coupon usage");
+    return { ...item, times_used: count, is_expired: Boolean(item.ends_at && new Date(item.ends_at).getTime() <= Date.now()) };
+  })).catch(() => null);
+  return usage ? NextResponse.json(usage) : NextResponse.json({ error: "Could not load coupon usage" }, { status: 503 });
 }
 
 export async function POST(request: Request) {

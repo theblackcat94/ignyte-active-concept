@@ -6,6 +6,7 @@ import { money } from "@/lib/catalog";
 import { browserDb, commerceConfigured } from "@/lib/commerce";
 import { useStore } from "@/components/store-provider";
 import { track } from "@/lib/analytics-client";
+import FreeShippingProgress from "@/components/free-shipping-progress";
 import "./checkout.css";
 
 type Shipping = { name: string; phone: string; line1: string; line2: string; city: string; state: string; postal_code: string; country: "AU" };
@@ -121,9 +122,11 @@ export default function CheckoutPage() {
       : <div className="checkout-grid"><form id="order-request" className="checkout-form" onSubmit={submit}>
         {step === "delivery" ? <><h2>Australian delivery</h2><p>You can continue as a guest. No account or sign-in is required.</p>
         <div className="checkout-guidance"><div><strong>GUEST CHECKOUT</strong><p>Enter your email and Australian address below. After saving the order request, keep its order number and link; guest order details can be reopened in this browser for 30 days.</p></div><div><strong>DELIVERY &amp; RETURNS</strong><p>Australian orders of AU$100 or more after discounts qualify for free shipping. For smaller orders, any unconfigured delivery rate will be quoted before payment. Read the <Link href="/returns">Shipping &amp; Returns Policy</Link> before continuing.</p></div></div>
+        <div className="checkout-contact-head"><h3>YOUR CONTACT</h3><p>We’ll use these details for your order. Newsletter signup is separate and optional.</p></div>
         <div className="checkout-fields">
           <label className="wide">EMAIL ADDRESS<input required type="email" autoComplete="email" maxLength={254} value={email} readOnly={signedIn} onChange={event => setEmail(event.target.value)} /></label>
-          <label>FULL NAME<input required autoComplete="name" maxLength={120} value={shipping.name} onChange={event => setShipping({ ...shipping, name: event.target.value })} /></label>
+          <label className="wide">FULL NAME<input required autoComplete="name" maxLength={120} value={shipping.name} onChange={event => setShipping({ ...shipping, name: event.target.value })} /></label>
+          <div className="checkout-address-head"><h3>DELIVERY ADDRESS</h3><p>Australia only. We’ll calculate shipping from your state and postcode.</p></div>
           <label>PHONE<input required type="tel" autoComplete="tel" minLength={8} maxLength={30} value={shipping.phone} onChange={event => setShipping({ ...shipping, phone: event.target.value })} /></label>
           <label className="wide">ADDRESS LINE 1<input required autoComplete="address-line1" maxLength={150} value={shipping.line1} onChange={event => setShipping({ ...shipping, line1: event.target.value })} /></label>
           <label className="wide">ADDRESS LINE 2<input autoComplete="address-line2" maxLength={150} value={shipping.line2} onChange={event => setShipping({ ...shipping, line2: event.target.value })} /></label>
@@ -147,6 +150,7 @@ export default function CheckoutPage() {
         <div className="checkout-total"><span>SUBTOTAL</span><strong>{money(subtotal)}</strong></div>
         <div className="checkout-coupon"><label htmlFor="coupon-code">DISCOUNT CODE</label><div><input id="coupon-code" value={couponCode} maxLength={30} onChange={event => { setCouponCode(event.target.value.toUpperCase()); setCoupon(null); setCouponMessage(""); }} placeholder="Enter code" /><button type="button" onClick={() => void applyCoupon()}>APPLY</button></div>{couponMessage && <small role="status">{couponMessage}</small>}</div>
         {appliedCoupon && <div className="checkout-total"><span>DISCOUNT ({appliedCoupon.code})</span><strong>−{money(appliedCoupon.discountCents / 100)}</strong></div>}
+        <FreeShippingProgress amountCents={shippingBasisCents} />
         <div className="checkout-total"><span>SHIPPING</span><strong>{quotedShipping === null ? "To be quoted" : money(quotedShipping / 100)}</strong></div>
         {quotedShipping !== null && <div className="checkout-total checkout-grand"><span>ESTIMATED TOTAL</span><strong>{money((subtotalCents - (appliedCoupon?.discountCents ?? 0) + quotedShipping) / 100)}</strong></div>}
         <p>Prices are in AUD and include GST. {quotedShipping === null ? "Delivery rates for your state are pending; the team will quote shipping before payment." : "Delivery is estimated from your state and order value; the team confirms the final amount before payment."}</p>

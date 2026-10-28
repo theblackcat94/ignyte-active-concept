@@ -18,7 +18,7 @@ import { asset } from "@/lib/asset";
 import "@/app/product-detail-v2.css";
 
 export default function ProductDetail({ product }: { product: Product }) {
-  const [size, setSize] = useState("");
+  const [selection, setSelection] = useState({ slug: product.slug, size: "" });
   const [openInfo, setOpenInfo] = useState<string | null>("FEATURES");
   const [guideOpen, setGuideOpen] = useState(false);
   const [showMobilePurchase, setShowMobilePurchase] = useState(false);
@@ -31,6 +31,8 @@ export default function ProductDetail({ product }: { product: Product }) {
   const colours = [product, ...products.filter(p => p.slug !== product.slug && p.name === product.name && p.category === product.category)]
     .filter((item, index, all) => all.findIndex(candidate => candidate.color.toLowerCase() === item.color.toLowerCase()) === index);
   const sizes: NonNullable<Product["variants"]> = product.variants ? product.variants : (product.slug.includes("socks") ? ["ONE SIZE"] : ["XS", "S", "M", "L", "XL"]).map(value => ({ id: value, size: value, price: product.price, stock: commerceConfigured ? 0 : 1 }));
+  const defaultSize = sizes.find(variant => variant.size === "S" && variant.stock > 0)?.size ?? sizes.find(variant => variant.stock > 0)?.size ?? "";
+  const size = selection.slug === product.slug && sizes.some(variant => variant.size === selection.size && variant.stock > 0) ? selection.size : defaultSize;
   const selectedVariant = sizes.find(variant => variant.size === size);
   const canAdd = Boolean(size && selectedVariant && selectedVariant.stock > 0);
   const addLabel = !sizes.some(variant => variant.stock > 0) ? "SOLD OUT" : !size ? "SELECT A SIZE" : canAdd ? "ADD TO BAG" : product.variants ? "SOLD OUT" : "PREVIEW ONLY";
@@ -86,9 +88,9 @@ export default function ProductDetail({ product }: { product: Product }) {
         </Link>)}
       </div>
       <div className="size-heading"><span>SELECT SIZE</span><button type="button" onClick={() => setGuideOpen(true)}>SIZE GUIDE ↗</button></div>
-      <div className="size-grid" ref={sizeRef}>{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} disabled={variant.stock <= 0} onClick={() => setSize(variant.size)} key={variant.id}>{variant.size}</button>)}</div>
+      <div className="size-grid" ref={sizeRef}>{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} disabled={variant.stock <= 0} onClick={() => setSelection({ slug: product.slug, size: variant.size })} key={variant.id}>{variant.size}</button>)}</div>
       <button ref={purchaseRef} type="button" className="button button-orange detail-add" onClick={() => size && addToBag(product.slug, size)} disabled={!canAdd}>{addLabel}<span>↗</span></button>
-      <button type="button" className="wishlist-button" onClick={() => toggleWishlist(product.slug)}>{wishlist.includes(product.slug) ? "♥ SAVED TO WISHLIST" : "♡ ADD TO WISHLIST"}</button>
+      <button type="button" className="wishlist-button" aria-pressed={wishlist.includes(product.slug)} onClick={() => toggleWishlist(product.slug)}><span className="wishlist-glyph" key={wishlist.includes(product.slug) ? "saved" : "unsaved"} aria-hidden="true">{wishlist.includes(product.slug) ? "♥" : "♡"}</span> {wishlist.includes(product.slug) ? "SAVED TO WISHLIST" : "ADD TO WISHLIST"}</button>
       <div className="detail-accordions">{sections.map(label => <div key={label}><button type="button" aria-expanded={openInfo === label} onClick={() => setOpenInfo(openInfo === label ? null : label)}>{label}<span>{openInfo === label ? "−" : "+"}</span></button>{openInfo === label && content(label)}</div>)}</div>
     </div></div>
     <div className="pdp-brand-callout"><div><span className="eyebrow">PERFORMANCE MEETS EXPRESSION ↘</span><h2>Built for the burn<sup>™</sup></h2><p>For women who train with purpose and express themselves with confidence. From the first warm-up to the final rep, bring your energy and make every session your own.</p></div><img src="/images/home/Home-Hero-Alt-5.jpg" alt="Ignyte athlete training with battle ropes" loading="lazy" /></div>

@@ -96,7 +96,7 @@ In `/admin`, edit each size's stock and availability. **Set each size to 20 & av
 ### Operations added October 2026
 
 - `/admin/analytics` shows anonymous first-party event counts for the last 30 days. It does not identify visitors or replace a consent-aware analytics platform. The event table is capped at 10,000 rows in the dashboard view.
-- `/admin/promotions` lets an admin configure discount codes. Checkout quotes the saving and the database validates/redemptions atomically on an order request. No live payment is taken.
+- `/admin/promotions` lets an admin configure percentage or fixed AUD discount codes with optional minimum spend, usage limit, start time and expiry. It shows each code's awaiting-payment and paid order uses, plus the proportion of a set limit used; cancelled orders are excluded. Checkout quotes the saving and the database validates/redemptions atomically on an order request. No live payment is taken.
 - Australian orders of $100 or more after discounts have free shipping. `/admin/shipping` configures state rates for smaller orders. Those rates remain inactive until approved, so checkout quotes them manually. The team confirms the final amount before payment.
 - A display-currency selector shows reference-rate estimates from Frankfurter. The actual product price and order request remain in AUD and Australian delivery only. The estimate is informational and can differ from card rates.
 - `/support`, `/contact`, `/privacy`, and `/terms` belong to this site. The contact form stores messages for `/admin/support`; staff must monitor and reply by email until outbound notifications are connected. Custom legal copy is pending approval and the policy pages link to the existing Ignyte policies.

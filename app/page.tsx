@@ -4,13 +4,13 @@ import Link from "next/link";
 import HomeProductCarousel from "@/components/home-product-carousel";
 import HomeHeroSlider from "@/components/home-hero-slider";
 import PdpSocialStrip from "@/components/pdp-social-strip";
+import FeatureArrow from "@/components/feature-arrow";
 import { homeBestSellerSlugs } from "@/data/pdp-planner";
 import { useStore } from "@/components/store-provider";
 import { asset } from "@/lib/asset";
 import "./home.css";
 
 const homeImage = (name: string) => asset(`/images/home/${name}`);
-const FeatureArrow = () => <span className="home-value-arrow" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" focusable="false"><path d="M7 7 25 25M13 25h12V13" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter" /></svg></span>;
 const featuredCover: Record<string, string> = {
   "sports-bras": "Ignyte-Sports-Bras-Vertical.jpg", tops: "Ignyte-Tops-Vertical.jpg",
   leggings: "Ignyte-Leggings-Vertical.jpg", shorts: "Ignyte-Shorts-Vertical.jpg",

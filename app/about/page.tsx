@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import FeatureArrow from "@/components/feature-arrow";
 import "./about.css";
 
 export const metadata: Metadata = { title: "About Ignyte Active | Built for the Burn", description: "Meet Ignyte Active, the activewear brand bringing performance and self-expression together. Discover our purpose and what it means to bring your own fire." };
@@ -11,9 +12,9 @@ export default function AboutPage() {
       <div><span className="eyebrow">IGNYTE® ACTIVEWEAR ↘</span><h1>High-performance gear<br className="about-hero-desktop-break" /> for women who train with intent<span>.</span></h1><p>IGNYTE brings together training, style and individuality. For women who love a challenge and bring their own energy to every session.</p></div>
     </section>
     <section className="about-features section-wrap">
-      <div><span>↘</span><h2>No distractions</h2><p>Designed to stay put, feel secure, and let you focus on the work.</p></div>
-      <div><span>↘</span><h2>Moves with you</h2><p>Flexible support that responds to every rep, hold, stretch, and session.</p></div>
-      <div><span>↘</span><h2>Tested in real training</h2><p>Built for sweat, pressure, and repeat wear.</p></div>
+      <div><FeatureArrow /><h2>No distractions</h2><p>Designed to stay put, feel secure, and let you focus on the work.</p></div>
+      <div><FeatureArrow /><h2>Moves with you</h2><p>Flexible support that responds to every rep, hold, stretch, and session.</p></div>
+      <div><FeatureArrow /><h2>Tested in real training</h2><p>Built for sweat, pressure, and repeat wear.</p></div>
     </section>
     <section className="about-mission section-wrap">
       <div><span className="eyebrow">OUR MISSION ↘</span><h2>To inspire women<br />to <em>bring the fire.</em></h2><p>We believe strength and self-expression belong together.</p><p>The determination to try something harder. The confidence to wear what you love. The satisfaction of a strong session, shared with people who get it.</p><p>IGNYTE is for women who train with purpose, enjoy the challenge and express themselves in their own way.</p><strong>Bring your fire.<br />We’ll build for the burn.</strong></div>
