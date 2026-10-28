@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { categories as conceptCategories, legacyProductSlugs, money, products as conceptProducts, type Product } from "@/lib/catalog";
 import { activeCategories, activeProducts, commerceConfigured } from "@/lib/commerce";
 import { track } from "@/lib/analytics-client";
+import { bagRecommendations } from "@/lib/product-merchandising";
+import "@/app/bag-recommendations.css";
 
 type BagItem = { slug: string; size: string; quantity: number };
 type Store = {
@@ -37,6 +39,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [checkoutMessage, setCheckoutMessage] = useState("");
   const [storageReady, setStorageReady] = useState(false);
+  const [recommendationSizes, setRecommendationSizes] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!commerceConfigured) return;
@@ -88,6 +91,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     const product = products.find(product => product.slug === item.slug);
     return sum + (product?.variants?.find(variant => variant.size === item.size)?.price ?? product?.price ?? 0) * item.quantity;
   }, 0);
+  const recommendations = bagRecommendations(bag.map(item => item.slug), products);
 
   return (
     <StoreContext.Provider value={{ products, categories, catalogPreview, bag, bagOpen, setBagOpen, addToBag, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
@@ -103,7 +107,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             <img src={product.image} alt={product.name} />
             <div><strong>{product.name}</strong><span>{product.color} / {item.size}</span><span>Qty {item.quantity} · {money(price * item.quantity)}</span><button className="text-button" onClick={() => removeFromBag(item.slug, item.size)}>Remove</button></div>
           </div>;
-        })}</div> : <div className="empty-bag"><span>✳</span><h3>Nothing in your bag yet.</h3><p>Find your next training favourite.</p><Link href="/shop" className="button button-dark" onClick={() => setBagOpen(false)}>SHOP THE COLLECTION <span>↗</span></Link></div>}
+        })}{recommendations.length > 0 && <section className="bag-recommendations" aria-label="You may also like"><h3>YOU MAY ALSO LIKE</h3>{recommendations.map(product => {
+          const chosen = recommendationSizes[product.slug] ?? "";
+          const variants = product.variants ?? [];
+          return <div className="bag-recommendation" key={product.slug}><Link href={`/product/${product.slug}`} onClick={() => setBagOpen(false)}><img src={product.image} alt="" /></Link><div><Link href={`/product/${product.slug}`} onClick={() => setBagOpen(false)}><strong>{product.name}</strong></Link><span>{product.color} · {money(product.price)}</span><div className="bag-recommendation-sizes" aria-label={`Choose ${product.name} size`}>{variants.map(variant => <button type="button" key={variant.id} disabled={variant.stock <= 0} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} aria-pressed={chosen === variant.size} onClick={() => setRecommendationSizes(current => ({ ...current, [product.slug]: variant.size }))}>{variant.size}</button>)}</div><button type="button" className="bag-recommendation-add" disabled={!variants.some(variant => variant.size === chosen && variant.stock > 0)} onClick={() => { addToBag(product.slug, chosen); setRecommendationSizes(current => ({ ...current, [product.slug]: "" })); }}>ADD TO BAG ↗</button></div></div>;
+        })}</section>}</div> : <div className="empty-bag"><span>✳</span><h3>Nothing in your bag yet.</h3><p>Find your next training favourite.</p><Link href="/shop" className="button button-dark" onClick={() => setBagOpen(false)}>SHOP THE COLLECTION <span>↗</span></Link></div>}
         <div className="drawer-foot"><div><span>SUBTOTAL</span><strong>{money(subtotal)}</strong></div><p>Australian delivery only. Shipping is quoted after your order request; no payment is taken at checkout.</p>{checkoutMessage && <p role="status">{checkoutMessage}</p>}<button className="button button-orange" disabled={!validBag.length} onClick={() => { setBagOpen(false); router.push("/checkout"); }}>CHECKOUT ↗</button></div>
       </aside>
     </StoreContext.Provider>

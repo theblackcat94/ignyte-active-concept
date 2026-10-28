@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { asset } from "@/lib/asset";
 import { useStore } from "./store-provider";
-import { CurrencySelector } from "./currency-estimate";
 import HeartIcon from "./heart-icon";
 
 export default function Header() {
@@ -24,7 +23,6 @@ export default function Header() {
       <Link className="brand brand-image" href="/" aria-label="Ignyte home"><img src={asset("/images/ignyte-logo.png")} alt="Ignyte" /></Link>
       <nav className="desktop-nav" aria-label="Main navigation">{nav.map(([label, href]) => <Link className={pathname === href ? "active" : ""} href={href} key={href}>{label}</Link>)}</nav>
       <div className="header-actions">
-        <CurrencySelector />
         <Link className="header-icon" href="/account" aria-label="Your account"><Icon name="account" /></Link>
         <button className="header-icon search-trigger" aria-label="Search" onClick={() => setSearchOpen(true)}><Icon name="search" /></button>
         <Link className="header-icon wishlist-trigger" href="/wishlist" aria-label={`Wishlist with ${wishlist.length} items`}><Icon name="heart" />{wishlist.length > 0 && <sup>{wishlist.length}</sup>}</Link>

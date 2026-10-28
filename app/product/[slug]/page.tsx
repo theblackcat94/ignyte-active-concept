@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { legacyProductSlugs, products } from "@/lib/catalog";
 import { activeProducts, commerceConfigured } from "@/lib/commerce";
 import ProductDetail from "@/components/product-detail-v2";
+import { productSeo } from "@/lib/product-seo";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ignyte.theblackcat94.com";
 const findProduct = cache(async (slug: string) => {
@@ -17,9 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const { product, live } = await findProduct(slug);
   if (!product) return { title: "Product not found | Ignyte Active", robots: { index: false } };
-  const title = `${product.name} in ${product.color} | Ignyte Active`;
-  const text = product.description.replace(/\s+/g, " ").trim();
-  const description = text.length > 155 ? `${text.slice(0, 152).replace(/\s+\S*$/, "")}…` : text;
+  const { title, description } = productSeo(product.name, product.color, product.description);
   const url = new URL(`/product/${product.slug}/`, siteUrl).toString();
   const image = new URL(product.image, siteUrl).toString();
   return {

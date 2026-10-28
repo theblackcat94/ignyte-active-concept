@@ -39,6 +39,6 @@ export function pdpFor(name: string, content?: Partial<PdpContent> | null, slug?
     ...merged,
     model_details: merged.model_details || (slug ? modelDetailsBySlug[slug] : "") || "",
     video_url: merged.video_url || "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4",
-    video_poster: merged.video_poster || "/images/home/Home-Hero-Video-Fallback.jpg",
+    video_poster: merged.video_poster || "/images/home/video-cover-pdp.jpg",
   };
 }

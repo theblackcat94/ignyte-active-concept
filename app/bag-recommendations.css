@@ -1,0 +1,13 @@
+.bag-recommendations{border-top:1px solid var(--line);padding-top:22px;margin-top:8px}
+.bag-recommendations h3{font-size:12px;letter-spacing:.12em;margin:0 0 20px}
+.bag-recommendation{display:grid;grid-template-columns:70px minmax(0,1fr);gap:14px;padding:0 0 20px;margin-bottom:20px;border-bottom:1px solid var(--line)}
+.bag-recommendation>a img{width:70px;height:90px;object-fit:cover}
+.bag-recommendation>div{min-width:0;display:flex;align-items:flex-start;flex-direction:column;gap:7px}
+.bag-recommendation>div>a strong{font-size:13px}
+.bag-recommendation>div>span{font-size:11px;color:#6c6861}
+.bag-recommendation-sizes{display:flex;flex-wrap:wrap;gap:5px}
+.bag-recommendation-sizes button{min-width:32px;height:28px;border:1px solid #bbb5ac;background:transparent;font-size:10px;font-weight:700}
+.bag-recommendation-sizes button[aria-pressed="true"]{background:#111;color:#fff;border-color:#111}
+.bag-recommendation-sizes button:disabled{opacity:.36;text-decoration:line-through}
+.bag-recommendation-add{background:none;border:0;border-bottom:1px solid currentColor;padding:2px 0;font-size:10px;font-weight:900;letter-spacing:.07em}
+.bag-recommendation-add:disabled{opacity:.45;cursor:not-allowed}

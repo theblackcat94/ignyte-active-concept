@@ -10,6 +10,7 @@ import ProductGallery from "./product-gallery";
 import SizeGuideContent from "./size-guide-content";
 import { CurrencyEstimate } from "./currency-estimate";
 import { productColourHex } from "@/lib/product-colors";
+import { pairedProducts } from "@/lib/product-merchandising";
 import "@/app/product-detail-v2.css";
 
 export default function ProductDetail({ product }: { product: Product }) {
@@ -17,7 +18,8 @@ export default function ProductDetail({ product }: { product: Product }) {
   const [openInfo, setOpenInfo] = useState<string | null>("FEATURES");
   const [guideOpen, setGuideOpen] = useState(false);
   const { products, addToBag, wishlist, toggleWishlist } = useStore();
-  const related = products.filter(p => p.slug !== product.slug).slice(0, 4);
+  const related = pairedProducts(product.slug, products, "related");
+  const upsells = pairedProducts(product.slug, products, "upsell");
   const colours = [product, ...products.filter(p => p.slug !== product.slug && p.name === product.name && p.category === product.category)]
     .filter((item, index, all) => all.findIndex(candidate => candidate.color.toLowerCase() === item.color.toLowerCase()) === index);
   const sizes: NonNullable<Product["variants"]> = product.variants ? product.variants : (product.slug.includes("socks") ? ["ONE SIZE"] : ["XS", "S", "M", "L", "XL"]).map(value => ({ id: value, size: value, price: product.price, stock: commerceConfigured ? 0 : 1 }));
@@ -62,7 +64,8 @@ export default function ProductDetail({ product }: { product: Product }) {
       <div className="detail-accordions">{sections.map(label => <div key={label}><button type="button" aria-expanded={openInfo === label} onClick={() => setOpenInfo(openInfo === label ? null : label)}>{label}<span>{openInfo === label ? "−" : "+"}</span></button>{openInfo === label && content(label)}</div>)}</div>
     </div></div>
     {pdp.show_brand_story && <div className="pdp-story"><section><span className="eyebrow">PERFORMANCE MEETS EXPRESSION ↘</span><h2>Find your rhythm.<br />Move your way.</h2><p>Made for women who train with purpose and bring their own energy to every session.</p></section><section><span className="eyebrow">THE IGNYTE APPROACH ↘</span><h2>Made for movement.</h2><p>Fit, feel and freedom of movement guide the details, from warm-up to final rep.</p></section><section><span className="eyebrow">THE DETAILS ↘</span><h2>Built for the burn.</h2><ul>{(pdp.features.length ? pdp.features : ["Explore the fit and fabric details in the product information above."]).slice(0, 4).map(feature => <li key={feature}>{feature}</li>)}</ul></section></div>}
-    <div className="related-section"><div className="section-heading"><div><span className="eyebrow">KEEP THE MOMENTUM</span><h2>YOU MAY <em>ALSO LIKE.</em></h2></div><Link href="/shop" className="text-link">SHOP ALL ↗</Link></div><div className="products-grid">{related.map((p, i) => <ProductCard product={p} index={i} key={p.slug} />)}</div></div>
+    {related.length > 0 && <div className="related-section"><div className="section-heading"><div><span className="eyebrow">COMPLETE YOUR EDIT</span><h2>PAIR IT <em>WITH.</em></h2></div><Link href="/shop" className="text-link">SHOP ALL ↗</Link></div><div className="products-grid">{related.map((p, i) => <ProductCard product={p} index={i} key={p.slug} />)}</div></div>}
+    {upsells.length > 0 && <div className="related-section"><div className="section-heading"><div><span className="eyebrow">ANOTHER WAY TO MOVE</span><h2>CONSIDER <em>THIS.</em></h2></div></div><div className="products-grid">{upsells.map((p, i) => <ProductCard product={p} index={i} key={p.slug} />)}</div></div>}
     {guideOpen && <div className="pdp-guide-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setGuideOpen(false); }}><div className="pdp-guide-dialog" role="dialog" aria-modal="true" aria-label="Size guide"><div className="pdp-guide-head"><h2>FIND YOUR FIT.</h2><button type="button" onClick={() => setGuideOpen(false)} aria-label="Close size guide">×</button></div><SizeGuideContent productCategory={product.category} /><Link href="/size-guide" className="text-link">OPEN FULL SIZE GUIDE ↗</Link></div></div>}
   </div>;
 }

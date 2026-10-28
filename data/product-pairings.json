@@ -1,0 +1,128 @@
+{
+  "aura-halter-espresso": {
+    "related": [
+      "seamless-legging-espresso",
+      "seamless-short-espresso"
+    ],
+    "upsell": null,
+    "crossSell": "ignyte-socks-white"
+  },
+  "aura-halter-lavender": {
+    "related": [
+      "seamless-legging-lavender",
+      "all-in-motion-shorts-jacaranda"
+    ],
+    "upsell": null,
+    "crossSell": "ignyte-socks-white"
+  },
+  "all-in-motion-shorts-black": {
+    "related": [
+      "motion-sports-bra-black",
+      "vyper-sports-bra-black"
+    ],
+    "upsell": null,
+    "crossSell": "ignyte-socks-white"
+  },
+  "all-in-motion-shorts-jacaranda": {
+    "related": [
+      "motion-sports-bra-jacaranda",
+      "aura-halter-lavender"
+    ],
+    "upsell": null,
+    "crossSell": "ignyte-socks-white"
+  },
+  "motion-sports-bra-black": {
+    "related": [
+      "all-in-motion-shorts-black",
+      "sculpt-shorts-black"
+    ],
+    "upsell": null,
+    "crossSell": "ignyte-socks-white"
+  },
+  "motion-sports-bra-jacaranda": {
+    "related": [
+      "all-in-motion-shorts-jacaranda",
+      "seamless-legging-lavender"
+    ],
+    "upsell": null,
+    "crossSell": "ignyte-socks-white"
+  },
+  "sculpt-shorts-black": {
+    "related": [
+      "vyper-sports-bra-black",
+      "motion-sports-bra-black"
+    ],
+    "upsell": "all-in-motion-shorts-black",
+    "crossSell": "ignyte-socks-white"
+  },
+  "sculpt-shorts-mauve": {
+    "related": [
+      "vyper-sports-bra-mauve"
+    ],
+    "upsell": "all-in-motion-shorts-black",
+    "crossSell": "ignyte-socks-white"
+  },
+  "seamless-legging-espresso": {
+    "related": [
+      "seamless-sports-bra-espresso",
+      "aura-halter-espresso"
+    ],
+    "upsell": null,
+    "crossSell": "ignyte-socks-white"
+  },
+  "seamless-legging-lavender": {
+    "related": [
+      "seamless-sports-bra-jacaranda",
+      "aura-halter-lavender"
+    ],
+    "upsell": null,
+    "crossSell": "ignyte-socks-white"
+  },
+  "seamless-short-espresso": {
+    "related": [
+      "seamless-sports-bra-espresso",
+      "aura-halter-espresso"
+    ],
+    "upsell": "seamless-legging-espresso",
+    "crossSell": "ignyte-socks-white"
+  },
+  "vyper-sports-bra-black": {
+    "related": [
+      "sculpt-shorts-black",
+      "all-in-motion-shorts-black"
+    ],
+    "upsell": null,
+    "crossSell": "ignyte-socks-white"
+  },
+  "vyper-sports-bra-mauve": {
+    "related": [
+      "sculpt-shorts-mauve"
+    ],
+    "upsell": null,
+    "crossSell": "ignyte-socks-white"
+  },
+  "seamless-sports-bra-espresso": {
+    "related": [
+      "seamless-legging-espresso",
+      "seamless-short-espresso"
+    ],
+    "upsell": null,
+    "crossSell": "ignyte-socks-white"
+  },
+  "seamless-sports-bra-jacaranda": {
+    "related": [
+      "seamless-legging-lavender",
+      "all-in-motion-shorts-jacaranda"
+    ],
+    "upsell": "motion-sports-bra-jacaranda",
+    "crossSell": "ignyte-socks-white"
+  },
+  "ignyte-socks-white": {
+    "related": [
+      "sculpt-shorts-black",
+      "motion-sports-bra-black"
+    ],
+    "upsell": null,
+    "crossSell": null
+  }
+}
