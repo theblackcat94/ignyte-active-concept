@@ -27,6 +27,7 @@ fi
 if ! id -u ignyte >/dev/null 2>&1; then
   useradd --system --home /opt/ignyte --shell /usr/sbin/nologin ignyte
 fi
+install -d -m 0750 -o ignyte -g ignyte /var/lib/ignyte
 install -d -m 0755 /opt/ignyte/releases
 install -d -m 0750 -o root -g ignyte /etc/ignyte
 mkdir "$release"

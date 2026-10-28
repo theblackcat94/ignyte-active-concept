@@ -32,6 +32,12 @@ The custom site is built on `internetremovals@100.120.9.34` and deployed to the 
 
 The build checkout is `/home/internetremovals/SERVER/NEXT/IGNYTE`. Fetch the release ref, create a clean detached temporary worktree at the exact commit, then run `bash deploy/build-and-deploy.sh <full-commit-sha>` from it. The script builds a Next.js standalone package, rejects credential-like files, transfers it over the existing build-machine SSH path, installs an isolated release, and probes the local app. The Linode's `/opt/ignyte/current` symlink supports rollback if the new release fails its health check.
 
+### Announcement and newsletter operations
+
+Staff can open `/admin/announcement` to turn the bar on or off, edit the everyday and Black Friday messages and their site-relative links, select static or scrolling display, and choose which message is active. Save applies the settings to the storefront. `/?announcement=black-friday` previews the Black Friday draft without activating it. Settings are stored outside releases at `/var/lib/ignyte/announcement.json` on the Linode; include this small file in server backups. In local development they are stored in ignored `.local-data/announcement.json`.
+
+Consented newsletter signups are stored in Supabase and listed in `/admin/marketing`. AWS SES is the selected sending provider, but no sending is enabled yet. Before connecting it, the AWS owner must provide IAM access scoped to SES (without sharing keys in chat), choose an AWS Region, verify the sending domain and DNS records, request production sending access, and agree on the sender address, campaign approval process, and unsubscribe/bounce handling. Keep the subscriber list and suppression status in sync with Supabase. Do not enable campaigns until those steps are complete.
+
 ### Jacob catalogue import (October 2026)
 
 `data/jacob-catalog-2026-10-27.json` maps the 45 **MEDIA READY** size SKUs to 16 product and colour listings. Their 92 prepared JPEGs are in `public/images/jacob-2026-10/`. The one HOLD size SKU and unconfirmed working-file galleries are excluded. The supplied mobile campaign video is the first homepage slide on narrow screens; the existing desktop video remains in use until Jacob supplies his landscape edit.
@@ -84,7 +90,7 @@ In `/admin`, edit each size's stock and availability. **Set each size to 20 & av
 - Australian orders of $100 or more after discounts have free shipping. `/admin/shipping` configures state rates for smaller orders. Those rates remain inactive until approved, so checkout quotes them manually. The team confirms the final amount before payment.
 - A display-currency selector shows reference-rate estimates from Frankfurter. The actual product price and order request remain in AUD and Australian delivery only. The estimate is informational and can differ from card rates.
 - `/support`, `/contact`, `/privacy`, and `/terms` belong to this site. The contact form stores messages for `/admin/support`; staff must monitor and reply by email until outbound notifications are connected. Custom legal copy is pending approval and the policy pages link to the existing Ignyte policies.
-- `/admin/marketing` lists the steps to connect a provider. The footer email form remains disabled until a provider, consent wording, and unsubscribe process are approved.
+- `/admin/marketing` lists consented footer signups stored in Supabase. AWS SES is the selected sender; outgoing messages remain disabled until the sending identity and account are configured.
 
 The Git repository and release archives protect application code. **They do not back up Supabase.** On the build machine, run a daily owner-only business-data export after deployment:
 
@@ -101,7 +107,7 @@ The export includes business tables and the `product-media` bucket, including pr
 
 - Review the copied concept catalogue in the admin. It remains unpublished until the team activates products and variants with verified stock.
 - Configure Supabase and verified inventory before testing order requests. Add Australian shipping rates, email notifications, and tested payment collection before fulfilling orders.
-- Connect newsletter signup to the approved email platform.
+- Connect newsletter sending to AWS SES after the sending domain, production access, and unsubscribe handling are ready.
 - Replace the concept campaign and product imagery with client-approved assets.
 - Confirm shipping, returns, support, accessibility and privacy copy. Support currently links to the live contact page.
 - Confirm the precise brand colour values; the current accent is `#ff4530`.

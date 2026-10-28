@@ -11,7 +11,7 @@ export default function SizeGuidePage() {
     <div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><span>SIZE GUIDE</span></div>
     <span className="eyebrow">IGNYTE / FIND YOUR FIT</span>
     <h1>SIZE GUIDE<span>.</span></h1>
-    <p className="size-guide-intro">Choose a category for the measurements that matter to your fit. Confirmed size ranges will appear here when available.</p>
+    <p className="size-guide-intro">Choose a category for the measurements that matter to your fit.</p>
     <div className="size-guide-layout">
       <SizeGuideContent showTabs />
       <aside className="size-guide-editorial" aria-label="Explore Ignyte products">

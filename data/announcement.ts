@@ -1,4 +1,5 @@
 export type Announcement = { mode: "static" | "ticker"; text: string; action: string; href: string; theme: "dark" | "orange" };
+export type AnnouncementSettings = { enabled: boolean; active: "default" | "blackFriday"; default: Announcement; blackFriday: Announcement };
 
 // The live message stays unchanged until the Black Friday promotion is approved.
 // Edit these settings in one place; preview the draft with ?announcement=black-friday.

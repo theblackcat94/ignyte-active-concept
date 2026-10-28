@@ -38,7 +38,7 @@ export function pdpFor(name: string, content?: Partial<PdpContent> | null, slug?
   const merged = { ...(plannerPdp[name] ?? emptyPdp), featured_best_seller: Boolean(slug && homeBestSellerSlugs.includes(slug)), ...content };
   return {
     ...merged,
-    model_details: merged.model_details || (slug ? modelDetailsBySlug[slug] : "") || "",
+    model_details: (merged.model_details || (slug ? modelDetailsBySlug[slug] : "") || "").replace(/\s*\((?:Blonde|Brunette)\)/gi, ""),
     video_url: merged.video_url || "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4",
     video_poster: merged.video_poster || "/images/home/video-cover-pdp.jpg",
   };

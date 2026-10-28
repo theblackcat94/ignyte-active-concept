@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { showDraftCareGuide } from "@/data/storefront-flags";
 import { useEffect, useState } from "react";
 import { type Product, money } from "@/lib/catalog";
 import { commerceConfigured } from "@/lib/commerce";
@@ -34,7 +35,7 @@ export default function ProductDetail({ product }: { product: Product }) {
     return () => window.removeEventListener("keydown", close);
   }, [guideOpen]);
   const sections = ["FEATURES", "DESIGNED FOR", "FIT & FABRIC", "MODEL DETAILS", "SIZE GUIDE", "CARE GUIDE", "DELIVERY & RETURNS"].filter(label =>
-    label === "FEATURES" ? pdp.features.length : label === "DESIGNED FOR" ? pdp.activities.length : label === "FIT & FABRIC" ? Boolean(pdp.fit || pdp.fabric || pdp.oeko_certified) : label === "MODEL DETAILS" ? Boolean(pdp.show_model_details && pdp.model_details.trim()) : label === "CARE GUIDE" ? product.category !== "accessories" && Boolean(pdp.care_approved) : true);
+    label === "FEATURES" ? pdp.features.length : label === "DESIGNED FOR" ? pdp.activities.length : label === "FIT & FABRIC" ? Boolean(pdp.fit || pdp.fabric || pdp.oeko_certified) : label === "MODEL DETAILS" ? Boolean(pdp.show_model_details && pdp.model_details.trim()) : label === "CARE GUIDE" ? product.category !== "accessories" && (Boolean(pdp.care_approved) || showDraftCareGuide) : true);
 
   function content(label: string) {
     if (label === "FEATURES") return <ul className="pdp-feature-list">{pdp.features.map(feature => <li key={feature}>{feature}</li>)}</ul>;
@@ -42,7 +43,7 @@ export default function ProductDetail({ product }: { product: Product }) {
     if (label === "FIT & FABRIC") return <div className="pdp-fit-fabric">{pdp.fit && <p><strong>Fit:</strong> {pdp.fit}</p>}{pdp.fabric && <p><strong>Fabric:</strong> {pdp.fabric}</p>}{pdp.oeko_certified && <div className="pdp-oeko"><strong>OEKO-TEX® STANDARD 100</strong><p>Made with OEKO-TEX® STANDARD 100 certified fabrics, tested for harmful substances so you can feel confident in what’s against your skin.</p>{pdp.oeko_certificate && <a href="https://www.oeko-tex.com/en/label-check" target="_blank" rel="noreferrer">Check certificate {pdp.oeko_certificate} ↗</a>}</div>}</div>;
     if (label === "MODEL DETAILS") return <p className="pdp-model-details">{pdp.model_details}</p>;
     if (label === "SIZE GUIDE") return <><SizeGuideContent productCategory={product.category} /><Link className="text-link" href="/size-guide">OPEN FULL SIZE GUIDE ↗</Link></>;
-    if (label === "CARE GUIDE") return <div className="pdp-care"><strong>Care for your kit</strong><p>Keep your IGNYTE activewear ready for your next move.</p><ul><li>Machine wash cold at 30°C on a gentle cycle.</li><li>Turn inside out and wash with similar colours.</li><li>Use a mild detergent. Avoid fabric softener and bleach.</li><li>Wash separately from towels and items with exposed zips or Velcro.</li><li>Air dry in the shade. Do not tumble dry.</li><li>Do not iron or dry clean.</li></ul><p>After a sweaty session, let your gear air out before placing it in the laundry basket. Always follow the care label on your garment.</p></div>;
+    if (label === "CARE GUIDE") return <div className="pdp-care">{!pdp.care_approved && <p className="pdp-review-note">Care instructions are being checked against garment labels. Follow the label on your item.</p>}<strong>Care for your kit</strong><p>Keep your IGNYTE activewear ready for your next move.</p><ul><li>Machine wash cold at 30°C on a gentle cycle.</li><li>Turn inside out and wash with similar colours.</li><li>Use a mild detergent. Avoid fabric softener and bleach.</li><li>Wash separately from towels and items with exposed zips or Velcro.</li><li>Air dry in the shade. Do not tumble dry.</li><li>Do not iron or dry clean.</li></ul><p>After a sweaty session, let your gear air out before placing it in the laundry basket. Always follow the care label on your garment.</p></div>;
     return <div className="pdp-delivery"><p>Australia only. Free shipping on orders of $100 or more. Delivery rates for smaller orders and prepaid return labels are being confirmed with the fulfilment team.</p><Link className="text-link" href="/returns">VIEW RETURNS POLICY ↗</Link></div>;
   }
 

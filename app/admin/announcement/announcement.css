@@ -1,0 +1,11 @@
+.announcement-admin .admin-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:18px 0 28px}
+.announcement-admin .admin-fields label{display:flex;flex-direction:column;gap:8px;font-size:11px;font-weight:800;letter-spacing:.06em}
+.announcement-admin .admin-fields label.wide{grid-column:1/-1}
+.announcement-admin .admin-fields input:not([type=checkbox]),.announcement-admin .admin-fields select{width:100%;min-height:44px;border:1px solid #c9c5c0;background:#fff;padding:10px 12px;color:#0B1020;font:inherit;letter-spacing:normal}
+.announcement-admin .admin-fields .admin-check{flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;min-height:44px;cursor:pointer}
+.announcement-admin .admin-check input{width:22px;height:22px;accent-color:#FF4533;cursor:pointer}
+.announcement-admin-variant{border-top:1px solid #ddd8d1;padding-top:22px}
+.announcement-admin-variant h3{margin:0;font-size:18px}
+.announcement-admin .ops-toolbar a{font-size:11px;font-weight:800;letter-spacing:.04em;text-decoration:underline;text-underline-offset:4px}
+.announcement-admin .ops-toolbar{margin-top:24px}
+@media(max-width:640px){.announcement-admin .admin-fields{grid-template-columns:1fr}.announcement-admin .admin-fields label.wide{grid-column:auto}}

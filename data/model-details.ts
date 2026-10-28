@@ -1,7 +1,7 @@
 // Product/colour assignments from the updated Product Upload Planner supplied on 28 October 2026.
 // Measurements were supplied by the Ignyte team for Lauren and Mel.
-const lauren = "Lauren (Blonde)\nBust: 86 cm\nWaist: 65 cm\nHips: 85 cm\nWears: Small";
-const mel = "Mel (Brunette)\nHeight: 179 cm\nBust: 81 cm · Cup: DD\nWaist: 68 cm\nHips: 96 cm\nWears: Small in tops and bottoms\nDress size: UK 6–8";
+const lauren = "Lauren\nBust: 86 cm\nWaist: 65 cm\nHips: 85 cm\nWears: Small";
+const mel = "Mel\nHeight: 179 cm\nBust: 81 cm · Cup: DD\nWaist: 68 cm\nHips: 96 cm\nWears: Small in tops and bottoms\nDress size: UK 6–8";
 
 export const modelDetailsBySlug: Record<string, string> = {
   "aura-halter-espresso": mel,

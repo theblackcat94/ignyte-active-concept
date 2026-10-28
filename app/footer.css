@@ -26,7 +26,6 @@
 .pdf-footer-brand img{width:min(240px,100%);height:auto}
 .pdf-footer-logo{position:relative;display:block;width:min(240px,100%)}
 .pdf-footer-logo img{display:block;width:100%;height:auto}
-.pdf-footer-logo .pdf-footer-logo-flame{position:absolute;inset:0;clip-path:inset(0 90.5% 0 0);filter:brightness(0) saturate(100%) invert(38%) sepia(95%) saturate(3746%) hue-rotate(346deg) brightness(101%) contrast(102%)}
 .pdf-footer-brand h3{font-family:var(--font-ignyte-mono),"Courier New",monospace;font-size:15px;font-weight:400;letter-spacing:.06em;margin:33px 0 20px}
 .pdf-footer-brand p{font-size:15px;line-height:1.5;margin:0 0 28px}
 .pdf-footer-social{display:inline-flex;width:39px;height:39px;border-radius:50%;background:#fff;align-items:center;justify-content:center;font-size:25px}
