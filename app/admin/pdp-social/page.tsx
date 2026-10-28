@@ -14,12 +14,13 @@ export default function PdpSocialAdminPage() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState("");
   const [message, setMessage] = useState("");
+  const [slugInputs, setSlugInputs] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!token) return;
     void fetch("/api/admin/pdp-social", { headers: adminHeaders(token), cache: "no-store" })
       .then(async response => { if (!response.ok) throw Error("Could not load Instagram posts."); return response.json() as Promise<PdpSocialSettings>; })
-      .then(data => { setSettings(data); setLoaded(true); })
+      .then(data => { setSettings(data); setSlugInputs(Object.fromEntries(data.posts.map(post => [post.id, post.productSlugs.join(", ")]))); setLoaded(true); })
       .catch(error => setMessage(error.message));
   }, [token]);
 
@@ -65,7 +66,7 @@ export default function PdpSocialAdminPage() {
       const response = await fetch("/api/admin/pdp-social", { method: "PUT", headers: adminHeaders(token), body: JSON.stringify(settings) });
       const result = await response.json() as PdpSocialSettings & { error?: string };
       if (!response.ok) throw Error(result.error ?? "Could not save Instagram posts.");
-      setSettings(result); setMessage("Saved. Refresh a product page to see the strip.");
+      setSettings(result); setSlugInputs(Object.fromEntries(result.posts.map(post => [post.id, post.productSlugs.join(", ")]))); setMessage("Saved. Refresh a product page to see the strip.");
     } catch (error) { setMessage(error instanceof Error ? error.message : "Could not save Instagram posts."); }
     finally { setSaving(false); }
   }
@@ -84,7 +85,7 @@ export default function PdpSocialAdminPage() {
           <label>IMAGE URL<input value={post.image} placeholder="Upload an approved thumbnail below" onChange={event => updatePost(post.id, { image: event.target.value })} /></label>
           <label>IMAGE DESCRIPTION<input value={post.alt} maxLength={180} placeholder="Describe the image for accessibility" onChange={event => updatePost(post.id, { alt: event.target.value })} /></label>
           <label>SHORT CAPTION (OPTIONAL)<input value={post.caption} maxLength={160} onChange={event => updatePost(post.id, { caption: event.target.value })} /></label>
-          <label className="wide">PRODUCT SLUGS (OPTIONAL, COMMA SEPARATED)<input value={post.productSlugs.join(", ")} placeholder="Leave blank to show on every product" onChange={event => updatePost(post.id, { productSlugs: event.target.value.split(",").map(value => value.trim()).filter(Boolean) })} /></label>
+          <label className="wide">PRODUCT SLUGS (OPTIONAL, COMMA SEPARATED)<input value={slugInputs[post.id] ?? post.productSlugs.join(", ")} placeholder="Leave blank to show on every product" onChange={event => { const value = event.target.value; setSlugInputs(current => ({ ...current, [post.id]: value })); updatePost(post.id, { productSlugs: value.split(",").map(slug => slug.trim()).filter(Boolean) }); }} /></label>
           <label className="pdp-social-admin-toggle"><input type="checkbox" checked={post.enabled} onChange={event => updatePost(post.id, { enabled: event.target.checked })} /> INCLUDE THIS POST</label>
           <label className="pdp-social-admin-upload">{uploading === post.id ? "UPLOADING…" : "UPLOAD THUMBNAIL"}<input type="file" accept="image/jpeg,image/png,image/webp" disabled={Boolean(uploading)} onChange={event => { const file = event.target.files?.[0]; if (file) void uploadImage(post, file); event.target.value = ""; }} /></label>
         </div>
