@@ -21,6 +21,10 @@ fi
 build_env_file="${BUILD_ENV_FILE:-/home/internetremovals/.config/ignyte/build.env}"
 deploy_target="${DEPLOY_SSH_TARGET:-root@172.105.186.242}"
 deploy_remote_prefix="${DEPLOY_REMOTE_PREFIX:-}"
+ssh_options=(-o BatchMode=yes -o StrictHostKeyChecking=yes)
+if [[ -n "${DEPLOY_SSH_IDENTITY:-}" ]]; then
+  ssh_options+=(-i "$DEPLOY_SSH_IDENTITY" -o IdentitiesOnly=yes)
+fi
 if [[ "$deploy_remote_prefix" != "" && "$deploy_remote_prefix" != "sudo" ]]; then
   echo "DEPLOY_REMOTE_PREFIX must be empty or sudo" >&2
   exit 1
@@ -94,11 +98,11 @@ fi
 
 archive="$stage/ignyte-$expected_sha.tar.gz"
 tar -C "$stage/app" -czf "$archive" .
-scp -o BatchMode=yes -o StrictHostKeyChecking=yes "$archive" "$deploy_target:/tmp/ignyte-$expected_sha.tar.gz"
+scp "${ssh_options[@]}" "$archive" "$deploy_target:/tmp/ignyte-$expected_sha.tar.gz"
 if [[ -f "$build_env_file" ]]; then
-  ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$deploy_target" \
+  ssh "${ssh_options[@]}" "$deploy_target" \
     "umask 077; cat > /tmp/ignyte-env-$expected_sha" < "$build_env_file"
 fi
-ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$deploy_target" \
+ssh "${ssh_options[@]}" "$deploy_target" \
   "${remote_install[@]}" < deploy/install-release.sh
 echo "Deployed commit $expected_sha to $deploy_target"
