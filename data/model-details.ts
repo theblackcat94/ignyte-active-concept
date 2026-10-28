@@ -3,6 +3,11 @@
 const lauren = "Lauren\nBust: 86 cm\nWaist: 65 cm\nHips: 85 cm\nWears: Small";
 const mel = "Mel\nHeight: 179 cm\nBust: 81 cm · Cup: DD\nWaist: 68 cm\nHips: 96 cm\nWears: Small in tops and bottoms\nDress size: UK 6–8";
 
+export const modelPortraits: Record<string, string> = {
+  Lauren: "/images/jacob-2026-10/ign-motsbr-blk/ign-motsbr-blk-motion-sports-bra-black-main-01.jpg",
+  Mel: "/images/jacob-2026-10/ign-halt-drkbrn/ign-halt-drkbrn-aura-halter-top-espresso-main-01.jpg",
+};
+
 export const modelDetailsBySlug: Record<string, string> = {
   "aura-halter-espresso": mel,
   "aura-halter-lavender": lauren,

@@ -119,7 +119,8 @@ export default function CheckoutPage() {
     {!commerceConfigured ? <div className="checkout-panel"><h2>Store setup in progress</h2><p>Order requests will open when the store database is connected.</p><Link className="text-link" href="/shop">CONTINUE SHOPPING ↗</Link></div>
       : !bag.length ? <div className="checkout-panel"><h2>Your bag is empty</h2><Link className="text-link" href="/shop">SHOP THE COLLECTION ↗</Link></div>
       : <div className="checkout-grid"><form id="order-request" className="checkout-form" onSubmit={submit}>
-        {step === "delivery" ? <><h2>Australian delivery</h2><p>Check out as a guest or use your account. Enter your address to calculate delivery where rates are available.</p>
+        {step === "delivery" ? <><h2>Australian delivery</h2><p>You can continue as a guest. No account or sign-in is required.</p>
+        <div className="checkout-guidance"><div><strong>GUEST CHECKOUT</strong><p>Enter your email and Australian address below. After saving the order request, keep its order number and link; guest order details can be reopened in this browser for 30 days.</p></div><div><strong>DELIVERY &amp; RETURNS</strong><p>Australian orders of AU$100 or more after discounts qualify for free shipping. For smaller orders, any unconfigured delivery rate will be quoted before payment. Read the <Link href="/returns">Shipping &amp; Returns Policy</Link> before continuing.</p></div></div>
         <div className="checkout-fields">
           <label className="wide">EMAIL ADDRESS<input required type="email" autoComplete="email" maxLength={254} value={email} readOnly={signedIn} onChange={event => setEmail(event.target.value)} /></label>
           <label>FULL NAME<input required autoComplete="name" maxLength={120} value={shipping.name} onChange={event => setShipping({ ...shipping, name: event.target.value })} /></label>
@@ -131,8 +132,9 @@ export default function CheckoutPage() {
           <label>POSTCODE<input required inputMode="numeric" pattern="[0-9]{4}" autoComplete="postal-code" value={shipping.postal_code} onChange={event => setShipping({ ...shipping, postal_code: event.target.value })} /></label>
           <label>COUNTRY<input readOnly value="Australia" /></label>
         </div>
-        <p className="checkout-email">{signedIn ? "Your order will also appear in your account." : "Guest orders can be viewed in this browser after submission. Please save the order number."}</p>
+        <p className="checkout-email">{signedIn ? "Your order will also appear in your account." : "No account needed. Your guest order link will be shown after you save the request; save the order number for support."}</p>
         <button className="button button-orange" disabled={!valid}>CONTINUE TO PAYMENT ↗</button></> : <><h2>Review &amp; payment</h2><p>Deliver to {shipping.name}, {shipping.line1}, {shipping.city} {shipping.state} {shipping.postal_code}.</p><button type="button" className="checkout-edit" onClick={() => setStep("delivery")}>EDIT DELIVERY ADDRESS ↗</button><div className="checkout-payment-notice"><span className="eyebrow">SECURE PAYMENT</span><h3>Card payments coming soon</h3><p>The merchant connection is being prepared. Do not enter card details on this site. Save your order below and the team will confirm delivery and payment before fulfilment.</p></div>
+        <p className="checkout-email">{quotedShipping === null ? "Delivery cost will be confirmed before payment." : `Estimated delivery is ${money(quotedShipping / 100)}; the team will confirm the final amount before payment.`} <Link href="/returns">Review shipping and returns ↗</Link></p>
         {error && <p className="checkout-error" role="alert">{error}</p>}
         <button className="button button-orange" disabled={!valid || busy}>{busy ? "SAVING ORDER…" : "SAVE ORDER FOR PAYMENT ↗"}</button></>}
       </form><aside className="checkout-summary"><h2>YOUR ORDER</h2>

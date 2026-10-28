@@ -20,15 +20,26 @@ function approvedImage(value: string) {
   } catch { return false; }
 }
 
+function approvedVideo(value: string) {
+  if (!value) return true;
+  try {
+    const url = new URL(value);
+    const project = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || "https://pyoskepqciqhnpgujtbs.supabase.co");
+    return url.protocol === "https:" && url.origin === project.origin && url.pathname.startsWith("/storage/v1/object/public/home-media/") && url.pathname.endsWith(".mp4");
+  } catch { return false; }
+}
+
 const postSchema = z.object({
   id: z.string().trim().min(1).max(80),
   enabled: z.boolean(),
   href: z.string().trim().max(300).refine(approvedInstagramLink, "Use a direct Instagram post or reel URL."),
-  image: z.string().trim().max(500).refine(approvedImage, "Upload an image or use a local image path."),
+  image: z.string().trim().max(500),
+  video: z.string().trim().max(500).optional().refine(value => approvedVideo(value ?? ""), "Upload an MP4 to play a reel on the site."),
+  embed: z.boolean().optional(),
   alt: z.string().trim().min(1).max(180),
   caption: z.string().trim().max(160),
   productSlugs: z.array(z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)).max(100),
-});
+}).refine(value => value.embed ? !value.image && !value.video : approvedImage(value.image), "Use a valid Instagram embed or upload a thumbnail.");
 
 export const pdpSocialSettingsSchema = z.object({ enabled: z.boolean(), posts: z.array(postSchema).max(12) })
   .refine(value => new Set(value.posts.map(post => post.id)).size === value.posts.length, "Post IDs must be unique.");

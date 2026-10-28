@@ -13,6 +13,8 @@ import SizeGuideContent from "./size-guide-content";
 import { CurrencyEstimate } from "./currency-estimate";
 import { productColourHex } from "@/lib/product-colors";
 import { pairedProducts } from "@/lib/product-merchandising";
+import { modelPortraits } from "@/data/model-details";
+import { asset } from "@/lib/asset";
 import "@/app/product-detail-v2.css";
 
 export default function ProductDetail({ product }: { product: Product }) {
@@ -21,6 +23,7 @@ export default function ProductDetail({ product }: { product: Product }) {
   const [guideOpen, setGuideOpen] = useState(false);
   const [showMobilePurchase, setShowMobilePurchase] = useState(false);
   const purchaseRef = useRef<HTMLButtonElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
   const sizeRef = useRef<HTMLDivElement>(null);
   const { products, addToBag, wishlist, toggleWishlist } = useStore();
   const related = pairedProducts(product.slug, products, "related");
@@ -41,9 +44,14 @@ export default function ProductDetail({ product }: { product: Product }) {
   useEffect(() => {
     const purchase = purchaseRef.current;
     if (!purchase) return;
-    const observer = new IntersectionObserver(([entry]) => setShowMobilePurchase(!entry.isIntersecting), { threshold: 0.1 });
+    let purchaseVisible = false;
+    const update = () => setShowMobilePurchase(!purchaseVisible && (galleryRef.current?.getBoundingClientRect().bottom ?? 0) < 0);
+    const observer = new IntersectionObserver(([entry]) => { purchaseVisible = entry.isIntersecting; update(); }, { threshold: 0.1 });
     observer.observe(purchase);
-    return () => observer.disconnect();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    update();
+    return () => { observer.disconnect(); window.removeEventListener("scroll", update); window.removeEventListener("resize", update); };
   }, [product.slug]);
   function mobilePurchase() {
     if (!canAdd) { sizeRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
@@ -56,7 +64,10 @@ export default function ProductDetail({ product }: { product: Product }) {
     if (label === "FEATURES") return <ul className="pdp-feature-list">{pdp.features.map(feature => <li key={feature}>{feature}</li>)}</ul>;
     if (label === "DESIGNED FOR") return <div className="pdp-activity-list">{pdp.activities.map(activity => <span key={activity}>{activity}</span>)}</div>;
     if (label === "FIT & FABRIC") return <div className="pdp-fit-fabric">{pdp.fit && <p><strong>Fit:</strong> {pdp.fit}</p>}{pdp.fabric && <p><strong>Fabric:</strong> {pdp.fabric}</p>}{pdp.oeko_certified && <div className="pdp-oeko"><strong>OEKO-TEX® STANDARD 100</strong><p>Made with OEKO-TEX® STANDARD 100 certified fabrics, tested for harmful substances so you can feel confident in what’s against your skin.</p>{pdp.oeko_certificate && <a href="https://www.oeko-tex.com/en/label-check" target="_blank" rel="noreferrer">Check certificate {pdp.oeko_certificate} ↗</a>}</div>}</div>;
-    if (label === "MODEL DETAILS") return <p className="pdp-model-details">{pdp.model_details}</p>;
+    if (label === "MODEL DETAILS") {
+      const name = pdp.model_details.split("\n", 1)[0].trim();
+      return <div className="pdp-model-block"><p className="pdp-model-details">{pdp.model_details}</p>{modelPortraits[name] && <img className="pdp-model-portrait" src={asset(modelPortraits[name])} alt={`${name} wearing IGNYTE activewear`} loading="lazy" />}</div>;
+    }
     if (label === "SIZE GUIDE") return <><SizeGuideContent productCategory={product.category} /><div className="pdp-size-guide-link"><Link className="text-link" href="/size-guide">OPEN FULL SIZE GUIDE ↗</Link></div></>;
     if (label === "CARE GUIDE") return <div className="pdp-care">{!pdp.care_approved && <p className="pdp-review-note">Care instructions are being checked against garment labels. Follow the label on your item.</p>}<strong>Care for your kit</strong><p>Keep your IGNYTE activewear ready for your next move.</p><ul><li>Machine wash cold at 30°C on a gentle cycle.</li><li>Turn inside out and wash with similar colours.</li><li>Use a mild detergent. Avoid fabric softener and bleach.</li><li>Wash separately from towels and items with exposed zips or Velcro.</li><li>Air dry in the shade. Do not tumble dry.</li><li>Do not iron or dry clean.</li></ul><p>After a sweaty session, let your gear air out before placing it in the laundry basket. Always follow the care label on your garment.</p></div>;
     return <div className="pdp-delivery"><p>Australia only. Free shipping on orders of $100 or more. Delivery rates for smaller orders and prepaid return labels are being confirmed with the fulfilment team.</p><Link className="text-link" href="/returns">VIEW RETURNS POLICY ↗</Link></div>;
@@ -64,7 +75,7 @@ export default function ProductDetail({ product }: { product: Product }) {
 
   return <div className="product-page pdp-stacked section-wrap">
     <div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><Link href={`/shop/${product.category}`}>{product.category.toUpperCase().replace("-", " ")}</Link><span>/</span><span>{product.name.toUpperCase()}</span></div>
-    <div className="detail-grid"><StackedProductGallery product={product} /><div className="detail-info"><span className="eyebrow">IGNYTE / {product.category.toUpperCase().replace("-", " ")}</span><h1>{product.name.toUpperCase()}<em>.</em></h1>
+    <div className="detail-grid"><div ref={galleryRef}><StackedProductGallery product={product} /></div><div className="detail-info"><span className="eyebrow">IGNYTE / {product.category.toUpperCase().replace("-", " ")}</span><h1>{product.name.toUpperCase()}<em>.</em></h1>
       <div className="detail-price">{(selectedVariant?.originalPrice ?? product.originalPrice) && <del>{money((selectedVariant?.originalPrice ?? product.originalPrice)!)}</del>}<span>{money(selectedVariant?.price ?? product.price)}<CurrencyEstimate aud={selectedVariant?.price ?? product.price} /></span></div>
       <p className="detail-description">{product.description}</p>{commerceConfigured && !product.variants && <p className="catalog-preview-note">Preview item. Available to order after sizes and stock are confirmed.</p>}
       <div className="detail-color">COLOUR: <strong>{product.color.toUpperCase()}</strong></div>

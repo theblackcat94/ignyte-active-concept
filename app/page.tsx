@@ -3,6 +3,7 @@
 import Link from "next/link";
 import HomeProductCarousel from "@/components/home-product-carousel";
 import HomeHeroSlider from "@/components/home-hero-slider";
+import PdpSocialStrip from "@/components/pdp-social-strip";
 import { homeBestSellerSlugs } from "@/data/pdp-planner";
 import { useStore } from "@/components/store-provider";
 import { asset } from "@/lib/asset";
@@ -39,5 +40,6 @@ export default function Home() {
     <section className="home-collections home-container" id="collections"><div className="home-section-head"><h2>FIND YOUR FIRE_</h2><Link href="/shop">SHOP ALL ↗</Link></div><div className="home-collection-grid">{collections.map((collection) => <Link href={`/shop/${collection.id}`} className="home-collection" key={collection.id}><img src={featuredCover[collection.id] ? homeImage(featuredCover[collection.id]) : collection.cover} alt={`${collection.label} collection`} loading="lazy" /><div><h3>{collection.label}</h3><span>SHOP NOW ↗</span></div></Link>)}</div></section>
     <section className="home-bottom" aria-labelledby="bottom-title"><img src={homeImage("Home-Hero-Alt-2-v2.jpg")} alt="Ignyte athletes training together" loading="lazy" /><div><span className="home-kicker">BRING THE FIRE_</span><h2 id="bottom-title">Your next move starts here.</h2><Link href="/shop" className="home-pill">SHOP THE COLLECTION <span>↗</span></Link></div></section>
     {bestSellers.length > 0 && <section className="home-products home-container" aria-labelledby="best-sellers-title"><div className="home-section-head"><h2 id="best-sellers-title">THE IGNYTE EDIT_</h2><Link href="/shop">SHOP ALL ↗</Link></div><HomeProductCarousel products={bestSellers} label="The Ignyte Edit" /></section>}
+    <div className="home-container"><PdpSocialStrip /></div>
   </div>;
 }

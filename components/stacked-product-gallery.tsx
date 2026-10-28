@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Product } from "@/lib/catalog";
 import ProductPhotoLightbox from "./product-photo-lightbox";
 import "@/app/pdp-stack-preview.css";
@@ -8,7 +8,18 @@ import "@/app/pdp-stack-preview.css";
 export default function StackedProductGallery({ product }: { product: Product }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [mobile, setMobile] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(true);
   const gridRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 900px)");
+    const update = () => setMobile(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
   const photos = [
     { image: product.image, alt: `${product.name} in ${product.color}` },
     ...product.gallery,
@@ -41,8 +52,13 @@ export default function StackedProductGallery({ product }: { product: Product })
         </button>
       </figure>)}
       {product.pdp.video_url && <figure className="pdp-stack-tile pdp-stack-video">
-        <video src={product.pdp.video_url} poster={product.pdp.video_poster} controls playsInline preload="none" aria-label={`${product.name} product film`} />
+        <video ref={videoRef} src={product.pdp.video_url} poster={product.pdp.video_poster} controls={!mobile} muted={muted} playsInline preload="none" aria-label={`${product.name} product film`} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} />
         <figcaption>IGNYTE FILM</figcaption>
+        {mobile && <div className="pdp-film-actions">
+          <button type="button" aria-label={playing ? "Pause product film" : "Play product film"} onClick={() => { const video = videoRef.current; if (!video) return; if (video.paused) void video.play(); else video.pause(); }}><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{playing ? <><path d="M8 5v14M16 5v14" /></> : <path d="m8 5 11 7-11 7z" />}</svg></button>
+          <button type="button" aria-label={muted ? "Unmute product film" : "Mute product film"} onClick={() => setMuted(value => !value)}><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z" />{muted ? <path d="m16 9 5 6m0-6-5 6" /> : <><path d="M15 9a4 4 0 0 1 0 6" /><path d="M18 6a8 8 0 0 1 0 12" /></>}</svg></button>
+          <button type="button" aria-label="View product film full screen" onClick={() => { const video = videoRef.current as (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null; if (!video) return; if (video.webkitEnterFullscreen) video.webkitEnterFullscreen(); else if (video.requestFullscreen) void video.requestFullscreen(); }}><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" /></svg></button>
+        </div>}
       </figure>}
     </div>
     {mediaCount > 1 && <nav className="pdp-stack-pagination" aria-label="Product media slides">

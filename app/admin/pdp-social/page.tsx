@@ -43,9 +43,9 @@ export default function PdpSocialAdminPage() {
     setSettings(current => ({ ...current, posts: [...current.posts, { id: crypto.randomUUID(), enabled: true, href: "", image: "", alt: "", caption: "", productSlugs: [] }] }));
   }
 
-  async function uploadImage(post: PdpSocialPost, file: File) {
+  async function uploadMedia(post: PdpSocialPost, file: File, kind: "image" | "video") {
     if (!token) return;
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size < 1 || file.size > 8 * 1024 * 1024) { setMessage("Choose a JPG, PNG or WebP up to 8 MB."); return; }
+    if (kind === "image" ? (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size < 1 || file.size > 8 * 1024 * 1024) : (file.type !== "video/mp4" || file.size < 1 || file.size > 50 * 1024 * 1024)) { setMessage(kind === "image" ? "Choose a JPG, PNG or WebP up to 8 MB." : "Choose an MP4 up to 50 MB."); return; }
     setUploading(post.id); setMessage("");
     try {
       const response = await fetch("/api/admin/home-hero/upload-ticket", { method: "POST", headers: adminHeaders(token), body: JSON.stringify({ type: file.type, size: file.size }) });
@@ -53,8 +53,8 @@ export default function PdpSocialAdminPage() {
       if (!response.ok || !ticket.path || !ticket.token || !ticket.url) throw Error(ticket.error ?? "Could not prepare upload.");
       const { error } = await browserDb().storage.from("home-media").uploadToSignedUrl(ticket.path, ticket.token, file, { contentType: file.type });
       if (error) throw error;
-      updatePost(post.id, { image: ticket.url });
-      setMessage("Image uploaded. Save the Instagram strip to publish it.");
+      updatePost(post.id, kind === "image" ? { image: ticket.url } : { video: ticket.url });
+      setMessage("Media uploaded. Save the Instagram strip to publish it.");
     } catch (error) { setMessage(error instanceof Error ? error.message : "Image upload failed."); }
     finally { setUploading(""); }
   }
@@ -66,7 +66,7 @@ export default function PdpSocialAdminPage() {
       const response = await fetch("/api/admin/pdp-social", { method: "PUT", headers: adminHeaders(token), body: JSON.stringify(settings) });
       const result = await response.json() as PdpSocialSettings & { error?: string };
       if (!response.ok) throw Error(result.error ?? "Could not save Instagram posts.");
-      setSettings(result); setSlugInputs(Object.fromEntries(result.posts.map(post => [post.id, post.productSlugs.join(", ")]))); setMessage("Saved. Refresh a product page to see the strip.");
+      setSettings(result); setSlugInputs(Object.fromEntries(result.posts.map(post => [post.id, post.productSlugs.join(", ")]))); setMessage("Saved. Refresh the home or product page to see the strip.");
     } catch (error) { setMessage(error instanceof Error ? error.message : "Could not save Instagram posts."); }
     finally { setSaving(false); }
   }
@@ -75,21 +75,25 @@ export default function PdpSocialAdminPage() {
     {!token && <p>Sign in with a team account to manage Instagram posts.</p>}
     {message && <p role="status" className="admin-message">{message}</p>}
     {token && loaded && <div className="ops-panel pdp-social-admin">
-      <h2>Curated product-page posts</h2>
-      <p>Add approved Instagram post or reel links with an image you have permission to use. Reorder them here; customers can swipe the strip on mobile. Leave the strip switched off until the posts are ready.</p>
-      <label className="pdp-social-admin-toggle"><input type="checkbox" checked={settings.enabled} onChange={event => setSettings(current => ({ ...current, enabled: event.target.checked }))} /> SHOW ON PRODUCT PAGES</label>
+      <h2>Curated Instagram posts</h2>
+      <p>Add public Instagram post or reel links as embeds, or upload approved media. The first ten enabled posts appear on the homepage and product pages; product slug limits apply only on product pages. Reorder posts here; customers can swipe the strip on mobile.</p>
+      <label className="pdp-social-admin-toggle"><input type="checkbox" checked={settings.enabled} onChange={event => setSettings(current => ({ ...current, enabled: event.target.checked }))} /> SHOW ON HOMEPAGE AND PRODUCT PAGES</label>
       {settings.posts.map((post, index) => <section className="pdp-social-admin-post" key={post.id}>
         <div className="pdp-social-admin-head"><h3>POST {index + 1}</h3><div><button type="button" onClick={() => movePost(index, -1)} disabled={index === 0} aria-label={`Move post ${index + 1} up`}>↑</button><button type="button" onClick={() => movePost(index, 1)} disabled={index === settings.posts.length - 1} aria-label={`Move post ${index + 1} down`}>↓</button><button type="button" onClick={() => setSettings(current => ({ ...current, posts: current.posts.filter(item => item.id !== post.id) }))}>REMOVE</button></div></div>
         <div className="pdp-social-admin-fields">
           <label>INSTAGRAM POST OR REEL URL<input value={post.href} placeholder="https://www.instagram.com/p/.../" onChange={event => updatePost(post.id, { href: event.target.value })} /></label>
-          <label>IMAGE URL<input value={post.image} placeholder="Upload an approved thumbnail below" onChange={event => updatePost(post.id, { image: event.target.value })} /></label>
+          <label className="pdp-social-admin-toggle"><input type="checkbox" checked={Boolean(post.embed)} onChange={event => updatePost(post.id, event.target.checked ? { embed: true, image: "", video: "" } : { embed: false })} /> USE INSTAGRAM EMBED</label>
+          {!post.embed && <><label>IMAGE URL<input value={post.image} placeholder="Upload an approved thumbnail below" onChange={event => updatePost(post.id, { image: event.target.value })} /></label>
+          <label>VIDEO URL (OPTIONAL)<input value={post.video ?? ""} placeholder="Upload a licensed MP4 below" onChange={event => updatePost(post.id, { video: event.target.value })} /></label></>}
           <label>IMAGE DESCRIPTION<input value={post.alt} maxLength={180} placeholder="Describe the image for accessibility" onChange={event => updatePost(post.id, { alt: event.target.value })} /></label>
           <label>SHORT CAPTION (OPTIONAL)<input value={post.caption} maxLength={160} onChange={event => updatePost(post.id, { caption: event.target.value })} /></label>
           <label className="wide">PRODUCT SLUGS (OPTIONAL, COMMA SEPARATED)<input value={slugInputs[post.id] ?? post.productSlugs.join(", ")} placeholder="Leave blank to show on every product" onChange={event => { const value = event.target.value; setSlugInputs(current => ({ ...current, [post.id]: value })); updatePost(post.id, { productSlugs: value.split(",").map(slug => slug.trim()).filter(Boolean) }); }} /></label>
           <label className="pdp-social-admin-toggle"><input type="checkbox" checked={post.enabled} onChange={event => updatePost(post.id, { enabled: event.target.checked })} /> INCLUDE THIS POST</label>
-          <label className="pdp-social-admin-upload">{uploading === post.id ? "UPLOADING…" : "UPLOAD THUMBNAIL"}<input type="file" accept="image/jpeg,image/png,image/webp" disabled={Boolean(uploading)} onChange={event => { const file = event.target.files?.[0]; if (file) void uploadImage(post, file); event.target.value = ""; }} /></label>
+          {!post.embed && <><label className="pdp-social-admin-upload">{uploading === post.id ? "UPLOADING…" : "UPLOAD THUMBNAIL"}<input type="file" accept="image/jpeg,image/png,image/webp" disabled={Boolean(uploading)} onChange={event => { const file = event.target.files?.[0]; if (file) void uploadMedia(post, file, "image"); event.target.value = ""; }} /></label>
+          <label className="pdp-social-admin-upload">{uploading === post.id ? "UPLOADING…" : "UPLOAD VIDEO"}<input type="file" accept="video/mp4" disabled={Boolean(uploading)} onChange={event => { const file = event.target.files?.[0]; if (file) void uploadMedia(post, file, "video"); event.target.value = ""; }} /></label></>}
         </div>
         {post.image && <img className="pdp-social-admin-preview" src={post.image} alt={post.alt || "Post thumbnail preview"} />}
+        {post.embed && post.href && <p><a href={post.href} target="_blank" rel="noopener noreferrer">VIEW INSTAGRAM POST ↗</a></p>}
       </section>)}
       <div className="ops-toolbar"><button type="button" onClick={addPost} disabled={settings.posts.length >= 12}>ADD POST</button><button type="button" onClick={() => void save()} disabled={saving || Boolean(uploading)}>{saving ? "SAVING…" : "SAVE INSTAGRAM STRIP"}</button><Link href="/product/motion-sports-bra-black/" target="_blank">VIEW EXAMPLE PDP ↗</Link></div>
       <p>Up to 12 posts. Uploaded thumbnails use the existing Supabase home-media bucket. Posts without product slugs appear on every PDP; posts with slugs appear only on those products.</p>
