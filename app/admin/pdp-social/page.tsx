@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AdminPageShell, adminHeaders, useAdminToken } from "@/components/admin-page-shell";
 import { browserDb } from "@/lib/commerce";
-import { defaultPdpSocialSettings, socialCoverImages, type PdpSocialPost, type PdpSocialSettings } from "@/data/pdp-social";
+import { defaultPdpSocialSettings, socialCoverImages, suppliedSocialCovers, type PdpSocialPost, type PdpSocialSettings } from "@/data/pdp-social";
 import "./pdp-social-admin.css";
 
 export default function PdpSocialAdminPage() {
@@ -66,7 +66,7 @@ export default function PdpSocialAdminPage() {
       const response = await fetch("/api/admin/pdp-social", { method: "PUT", headers: adminHeaders(token), body: JSON.stringify(settings) });
       const result = await response.json() as PdpSocialSettings & { error?: string };
       if (!response.ok) throw Error(result.error ?? "Could not save Instagram posts.");
-      setSettings(result); setSlugInputs(Object.fromEntries(result.posts.map(post => [post.id, post.productSlugs.join(", ")]))); setMessage("Saved. Refresh the home or product page to see the strip.");
+      setSettings(result); setSlugInputs(Object.fromEntries(result.posts.map(post => [post.id, post.productSlugs.join(", ")]))); setMessage("Saved. The home and product strips refresh when shoppers return to the tab.");
     } catch (error) { setMessage(error instanceof Error ? error.message : "Could not save Instagram posts."); }
     finally { setSaving(false); }
   }
@@ -76,7 +76,7 @@ export default function PdpSocialAdminPage() {
     {message && <p role="status" className="admin-message">{message}</p>}
     {token && loaded && <div className="ops-panel pdp-social-admin">
       <h2>Curated Instagram posts</h2>
-      <p>Add public Instagram post or reel links and upload matching thumbnails or videos. Until you upload media, the strip uses an Ignyte campaign cover. The first ten enabled posts appear on the homepage and product pages; customers can swipe the strip on mobile.</p>
+      <p>Add public Instagram post or reel links and upload matching thumbnails or videos. The ten supplied post covers appear by default. The first ten enabled posts appear on the homepage and product pages; customers can swipe the strip on mobile.</p>
       <label className="pdp-social-admin-toggle"><input type="checkbox" checked={settings.enabled} onChange={event => setSettings(current => ({ ...current, enabled: event.target.checked }))} /> SHOW ON HOMEPAGE AND PRODUCT PAGES</label>
       {settings.posts.map((post, index) => <section className="pdp-social-admin-post" key={post.id}>
         <div className="pdp-social-admin-head"><h3>POST {index + 1}</h3><div><button type="button" onClick={() => movePost(index, -1)} disabled={index === 0} aria-label={`Move post ${index + 1} up`}>↑</button><button type="button" onClick={() => movePost(index, 1)} disabled={index === settings.posts.length - 1} aria-label={`Move post ${index + 1} down`}>↓</button><button type="button" onClick={() => setSettings(current => ({ ...current, posts: current.posts.filter(item => item.id !== post.id) }))}>REMOVE</button></div></div>
@@ -91,11 +91,11 @@ export default function PdpSocialAdminPage() {
           <label className="pdp-social-admin-upload">{uploading === post.id ? "UPLOADING…" : "UPLOAD THUMBNAIL"}<input type="file" accept="image/jpeg,image/png,image/webp" disabled={Boolean(uploading)} onChange={event => { const file = event.target.files?.[0]; if (file) void uploadMedia(post, file, "image"); event.target.value = ""; }} /></label>
           <label className="pdp-social-admin-upload">{uploading === post.id ? "UPLOADING…" : "UPLOAD VIDEO"}<input type="file" accept="video/mp4" disabled={Boolean(uploading)} onChange={event => { const file = event.target.files?.[0]; if (file) void uploadMedia(post, file, "video"); event.target.value = ""; }} /></label>
         </div>
-        <img className="pdp-social-admin-preview" src={post.image || socialCoverImages[index % socialCoverImages.length]} alt={post.image ? post.alt || "Post thumbnail preview" : "Ignyte campaign cover preview"} />
+        <img className="pdp-social-admin-preview" src={post.image || suppliedSocialCovers[post.href.match(/\/(?:p|reel)\/([^/]+)/)?.[1] || ""] || socialCoverImages[index % socialCoverImages.length]} alt={post.alt || "Instagram post cover preview"} />
         {post.href && <p><a href={post.href} target="_blank" rel="noopener noreferrer">VIEW INSTAGRAM POST ↗</a></p>}
       </section>)}
       <div className="ops-toolbar"><button type="button" onClick={addPost} disabled={settings.posts.length >= 12}>ADD POST</button><button type="button" onClick={() => void save()} disabled={saving || Boolean(uploading)}>{saving ? "SAVING…" : "SAVE INSTAGRAM STRIP"}</button><Link href="/product/motion-sports-bra-black/" target="_blank">VIEW EXAMPLE PDP ↗</Link></div>
-      <p>Up to 12 posts. Uploaded thumbnails use the existing Supabase home-media bucket. The brand cover is editorial and may differ from the linked post until a matching thumbnail is uploaded. Posts without product slugs appear on every PDP; posts with slugs appear only on those products.</p>
+      <p>Up to 12 posts. Uploaded thumbnails use the existing Supabase home-media bucket and replace the supplied cover for that post. Posts without product slugs appear on every PDP; posts with slugs appear only on those products.</p>
     </div>}
   </AdminPageShell>;
 }

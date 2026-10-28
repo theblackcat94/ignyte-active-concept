@@ -7,6 +7,7 @@ import { asset } from "@/lib/asset";
 import { useStore } from "./store-provider";
 import HeartIcon from "./heart-icon";
 import AnnouncementBar from "./announcement-bar";
+import HeaderLogo from "./header-logo";
 
 export default function Header() {
   const { products, categories, bag, setBagOpen, searchOpen, setSearchOpen, wishlist } = useStore();
@@ -21,7 +22,7 @@ export default function Header() {
     <AnnouncementBar />
     <header className="site-header">
       <div className="header-mobile-left"><button className="header-icon mobile-menu-toggle" aria-label="Open menu" onClick={() => setMenuOpen(true)}><span className="hamburger"><i /><i /></span></button><button className="header-icon mobile-search-trigger" aria-label="Search" onClick={() => setSearchOpen(true)}><Icon name="search" /></button></div>
-      <Link className="brand brand-image" href="/" aria-label="Ignyte home"><img src={asset("/images/ignyte-logo.png")} alt="Ignyte" /></Link>
+      <Link className="brand brand-image" href="/" aria-label="Ignyte home"><HeaderLogo /></Link>
       <nav className="desktop-nav" aria-label="Main navigation">{nav.map(([label, href]) => <Link className={pathname === href ? "active" : ""} href={href} key={href}>{label}</Link>)}</nav>
       <div className="header-actions">
         <Link className="header-icon" href="/account" aria-label="Your account"><Icon name="account" /></Link>

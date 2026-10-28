@@ -1,1 +1,7 @@
 .bag-shipping-progress,.drawer-foot .bag-shipping-progress{display:block;margin:0 0 20px;letter-spacing:0}.bag-shipping-progress strong{display:block;font-size:13px;line-height:1.3}.bag-shipping-track{height:12px;overflow:hidden;border-radius:999px;background:#e1ddd7;margin:12px 0 9px}.bag-shipping-track>span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#0B1020 0%,#b62e25 54%,#FF4533 100%);box-shadow:0 0 12px #ff453366;transition:width .45s ease}.bag-shipping-progress.is-unlocked .bag-shipping-track>span{box-shadow:0 0 16px #ff4533aa}.bag-shipping-progress small{display:block;color:#625d58;font-size:10px;line-height:1.35}@media(prefers-reduced-motion:reduce){.bag-shipping-track>span{transition:none}}
+.bag-shipping-progress{position:relative}
+.bag-shipping-flames{position:absolute;inset:auto 10px 26px auto;display:flex;gap:3px;pointer-events:none;color:#FF4533}
+.bag-shipping-flames svg{width:12px;height:25px;opacity:0;animation:shipping-flame 950ms ease-out forwards}
+.bag-shipping-flames svg:nth-child(2){animation-delay:80ms}.bag-shipping-flames svg:nth-child(3){animation-delay:140ms}.bag-shipping-flames svg:nth-child(4){animation-delay:200ms}.bag-shipping-flames svg:nth-child(5){animation-delay:260ms}
+@keyframes shipping-flame{0%{opacity:0;transform:translateY(6px) scale(.5)}20%{opacity:.9}100%{opacity:0;transform:translateY(-22px) scale(1)}}
+@media(prefers-reduced-motion:reduce){.bag-shipping-flames{display:none}}

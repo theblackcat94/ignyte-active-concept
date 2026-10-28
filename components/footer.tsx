@@ -25,7 +25,8 @@ const footerLinks = [
     { label: "Collections", href: "/collections" },
     { label: "Wishlist", href: "/wishlist" },
   ] },
-  { title: "CONNECT", items: [
+  { title: "CONTACT", items: [
+    { label: "Contact us", href: "/contact" },
     { label: "Instagram ↗", href: "https://www.instagram.com/ignyteactive" },
   ] },
 ];

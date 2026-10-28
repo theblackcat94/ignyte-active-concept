@@ -12,19 +12,23 @@ export type PdpSocialPost = {
 
 export type PdpSocialSettings = { enabled: boolean; posts: PdpSocialPost[] };
 
-// Editorial covers for linked posts until the team uploads the matching post media.
+// Supplied covers, kept in the same order as the linked Instagram posts.
 export const socialCoverImages = [
-  "/images/home/Home-Hero-Alt-2-v2.jpg",
-  "/images/home/Home-Hero-Alt-3.jpg",
-  "/images/home/Home-Hero-Alt-4.jpg",
-  "/images/home/Home-Hero-Alt-5.jpg",
-  "/images/home/Home-Hero-Alt-6.jpg",
-  "/images/home/Ignyte-Sports-Bras-Vertical.jpg",
-  "/images/home/Ignyte-Shorts-Vertical.jpg",
-  "/images/home/Ignyte-Leggings-Vertical.jpg",
-  "/images/about/Ignyte-About-Mission.jpg",
-  "/images/home/Home-Hero-1.jpg",
+  "/images/instagram/01_De8vidKvamy.jpg",
+  "/images/instagram/02_DdvnCY3ii41.jpg",
+  "/images/instagram/03_De2r1sZyQYS.jpg",
+  "/images/instagram/04_Ded58Prv8I2.jpg",
+  "/images/instagram/05_Dedp7U4PLHp.jpg",
+  "/images/instagram/06_DeGq_vJj2Kq.jpg",
+  "/images/instagram/07_Dea7TywSYHZ.jpg",
+  "/images/instagram/08_Dd0oO4zvIO6.jpg",
+  "/images/instagram/09_DeUHvweyJJx.jpg",
+  "/images/instagram/10_Dds4WdxvhIC.jpg",
 ] as const;
+
+export const suppliedSocialCovers: Record<string, string> = Object.fromEntries(
+  socialCoverImages.map(image => [image.split("_").at(-1)!.replace(".jpg", ""), image]),
+);
 
 const instagramGrid = [
   ["reel", "De8vidKvamy"], ["p", "DdvnCY3ii41"], ["p", "De2r1sZyQYS"],
@@ -38,7 +42,7 @@ export const defaultPdpSocialSettings: PdpSocialSettings = {
   enabled: true,
   posts: instagramGrid.map(([kind, code], index) => ({
     id: `instagram-${code}`, enabled: true, embed: true,
-    href: `https://www.instagram.com/${kind}/${code}/`, image: "",
+    href: `https://www.instagram.com/${index === 6 ? "cara.mel95/" : index === 8 ? "train_withsis/" : "ignyteactive/"}${kind}/${code}/`, image: "",
     alt: `Ignyte Active Instagram ${kind === "reel" ? "reel" : "post"} ${index + 1}`,
     caption: kind === "reel" ? "WATCH REEL" : "VIEW POST", productSlugs: [],
   })),

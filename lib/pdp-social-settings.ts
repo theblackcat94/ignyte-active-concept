@@ -7,7 +7,7 @@ import { defaultPdpSocialSettings } from "@/data/pdp-social";
 function approvedInstagramLink(value: string) {
   try {
     const url = new URL(value);
-    return url.protocol === "https:" && ["instagram.com", "www.instagram.com"].includes(url.hostname) && /^\/(p|reel)\/[A-Za-z0-9_-]+\/?$/.test(url.pathname);
+    return url.protocol === "https:" && ["instagram.com", "www.instagram.com"].includes(url.hostname) && /^\/(?:[A-Za-z0-9._]+\/)?(p|reel)\/[A-Za-z0-9_-]+\/?$/.test(url.pathname);
   } catch { return false; }
 }
 
@@ -48,7 +48,16 @@ const stateDir = process.env.IGNYTE_STATE_DIR ?? (process.env.NODE_ENV === "prod
 const configPath = path.join(stateDir, "pdp-social.json");
 
 export async function readPdpSocialSettings() {
-  try { return pdpSocialSettingsSchema.parse(JSON.parse(await readFile(configPath, "utf8"))); }
+  try {
+    const settings = pdpSocialSettingsSchema.parse(JSON.parse(await readFile(configPath, "utf8")));
+    // Upgrade only the original seed links; preserve any destination edited by the team.
+    return { ...settings, posts: settings.posts.map(post => {
+      const code = post.id.startsWith("instagram-") ? post.id.slice("instagram-".length) : "";
+      const original = defaultPdpSocialSettings.posts.find(item => item.id === post.id);
+      if (original && post.href === `https://www.instagram.com/${original.href.includes("/reel/") ? "reel" : "p"}/${code}/`) return { ...post, href: original.href };
+      return post;
+    }) };
+  }
   catch (error) {
     if (error && typeof error === "object" && "code" in error && error.code === "ENOENT") return defaultPdpSocialSettings;
     throw error;

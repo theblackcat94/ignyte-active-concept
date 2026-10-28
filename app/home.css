@@ -2,6 +2,7 @@ body:has(.home-page){background:var(--paper);color:var(--ink);font-family:var(--
 .home-page{overflow:hidden;background:var(--paper)}
 .home-container{width:min(100% - 88px,1500px);margin-inline:auto}
 .home-kicker{font-family:var(--font-ignyte-mono),"Courier New",monospace;font-size:15px;font-weight:700;letter-spacing:.08em;line-height:1.4}
+.home-kicker-keep{white-space:nowrap}
 .home-pill{display:inline-flex;align-items:center;justify-content:space-between;gap:25px;border:1px solid currentColor;border-radius:40px;padding:15px 22px;font-family:var(--font-ignyte-mono),"Courier New",monospace;font-size:14px;font-weight:700;letter-spacing:.04em;color:#fff;transition:background .2s,color .2s}
 .home-pill:hover{background:#fff;color:#0B1020}
 .home-hero{position:relative;height:clamp(620px,56.25vw,1200px);background:#0B1020;color:#fff}

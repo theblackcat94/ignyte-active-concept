@@ -43,7 +43,7 @@ export default function StackedProductGallery({ product }: { product: Product })
     setActiveIndex(index);
   }
 
-  return <section className="pdp-stack-media" aria-label={`${product.name} stacked media gallery`}>
+  return <section className="pdp-stack-media" aria-label={`${product.name} media gallery`}>
     <div className="pdp-stack-grid" ref={gridRef} onScroll={updateActiveIndex}>
       {photos.map((photo, index) => <figure className="pdp-stack-tile" key={`${photo.image}-${index}`}>
         <button type="button" className="pdp-stack-photo" onClick={() => setOpenIndex(index)} aria-label={`Enlarge photo ${index + 1} of ${photos.length}: ${photo.alt}`}>
@@ -61,9 +61,11 @@ export default function StackedProductGallery({ product }: { product: Product })
         </div>}
       </figure>}
     </div>
+    {mediaCount > 1 && <div className="pdp-stack-controls"><button type="button" onClick={() => goToMedia(Math.max(0, activeIndex - 1))} disabled={activeIndex === 0} aria-label="Previous product image">←</button><span>{activeIndex + 1} / {mediaCount}</span><button type="button" onClick={() => goToMedia(Math.min(mediaCount - 1, activeIndex + 1))} disabled={activeIndex === mediaCount - 1} aria-label="Next product image">→</button></div>}
     {mediaCount > 1 && <nav className="pdp-stack-pagination" aria-label="Product media slides">
       {Array.from({ length: mediaCount }, (_, index) => <button key={index} type="button" className={activeIndex === index ? "active" : ""} aria-label={`Show ${index === photos.length ? "product film" : `photo ${index + 1}`} of ${mediaCount}`} aria-current={activeIndex === index ? "true" : undefined} onClick={() => goToMedia(index)}><span /></button>)}
     </nav>}
+    {mediaCount > 1 && <nav className="pdp-stack-thumbnails" aria-label="Product media thumbnails">{photos.map((photo, index) => <button type="button" key={`${photo.image}-thumb`} className={activeIndex === index ? "active" : ""} onClick={() => goToMedia(index)} aria-label={`Show product photo ${index + 1}`} aria-current={activeIndex === index ? "true" : undefined}><img src={photo.image} alt="" loading="lazy" /></button>)}{product.pdp.video_url && <button type="button" className={activeIndex === photos.length ? "active" : ""} onClick={() => goToMedia(photos.length)} aria-label="Show product film" aria-current={activeIndex === photos.length ? "true" : undefined}><img src={product.pdp.video_poster || product.image} alt="" loading="lazy" /><span aria-hidden="true">▶</span></button>}</nav>}
     {openIndex !== null && <ProductPhotoLightbox photos={photos} initialIndex={openIndex} onClose={() => setOpenIndex(null)} />}
   </section>;
 }
