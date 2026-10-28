@@ -1,6 +1,6 @@
 # IGNYTE email designs
 
-These are review drafts. They are not configured in Supabase or connected to SES, and no site event sends them yet.
+These are review drafts. The site now requests Supabase Auth confirmation mail during account creation and offers a resend action, but the branded Auth HTML below must be installed in Supabase before it is sent. The transactional designs in `lib/email-templates.ts` are not connected to site events or SES yet.
 
 | Message | Trigger | Subject | Source |
 | --- | --- | --- | --- |
@@ -12,7 +12,7 @@ These are review drafts. They are not configured in Supabase or connected to SES
 | Order dispatched | A team member records dispatch and tracking | Your IGNYTE order is on its way | `lib/email-templates.ts` |
 | Enquiry received | Contact form saves a ticket | We received your IGNYTE message | `lib/email-templates.ts` |
 
-The first three files use [Supabase Auth's documented `{{ .ConfirmationURL }}` and `{{ .SiteURL }}` variables](https://supabase.com/docs/guides/auth/auth-email-templates). The account confirmation and recovery links must be tested against the configured Site URL and redirect allow list before replacing the live Supabase templates. Supabase sends these through its own email service until a custom SMTP connection is configured. Disable link tracking in any SMTP provider used for Auth so verification links are not rewritten.
+The first three files use Supabase Auth's `{{ .ConfirmationURL }}` and `{{ .SiteURL }}` variables. Install `auth-confirm.html` as the **Confirm signup** HTML in Supabase Dashboard → Authentication → Email Templates, with subject `Confirm your IGNYTE account`. The account confirmation and recovery links must be tested against the configured Site URL and redirect allow list for **both** `https://ignyte.theblackcat94.com/account` and `https://dev.ignyteactive.com/account` before replacing the live Supabase templates. Supabase sends these through its own email service until a custom SMTP connection is configured. Disable link tracking in any SMTP provider used for Auth so verification links are not rewritten.
 
 The other designs are typed renderers that return HTML and plain text. Dynamic values are HTML-escaped. They are deliberately not called by checkout or support routes. Order-request copy states that payment has not been taken; payment-confirmed mail must only follow a verified merchant callback. Dispatch mail must only follow a real fulfilment update. A guest order detail link is omitted unless it can be opened securely outside the original checkout browser.
 
