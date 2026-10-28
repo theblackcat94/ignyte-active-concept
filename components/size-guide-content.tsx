@@ -7,7 +7,7 @@ import "@/app/size-guide/size-guide.css";
 
 const guideOrder: SizeGuideCategory[] = ["sports-bras", "bottoms", "tops", "socks"];
 
-export default function SizeGuideContent({ productCategory, showTabs = false, reviewMode = false }: { productCategory?: string; showTabs?: boolean; reviewMode?: boolean }) {
+export default function SizeGuideContent({ productCategory, showTabs = false }: { productCategory?: string; showTabs?: boolean }) {
   const [activeTab, setActiveTab] = useState<SizeGuideCategory>("sports-bras");
   const [unit, setUnit] = useState<"cm" | "in">("cm");
   const category = showTabs ? activeTab : guideCategoryForProduct(productCategory ?? "sports-bras");
@@ -20,7 +20,6 @@ export default function SizeGuideContent({ productCategory, showTabs = false, re
       {guideOrder.map(key => <button type="button" key={key} className={category === key ? "selected" : ""} aria-pressed={category === key} onClick={() => setActiveTab(key)}>{sizeGuides[key].label.toUpperCase()}</button>)}
     </div>}
     <h3>{guide.label} size guide</h3>
-    {!guide.approved && <p className="size-guide-help">Provisional body measurements for review. Please check the product fit notes or <Link href="/contact">contact us</Link> if you need help choosing a size.</p>}
     {guide.note ? <p>{guide.note}</p> : <>
       {hasRanges ? <><div className="size-guide-units" aria-label="Measurement unit"><button type="button" aria-pressed={unit === "cm"} onClick={() => setUnit("cm")}>CM</button><button type="button" aria-pressed={unit === "in"} onClick={() => setUnit("in")}>IN</button></div><div className="size-guide-scroll"><table><caption>Body measurement ranges · {unit}</caption><thead><tr><th scope="col">Measurement</th>{guide.sizes.map(size => <th scope="col" key={size}>{size}</th>)}</tr></thead><tbody>{guide.rows.map(row => <tr key={row.label}><th scope="row">{row.label}</th>{guide.sizes.map(size => <td key={size}>{formatRange(row.ranges[size])}</td>)}</tr>)}</tbody></table></div></>
         : <p className="size-guide-help">Detailed size ranges for {guide.label.toLowerCase()} will be added soon. <Link href="/contact">Contact us</Link> for fit advice before ordering.</p>}

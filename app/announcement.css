@@ -1,11 +1,10 @@
 .announcement-orange{background:#FF4533;color:#fff}
 .announcement-orange .announcement-center{color:#fff}
 .announcement-ticker{overflow:hidden;display:block;padding:0}
-.announcement-track{display:flex;align-items:center;white-space:nowrap;width:max-content;height:100%;animation:announcement-enter 12s linear both,announcement-loop 48s linear infinite;will-change:transform}
+.announcement-track{display:flex;align-items:center;white-space:nowrap;width:max-content;height:100%;animation:announcement-loop 90s linear infinite;will-change:transform}
 .announcement-group{display:flex;align-items:center;gap:60px;padding-right:60px;min-width:100vw}
 .announcement-group>span{display:inline-flex;align-items:center;gap:14px;min-width:max-content}
-.announcement-track:hover{animation-play-state:paused,paused}
+.announcement-track:hover{animation-play-state:paused}
 .announcement-track u{text-underline-offset:3px}
-@keyframes announcement-enter{from{transform:translateX(100vw)}to{transform:translateX(0)}}
 @keyframes announcement-loop{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.announcement-track{animation:none!important;width:100%;justify-content:center}.announcement-group{justify-content:center}.announcement-group>span:not(:first-child),.announcement-group:nth-child(2){display:none}}
