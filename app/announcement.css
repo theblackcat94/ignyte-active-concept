@@ -1,4 +1,4 @@
-.announcement-orange{background:#ff4938;color:#fff}
+.announcement-orange{background:#FF4533;color:#fff}
 .announcement-orange .announcement-center{color:#fff}
 .announcement-ticker{overflow:hidden;display:block;padding:0}
 .announcement-track{display:flex;align-items:center;gap:60px;white-space:nowrap;width:max-content;height:100%;animation:announcement-scroll 28s linear infinite}

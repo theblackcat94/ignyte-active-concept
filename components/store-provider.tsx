@@ -19,6 +19,7 @@ type Store = {
   bagOpen: boolean;
   setBagOpen: (open: boolean) => void;
   addToBag: (slug: string, size: string) => void;
+  changeBagQuantity: (slug: string, size: string, change: number) => void;
   removeFromBag: (slug: string, size: string) => void;
   clearBag: () => void;
   wishlist: string[];
@@ -72,9 +73,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const addToBag = (slug: string, size: string) => {
     const product = products.find(item => item.slug === slug);
-    if (product && commerceConfigured && !product.variants?.some(variant => variant.size === size && variant.stock > 0)) return;
+    const availableStock = product?.variants?.find(variant => variant.size === size)?.stock;
+    if (product && commerceConfigured && (!availableStock || availableStock <= 0)) return;
     setBag(current => {
       const found = current.find(item => item.slug === slug && item.size === size);
+      if (found && availableStock !== undefined && found.quantity >= availableStock) return current;
       return found
         ? current.map(item => item === found ? { ...item, quantity: item.quantity + 1 } : item)
         : [...current, { slug, size, quantity: 1 }];
@@ -83,6 +86,17 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     track("add_to_bag", `/product/${slug}/`);
   };
   const removeFromBag = (slug: string, size: string) => setBag(current => current.filter(item => !(item.slug === slug && item.size === size)));
+  const changeBagQuantity = (slug: string, size: string, change: number) => {
+    const product = products.find(item => item.slug === slug);
+    const stock = product?.variants?.find(variant => variant.size === size)?.stock;
+    setBag(current => current.flatMap(item => {
+      if (item.slug !== slug || item.size !== size) return [item];
+      const quantity = item.quantity + change;
+      if (quantity <= 0) return [];
+      if (change > 0 && stock !== undefined && quantity > stock) return [item];
+      return [{ ...item, quantity }];
+    }));
+  };
   const clearBag = useCallback(() => setBag([]), []);
   const toggleWishlist = (slug: string) => setWishlist(current => current.includes(slug) ? current.filter(item => item !== slug) : [...current, slug]);
 
@@ -95,7 +109,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const recommendations = bagRecommendations(bag.map(item => item.slug), products);
 
   return (
-    <StoreContext.Provider value={{ products, categories, catalogPreview, bag, bagOpen, setBagOpen, addToBag, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
+    <StoreContext.Provider value={{ products, categories, catalogPreview, bag, bagOpen, setBagOpen, addToBag, changeBagQuantity, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
       {children}
       {bagOpen && <div className="drawer-backdrop" onClick={() => setBagOpen(false)} />}
       <aside className={`bag-drawer ${bagOpen ? "is-open" : ""}`} aria-label="Shopping bag" aria-hidden={!bagOpen}>
@@ -105,8 +119,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           if (!product) return <div className="bag-row" key={`${item.slug}-${item.size}`}><div><strong>Unavailable product</strong><button className="text-button" onClick={() => removeFromBag(item.slug, item.size)}>Remove</button></div></div>;
           const price = product.variants?.find(variant => variant.size === item.size)?.price ?? product.price;
           return <div className="bag-row" key={`${item.slug}-${item.size}`}>
-            <img src={product.image} alt={product.name} />
-            <div><strong>{product.name}</strong><span>{product.color} / {item.size}</span><span>Qty {item.quantity} · {money(price * item.quantity)}</span><button className="text-button" onClick={() => removeFromBag(item.slug, item.size)}>Remove</button></div>
+            <Link href={`/product/${product.slug}`} onClick={() => setBagOpen(false)} aria-label={`View ${product.name}`}><img src={product.image} alt="" /></Link>
+            <div><Link className="bag-product-name" href={`/product/${product.slug}`} onClick={() => setBagOpen(false)}>{product.name}</Link><span>{product.color} / {item.size}</span><div className="bag-quantity" aria-label={`${product.name} quantity`}><button type="button" onClick={() => changeBagQuantity(item.slug, item.size, -1)} aria-label={`Decrease ${product.name} quantity`}>−</button><span aria-live="polite">{item.quantity}</span><button type="button" onClick={() => changeBagQuantity(item.slug, item.size, 1)} disabled={Boolean(product.variants?.some(variant => variant.size === item.size && item.quantity >= variant.stock))} aria-label={`Increase ${product.name} quantity`}>+</button></div><span>{money(price * item.quantity)}</span><button className="text-button" onClick={() => removeFromBag(item.slug, item.size)}>Remove</button></div>
           </div>;
         })}{recommendations.length > 0 && <section className="bag-recommendations" aria-label="You may also like"><h3>YOU MAY ALSO LIKE</h3>{recommendations.map(product => {
           const chosen = recommendationSizes[product.slug] ?? "";
