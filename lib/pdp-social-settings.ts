@@ -39,7 +39,7 @@ const postSchema = z.object({
   alt: z.string().trim().min(1).max(180),
   caption: z.string().trim().max(160),
   productSlugs: z.array(z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)).max(100),
-}).refine(value => value.embed ? !value.image && !value.video : approvedImage(value.image), "Use a valid Instagram embed or upload a thumbnail.");
+}).refine(value => !value.image || approvedImage(value.image), "Upload a thumbnail or use a supplied brand cover.");
 
 export const pdpSocialSettingsSchema = z.object({ enabled: z.boolean(), posts: z.array(postSchema).max(12) })
   .refine(value => new Set(value.posts.map(post => post.id)).size === value.posts.length, "Post IDs must be unique.");

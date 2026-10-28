@@ -12,6 +12,20 @@ export type PdpSocialPost = {
 
 export type PdpSocialSettings = { enabled: boolean; posts: PdpSocialPost[] };
 
+// Editorial covers for linked posts until the team uploads the matching post media.
+export const socialCoverImages = [
+  "/images/home/Home-Hero-Alt-2-v2.jpg",
+  "/images/home/Home-Hero-Alt-3.jpg",
+  "/images/home/Home-Hero-Alt-4.jpg",
+  "/images/home/Home-Hero-Alt-5.jpg",
+  "/images/home/Home-Hero-Alt-6.jpg",
+  "/images/home/Ignyte-Sports-Bras-Vertical.jpg",
+  "/images/home/Ignyte-Shorts-Vertical.jpg",
+  "/images/home/Ignyte-Leggings-Vertical.jpg",
+  "/images/about/Ignyte-About-Mission.jpg",
+  "/images/home/Home-Hero-1.jpg",
+] as const;
+
 const instagramGrid = [
   ["reel", "De8vidKvamy"], ["p", "DdvnCY3ii41"], ["p", "De2r1sZyQYS"],
   ["reel", "Ded58Prv8I2"], ["p", "Dedp7U4PLHp"], ["p", "DeGq_vJj2Kq"],
