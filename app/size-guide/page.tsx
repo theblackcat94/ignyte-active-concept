@@ -11,9 +11,9 @@ export default function SizeGuidePage() {
     <div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><span>SIZE GUIDE</span></div>
     <span className="eyebrow">IGNYTE / FIND YOUR FIT</span>
     <h1>SIZE GUIDE<span>.</span></h1>
-    <p className="size-guide-intro">Compare your bust, waist and hip measurements with our S, M and L reference chart.</p>
+    <p className="size-guide-intro">Choose a category for the measurements that matter to your fit. Confirmed size ranges will appear here when available.</p>
     <div className="size-guide-layout">
-      <SizeGuideContent />
+      <SizeGuideContent showTabs />
       <aside className="size-guide-editorial" aria-label="Explore Ignyte products">
         <Link href="/product/seamless-legging-lavender/" className="size-guide-product">
           <Image src={asset("/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-jacaranda-main-01.jpg")} alt="Model wearing Ignyte Seamless Leggings in Jacaranda" width={1800} height={2400} sizes="(min-width: 1200px) 340px, 50vw" />

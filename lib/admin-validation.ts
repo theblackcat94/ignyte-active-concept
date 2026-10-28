@@ -19,6 +19,7 @@ export const productInput = z.object({
     fit: z.string().trim().max(500),
     fabric: z.string().trim().max(1500),
     model_details: z.string().trim().max(1500),
+    show_model_details: z.boolean().default(true),
     show_brand_story: z.boolean(),
     video_url: z.string().trim().max(1000).refine(value => !value || value.startsWith("/images/") || value.startsWith("https://")),
     video_poster: z.string().trim().max(1000).refine(value => !value || value.startsWith("/images/") || value.startsWith("https://")),

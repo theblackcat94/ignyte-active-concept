@@ -1,11 +1,13 @@
 // Product-specific review copy transcribed from the supplied Product Upload Planner.
 // The planner marks these entries "To confirm"; edit/approve them in the product manager.
+import { modelDetailsBySlug } from "./model-details";
 export type PdpContent = {
   features: string[];
   activities: string[];
   fit: string;
   fabric: string;
   model_details: string;
+  show_model_details: boolean;
   show_brand_story: boolean;
   video_url: string;
   video_poster: string;
@@ -14,7 +16,7 @@ export type PdpContent = {
   featured_best_seller: boolean;
 };
 
-const shared = { model_details: "", show_brand_story: true, video_url: "", video_poster: "", oeko_certificate: "", oeko_certified: true, featured_best_seller: false };
+const shared = { model_details: "", show_model_details: true, show_brand_story: true, video_url: "", video_poster: "", oeko_certificate: "", oeko_certified: true, featured_best_seller: false };
 
 export const plannerPdp: Record<string, PdpContent> = {
   "Aura Halter Top": { ...shared, features: ["Flattering neckline", "Sculpted fit", "Body-hugging design", "Extended length", "Versatile styling"], activities: ["Yoga", "Pilates", "Everyday"], fit: "True to size", fabric: "90% polyamide, 10% elastane" },
@@ -35,6 +37,7 @@ export function pdpFor(name: string, content?: Partial<PdpContent> | null, slug?
   const merged = { ...(plannerPdp[name] ?? emptyPdp), featured_best_seller: Boolean(slug && homeBestSellerSlugs.includes(slug)), ...content };
   return {
     ...merged,
+    model_details: merged.model_details || (slug ? modelDetailsBySlug[slug] : "") || "",
     video_url: merged.video_url || "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4",
     video_poster: merged.video_poster || "/images/home/Home-Hero-Video-Fallback.jpg",
   };
