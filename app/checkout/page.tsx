@@ -2,11 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { money } from "@/lib/catalog";
 import { browserDb, commerceConfigured } from "@/lib/commerce";
 import { useStore } from "@/components/store-provider";
 import { track } from "@/lib/analytics-client";
 import FreeShippingProgress from "@/components/free-shipping-progress";
+import { loadEwayModal, openEwayModal } from "@/lib/eway-modal";
 import "./checkout.css";
 
 type Shipping = { name: string; phone: string; line1: string; line2: string; city: string; state: string; postal_code: string; country: "AU" };
@@ -14,6 +16,7 @@ const emptyShipping: Shipping = { name: "", phone: "", line1: "", line2: "", cit
 const states = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"];
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const { bag, products, clearBag } = useStore();
   const [shipping, setShipping] = useState<Shipping>(emptyShipping);
   const [email, setEmail] = useState("");
@@ -115,8 +118,16 @@ export default function CheckoutPage() {
           body: JSON.stringify({ orderId: result.orderId }),
         });
         const payment = await paymentResponse.json();
-        if (!paymentResponse.ok || !payment.url) throw new Error(payment.error || "Payment could not be opened.");
-        window.location.assign(payment.url);
+        if (!paymentResponse.ok || !payment.url || !payment.accessCode) throw new Error(payment.error || "Payment could not be opened.");
+        let modal;
+        try { modal = await loadEwayModal(); }
+        catch { window.location.assign(payment.url); return; }
+        const outcome = await openEwayModal(modal, payment.url, payment.accessCode);
+        if (outcome !== "cancelled") {
+          router.push(`/checkout/eway-return/?AccessCode=${encodeURIComponent(payment.accessCode)}`);
+          return;
+        }
+        setError("Payment cancelled. Your bag is unchanged; you can try again when ready.");
         return;
       }
       setOrderId(result.orderId);
@@ -156,10 +167,10 @@ export default function CheckoutPage() {
           <label>COUNTRY<input readOnly value="Australia" /></label>
         </div>
         <p className="checkout-email">{signedIn ? "Your order will also appear in your account." : "No account needed. Your guest order link will be shown after you save the request; save the order number for support."}</p>
-        <button className="button button-orange" disabled={!valid}>CONTINUE TO PAYMENT ↗</button></> : <><h2>Review &amp; payment</h2><p>Deliver to {shipping.name}, {shipping.line1}, {shipping.city} {shipping.state} {shipping.postal_code}.</p><button type="button" className="checkout-edit" onClick={() => setStep("delivery")}>EDIT DELIVERY ADDRESS ↗</button><div className="checkout-payment-notice"><span className="eyebrow">SECURE PAYMENT</span>{ewayMode === "sandbox" && quotedShipping !== null ? <><h3>Test payment with eWAY</h3><p>You will continue to eWAY&apos;s hosted payment page. This is a sandbox test; no real charge will be made.</p></> : ewayMode === "production" && quotedShipping !== null ? <><h3>Pay securely with eWAY</h3><p>You will continue to eWAY&apos;s hosted payment page to complete your purchase.</p></> : <><h3>Card payments coming soon</h3><p>The merchant connection is being prepared. Do not enter card details on this site. Save your order below and the team will confirm delivery and payment before fulfilment.</p></>}</div>
-        <p className="checkout-email">{quotedShipping === null ? "Delivery cost will be confirmed before payment." : `Estimated delivery is ${money(quotedShipping / 100)}; the team will confirm the final amount before payment.`} <Link href="/returns">Review shipping and returns ↗</Link></p>
+        <button className="button button-orange" disabled={!valid}>CONTINUE TO PAYMENT ↗</button></> : <><h2>Review &amp; payment</h2><p>Deliver to {shipping.name}, {shipping.line1}, {shipping.city} {shipping.state} {shipping.postal_code}.</p><button type="button" className="checkout-edit" onClick={() => setStep("delivery")}>EDIT DELIVERY ADDRESS ↗</button><div className="checkout-payment-notice"><span className="eyebrow">SECURE PAYMENT</span>{ewayMode === "sandbox" && quotedShipping !== null ? <><h3>Test payment with eWAY</h3><p>The secure card form opens over this checkout. eWAY handles card details directly. This is a sandbox test; no real charge will be made.</p><span className="checkout-payment-provider">SECURED BY EWAY <span aria-hidden="true">↗</span></span></> : ewayMode === "production" && quotedShipping !== null ? <><h3>Pay securely with eWAY</h3><p>The secure card form opens over this checkout. eWAY handles card details directly.</p><span className="checkout-payment-provider">SECURED BY EWAY <span aria-hidden="true">↗</span></span></> : <><h3>Card payments coming soon</h3><p>The merchant connection is being prepared. Do not enter card details on this site. Save your order below and the team will confirm delivery and payment before fulfilment.</p></>}</div>
+        <p className="checkout-email">{quotedShipping === null ? "Delivery cost will be confirmed before payment." : ewayMode !== "none" && ewayMode !== null ? `Delivery is ${money(quotedShipping / 100)} and included in the total due.` : `Estimated delivery is ${money(quotedShipping / 100)}; the team will confirm the final amount before payment.`} <Link href="/returns">Review shipping and returns ↗</Link></p>
         {error && <p className="checkout-error" role="alert">{error}</p>}
-        <button className="button button-orange" disabled={!valid || busy || ewayMode === null}>{busy ? "PROCESSING…" : ewayMode === null ? "CHECKING PAYMENT OPTIONS…" : ewayMode !== "none" && quotedShipping !== null ? "CONTINUE TO EWAY ↗" : "SAVE ORDER FOR PAYMENT ↗"}</button></>}
+        <button className="button button-orange" disabled={!valid || busy || ewayMode === null}>{busy ? "OPENING SECURE PAYMENT…" : ewayMode === null ? "CHECKING PAYMENT OPTIONS…" : ewayMode !== "none" && quotedShipping !== null ? "PAY SECURELY ↗" : "SAVE ORDER FOR PAYMENT ↗"}</button></>}
       </form><aside className="checkout-summary"><h2>YOUR ORDER</h2>
         {lines.map(item => <div className="checkout-item" key={`${item.slug}-${item.size}`}>
           {item.product && <img src={item.product.image} alt={item.product.name} />}
@@ -172,8 +183,8 @@ export default function CheckoutPage() {
         {appliedCoupon && <div className="checkout-total"><span>DISCOUNT ({appliedCoupon.code})</span><strong>−{money(appliedCoupon.discountCents / 100)}</strong></div>}
         <FreeShippingProgress amountCents={shippingBasisCents} />
         <div className="checkout-total"><span>SHIPPING</span><strong>{quotedShipping === null ? "To be quoted" : money(quotedShipping / 100)}</strong></div>
-        {quotedShipping !== null && <div className="checkout-total checkout-grand"><span>ESTIMATED TOTAL</span><strong>{money((subtotalCents - (appliedCoupon?.discountCents ?? 0) + quotedShipping) / 100)}</strong></div>}
-        <p>Prices are in AUD and include GST. {quotedShipping === null ? "Delivery rates for your state are pending; the team will quote shipping before payment." : "Delivery is estimated from your state and order value; the team confirms the final amount before payment."}</p>
+        {quotedShipping !== null && <div className="checkout-total checkout-grand"><span>{ewayMode !== "none" && ewayMode !== null ? "TOTAL DUE" : "ESTIMATED TOTAL"}</span><strong>{money((subtotalCents - (appliedCoupon?.discountCents ?? 0) + quotedShipping) / 100)}</strong></div>}
+        <p>Prices are in AUD and include GST. {quotedShipping === null ? "Delivery rates for your state are pending; the team will quote shipping before payment." : ewayMode !== "none" && ewayMode !== null ? "The total due includes delivery; eWAY will confirm the card payment status." : "Delivery is estimated from your state and order value; the team confirms the final amount before payment."}</p>
       </aside></div>}
   </div>;
 }

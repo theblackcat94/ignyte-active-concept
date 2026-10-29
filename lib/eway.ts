@@ -87,6 +87,9 @@ export async function createEwaySharedPage(input: EwaySharedPageRequest): Promis
       TransactionType: "Purchase",
       RedirectUrl: input.redirectUrl,
       CancelUrl: input.cancelUrl,
+      LogoUrl: `${new URL(input.redirectUrl).origin}/images/ignyte-footer-logo.svg`,
+      HeaderText: "IGNYTE ACTIVE · SECURE CHECKOUT",
+      CustomView: "BootstrapFlatly",
       CustomerReadOnly: true,
       Customer: {
         FirstName: firstName || "Customer",

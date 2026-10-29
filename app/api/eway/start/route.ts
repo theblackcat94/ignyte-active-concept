@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "This order needs a confirmed shipping total before card payment." }, { status: 409 });
   }
   if (order.eway_access_code && order.eway_shared_payment_url) {
-    return NextResponse.json({ url: order.eway_shared_payment_url }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json({ url: order.eway_shared_payment_url, accessCode: order.eway_access_code }, { headers: { "Cache-Control": "no-store" } });
   }
   const details = order.shipping_details as { name?: string; phone?: string; address?: { country?: string } } | null;
   if (details?.address?.country !== "AU" || !details.name || !order.customer_email) {
@@ -65,12 +65,12 @@ export async function POST(request: NextRequest) {
     });
     if (attachError) throw attachError;
     if (!attached) {
-      const { data: current } = await db.from("orders").select("eway_shared_payment_url")
+      const { data: current } = await db.from("orders").select("eway_shared_payment_url,eway_access_code")
         .eq("id", order.id).eq("status", "awaiting_payment").single();
       if (!current?.eway_shared_payment_url) throw new Error("Payment page race could not be resolved");
-      return NextResponse.json({ url: current.eway_shared_payment_url }, { headers: { "Cache-Control": "no-store" } });
+      return NextResponse.json({ url: current.eway_shared_payment_url, accessCode: current.eway_access_code }, { headers: { "Cache-Control": "no-store" } });
     }
-    return NextResponse.json({ url: page.url }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json({ url: page.url, accessCode: page.accessCode }, { headers: { "Cache-Control": "no-store" } });
   } catch (failure) {
     console.error("Eway payment page failed", failure instanceof Error ? failure.message : "Unknown error");
     return NextResponse.json({ error: "Payment could not be opened. Please try again or contact support." }, { status: 503 });
