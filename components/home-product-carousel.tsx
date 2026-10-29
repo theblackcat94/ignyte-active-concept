@@ -26,7 +26,7 @@ export default function HomeProductCarousel({ products, label }: { products: Pro
   const move = (direction: number) => track.current?.scrollBy({ left: direction * track.current.clientWidth * 0.8, behavior: "smooth" });
   return <div className="home-product-carousel">
     <div className="home-product-track" ref={track} role="region" aria-label={label} tabIndex={0}>
-      {products.map((product, index) => <ProductCard key={product.slug} product={product} index={index} />)}
+      {products.map((product, index) => <ProductCard key={product.slug} product={product} index={index} showOptions />)}
     </div>
     <div className="home-product-controls"><button type="button" onClick={() => move(-1)} disabled={!canBack} aria-label={`Previous ${label}`}>←</button><button type="button" onClick={() => move(1)} disabled={!canForward} aria-label={`Next ${label}`}>→</button></div>
   </div>;
