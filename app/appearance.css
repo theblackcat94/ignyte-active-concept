@@ -21,3 +21,49 @@ html[data-appearance="dark"] .pdf-footer-social,html[data-appearance="dark"] .pr
 html[data-appearance="ignyte"] .site-header,html[data-appearance="ignyte"] .pdf-footer,html[data-appearance="ignyte"] .pdf-footer-perks{background:#fffaf4}
 html[data-appearance="ignyte"] .home-story,html[data-appearance="ignyte"] .home-products,html[data-appearance="ignyte"] .home-collections,html[data-appearance="ignyte"] .home-fit,html[data-appearance="ignyte"] .home-founders{background:#fff4ed}
 @media(prefers-reduced-motion:reduce){html[data-appearance] *,html[data-appearance] *:before,html[data-appearance] *:after{scroll-behavior:auto!important;transition-duration:0s!important}}
+
+/* The same vector wordmark uses currentColor so its lettering follows each surface. */
+.mobile-menu-head .header-brand-svg{display:block;width:180px;height:auto;color:currentColor}
+@media(max-width:520px){.mobile-menu-head .header-brand-svg{width:150px}}
+html[data-appearance="dark"] .site-header .header-brand-svg,html[data-appearance="dark"] .mobile-menu-head .header-brand-svg{color:#f5f0e8}
+html[data-appearance="dark"] .site-header .header-brand-flame,html[data-appearance="dark"] .mobile-menu-head .header-brand-flame{fill:#FF4533}
+html[data-appearance="dark"] .pdf-footer-logo{color:#f5f0e8}
+html[data-appearance="dark"] .product-card-colours>span,html[data-appearance="dark"] .product-card-colours strong,html[data-appearance="dark"] .product-card-colours .selected>span{color:#f5f0e8}
+html[data-appearance="dark"] .product-card-swatches button.selected>span{outline-color:#f5f0e8}
+html[data-appearance="dark"] .home-product-controls button{background:#151c2e;border-color:#8790a0;color:#f5f0e8}
+html[data-appearance="dark"] .home-product-controls button:hover:not(:disabled){background:#f5f0e8;color:#0B1020}
+html[data-appearance="dark"] .button-dark,html[data-appearance="dark"] .home-pill{background:#f5f0e8;color:#0B1020}
+html[data-appearance="dark"] .button-orange,html[data-appearance="dark"] .quick-add-confirm{color:#0B1020}
+html[data-appearance="dark"] .pdp-oeko{background:#151c2e;border-color:#6c7586;color:#f5f0e8}
+html[data-appearance="dark"] .pdp-oeko>strong{color:#f5f0e8;border-color:#8790a0}
+html[data-appearance="dark"] .pdp-oeko a,html[data-appearance="dark"] .pdp-fit-fabric>p span{color:#d9dde4}
+html[data-appearance="dark"] .pdp-purchase-reassurance svg{color:#f5f0e8}
+html[data-appearance="dark"] .pdp-colour-option,html[data-appearance="dark"] .size-heading button,html[data-appearance="dark"] .detail-color,html[data-appearance="dark"] .detail-price{color:#f5f0e8}
+html[data-appearance="dark"] .breadcrumb,html[data-appearance="dark"] .product-card-colours{color:#c2c6d0}
+html[data-appearance="dark"] .shop-active-filters .filter-clear{color:#f5f0e8}
+html[data-appearance="dark"] .filter-panel label.selected{color:#ff8c78}
+html[data-appearance="dark"] .checkout-form label,html[data-appearance="dark"] .checkout-summary,html[data-appearance="dark"] .checkout-form h2,html[data-appearance="dark"] .checkout-form h3{color:#f5f0e8}
+html[data-appearance="dark"] .checkout-newsletter span{color:#d9dde4}
+html[data-appearance="dark"] .pdf-footer-bottom{border-color:#545b6a;color:#c2c6d0}
+html[data-appearance="dark"] .pdf-footer-perks{border-color:#545b6a}
+html[data-appearance="dark"] .pdf-footer-perks>a{border-color:#545b6a}
+html[data-appearance="dark"] .pdf-footer-social{border:1px solid #8790a0}
+
+/* IGNYTE is the deliberate high-energy Easter egg palette. Photography is untouched. */
+html[data-appearance="ignyte"]{--paper:#FF4533;--ink:#0B1020;--line:#9e251b;--muted:#39251f}
+html[data-appearance="ignyte"] body,html[data-appearance="ignyte"] .site-header,html[data-appearance="ignyte"] .mobile-menu,html[data-appearance="ignyte"] .pdf-footer,html[data-appearance="ignyte"] .pdf-footer-perks,html[data-appearance="ignyte"] .shop-page,html[data-appearance="ignyte"] .product-page,html[data-appearance="ignyte"] .checkout-page,html[data-appearance="ignyte"] .about-page{background:#FF4533;color:#0B1020}
+html[data-appearance="ignyte"] .home-story,html[data-appearance="ignyte"] .home-products,html[data-appearance="ignyte"] .home-values,html[data-appearance="ignyte"] .home-collections,html[data-appearance="ignyte"] .home-fit,html[data-appearance="ignyte"] .home-founders,html[data-appearance="ignyte"] .home-bottom,html[data-appearance="ignyte"] .pdp-brand-callout,html[data-appearance="ignyte"] .pdf-footer-signup,html[data-appearance="ignyte"] .pdf-footer-main{background:#FF4533;color:#0B1020}
+html[data-appearance="ignyte"] .home-products:nth-of-type(even),html[data-appearance="ignyte"] .home-fit{background:#ff8067}
+html[data-appearance="ignyte"] .home-story p,html[data-appearance="ignyte"] .home-values p,html[data-appearance="ignyte"] .home-fit-card p,html[data-appearance="ignyte"] .pdp-brand-callout p,html[data-appearance="ignyte"] .pdf-footer-signup p{color:#0B1020}
+html[data-appearance="ignyte"] .pdf-footer-logo,html[data-appearance="ignyte"] .site-header .header-brand-svg,html[data-appearance="ignyte"] .mobile-menu-head .header-brand-svg{color:#0B1020}
+html[data-appearance="ignyte"] .site-header .header-brand-flame,html[data-appearance="ignyte"] .mobile-menu-head .header-brand-flame,html[data-appearance="ignyte"] .pdf-footer-logo .header-brand-flame{fill:#0B1020}
+html[data-appearance="ignyte"] .button-orange,html[data-appearance="ignyte"] .home-pill,html[data-appearance="ignyte"] .quick-add-confirm{background:#0B1020;color:#fff4ed}
+html[data-appearance="ignyte"] .home-product-controls button{border-color:#0B1020}
+html[data-appearance="ignyte"] .pdf-footer-email-row{border-color:#0B1020}
+html[data-appearance="ignyte"] .pdf-footer-signup-form input,html[data-appearance="ignyte"] .pdf-footer-signup-form button,html[data-appearance="ignyte"] .pdf-footer-consent,html[data-appearance="ignyte"] .pdf-footer-consent a{color:#0B1020}
+html[data-appearance="ignyte"] .pdf-footer-signup-form input::placeholder{color:#39251f}
+html[data-appearance="ignyte"] .pdf-footer-consent input{border-color:#0B1020}
+html[data-appearance="ignyte"] .footer-appearance select{border-color:#0B1020}
+html[data-appearance="ignyte"] .pdp-story-icon,html[data-appearance="ignyte"] .home-value-arrow,html[data-appearance="ignyte"] .about-features .home-value-arrow{border-color:#0B1020;color:#0B1020}
+html[data-appearance="ignyte"] .home-slider .home-hero-content h1,html[data-appearance="ignyte"] .about-hero h1,html[data-appearance="ignyte"] .shop-banner h1{color:#fff4ed;animation:fx-ember 1.7s ease-in-out infinite alternate}
+@media(prefers-reduced-motion:reduce){html[data-appearance="ignyte"] .home-slider .home-hero-content h1,html[data-appearance="ignyte"] .about-hero h1,html[data-appearance="ignyte"] .shop-banner h1{animation:none;text-shadow:0 -2px 6px #ffab40,0 -6px 14px #ff6d00,0 -12px 28px #dd2c00,0 -20px 44px rgba(213,0,0,.55)}}
