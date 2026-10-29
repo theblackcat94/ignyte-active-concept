@@ -56,6 +56,9 @@ if [[ -f "$build_env_file" ]]; then
       EWAY_API_KEY|EWAY_API_PASSWORD|EWAY_ENVIRONMENT)
         # Server-only settings are copied to the target env file, never exported to the build.
         ;;
+      SES_AWS_ACCESS_KEY_ID|SES_AWS_SECRET_ACCESS_KEY|SES_AWS_SESSION_TOKEN|SES_AWS_REGION|SES_FROM_EMAIL|ORDER_NOTIFICATION_EMAIL)
+        # Server-only mail settings are copied to the target env file, never exported to the build.
+        ;;
       *) echo "Unexpected build setting name: $name" >&2; exit 1 ;;
     esac
   done < "$build_env_file"

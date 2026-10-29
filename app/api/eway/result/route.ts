@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminDb } from "@/lib/commerce";
 import { ewayEnvironment, getEwayTransaction } from "@/lib/eway";
+import { queuePaymentConfirmedEmails } from "@/lib/order-email-outbox";
 
 export const runtime = "nodejs";
 
@@ -18,6 +19,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Payment result is unavailable." }, { status: 404 });
   }
   if (order.status === "paid" && order.eway_transaction_id) {
+    try { await queuePaymentConfirmedEmails(order.id); }
+    catch (emailError) { console.error("Could not queue paid order emails", emailError instanceof Error ? emailError.message : "Unknown error"); }
     return NextResponse.json({ status: "paid", orderId: order.id, guest: !order.user_id }, { headers: { "Cache-Control": "no-store" } });
   }
   try {
@@ -37,6 +40,8 @@ export async function GET(request: NextRequest) {
       p_environment: environment,
     });
     if (completeError) throw completeError;
+    try { await queuePaymentConfirmedEmails(order.id); }
+    catch (emailError) { console.error("Could not queue paid order emails", emailError instanceof Error ? emailError.message : "Unknown error"); }
     return NextResponse.json({ status: "paid", orderId: order.id, guest: !order.user_id }, { headers: { "Cache-Control": "no-store" } });
   } catch (failure) {
     console.error("Eway result check failed", failure instanceof Error ? failure.message : "Unknown error");

@@ -1,6 +1,6 @@
 # IGNYTE email designs
 
-These are review drafts. The site delegates account creation to Supabase Auth and offers a confirmation resend action when Auth requires email verification. Whether a confirmation is sent depends on the Supabase project settings; the branded Auth HTML below must be installed in Supabase before it is sent. The transactional designs in `lib/email-templates.ts` are not connected to site events or SES yet.
+The site delegates account creation to Supabase Auth and offers a confirmation resend action when Auth requires email verification. Account confirmation, password reset and team invitations still use Supabase Auth's configured email service. Order request receipts, payment confirmations and support order alerts are wired to the SES sender through a Supabase outbox; the outbox migration and server configuration below must be in place before delivery can work.
 
 | Message | Trigger | Subject | Source |
 | --- | --- | --- | --- |
@@ -14,9 +14,9 @@ These are review drafts. The site delegates account creation to Supabase Auth an
 
 The first three files use Supabase Auth's `{{ .ConfirmationURL }}` and `{{ .SiteURL }}` variables. Install `auth-confirm.html` as the **Confirm signup** HTML in Supabase Dashboard → Authentication → Email Templates, with subject `Confirm your IGNYTE account`. The account confirmation and recovery links must be tested against the configured Site URL and redirect allow list for **both** `https://ignyte.theblackcat94.com/account` and `https://dev.ignyteactive.com/account` before replacing the live Supabase templates. Supabase sends these through its own email service until a custom SMTP connection is configured. Disable link tracking in any SMTP provider used for Auth so verification links are not rewritten.
 
-The other designs are typed renderers that return HTML and plain text. Dynamic values are HTML-escaped. They are deliberately not called by checkout or support routes. Order-request copy states that payment has not been taken; payment-confirmed mail must only follow a verified merchant callback. Dispatch mail must only follow a real fulfilment update. A guest order detail link is omitted unless it can be opened securely outside the original checkout browser.
+The other designs are typed renderers that return HTML and plain text. Dynamic values are HTML-escaped. Order-request copy states that payment has not been taken; payment-confirmed mail follows a verified eWAY or Stripe callback. The unique outbox event key prevents routine webhook retries from sending duplicate receipts. An admin-only retry endpoint processes queued messages from Admin → Orders. Dispatch and enquiry templates are not yet connected to a send event.
 
-Before sending: obtain SES production access in Sydney; grant the app a narrowly scoped send permission without committing keys; add an idempotent email outbox so retries cannot duplicate receipts; test links, rendering and delivery to multiple mail clients. Marketing campaigns and welcome email need a separate consent/unsubscribe and approval flow.
+Before delivery: apply `supabase/migrations/202610290002_order_email_outbox.sql`; configure `SES_AWS_ACCESS_KEY_ID`, `SES_AWS_SECRET_ACCESS_KEY`, `SES_AWS_REGION`, `SES_FROM_EMAIL` and `ORDER_NOTIFICATION_EMAIL` in the protected build environment file; verify the SES identity and production sending access in Sydney; then send and review test orders. Do not commit credentials or paste them into chat. `SES_AWS_SESSION_TOKEN` is optional for temporary credentials. Marketing campaigns and welcome email need a separate consent/unsubscribe and approval flow.
 
 ## Sending and complaint process
 

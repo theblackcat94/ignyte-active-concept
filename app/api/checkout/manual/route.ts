@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createHash, createHmac } from "node:crypto";
 import { adminDb, verifiedUser } from "@/lib/commerce";
 import { qualifiesForFreeShipping } from "@/lib/shipping-policy";
+import { queueOrderRequestEmails } from "@/lib/order-email-outbox";
 
 export const runtime = "nodejs";
 
@@ -75,6 +76,8 @@ export async function POST(request: Request) {
     if (totalError) { console.error("Could not save order total", totalError.message); shippingCents = null; }
   }
   await db.from("site_events").insert({ event_name: "order_requested", page_path: "/checkout/" });
+  try { await queueOrderRequestEmails(orderId); }
+  catch (emailError) { console.error("Could not queue order request emails", emailError instanceof Error ? emailError.message : "Unknown error"); }
   const response = NextResponse.json({ orderId, status: "awaiting_payment", guest: !user, shippingCents,
     amountDueCents: shippingCents === null || !order ? null : order.subtotal_cents - order.discount_cents + shippingCents });
   if (guestToken) response.cookies.set(`ignyte_guest_order_${orderId.replaceAll("-", "")}`, guestToken, {

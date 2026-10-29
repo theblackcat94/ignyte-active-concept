@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { adminDb } from "@/lib/commerce";
+import { queuePaymentConfirmedEmails } from "@/lib/order-email-outbox";
 
 export const runtime = "nodejs";
 
@@ -46,6 +47,8 @@ export async function POST(request: Request) {
       p_shipping_details: shippingDetails,
     });
     if (completeError) return NextResponse.json({ error: "Order update failed" }, { status: 500 });
+    try { await queuePaymentConfirmedEmails(orderId); }
+    catch (emailError) { console.error("Could not queue paid order emails", emailError instanceof Error ? emailError.message : "Unknown error"); }
   } else {
     const { error: releaseError } = await db.rpc("release_order", { p_order_id: orderId });
     if (releaseError) return NextResponse.json({ error: "Stock release failed" }, { status: 500 });

@@ -1,4 +1,4 @@
-/** Branded message designs. No route calls these until SES sending and an outbox are configured. */
+/** Branded transactional message designs. */
 export type EmailDesign = { subject: string; html: string; text: string };
 
 export type EmailOrder = {
@@ -56,6 +56,16 @@ export function paymentConfirmedEmail(order: EmailOrder, siteUrl: string): Email
   const lines = orderLines(order);
   const intro = "Your payment is confirmed. We will email you again when your order is on its way.";
   return { subject: `Your IGNYTE payment is confirmed · ${order.id}`, html: layout("PAYMENT CONFIRMED", "You're all set.", paragraph(intro) + lines.html + (order.viewUrl ? button("VIEW ORDER", order.viewUrl) : ""), siteUrl), text: `${intro}\n\n${lines.text}${order.viewUrl ? `\nView order: ${order.viewUrl}` : ""}\n\nQuestions? support@ignyteactive.com` };
+}
+
+export function adminOrderEmail(order: EmailOrder, status: "awaiting payment" | "paid", customerEmail: string, siteUrl: string): EmailDesign {
+  const lines = orderLines(order);
+  const intro = `A customer order is ${status}. Customer: ${customerEmail}.`;
+  return {
+    subject: `New IGNYTE order · ${order.id} · ${status.toUpperCase()}`,
+    html: layout("TEAM ORDER ALERT", `Order ${status}.`, paragraph(intro) + lines.html + button("OPEN ORDER MANAGER", `${siteUrl}/admin/orders/`), siteUrl),
+    text: `${intro}\n\n${lines.text}\n\nManage orders: ${siteUrl}/admin/orders/`,
+  };
 }
 
 export function orderDispatchedEmail(orderId: string, carrier: string, trackingNumber: string, siteUrl: string): EmailDesign {
