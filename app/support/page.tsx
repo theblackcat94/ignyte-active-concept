@@ -29,7 +29,7 @@ const groups: { title: string; questions: Faq[] }[] = [
   {
     title: "Shipping & returns",
     questions: [
-      { question: "Where do you deliver?", answer: "We currently deliver within Australia. We’ll confirm your delivery cost before payment." },
+      { question: "Where do you deliver?", answer: "We currently deliver within Australia. Delivery is AU$15 on orders under AU$100 after discounts, and free on orders of AU$100 or more. Your charge appears at checkout." },
       { question: "Do you offer free shipping?", answer: <>Yes. Australian orders of AU$100 or more after discounts receive free shipping. See the shipping information on our <Link href="/returns">Returns page</Link>.</> },
       { question: "When will my order arrive?", answer: "Delivery times depend on your location and shipping method. Estimated dispatch and delivery times have not yet been confirmed with our fulfilment partner; contact us if you need an update on an order." },
       { question: "How do I return an item?", answer: <>Contact our team before sending an item back. We’ll explain eligibility, the return steps and any postage arrangements. Read the <Link href="/returns">Returns page</Link> for the current policy.</> },
