@@ -21,7 +21,9 @@ import { asset } from "@/lib/asset";
 import HeartIcon from "./heart-icon";
 import "@/app/product-detail-v2.css";
 
-export default function ProductDetail({ product }: { product: Product }) {
+export default function ProductDetail({ product: initialProduct }: { product: Product }) {
+  const { products, addToBag, wishlist, toggleWishlist, catalogLoading, catalogError } = useStore();
+  const product = !catalogLoading && !catalogError ? products.find(item => item.slug === initialProduct.slug) ?? initialProduct : initialProduct;
   const [selection, setSelection] = useState({ slug: product.slug, size: "" });
   const [openInfo, setOpenInfo] = useState<string | null>("FEATURES");
   const [guideOpen, setGuideOpen] = useState(false);
@@ -30,7 +32,6 @@ export default function ProductDetail({ product }: { product: Product }) {
   const galleryRef = useRef<HTMLDivElement>(null);
   const galleryHandle = useRef<ProductGalleryHandle>(null);
   const sizeRef = useRef<HTMLDivElement>(null);
-  const { products, addToBag, wishlist, toggleWishlist } = useStore();
   const related = pairedProducts(product.slug, products, "related");
   const upsells = pairedProducts(product.slug, products, "upsell");
   const colours = [product, ...products.filter(p => p.slug !== product.slug && p.name === product.name && p.category === product.category)]
@@ -40,8 +41,8 @@ export default function ProductDetail({ product }: { product: Product }) {
   const defaultSize = sizes.length === 1 && sizes[0].stock > 0 ? sizes[0].size : "";
   const size = selection.slug === product.slug && sizes.some(variant => variant.size === selection.size && variant.stock > 0) ? selection.size : defaultSize;
   const selectedVariant = sizes.find(variant => variant.size === size);
-  const canAdd = Boolean(size && selectedVariant && selectedVariant.stock > 0);
-  const addLabel = !sizes.some(variant => variant.stock > 0) ? "SOLD OUT" : !size ? "SELECT A SIZE" : canAdd ? "ADD TO BAG" : product.variants ? "SOLD OUT" : "PREVIEW ONLY";
+  const canAdd = Boolean(!catalogLoading && !catalogError && size && selectedVariant && selectedVariant.stock > 0);
+  const addLabel = catalogLoading ? "CHECKING STOCK" : catalogError ? "STOCK UNAVAILABLE" : !sizes.some(variant => variant.stock > 0) ? "SOLD OUT" : !size ? "SELECT A SIZE" : canAdd ? "ADD TO BAG" : product.variants ? "SOLD OUT" : "PREVIEW ONLY";
   const pdp = product.pdp;
   useEffect(() => {
     let cancelled = false;
@@ -117,7 +118,7 @@ export default function ProductDetail({ product }: { product: Product }) {
     {related.length > 0 && <div className="related-section"><div className="section-heading"><div><span className="eyebrow">COMPLETE YOUR EDIT</span><h2>PAIR IT <em>WITH.</em></h2></div><Link href="/shop" className="text-link">SHOP ALL ↗</Link></div><div className="products-grid">{related.map((p, i) => <ProductCard product={p} index={i} key={p.slug} />)}</div></div>}
     {upsells.length > 0 && <div className="related-section"><div className="section-heading"><div><span className="eyebrow">ANOTHER WAY TO MOVE</span><h2>CONSIDER <em>THIS.</em></h2></div></div><div className="products-grid">{upsells.map((p, i) => <ProductCard product={p} index={i} key={p.slug} />)}</div></div>}
     <PdpSocialStrip productSlug={product.slug} />
-    {showMobilePurchase && !guideOpen && <div className="pdp-mobile-purchase"><button type="button" onClick={mobilePurchase} disabled={!sizes.some(variant => variant.stock > 0)}>{size ? "ADD TO BAG ↗" : "SELECT SIZE ↑"}</button></div>}
+    {showMobilePurchase && !guideOpen && <div className="pdp-mobile-purchase"><button type="button" onClick={mobilePurchase} disabled={catalogLoading || catalogError || !sizes.some(variant => variant.stock > 0)}>{catalogLoading ? "CHECKING STOCK" : catalogError ? "STOCK UNAVAILABLE" : size ? "ADD TO BAG ↗" : "SELECT SIZE ↑"}</button></div>}
     {guideOpen && <div className="pdp-guide-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setGuideOpen(false); }}><div className="pdp-guide-dialog" role="dialog" aria-modal="true" aria-label="Size guide"><div className="pdp-guide-head"><h2>FIND YOUR FIT.</h2><button type="button" onClick={() => setGuideOpen(false)} aria-label="Close size guide">×</button></div><SizeGuideContent productCategory={product.category} /><Link href={isSock ? "/size-guide#socks" : "/size-guide"} className="text-link">OPEN FULL SIZE GUIDE ↗</Link></div></div>}
   </div>;
 }
