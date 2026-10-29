@@ -16,7 +16,7 @@ export default function SizeGuideContent({ productCategory, showTabs = false }: 
   const hasRanges = guide.rows.some(row => guide.sizes.some(size => Boolean(row.ranges[size])));
   const formatRange = (range: readonly [number, number] | undefined) => !range ? "—" : unit === "cm" ? `${range[0]}–${range[1]}` : `${(range[0] / 2.54).toFixed(1)}–${(range[1] / 2.54).toFixed(1)}`;
 
-  return <div className="size-guide-content">
+  return <div className={`size-guide-content ${category === "socks" ? "is-socks" : ""}`}>
     {showTabs && <div className="size-guide-tabs" aria-label="Choose size guide category">
       {guideOrder.map(key => <button type="button" key={key} className={category === key ? "selected" : ""} aria-pressed={category === key} onClick={() => setActiveTab(key)}>{sizeGuides[key].label.toUpperCase()}</button>)}
     </div>}
