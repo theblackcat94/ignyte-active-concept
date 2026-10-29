@@ -53,6 +53,9 @@ if [[ -f "$build_env_file" ]]; then
         export "$name=$value" ;;
       SUPABASE_SECRET_KEY)
         [[ -n "$value" ]] && has_secret_key=true ;;
+      EWAY_API_KEY|EWAY_API_PASSWORD|EWAY_ENVIRONMENT)
+        # Server-only settings are copied to the target env file, never exported to the build.
+        ;;
       *) echo "Unexpected build setting name: $name" >&2; exit 1 ;;
     esac
   done < "$build_env_file"
