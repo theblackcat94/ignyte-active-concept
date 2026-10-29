@@ -37,7 +37,7 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
 }
 
 export default function Footer() {
-  const comparison = usePathname() === "/home-preview";
+  const comparison = usePathname().replace(/\/$/, "") === "/home-preview";
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [signupBusy, setSignupBusy] = useState(false);
