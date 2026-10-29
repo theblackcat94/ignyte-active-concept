@@ -2,6 +2,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Product } from "@/lib/catalog";
 import { pdpFor, type PdpContent } from "@/data/pdp-planner";
 import { displayColour } from "./display-colour";
+import { productShortDescription } from "./product-short-description";
 
 export type StoreProduct = {
   id: string;
@@ -81,7 +82,7 @@ export function toDisplayProduct(product: StoreProduct): Product {
   const cheapest = variants.length ? [...variants].sort((a, b) => a.price - b.price)[0] : undefined;
   return {
     slug: product.slug, name: product.name, category: product.category,
-    color: displayColour(product.color), description: displayColour(product.description),
+    color: displayColour(product.color), description: productShortDescription(product.name, product.slug, displayColour(product.description)),
     image: product.image_path, gallery: (product.gallery ?? []).map(item => ({ ...item, alt: displayColour(item.alt) })), label: product.label ?? undefined,
     pdp: pdpFor(product.name, product.pdp_content, product.slug),
     price: cheapest?.price ?? 0, originalPrice: cheapest?.originalPrice,

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { defaultHomeHeroSettings, homeHeroMediaUrl, type HomeHeroSettings } from "@/data/home-hero";
 
-export default function HomeHeroSlider() {
+export default function HomeHeroSlider({ comparison = false }: { comparison?: boolean }) {
   const [settings, setSettings] = useState<HomeHeroSettings>(defaultHomeHeroSettings);
   const [active, setActive] = useState(0);
   const [mobile, setMobile] = useState(false);
@@ -32,7 +32,7 @@ export default function HomeHeroSlider() {
       {slide.kind === "video" ? <video src={mediaSrc} poster={slide.poster ? homeHeroMediaUrl(slide.poster) : undefined} autoPlay muted playsInline loop preload="metadata" aria-label={slide.alt} /> : <img src={mediaSrc} alt={slide.alt} loading={active === 0 ? "eager" : "lazy"} />}
     </div>
     <div className="home-hero-shade" />
-    <div className="home-hero-content" aria-live="polite"><span className="home-kicker">{slide.kicker}</span><h1>{slide.title}</h1><Link href={slide.href} className="home-pill">{slide.action} <span>↗</span></Link></div>
+    <div className="home-hero-content" aria-live="polite"><span className="home-kicker">{slide.kicker}</span><h1>{comparison && slide.id === "hero-film" ? "Built for the burn." : slide.title}</h1><Link href={slide.href} className="home-pill">{slide.action} <span>↗</span></Link></div>
     <div className="home-slider-controls"><button type="button" onClick={() => move(-1)} aria-label="Previous slide">←</button><span>{String(active + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}</span><button type="button" onClick={() => move(1)} aria-label="Next slide">→</button></div>
     <div className="home-slider-dots" aria-label="Choose a slide">{slides.map((item, index) => <button key={item.id} type="button" className={index === active ? "active" : ""} onClick={() => setActive(index)} aria-label={`Show slide ${index + 1}: ${item.kicker.replace("_", "")}`} aria-current={index === active ? "true" : undefined} />)}</div>
   </section>;

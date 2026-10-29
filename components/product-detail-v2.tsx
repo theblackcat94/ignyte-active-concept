@@ -8,6 +8,8 @@ import { commerceConfigured } from "@/lib/commerce";
 import { useStore } from "./store-provider";
 import ProductCard from "./product-card";
 import StackedProductGallery from "./stacked-product-gallery";
+import type { ProductGalleryHandle } from "./stacked-product-gallery";
+import BuildYourSet from "./build-your-set";
 import PdpSocialStrip from "./pdp-social-strip";
 import SizeGuideContent from "./size-guide-content";
 import { CurrencyEstimate } from "./currency-estimate";
@@ -25,6 +27,7 @@ export default function ProductDetail({ product }: { product: Product }) {
   const [showMobilePurchase, setShowMobilePurchase] = useState(false);
   const purchaseRef = useRef<HTMLButtonElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
+  const galleryHandle = useRef<ProductGalleryHandle>(null);
   const sizeRef = useRef<HTMLDivElement>(null);
   const { products, addToBag, wishlist, toggleWishlist } = useStore();
   const related = pairedProducts(product.slug, products, "related");
@@ -78,7 +81,7 @@ export default function ProductDetail({ product }: { product: Product }) {
 
   return <div className="product-page pdp-stacked section-wrap">
     <div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><Link href={`/shop/${product.category}`}>{product.category.toUpperCase().replace("-", " ")}</Link><span>/</span><span>{product.name.toUpperCase()}</span></div>
-    <div className="detail-grid"><div ref={galleryRef}><StackedProductGallery product={product} /></div><div className="detail-info"><span className="eyebrow">IGNYTE / {product.category.toUpperCase().replace("-", " ")}</span><h1>{product.name.toUpperCase()}<em>.</em></h1>
+    <div className="detail-grid"><div ref={galleryRef}><StackedProductGallery ref={galleryHandle} product={product} />{product.pdp.video_url && <button type="button" className="pdp-see-move" onClick={() => galleryHandle.current?.showVideo()}>SEE IT MOVE ↗</button>}</div><div className="detail-info"><span className="eyebrow">IGNYTE / {product.category.toUpperCase().replace("-", " ")}</span><h1>{product.name.toUpperCase()}<em>.</em></h1>
       <div className="detail-price">{(selectedVariant?.originalPrice ?? product.originalPrice) && <del>{money((selectedVariant?.originalPrice ?? product.originalPrice)!)}</del>}<span>{money(selectedVariant?.price ?? product.price)}<CurrencyEstimate aud={selectedVariant?.price ?? product.price} /></span></div>
       <p className="detail-description">{product.description}</p>{commerceConfigured && !product.variants && <p className="catalog-preview-note">Preview item. Available to order after sizes and stock are confirmed.</p>}
       <div className="detail-color">COLOUR: <strong>{product.color.toUpperCase()}</strong></div>
@@ -91,6 +94,7 @@ export default function ProductDetail({ product }: { product: Product }) {
       <div className="size-heading"><span>SELECT SIZE</span><button type="button" onClick={() => setGuideOpen(true)}>SIZE GUIDE ↗</button></div>
       <div className="size-grid" ref={sizeRef}>{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} disabled={variant.stock <= 0} onClick={() => setSelection({ slug: product.slug, size: variant.size })} key={variant.id}>{variant.size}</button>)}</div>
       <button ref={purchaseRef} type="button" className="button button-orange detail-add" onClick={() => size && addToBag(product.slug, size)} disabled={!canAdd}>{addLabel}<span>↗</span></button>
+      <BuildYourSet bra={product} braSize={size} />
       <button type="button" className="wishlist-button" aria-pressed={wishlist.includes(product.slug)} onClick={() => toggleWishlist(product.slug)}><span className="wishlist-glyph" key={wishlist.includes(product.slug) ? "saved" : "unsaved"} aria-hidden="true"><HeartIcon filled={wishlist.includes(product.slug)} /></span> {wishlist.includes(product.slug) ? "SAVED TO WISHLIST" : "ADD TO WISHLIST"}</button>
       <div className="detail-accordions">{sections.map(label => <div key={label}><button type="button" aria-expanded={openInfo === label} onClick={() => setOpenInfo(openInfo === label ? null : label)}>{label}<span>{openInfo === label ? "−" : "+"}</span></button>{openInfo === label && content(label)}</div>)}</div>
     </div></div>

@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import type { Product } from "@/lib/catalog";
 import ProductPhotoLightbox from "./product-photo-lightbox";
 import "@/app/pdp-stack-preview.css";
 
-export default function StackedProductGallery({ product }: { product: Product }) {
+export type ProductGalleryHandle = { showVideo: () => void };
+
+const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Product }>(function StackedProductGallery({ product }, ref) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [mobile, setMobile] = useState(false);
@@ -25,6 +27,17 @@ export default function StackedProductGallery({ product }: { product: Product })
     ...product.gallery,
   ];
   const mediaCount = photos.length + (product.pdp.video_url ? 1 : 0);
+  useImperativeHandle(ref, () => ({ showVideo() {
+    if (!product.pdp.video_url) return;
+    goToMedia(photos.length);
+    gridRef.current?.closest(".pdp-stack-media")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    setMuted(true);
+    video.controls = true;
+    void video.play().catch(() => { video.controls = true; });
+  } }));
 
   function updateActiveIndex() {
     if (!mobile) return;
@@ -67,4 +80,6 @@ export default function StackedProductGallery({ product }: { product: Product })
     {mediaCount > 1 && <nav className="pdp-stack-thumbnails" aria-label="Product media thumbnails">{photos.map((photo, index) => <button type="button" key={`${photo.image}-thumb`} className={activeIndex === index ? "active" : ""} onClick={() => goToMedia(index)} aria-label={`Show product photo ${index + 1}`} aria-current={activeIndex === index ? "true" : undefined}><img src={photo.image} alt="" loading="lazy" /></button>)}{product.pdp.video_url && <button type="button" className={activeIndex === photos.length ? "active" : ""} onClick={() => goToMedia(photos.length)} aria-label="Show product film" aria-current={activeIndex === photos.length ? "true" : undefined}><img src={product.pdp.video_poster || product.image} alt="" loading="lazy" /><span aria-hidden="true">▶</span></button>}</nav>}
     {openIndex !== null && <ProductPhotoLightbox photos={photos} initialIndex={openIndex} onClose={() => setOpenIndex(null)} />}
   </section>;
-}
+});
+
+export default StackedProductGallery;

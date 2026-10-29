@@ -5,7 +5,7 @@ import { socialCoverImages, suppliedSocialCovers, type PdpSocialPost } from "@/d
 import { asset } from "@/lib/asset";
 import "@/app/pdp-social.css";
 
-export default function PdpSocialStrip({ productSlug }: { productSlug?: string }) {
+export default function PdpSocialStrip({ productSlug, hideEyebrow = false }: { productSlug?: string; hideEyebrow?: boolean }) {
   const [posts, setPosts] = useState<PdpSocialPost[]>([]);
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -26,7 +26,7 @@ export default function PdpSocialStrip({ productSlug }: { productSlug?: string }
   function move(direction: number) { trackRef.current?.scrollBy({ left: direction * (trackRef.current.clientWidth * 0.8), behavior: "smooth" }); }
 
   return <section className="pdp-social" aria-label="Ignyte on Instagram">
-    <div className="pdp-social-heading"><div><span className="eyebrow">FOLLOW THE FIRE</span><h2>IGNYTE <em>IN MOTION.</em></h2></div><div className="pdp-social-controls"><a href="https://www.instagram.com/ignyteactive/" target="_blank" rel="noopener noreferrer">FOLLOW @IGNYTEACTIVE ↗</a>{posts.length > 1 && <><button type="button" aria-label="Previous Instagram posts" onClick={() => move(-1)}>←</button><button type="button" aria-label="Next Instagram posts" onClick={() => move(1)}>→</button></>}</div></div>
+    <div className="pdp-social-heading"><div>{!hideEyebrow && <span className="eyebrow">FOLLOW THE FIRE</span>}<h2>IGNYTE <em>IN MOTION.</em></h2></div><div className="pdp-social-controls"><a href="https://www.instagram.com/ignyteactive/" target="_blank" rel="noopener noreferrer">FOLLOW @IGNYTEACTIVE ↗</a>{posts.length > 1 && <><button type="button" aria-label="Previous Instagram posts" onClick={() => move(-1)}>←</button><button type="button" aria-label="Next Instagram posts" onClick={() => move(1)}>→</button></>}</div></div>
     <div className="pdp-social-track" ref={trackRef}>{posts.map((post, index) => {
       const cover = post.image || suppliedSocialCovers[post.href.match(/\/(?:p|reel)\/([^/]+)/)?.[1] || ""] || socialCoverImages[index % socialCoverImages.length];
       const imageSrc = cover.startsWith("/images/") ? asset(cover) : cover;

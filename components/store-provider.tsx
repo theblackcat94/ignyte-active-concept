@@ -21,6 +21,7 @@ type Store = {
   bagOpen: boolean;
   setBagOpen: (open: boolean) => void;
   addToBag: (slug: string, size: string) => void;
+  addSetToBag: (braSlug: string, braSize: string, bottomSlug: string, bottomSize: string) => boolean;
   changeBagQuantity: (slug: string, size: string, change: number) => void;
   removeFromBag: (slug: string, size: string) => void;
   clearBag: () => void;
@@ -48,6 +49,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [recommendationSizes, setRecommendationSizes] = useState<Record<string, string>>({});
   const [actionNotice, setActionNotice] = useState<{ message: string; id: number } | null>(null);
   const noticeSequence = useRef(0);
+  const setAddLocked = useRef(false);
 
   useEffect(() => {
     if (!actionNotice) return;
@@ -98,6 +100,33 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setActionNotice({ message: `${product?.name ?? "Item"} added to your bag`, id: ++noticeSequence.current });
     track("add_to_bag", `/product/${slug}/`);
   };
+  const addSetToBag = (braSlug: string, braSize: string, bottomSlug: string, bottomSize: string) => {
+    if (setAddLocked.current || !braSize || !bottomSize || braSlug === bottomSlug) return false;
+    const bra = products.find(item => item.slug === braSlug);
+    const bottom = products.find(item => item.slug === bottomSlug);
+    const braVariant = bra?.variants?.find(item => item.size === braSize);
+    const bottomVariant = bottom?.variants?.find(item => item.size === bottomSize);
+    if (!bra || !bottom || !braVariant || !bottomVariant || braVariant.stock <= 0 || bottomVariant.stock <= 0) return false;
+    if (bag.find(item => item.slug === braSlug && item.size === braSize)?.quantity === braVariant.stock ||
+        bag.find(item => item.slug === bottomSlug && item.size === bottomSize)?.quantity === bottomVariant.stock) return false;
+    setAddLocked.current = true;
+    window.setTimeout(() => { setAddLocked.current = false; }, 700);
+    setBag(current => {
+      const entries = [[braSlug, braSize, braVariant.stock], [bottomSlug, bottomSize, bottomVariant.stock]] as const;
+      if (entries.some(([slug, size, stock]) => (current.find(item => item.slug === slug && item.size === size)?.quantity ?? 0) >= stock)) return current;
+      const next = [...current];
+      for (const [slug, size] of entries) {
+        const index = next.findIndex(item => item.slug === slug && item.size === size);
+        if (index < 0) next.push({ slug, size, quantity: 1 });
+        else next[index] = { ...next[index], quantity: next[index].quantity + 1 };
+      }
+      return next;
+    });
+    setBagOpen(true);
+    setActionNotice({ message: "Set added to your bag", id: ++noticeSequence.current });
+    track("add_to_bag", `/product/${braSlug}/`);
+    return true;
+  };
   const removeFromBag = (slug: string, size: string) => setBag(current => current.filter(item => !(item.slug === slug && item.size === size)));
   const changeBagQuantity = (slug: string, size: string, change: number) => {
     const product = products.find(item => item.slug === slug);
@@ -127,7 +156,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const recommendations = bagRecommendations(bag.map(item => item.slug), products);
 
   return (
-    <StoreContext.Provider value={{ products, categories, catalogPreview, catalogLoading, catalogError, bag, bagOpen, setBagOpen, addToBag, changeBagQuantity, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
+    <StoreContext.Provider value={{ products, categories, catalogPreview, catalogLoading, catalogError, bag, bagOpen, setBagOpen, addToBag, addSetToBag, changeBagQuantity, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
       {children}
       {actionNotice && <div key={actionNotice.id} className="store-action-toast" role="status" aria-live="polite"><span aria-hidden="true">✦</span>{actionNotice.message}</div>}
       {bagOpen && <div className="drawer-backdrop" onClick={() => setBagOpen(false)} />}
