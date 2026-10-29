@@ -112,6 +112,7 @@ export default function PdpSocialAdminPage() {
   }
 
   return <AdminPageShell title="Instagram strip">
+    <div className="ops-panel pdp-social-preview-link"><div><h2>Live profile preview</h2><p>Review how Instagram’s public profile embed sits inside the Ignyte site layout.</p></div><Link className="text-link" href="/instagram-live-preview" target="_blank">OPEN PREVIEW ↗</Link></div>
     {!token && <div className="ops-panel"><h2>Website team access</h2><p>This editor manages the current manual feed. It requires an IGNYTE website team account; Meta Business Suite access does not sign you into this editor.</p><p>For the automatic feed, Zach first needs to complete the official Meta connection flow. Marcus, who has Meta Business Suite access, can then authorise @ignyteactive through Meta’s own permissions screen. Jade may need to approve the request if she controls the Instagram login. Jacob does not need to send a password or use this editor to grant Meta access.</p><p>The manual feed stays live until the connection is authorised and tested.</p><Link className="text-link" href="/account">SIGN IN WITH A TEAM ACCOUNT ↗</Link></div>}
     {token && accessDenied && <p>Only an IGNYTE website team account can edit this feed. Meta Business Suite access alone does not unlock this page. Marcus can authorise the Instagram connection through Meta’s official screen once Zach has completed that flow; no password should be sent by email.</p>}
     {message && <p role="status" className="admin-message">{message}</p>}

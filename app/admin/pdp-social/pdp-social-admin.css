@@ -24,3 +24,8 @@
 .pdp-social-cached-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;max-width:850px}
 .pdp-social-cached-preview a{display:grid;gap:5px;font-size:10px}
 .pdp-social-cached-preview img{width:100%;aspect-ratio:4/5;object-fit:cover;background:#e8e5df}
+.pdp-social-preview-link{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.pdp-social-preview-link h2{margin:0 0 6px;font-size:16px}
+.pdp-social-preview-link p{margin:0;max-width:560px;color:#625d58;font-size:13px;line-height:1.5}
+.pdp-social-preview-link .text-link{flex:none}
+@media(max-width:700px){.pdp-social-preview-link{align-items:start;flex-direction:column}}
