@@ -4,6 +4,7 @@ import path from "node:path";
 import { z } from "zod";
 import { defaultPdpSocialSettings, suppliedSocialCovers } from "@/data/pdp-social";
 import { cacheInstagramCover } from "./instagram-cover-cache";
+import { getInstagramAccessToken } from "./instagram-token-store";
 
 function approvedInstagramLink(value: string) {
   try {
@@ -85,7 +86,7 @@ export async function refreshInstagramFeed(force = false) {
   if (refreshPending) return refreshPending;
   refreshPending = (async () => {
     const settings = await readPdpSocialSettings();
-    const token = process.env.IGNYTE_INSTAGRAM_ACCESS_TOKEN;
+    const token = await getInstagramAccessToken();
     if (!token) throw new Error("Meta Instagram access token is not configured");
     if (!force && settings.lastRefresh && Date.now() - Date.parse(settings.lastRefresh) < 60 * 60 * 1000) return settings;
     const url = new URL("https://graph.instagram.com/v25.0/me/media");

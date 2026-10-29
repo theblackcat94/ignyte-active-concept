@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { readPdpSocialSettings, refreshInstagramFeed } from "@/lib/pdp-social-settings";
+import { instagramConnected } from "@/lib/instagram-token-store";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -7,7 +8,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     let settings = await readPdpSocialSettings();
-    if (settings.automatic && process.env.IGNYTE_INSTAGRAM_ACCESS_TOKEN) {
+    if (settings.automatic && await instagramConnected()) {
       try { settings = await refreshInstagramFeed(); } catch { /* Retain the last successful feed. */ }
     }
     const automaticPosts = (settings.cachedPosts ?? []).map(post => {

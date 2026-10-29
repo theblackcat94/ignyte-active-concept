@@ -15,7 +15,7 @@ export default function PdpSocialAdminPage() {
   const [uploading, setUploading] = useState("");
   const [message, setMessage] = useState("");
   const [slugInputs, setSlugInputs] = useState<Record<string, string>>({});
-  const [connection, setConnection] = useState<{ configured: boolean; mediaCount?: number; lastRefresh?: string; automatic?: boolean } | null>(null);
+  const [connection, setConnection] = useState<{ configured: boolean; oauthReady?: boolean; mediaCount?: number; lastRefresh?: string; automatic?: boolean } | null>(null);
   const [checkingConnection, setCheckingConnection] = useState(false);
   const [accessDenied, setAccessDenied] = useState(false);
 
@@ -42,6 +42,27 @@ export default function PdpSocialAdminPage() {
     } catch (error) { setMessage(error instanceof Error ? error.message : "Connection check failed."); }
     finally { setCheckingConnection(false); }
   }
+
+  async function connectInstagram() {
+    if (!token) return;
+    setCheckingConnection(true);
+    setMessage("");
+    try {
+      const response = await fetch("/api/admin/instagram-oauth/start", { method: "POST", headers: adminHeaders(token), cache: "no-store" });
+      const result = await response.json() as { authorizationUrl?: string; error?: string };
+      if (!response.ok || !result.authorizationUrl) throw Error(result.error ?? "Could not start Meta authorisation.");
+      window.location.assign(result.authorizationUrl);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not start Meta authorisation.");
+      setCheckingConnection(false);
+    }
+  }
+
+  useEffect(() => {
+    const outcome = new URLSearchParams(window.location.search).get("instagram");
+    if (outcome === "connected") setMessage("Instagram is connected. Test the feed and review the imported posts before enabling automatic updates.");
+    if (outcome === "error") setMessage("Instagram connection could not be completed. Check the Meta app setup and try again.");
+  }, []);
 
   function updatePost(id: string, patch: Partial<PdpSocialPost>) {
     setSettings(current => ({ ...current, posts: current.posts.map(post => post.id === id ? { ...post, ...patch } : post) }));
@@ -94,7 +115,7 @@ export default function PdpSocialAdminPage() {
     {!token && <div className="ops-panel"><h2>Website team access</h2><p>This editor manages the current manual feed. It requires an IGNYTE website team account; Meta Business Suite access does not sign you into this editor.</p><p>For the automatic feed, Zach first needs to complete the official Meta connection flow. Marcus, who has Meta Business Suite access, can then authorise @ignyteactive through Meta’s own permissions screen. Jade may need to approve the request if she controls the Instagram login. Jacob does not need to send a password or use this editor to grant Meta access.</p><p>The manual feed stays live until the connection is authorised and tested.</p><Link className="text-link" href="/account">SIGN IN WITH A TEAM ACCOUNT ↗</Link></div>}
     {token && accessDenied && <p>Only an IGNYTE website team account can edit this feed. Meta Business Suite access alone does not unlock this page. Marcus can authorise the Instagram connection through Meta’s official screen once Zach has completed that flow; no password should be sent by email.</p>}
     {message && <p role="status" className="admin-message">{message}</p>}
-    {token && !accessDenied && <div className="ops-panel pdp-social-connection"><h2>Automatic feed connection</h2><p>This page can test an existing server-side Instagram credential, but it cannot start Meta login. Zach must configure the Meta app and official Instagram authorisation first. A Business or Creator account and the instagram_business_basic permission are required. Do not send passwords or tokens through email or chat.</p><p>Connection: <strong>{connection?.configured ? "SERVER CREDENTIAL PRESENT" : "AWAITING META AUTHORISATION"}</strong>{connection?.lastRefresh && <> · Last successful refresh: {new Date(connection.lastRefresh).toLocaleString("en-AU")}</>}. The public feed refreshes at most hourly and keeps its last successful posts if Meta is temporarily unavailable.</p><button type="button" disabled={!connection?.configured || checkingConnection} onClick={() => void checkConnection()}>{checkingConnection ? "CHECKING…" : "TEST AND REFRESH META FEED"}</button><label className="pdp-social-admin-toggle"><input type="checkbox" checked={Boolean(settings.automatic)} disabled={!connection?.configured || !settings.cachedPosts?.length} onChange={event => setSettings(current => ({ ...current, automatic: event.target.checked }))} /> USE VERIFIED AUTOMATIC FEED AFTER SAVING</label><p>Manual post controls below remain the fallback. Matching posts can override covers, captions and visibility; keep collaborative posts here when Meta does not return them. Review the cached covers below before switching.</p>{Boolean(settings.cachedPosts?.length) && <div className="pdp-social-cached-preview" aria-label="Cached automatic Instagram feed">{settings.cachedPosts?.map(post => <a key={post.id} href={post.href} target="_blank" rel="noopener noreferrer"><img src={post.image} alt={post.alt} /><span>{post.caption}</span></a>)}</div>}</div>}
+    {token && !accessDenied && <div className="ops-panel pdp-social-connection"><h2>Automatic feed connection</h2><p>Connect the @ignyteactive professional account through Meta’s sign-in and approval screen. The app stores its access token on the server; nobody needs to send a password or token in chat. The Instagram account must be Business or Creator and approve <code>instagram_business_basic</code>.</p><p>Connection: <strong>{connection?.configured ? "INSTAGRAM ACCOUNT CONNECTED" : "AWAITING META AUTHORISATION"}</strong>{connection?.lastRefresh && <> · Last successful refresh: {new Date(connection.lastRefresh).toLocaleString("en-AU")}</>}. The public feed refreshes at most hourly and keeps its last successful posts if Meta is temporarily unavailable.</p><button type="button" disabled={!connection?.oauthReady || checkingConnection} onClick={() => void connectInstagram()}>{checkingConnection ? "OPENING META…" : connection?.configured ? "RECONNECT INSTAGRAM" : "CONNECT INSTAGRAM WITH META"}</button>{!connection?.oauthReady && <p>Meta app settings are not yet configured on this server. Add the App ID, App Secret and exact callback URL before Jade connects.</p>}<button type="button" disabled={!connection?.configured || checkingConnection} onClick={() => void checkConnection()}>{checkingConnection ? "CHECKING…" : "TEST AND REFRESH META FEED"}</button><label className="pdp-social-admin-toggle"><input type="checkbox" checked={Boolean(settings.automatic)} disabled={!connection?.configured || !settings.cachedPosts?.length} onChange={event => setSettings(current => ({ ...current, automatic: event.target.checked }))} /> USE VERIFIED AUTOMATIC FEED AFTER SAVING</label><p>Manual post controls below remain the fallback. Matching posts can override covers, captions and visibility; keep collaborative posts here when Meta does not return them. Review the cached covers below before switching.</p>{Boolean(settings.cachedPosts?.length) && <div className="pdp-social-cached-preview" aria-label="Cached automatic Instagram feed">{settings.cachedPosts?.map(post => <a key={post.id} href={post.href} target="_blank" rel="noopener noreferrer"><img src={post.image} alt={post.alt} /><span>{post.caption}</span></a>)}</div>}</div>}
     {token && !accessDenied && loaded && <div className="ops-panel pdp-social-admin">
       <h2>Curated Instagram posts</h2>
       <p>Add public Instagram post or reel links and upload matching thumbnails or videos. The ten supplied post covers appear by default. The first ten enabled posts appear on the homepage and product pages; customers can swipe the strip on mobile.</p>
