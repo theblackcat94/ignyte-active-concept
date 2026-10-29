@@ -30,7 +30,16 @@ const stateDir = process.env.IGNYTE_STATE_DIR ?? (process.env.NODE_ENV === "prod
 const configPath = path.join(stateDir, "home-hero.json");
 
 export async function readHomeHeroSettings() {
-  try { return homeHeroSettingsSchema.parse(JSON.parse(await readFile(configPath, "utf8"))); }
+  try {
+    const settings = homeHeroSettingsSchema.parse(JSON.parse(await readFile(configPath, "utf8")));
+    // Move the previously shipped film to the new edit without replacing later admin choices.
+    const oldFilms = new Set(["/images/home/Ignyte-Video-Website-Hero-Low-Res.mp4", "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4"]);
+    return { slides: settings.slides.map(slide => slide.id === "hero-film" ? {
+      ...slide,
+      desktopSrc: oldFilms.has(slide.desktopSrc) ? defaultHomeHeroSettings.slides[0].desktopSrc : slide.desktopSrc,
+      mobileSrc: oldFilms.has(slide.mobileSrc) ? defaultHomeHeroSettings.slides[0].mobileSrc : slide.mobileSrc,
+    } : slide) };
+  }
   catch (error) {
     if (error && typeof error === "object" && "code" in error && error.code === "ENOENT") return defaultHomeHeroSettings;
     throw error;

@@ -33,7 +33,7 @@ export const plannerPdp: Record<string, PdpContent> = {
 
 export const emptyPdp: PdpContent = { ...shared, oeko_certified: false, features: [], activities: [], fit: "", fabric: "" };
 export const homeBestSellerSlugs = ["aura-halter-lavender", "motion-sports-bra-black", "seamless-legging-lavender", "all-in-motion-shorts-black", "vyper-sports-bra-mauve", "sculpt-shorts-mauve"];
-export const brandFilmUrl = "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4";
+export const brandFilmUrl = "/images/home/Ignyte-Vertical-Compressed-Sound.mp4";
 export const brandFilmPoster = "/images/home/video-cover-pdp.jpg";
 
 export function pdpFor(name: string, content?: Partial<PdpContent> | null, slug?: string): PdpContent {
@@ -41,7 +41,7 @@ export function pdpFor(name: string, content?: Partial<PdpContent> | null, slug?
   return {
     ...merged,
     model_details: (merged.model_details || (slug ? modelDetailsBySlug[slug] : "") || "").replace(/\s*\((?:Blonde|Brunette)\)/gi, ""),
-    video_url: merged.video_url || brandFilmUrl,
-    video_poster: !merged.video_url || merged.video_url === brandFilmUrl ? brandFilmPoster : merged.video_poster || brandFilmPoster,
+    video_url: !merged.video_url || merged.video_url === "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4" ? brandFilmUrl : merged.video_url,
+    video_poster: !merged.video_url || merged.video_url === brandFilmUrl || merged.video_url === "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4" ? brandFilmPoster : merged.video_poster || brandFilmPoster,
   };
 }

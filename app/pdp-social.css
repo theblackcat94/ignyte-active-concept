@@ -5,11 +5,8 @@
 .pdp-social-controls a{font-size:10px;font-weight:800;letter-spacing:.1em;border-bottom:1px solid currentColor;padding-bottom:7px;white-space:nowrap;margin-right:14px}
 .pdp-social-controls button{width:38px;height:38px;border:1px solid #c9c4bc;border-radius:50%;background:transparent;font-size:20px;cursor:pointer}
 .pdp-social-controls button:hover{background:var(--orange);color:#fff;border-color:var(--orange)}
-.pdp-social-track{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(260px,calc((100% - 28px)/3.2));gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:#0B1020 #ddd8d1;padding-bottom:18px}
-.pdp-social-track::-webkit-scrollbar{height:10px}
-.pdp-social-track::-webkit-scrollbar-track{background:#ddd8d1;border-radius:999px}
-.pdp-social-track::-webkit-scrollbar-thumb{background:#0B1020;border:2px solid #ddd8d1;border-radius:999px}
-.pdp-social-track::-webkit-scrollbar-thumb:hover{background:#FF4533}
+.pdp-social-track{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(260px,calc((100% - 28px)/3.2));gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:18px}
+.pdp-social-track::-webkit-scrollbar{display:none}
 .pdp-social-card{min-width:0;scroll-snap-align:start}
 .pdp-social-media{position:relative;display:block;overflow:hidden;width:100%;aspect-ratio:4/5;background:#dedbd5;color:#fff}
 .pdp-social-media img,.pdp-social-media video{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}

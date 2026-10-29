@@ -29,6 +29,27 @@ const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Produc
     ...product.gallery,
   ].filter((_, index) => index !== 4);
   const mediaCount = photos.length + (product.pdp.video_url ? 1 : 0);
+  useEffect(() => {
+    if (activeIndex !== photos.length || !product.pdp.video_url) return;
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    setMuted(true);
+    if (video.paused) void video.play().catch(() => { video.controls = true; });
+  }, [activeIndex, photos.length, product.pdp.video_url]);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0]?.isIntersecting && video.paused) {
+        video.muted = true;
+        setMuted(true);
+        void video.play().catch(() => { video.controls = true; });
+      }
+    }, { threshold: 0.55 });
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, [product.pdp.video_url]);
   useImperativeHandle(ref, () => ({ showVideo() {
     if (!product.pdp.video_url) return;
     goToMedia(photos.length);
@@ -73,7 +94,7 @@ const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Produc
         </button>
       </figure>)}
       {product.pdp.video_url && <figure className="pdp-stack-tile pdp-stack-video">
-        <video ref={videoRef} src={product.pdp.video_url} poster={product.pdp.video_poster} controls={!mobile} muted={muted} playsInline preload="none" aria-label={`${product.name} product film`} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} />
+        <video ref={videoRef} src={product.pdp.video_url} poster={product.pdp.video_poster} controls={!mobile} muted={muted} playsInline preload="metadata" aria-label={`${product.name} product film`} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} />
         <figcaption>IGNYTE FILM</figcaption>
         {mobile && <div className="pdp-film-actions">
           <button type="button" aria-label={playing ? "Pause product film" : "Play product film"} onClick={() => { const video = videoRef.current; if (!video) return; if (video.paused) void video.play(); else video.pause(); }}><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{playing ? <><path d="M8 5v14M16 5v14" /></> : <path d="m8 5 11 7-11 7z" />}</svg></button>
