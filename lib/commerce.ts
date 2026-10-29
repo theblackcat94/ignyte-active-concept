@@ -2,6 +2,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Product } from "@/lib/catalog";
 import { pdpFor, type PdpContent } from "@/data/pdp-planner";
 import { displayColour } from "./display-colour";
+import { sockSizing } from "@/data/size-guide";
 
 export type StoreProduct = {
   id: string;
@@ -74,7 +75,7 @@ export function browserDb() {
 
 export function toDisplayProduct(product: StoreProduct): Product {
   const variants = product.product_variants.filter(variant => variant.active)
-    .map(variant => ({ id: variant.id, size: variant.size,
+    .map(variant => ({ id: variant.id, size: product.name.toLowerCase().includes("sock") && variant.size.toLowerCase() === "one size" ? sockSizing.variant : variant.size,
       price: (variant.sale_price_cents ?? variant.price_cents) / 100,
       originalPrice: variant.sale_price_cents == null ? undefined : variant.price_cents / 100,
       stock: variant.stock_on_hand }));

@@ -17,3 +17,10 @@
 .pdp-social-admin-upload input{position:absolute;width:1px;height:1px;opacity:0}
 .pdp-social-admin-preview{width:min(200px,100%);aspect-ratio:1;object-fit:cover;margin-top:20px}
 @media(max-width:700px){.pdp-social-admin-fields{grid-template-columns:1fr}.pdp-social-admin-fields .wide{grid-column:auto}.pdp-social-admin-post{padding:14px}}
+.pdp-social-connection{display:grid;gap:12px}
+.pdp-social-connection p{margin:0;max-width:850px;line-height:1.5}
+.pdp-social-connection>button{justify-self:start;min-height:42px;border:1px solid #0B1020;background:#0B1020;color:#fff;padding:8px 15px;font-size:11px;font-weight:800;cursor:pointer}
+.pdp-social-connection>button:disabled{opacity:.5;cursor:not-allowed}
+.pdp-social-cached-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;max-width:850px}
+.pdp-social-cached-preview a{display:grid;gap:5px;font-size:10px}
+.pdp-social-cached-preview img{width:100%;aspect-ratio:4/5;object-fit:cover;background:#e8e5df}

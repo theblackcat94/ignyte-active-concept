@@ -14,6 +14,7 @@ export async function PUT(request: Request) {
   if (!await verifiedStaff(request)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const parsed = pdpSocialSettingsSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Check post details." }, { status: 400 });
+  if (parsed.data.automatic && (!process.env.IGNYTE_INSTAGRAM_ACCESS_TOKEN || !parsed.data.cachedPosts?.length)) return NextResponse.json({ error: "Verify and cache the Meta feed before enabling automatic updates." }, { status: 400 });
   try { return NextResponse.json(await writePdpSocialSettings(parsed.data)); }
   catch { return NextResponse.json({ error: "Could not save Instagram posts." }, { status: 503 }); }
 }

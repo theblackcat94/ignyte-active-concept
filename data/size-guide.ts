@@ -2,6 +2,12 @@
 // Jade approved the original bust, waist and hip ranges on 28 October 2026.
 // Underbust and AU bra equivalents are approximate references pending brand fit review.
 export type SizeGuideCategory = "sports-bras" | "bottoms" | "tops" | "socks";
+export const sockSizing = {
+  variant: "One size",
+  range: "4.5–7.5",
+  guideText: "These socks are designed to fit US women’s shoe sizes 4.5–7.5.",
+  productText: "Fits US women’s shoe sizes 4.5–7.5.",
+} as const;
 export type SizeGuideRow = { label: string; ranges: Partial<Record<"S" | "M" | "L", readonly [number, number]>> };
 export type CategoryGuide = { label: string; approved: boolean; sizes: readonly ["S", "M", "L"]; rows: SizeGuideRow[]; tips: string[]; note?: string; auBraEquivalents?: Record<"S" | "M" | "L", string> };
 
@@ -18,8 +24,7 @@ export const sizeGuides: Record<SizeGuideCategory, CategoryGuide> = {
     { label: "Bust", ranges: { S: [86, 90], M: [90, 94], L: [94, 98] } },
     { label: "Waist", ranges: { S: [66, 70], M: [70, 74], L: [74, 78] } },
   ] },
-  socks: { label: "Socks", approved: true, sizes: ["S", "M", "L"], rows: [], tips: [],
-    note: "One size. Contact us if you would like fit advice before ordering." },
+  socks: { label: "Socks", approved: true, sizes: ["S", "M", "L"], rows: [], tips: [] },
 };
 
 export function guideCategoryForProduct(category: string): SizeGuideCategory {

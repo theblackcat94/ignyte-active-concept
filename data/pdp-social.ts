@@ -8,9 +8,11 @@ export type PdpSocialPost = {
   alt: string;
   caption: string;
   productSlugs: string[];
+  cropX?: number;
+  cropY?: number;
 };
 
-export type PdpSocialSettings = { enabled: boolean; posts: PdpSocialPost[]; coversVersion?: number };
+export type PdpSocialSettings = { enabled: boolean; posts: PdpSocialPost[]; coversVersion?: number; automatic?: boolean; cachedPosts?: PdpSocialPost[]; lastRefresh?: string };
 
 // Supplied covers, kept in the same order as the linked Instagram posts.
 export const socialCoverImages = [

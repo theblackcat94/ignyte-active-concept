@@ -14,7 +14,7 @@ export default function PdpSocialStrip({ productSlug, hideEyebrow = false }: { p
     const refresh = () => { void fetch("/api/pdp-social", { cache: "no-store" })
       .then(async response => { if (!response.ok) throw Error("Could not load posts"); return response.json() as Promise<{ posts: PdpSocialPost[] }>; })
       .then(data => { if (active) setPosts(data.posts.filter(post => !productSlug || !post.productSlugs.length || post.productSlugs.includes(productSlug)).slice(0, 10)); })
-      .catch(() => { if (active) setPosts([]); }); };
+      .catch(() => { /* Keep the last successfully rendered feed. */ }); };
     refresh();
     const onVisible = () => { if (document.visibilityState === "visible") refresh(); };
     window.addEventListener("focus", refresh);
@@ -32,7 +32,7 @@ export default function PdpSocialStrip({ productSlug, hideEyebrow = false }: { p
       const imageSrc = cover.startsWith("/images/") ? asset(cover) : cover;
       const isReel = /\/reel\//.test(post.href);
       return <article className={`pdp-social-card ${post.href.includes("DdvnCY3ii41") ? "is-landscape" : ""}`} key={post.id}>
-        {post.video ? <div className="pdp-social-media"><video src={post.video} poster={imageSrc} controls playsInline preload="none" aria-label={post.alt} /></div> : <a className="pdp-social-media" href={post.href} target="_blank" rel="noopener noreferrer" aria-label={`${post.alt} — open on Instagram`}><img src={imageSrc} alt={post.image ? post.alt : "Ignyte campaign image"} loading="lazy" /><span className="pdp-social-media-shade" aria-hidden="true" /><span className="pdp-social-media-mark" aria-hidden="true">{isReel ? "▶" : "↗"}</span></a>}
+        {post.video ? <div className="pdp-social-media"><video src={post.video} poster={imageSrc} controls playsInline preload="none" aria-label={post.alt} /></div> : <a className="pdp-social-media" href={post.href} target="_blank" rel="noopener noreferrer" aria-label={`${post.alt} — open on Instagram`}><img src={imageSrc} alt={post.image ? post.alt : "Ignyte campaign image"} loading="lazy" style={{ objectPosition: `${post.cropX ?? 50}% ${post.cropY ?? 50}%` }} /><span className="pdp-social-media-shade" aria-hidden="true" /><span className="pdp-social-media-mark" aria-hidden="true">{isReel ? <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5.5v13l10-6.5z" /></svg> : "↗"}</span></a>}
         <div className="pdp-social-card-foot"><span><small>{isReel ? "REEL" : "POST"}</small></span><a href={post.href} target="_blank" rel="noopener noreferrer">{post.caption || (isReel ? "WATCH REEL" : "VIEW POST")} ↗</a></div>
       </article>;
     })}</div>

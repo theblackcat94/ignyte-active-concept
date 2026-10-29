@@ -75,7 +75,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     queueMicrotask(() => {
       if (cancelled) return;
       try {
-        setBag((JSON.parse(localStorage.getItem("ignyte-concept-bag") || "[]") as BagItem[]).map(item => ({ ...item, slug: legacyProductSlugs[item.slug] || item.slug })));
+        setBag((JSON.parse(localStorage.getItem("ignyte-concept-bag") || "[]") as BagItem[]).map(item => ({ ...item, slug: legacyProductSlugs[item.slug] || item.slug, size: item.slug.includes("socks") && item.size.toLowerCase() === "one size" ? "One size" : item.size })));
         setWishlist((JSON.parse(localStorage.getItem("ignyte-concept-wishlist") || "[]") as string[]).map(slug => legacyProductSlugs[slug] || slug));
       } catch { /* A fresh bag is safe if browser storage is unavailable. */ }
       setStorageReady(true);
