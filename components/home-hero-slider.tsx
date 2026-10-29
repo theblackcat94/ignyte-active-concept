@@ -8,6 +8,8 @@ export default function HomeHeroSlider({ comparison = false }: { comparison?: bo
   const [settings, setSettings] = useState<HomeHeroSettings>(defaultHomeHeroSettings);
   const [active, setActive] = useState(0);
   const [mobile, setMobile] = useState(false);
+  const [readySrc, setReadySrc] = useState("");
+  const [failedSrc, setFailedSrc] = useState("");
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const slides = settings.slides.filter(item => item.enabled);
@@ -29,18 +31,23 @@ export default function HomeHeroSlider({ comparison = false }: { comparison?: bo
   const move = (direction: number) => setActive(index => (index + direction + slides.length) % slides.length);
   useEffect(() => {
     if (slide.kind !== "video") return;
+    const video = videoRef.current;
+    if (video) {
+      if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) setReadySrc(mediaSrc);
+      void video.play().catch(() => setFailedSrc(mediaSrc));
+    }
     const timeout = window.setTimeout(() => {
       if (videoRef.current?.paused && !videoRef.current.ended) setActive(index => (index + 1) % slides.length);
     }, 11000);
     return () => window.clearTimeout(timeout);
-  }, [active, slide.id, slide.kind, slides.length]);
+  }, [active, mediaSrc, slide.id, slide.kind, slides.length]);
 
   return <section className={`home-hero home-slider ${slide.kind === "video" ? "home-slide-video" : "home-slide-photo"}`} aria-label="Ignyte home media carousel" aria-roledescription="carousel" onTouchStart={event => { const touch = event.touches[0]; touchStart.current = { x: touch.clientX, y: touch.clientY }; }} onTouchEnd={event => { const start = touchStart.current; touchStart.current = null; if (!start) return; const touch = event.changedTouches[0]; const dx = touch.clientX - start.x; const dy = touch.clientY - start.y; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4) move(dx < 0 ? 1 : -1); }}>
     <div className="home-slide-media" key={`${slide.id}-${mediaSrc}`}>
-      {slide.kind === "video" ? <video ref={videoRef} src={mediaSrc} poster={slide.poster ? homeHeroMediaUrl(slide.poster) : undefined} autoPlay muted playsInline preload="metadata" onEnded={() => move(1)} aria-label={slide.alt} /> : <img src={mediaSrc} alt={slide.alt} loading={active === 0 ? "eager" : "lazy"} />}
+      {slide.kind === "video" ? <>{failedSrc === mediaSrc && slide.poster && <img src={homeHeroMediaUrl(slide.poster)} alt={slide.alt} />}<video ref={videoRef} className={readySrc === mediaSrc && failedSrc !== mediaSrc ? "is-ready" : ""} src={mediaSrc} autoPlay muted playsInline preload="metadata" onLoadedData={() => setReadySrc(mediaSrc)} onError={() => setFailedSrc(mediaSrc)} onEnded={() => move(1)} aria-label={slide.alt} /></> : <img src={mediaSrc} alt={slide.alt} loading={active === 0 ? "eager" : "lazy"} />}
     </div>
     <div className="home-hero-shade" />
-    <div className="home-hero-content" aria-live="polite"><span className="home-kicker">{slide.kicker}</span><h1>{comparison && slide.id === "hero-film" ? "Built for the burn." : slide.title}</h1><Link href={slide.href} className="home-pill">{slide.action} <span>↗</span></Link></div>
+    <div className="home-hero-content" aria-live="polite"><span className="home-kicker">{slide.kicker}</span><h1>{comparison && slide.id === "hero-film" ? "Built for the burn." : slide.title}{slide.id === "hero-film" && <sup>™</sup>}</h1><Link href={slide.href} className="home-pill">{slide.action} <span>↗</span></Link></div>
     <div className="home-slider-controls"><button type="button" onClick={() => move(-1)} aria-label="Previous slide">←</button><span>{String(active + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}</span><button type="button" onClick={() => move(1)} aria-label="Next slide">→</button></div>
     <div className="home-slider-dots" aria-label="Choose a slide">{slides.map((item, index) => <button key={item.id} type="button" className={index === active ? "active" : ""} onClick={() => setActive(index)} aria-label={`Show slide ${index + 1}: ${item.kicker.replace("_", "")}`} aria-current={index === active ? "true" : undefined} />)}</div>
   </section>;

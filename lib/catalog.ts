@@ -3,6 +3,7 @@ import prepared from "@/data/jacob-catalog-2026-10-27.json";
 import { pdpFor, type PdpContent } from "@/data/pdp-planner";
 import { displayColour } from "./display-colour";
 import { productShortDescription } from "./product-short-description";
+import { mappedProductAttributes } from "@/data/product-attributes";
 
 export type Category = string;
 export type Product = {
@@ -11,6 +12,9 @@ export type Product = {
   category: string;
   price: number;
   color: string;
+  plannerProductId?: string;
+  fitAttribute?: string;
+  coverageAttribute?: string;
   image: string;
   gallery: { image: string; alt: string }[];
   label?: string;
@@ -26,6 +30,7 @@ const coverImage = (name: string) => asset(`/images/collection-covers/${name}`);
 const featuredSlugs = ["aura-halter-lavender", "seamless-legging-lavender", "seamless-short-espresso", "seamless-sports-bra-espresso"];
 export const products: Product[] = prepared.products.map(item => ({
   slug: item.slug, name: item.name, category: item.category, color: displayColour(item.color),
+  ...mappedProductAttributes(item.variants.map(variant => variant.sku)),
   description: productShortDescription(item.name, item.slug, displayColour(item.description)), image: asset(item.image_path),
   pdp: pdpFor(item.name, null, item.slug),
   gallery: item.gallery.map(entry => ({ image: asset(entry.image), alt: displayColour(entry.alt) })),

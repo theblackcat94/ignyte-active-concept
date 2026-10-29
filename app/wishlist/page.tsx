@@ -3,6 +3,7 @@
 import Link from "next/link";
 import ProductCard from "@/components/product-card";
 import { useStore } from "@/components/store-provider";
+import "./wishlist.css";
 
 export default function WishlistPage() {
   const { products, wishlist } = useStore();

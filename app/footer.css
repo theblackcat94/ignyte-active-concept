@@ -40,6 +40,7 @@
 .pdf-footer-column a:hover,.pdf-footer-bottom a:hover{color:#FF4533}
 .pdf-footer-bottom{width:min(100% - 88px,1500px);margin:auto;border-top:1px solid #ddd;min-height:100px;display:flex;align-items:center;justify-content:space-between;gap:20px;color:#545661;font-size:12px}
 .pdf-footer-bottom>div{display:flex;gap:35px}
+.pdf-footer-credit{display:inline-block;margin-top:8px;font-size:11px;letter-spacing:0}.pdf-footer-credit a{text-decoration:underline;text-underline-offset:2px}
 @media(max-width:900px){.pdf-footer-signup-inner{grid-template-columns:1fr;gap:32px;padding:65px 0}.pdf-footer-perks{grid-template-columns:repeat(2,1fr)}.pdf-footer-perks>:nth-child(2){border-right:0}.pdf-footer-perks>:nth-child(-n+2){border-bottom:1px solid #ddd}.pdf-footer-main{grid-template-columns:repeat(4,1fr);gap:45px;padding:75px 0}.pdf-footer-brand{grid-column:1/-1}}
 @media(max-width:560px){.pdf-footer-signup-inner,.pdf-footer-main,.pdf-footer-bottom{width:min(100% - 36px,1500px)}.pdf-footer-signup-inner{padding:55px 0}.pdf-footer-signup h2{font-size:38px}.pdf-footer-email-row{height:58px}.pdf-footer-perks>a,.pdf-footer-perks>div{min-height:100px;gap:10px;padding:12px}.pdf-footer-perks span{font-size:25px}.pdf-footer-perks strong{font-size:9px}.pdf-footer-main{grid-template-columns:repeat(2,1fr);gap:45px 20px}.pdf-footer-column h3{font-size:11px}.pdf-footer-column a{font-size:13px}.pdf-footer-bottom{display:block;padding:25px 0;font-size:10px}.pdf-footer-bottom>div{margin-top:18px;gap:20px}}
 @media(max-width:560px){.pdf-footer-signup h2{line-height:1.02}}
