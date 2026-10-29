@@ -122,7 +122,9 @@ export default function CheckoutPage() {
         let modal;
         try { modal = await loadEwayModal(); }
         catch { window.location.assign(payment.url); return; }
-        const outcome = await openEwayModal(modal, payment.url, payment.accessCode);
+        let outcome;
+        try { outcome = await openEwayModal(modal, payment.url, payment.accessCode); }
+        catch { window.location.assign(payment.url); return; }
         if (outcome !== "cancelled") {
           router.push(`/checkout/eway-return/?AccessCode=${encodeURIComponent(payment.accessCode)}`);
           return;

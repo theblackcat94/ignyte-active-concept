@@ -41,7 +41,14 @@ export function openEwayModal(modal: EwayModal, url: string, accessCode: string)
   if (!accessCode || !url.startsWith("https://")) throw new Error("Invalid payment page.");
   return new Promise((resolve, reject) => {
     try {
+      const timeout = window.setTimeout(() => {
+        const frame = document.getElementById("eway-payment-window");
+        if (!frame || getComputedStyle(frame).visibility !== "visible") {
+          reject(new Error("eWAY payment frame did not open."));
+        }
+      }, 10000);
       modal.showModalPayment({ sharedPaymentUrl: url }, result => {
+        window.clearTimeout(timeout);
         if (result === "Complete") resolve("complete");
         else if (result === "Cancel") resolve("cancelled");
         else resolve("error");
