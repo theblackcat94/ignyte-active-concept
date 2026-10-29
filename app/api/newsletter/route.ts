@@ -9,6 +9,7 @@ const schema = z.object({
   email: z.email().trim().toLowerCase().max(254),
   consent: z.literal(true),
   website: z.string().max(0),
+  source: z.enum(["footer", "checkout"]).optional(),
 });
 const attempts = new Map<string, number>();
 
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
       email: parsed.data.email,
       status: "confirmed",
       consent_at: new Date().toISOString(),
-      source: "footer",
+      source: parsed.data.source ?? "footer",
       unsubscribe_token: randomBytes(32).toString("hex"),
     };
     const { error } = await db.from("marketing_subscribers").upsert(record, { onConflict: "email" });

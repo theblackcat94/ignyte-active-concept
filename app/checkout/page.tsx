@@ -20,6 +20,8 @@ export default function CheckoutPage() {
   const { bag, products, clearBag } = useStore();
   const [shipping, setShipping] = useState<Shipping>(emptyShipping);
   const [email, setEmail] = useState("");
+  const [newsletterOptIn, setNewsletterOptIn] = useState(false);
+  const [newsletterWarning, setNewsletterWarning] = useState("");
   const [signedIn, setSignedIn] = useState(false);
   const [guestOrder, setGuestOrder] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -112,6 +114,12 @@ export default function CheckoutPage() {
       const result = await response.json();
       if (!response.ok || !result.orderId) throw new Error(result.error || "Your order could not be placed.");
       savedOrderId = result.orderId;
+      if (newsletterOptIn) {
+        try {
+          const signup = await fetch("/api/newsletter", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, consent: true, website: "", source: "checkout" }) });
+          if (!signup.ok) setNewsletterWarning("We could not add you to the newsletter. You can sign up in the footer.");
+        } catch { setNewsletterWarning("We could not add you to the newsletter. You can sign up in the footer."); }
+      }
       if (ewayMode !== "none" && ewayMode !== null && result.amountDueCents !== null) {
         const paymentResponse = await fetch("/api/eway/start", {
           method: "POST", headers,
@@ -144,7 +152,7 @@ export default function CheckoutPage() {
 
   if (orderId) return <div className="checkout-page section-wrap checkout-confirmation">
     <span className="eyebrow">CHECKOUT / PAYMENT</span><h1>PAYMENT PENDING<span>.</span></h1>
-    <div className="checkout-panel"><h2>Order saved</h2><p>Order <strong>{orderId}</strong> is ready for payment. {amountDueCents === null ? "Shipping is awaiting a final quote." : `Estimated total including delivery: ${money(amountDueCents / 100)}.`}</p><div className="checkout-payment-notice"><strong>Card payment is being connected</strong><p>No card details are collected here and your order has not been charged. The Ignyte team will confirm the amount and payment method before fulfilment.</p></div>{guestOrder && <p>Stock for guest orders will be confirmed by the team.</p>}<Link className="button button-dark" href={guestOrder ? `/guest/orders/${orderId}` : `/account/orders/${orderId}`}>VIEW ORDER & PAYMENT STATUS ↗</Link></div>
+    <div className="checkout-panel"><h2>Order saved</h2><p>Order <strong>{orderId}</strong> is ready for payment. {amountDueCents === null ? "Shipping is awaiting a final quote." : `Estimated total including delivery: ${money(amountDueCents / 100)}.`}</p>{newsletterWarning && <p role="status">{newsletterWarning}</p>}<div className="checkout-payment-notice"><strong>Card payment is being connected</strong><p>No card details are collected here and your order has not been charged. The Ignyte team will confirm the amount and payment method before fulfilment.</p></div>{guestOrder && <p>Stock for guest orders will be confirmed by the team.</p>}<Link className="button button-dark" href={guestOrder ? `/guest/orders/${orderId}` : `/account/orders/${orderId}`}>VIEW ORDER & PAYMENT STATUS ↗</Link></div>
   </div>;
 
   return <div className="checkout-page section-wrap">
@@ -153,11 +161,11 @@ export default function CheckoutPage() {
     {!commerceConfigured ? <div className="checkout-panel"><h2>Store setup in progress</h2><p>Order requests will open when the store database is connected.</p><Link className="text-link" href="/shop">CONTINUE SHOPPING ↗</Link></div>
       : !bag.length ? <div className="checkout-panel"><h2>Your bag is empty</h2><Link className="text-link" href="/shop">SHOP THE COLLECTION ↗</Link></div>
       : <div className="checkout-grid"><form id="order-request" className="checkout-form" onSubmit={submit}>
-        {step === "delivery" ? <><h2>Australian delivery</h2><p>You can continue as a guest. No account or sign-in is required.</p>
-        <div className="checkout-guidance"><div><strong>GUEST CHECKOUT</strong><p>Enter your email and Australian address below. After saving the order request, keep its order number and link; guest order details can be reopened in this browser for 30 days.</p></div><div><strong>DELIVERY &amp; RETURNS</strong><p>Australian orders of AU$100 or more after discounts qualify for free shipping. Orders under AU$100 after discounts have a flat AU$15 delivery charge. Read the <Link href="/returns">Shipping &amp; Returns Policy</Link> before continuing.</p></div></div>
-        <div className="checkout-contact-head"><h3>YOUR CONTACT</h3><p>We’ll use these details for your order. Newsletter signup is separate and optional.</p></div>
+        {step === "delivery" ? <><h2>Australian delivery</h2><p>Guest checkout is available. Free shipping on AU orders of $100 or more; otherwise $15. <Link href="/returns">Delivery &amp; returns ↗</Link></p>
+        <div className="checkout-contact-head"><h3>YOUR CONTACT</h3></div>
         <div className="checkout-fields">
           <label className="wide">EMAIL ADDRESS<input required type="email" autoComplete="email" maxLength={254} value={email} readOnly={signedIn} onChange={event => setEmail(event.target.value)} /></label>
+          <label className="wide checkout-newsletter"><input type="checkbox" checked={newsletterOptIn} onChange={event => setNewsletterOptIn(event.target.checked)} /><span>Yes, email me IGNYTE news and product updates. Optional; unsubscribe any time.</span></label>
           <label className="wide">FULL NAME<input required autoComplete="name" maxLength={120} value={shipping.name} onChange={event => setShipping({ ...shipping, name: event.target.value })} /></label>
           <div className="checkout-address-head"><h3>DELIVERY ADDRESS</h3><p>Australia only. We’ll calculate shipping from your state and postcode.</p></div>
           <label>PHONE<input required type="tel" autoComplete="tel" minLength={8} maxLength={30} value={shipping.phone} onChange={event => setShipping({ ...shipping, phone: event.target.value })} /></label>
@@ -168,7 +176,7 @@ export default function CheckoutPage() {
           <label>POSTCODE<input required inputMode="numeric" pattern="[0-9]{4}" autoComplete="postal-code" value={shipping.postal_code} onChange={event => setShipping({ ...shipping, postal_code: event.target.value })} /></label>
           <label>COUNTRY<input readOnly value="Australia" /></label>
         </div>
-        <p className="checkout-email">{signedIn ? "Your order will also appear in your account." : "No account needed. Your guest order link will be shown after you save the request; save the order number for support."}</p>
+        <p className="checkout-email">{signedIn ? "Your order will also appear in your account." : "Your guest order link will appear after checkout."}</p>
         <button className="button button-orange" disabled={!valid}>CONTINUE TO PAYMENT ↗</button></> : <><h2>Review &amp; payment</h2><p>Deliver to {shipping.name}, {shipping.line1}, {shipping.city} {shipping.state} {shipping.postal_code}.</p><button type="button" className="checkout-edit" onClick={() => setStep("delivery")}>EDIT DELIVERY ADDRESS ↗</button><div className="checkout-payment-notice"><span className="eyebrow">SECURE PAYMENT</span>{ewayMode === "sandbox" && quotedShipping !== null ? <><h3>Test payment with eWAY</h3><p>The secure card form opens over this checkout. eWAY handles card details directly. This is a sandbox test; no real charge will be made.</p><span className="checkout-payment-provider">SECURED BY EWAY <span aria-hidden="true">↗</span></span></> : ewayMode === "production" && quotedShipping !== null ? <><h3>Pay securely with eWAY</h3><p>The secure card form opens over this checkout. eWAY handles card details directly.</p><span className="checkout-payment-provider">SECURED BY EWAY <span aria-hidden="true">↗</span></span></> : <><h3>Card payments coming soon</h3><p>The merchant connection is being prepared. Do not enter card details on this site. Save your order below and the team will confirm delivery and payment before fulfilment.</p></>}</div>
         <p className="checkout-email">{quotedShipping === null ? "Delivery cost will be confirmed before payment." : ewayMode !== "none" && ewayMode !== null ? `Delivery is ${money(quotedShipping / 100)} and included in the total due.` : `Estimated delivery is ${money(quotedShipping / 100)}; the team will confirm the final amount before payment.`} <Link href="/returns">Review shipping and returns ↗</Link></p>
         {error && <p className="checkout-error" role="alert">{error}</p>}

@@ -5,3 +5,7 @@
 .about-founders{padding-top:95px;padding-bottom:125px;border-top:1px solid #d5d0c8}.about-founders h2{max-width:780px}.about-founders p{max-width:760px}.about-founders>strong{display:block;font-size:24px;font-weight:500;margin-top:26px}.about-founders .about-founder-signature{font-size:18px;margin-top:35px}.about-founder-signature span{font-size:13px;color:#68635d}
 @media(max-width:520px){.about-founders{padding-top:75px;padding-bottom:125px}.about-founders h2{font-size:42px}.about-founders p{font-size:16px}}
 .about-hero>div,.about-hero h1{overflow:visible}.about-hero h1 .fx-ember{color:var(--ink)}
+.about-founders{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:start;gap:clamp(35px,6vw,95px)}
+.about-founders-copy>strong{display:block;font-size:24px;font-weight:500;margin-top:26px}
+.about-founders-photo{width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;object-position:center}
+@media(max-width:800px){.about-founders{grid-template-columns:1fr}.about-founders-photo{aspect-ratio:3/2;object-position:center 34%}}

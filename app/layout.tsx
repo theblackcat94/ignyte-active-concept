@@ -5,6 +5,7 @@ import "./globals.css";
 import "./ember.css";
 import "./product-gallery.css";
 import "./footer.css";
+import "./appearance.css";
 import { StoreProvider } from "@/components/store-provider";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
@@ -38,7 +39,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-scroll-behavior="smooth">
+    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: "try{var a=localStorage.getItem('ignyte-appearance');document.documentElement.dataset.appearance=(a==='dark'||a==='ignyte')?a:'light'}catch(e){document.documentElement.dataset.appearance='light'}" }} /></head>
       <body className={`${ignyteSans.variable} ${ignyteMono.variable}`}>
         <StoreProvider>
           <AnalyticsTracker />

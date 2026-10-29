@@ -26,7 +26,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const { products, addToBag, bagOpen, wishlist, toggleWishlist, catalogLoading, catalogError } = useStore();
   const product = !catalogLoading && !catalogError ? products.find(item => item.slug === initialProduct.slug) ?? initialProduct : initialProduct;
   const [selection, setSelection] = useState({ slug: product.slug, size: "" });
-  const [openInfo, setOpenInfo] = useState<string | null>("FEATURES");
+  const [openInfo, setOpenInfo] = useState<string | null>(null);
   const [guideOpen, setGuideOpen] = useState(false);
   const [showMobilePurchase, setShowMobilePurchase] = useState(false);
   const sizeRef = useRef<HTMLDivElement>(null);
