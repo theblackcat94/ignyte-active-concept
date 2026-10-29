@@ -94,8 +94,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   }
 
   return <div className="product-page pdp-stacked section-wrap">
-    <div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><Link href={`/shop/${product.category}`}>{product.category.toUpperCase().replace("-", " ")}</Link><span>/</span><span>{product.name.toUpperCase()}</span></div>
-    <div className="detail-grid"><div ref={galleryRef}><StackedProductGallery ref={galleryHandle} product={product} />{product.pdp.video_url && <button type="button" className="pdp-see-move" onClick={() => galleryHandle.current?.showVideo()}>SEE IT MOVE ↗</button>}</div><div className="detail-info"><span className="eyebrow">IGNYTE / {product.category.toUpperCase().replace("-", " ")}</span><h1>{product.name.toUpperCase()}<em>.</em></h1>
+    <div className="detail-grid"><div ref={galleryRef}><StackedProductGallery ref={galleryHandle} product={product} /></div><div className="detail-info" tabIndex={0} aria-label="Product details and purchase options"><div className="breadcrumb pdp-detail-breadcrumb"><Link href="/">IGNYTE</Link><span>/</span><Link href={`/shop/${product.category}`}>{product.category.toUpperCase().replace("-", " ")}</Link><span>/</span><span>{product.name.toUpperCase()}</span></div><h1>{product.name.toUpperCase()}<em>.</em></h1>
       <div className="detail-price">{(selectedVariant?.originalPrice ?? product.originalPrice) && <del>{money((selectedVariant?.originalPrice ?? product.originalPrice)!)}</del>}<span>{money(selectedVariant?.price ?? product.price)}<CurrencyEstimate aud={selectedVariant?.price ?? product.price} /></span></div>
       <p className="detail-description">{product.description}</p>{commerceConfigured && !product.variants && <p className="catalog-preview-note">Preview item. Available to order after sizes and stock are confirmed.</p>}
       <div className="detail-color">COLOUR: <strong>{product.color.toUpperCase()}</strong></div>

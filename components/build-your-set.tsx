@@ -8,6 +8,7 @@ import "@/app/build-your-set.css";
 
 export default function BuildYourSet({ bra, braSize }: { bra: Product; braSize: string }) {
   const { products, bag, addSetToBag } = useStore();
+  const [expanded, setExpanded] = useState(false);
   const [choice, setChoice] = useState<{ braSlug: string; bottomSlug: string; size: string }>({ braSlug: bra.slug, bottomSlug: "", size: "" });
   if (bra.category !== "sports-bras") return null;
   const bottoms = pairedProducts(bra.slug, products, "related")
@@ -27,7 +28,8 @@ export default function BuildYourSet({ bra, braSize }: { bra: Product; braSize: 
   const ready = Boolean(braVariant && bottomVariant && hasStock(bra.slug, braSize, braVariant.stock) && hasStock(bottom.slug, bottomSize, bottomVariant.stock));
 
   return <section className="build-set" aria-labelledby="build-set-title">
-    <div className="build-set-heading"><div><span>COMPLETE THE LOOK</span><h2 id="build-set-title">Build your set.</h2></div><p>Choose one matching bottom. Each piece is priced separately.</p></div>
+    <button type="button" className="build-set-toggle" aria-expanded={expanded} aria-controls="build-set-content" onClick={() => setExpanded(value => !value)}><span id="build-set-title">COMPLETE THE LOOK</span><span aria-hidden="true">{expanded ? "−" : "+"}</span></button>
+    {expanded && <div id="build-set-content"><div className="build-set-heading"><div><h2>Build your set.</h2></div><p>Choose one matching bottom. Each piece is priced separately.</p></div>
     <div className="build-set-items"><div className="build-set-item"><img src={bra.image} alt="" /><div><strong>{bra.name}</strong><span>{bra.color} / {braSize || "Choose bra size above"}</span></div><b>{money(braPrice)}</b></div>
       <div className="build-set-choice" role="group" aria-label="Choose matching bottom">{bottoms.map(item => <button key={item.slug} type="button" aria-pressed={item.slug === bottom.slug} onClick={() => setChoice({ braSlug: bra.slug, bottomSlug: item.slug, size: "" })}>{item.name}</button>)}</div>
       <div className="build-set-item"><img src={bottom.image} alt="" /><div><strong>{bottom.name}</strong><span>{bottom.color}</span></div><b>{money(bottomPrice)}</b></div>
@@ -35,6 +37,6 @@ export default function BuildYourSet({ bra, braSize }: { bra: Product; braSize: 
     <div className="build-set-size"><span>SELECT BOTTOM SIZE</span><div role="group" aria-label={`${bottom.name} size`}>{variants.map(item => <button key={item.id} type="button" disabled={item.stock <= 0} aria-pressed={bottomSize === item.size} onClick={() => setChoice({ braSlug: bra.slug, bottomSlug: bottom.slug, size: item.size })}>{item.size}</button>)}</div></div>
     <div className="build-set-total"><span>SET TOTAL</span><strong>{money(braPrice + bottomPrice)}</strong></div>
     <button type="button" className="build-set-add" disabled={!ready} onClick={() => addSetToBag(bra.slug, braSize, bottom.slug, bottomSize)}>ADD SET TO BAG <span>↗</span></button>
-    {!braSize && <p className="build-set-hint">Choose your bra size above to add the set.</p>}
+    {!braSize && <p className="build-set-hint">Choose your bra size above to add the set.</p>}</div>}
   </section>;
 }
