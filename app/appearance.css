@@ -37,6 +37,7 @@ html[data-appearance="dark"] .button-orange,html[data-appearance="dark"] .quick-
 html[data-appearance="dark"] .pdp-oeko{background:#151c2e;border-color:#6c7586;color:#f5f0e8}
 html[data-appearance="dark"] .pdp-oeko>strong{color:#f5f0e8;border-color:#8790a0}
 html[data-appearance="dark"] .pdp-oeko a,html[data-appearance="dark"] .pdp-fit-fabric>p span{color:#d9dde4}
+html[data-appearance="dark"] .product-page .detail-accordions .pdp-fit-fabric>p span{color:#d9dde4}
 html[data-appearance="dark"] .pdp-purchase-reassurance svg{color:#f5f0e8}
 html[data-appearance="dark"] .pdp-colour-option,html[data-appearance="dark"] .size-heading button,html[data-appearance="dark"] .detail-color,html[data-appearance="dark"] .detail-price{color:#f5f0e8}
 html[data-appearance="dark"] .breadcrumb,html[data-appearance="dark"] .product-card-colours{color:#c2c6d0}
