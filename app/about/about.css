@@ -9,3 +9,11 @@
 .about-founders-copy>strong{display:block;font-size:24px;font-weight:500;margin-top:26px}
 .about-founders-photo{width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;object-position:center}
 @media(max-width:800px){.about-founders{grid-template-columns:1fr}.about-founders-photo{aspect-ratio:3/2;object-position:center 34%}}
+
+/* Keep the approved desktop headline on two lines without constraining mobile copy. */
+@media(min-width:901px){.about-hero h1{max-width:none;font-size:clamp(48px,4.8vw,76px)}.about-hero-line{display:block;white-space:nowrap}.about-hero-desktop-break{display:none}}
+.about-hero h1 .about-hero-line{color:inherit}
+.about-hero h1 .fx-ember{color:var(--ink,#ffd9a0)}
+@media(max-width:900px){.about-hero-line{display:inline;white-space:normal}}
+.about-mission img{object-position:center 32%}
+@media(max-width:800px){.about-mission img{object-position:center 26%}}

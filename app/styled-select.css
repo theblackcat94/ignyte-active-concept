@@ -18,3 +18,12 @@ html[data-appearance="ignyte"] .styled-select-trigger,html[data-appearance="igny
 html[data-appearance="ignyte"] .styled-select-menu button:hover,html[data-appearance="ignyte"] .styled-select-menu button:focus-visible{background:#FF4533}
 html[data-appearance="ignyte"] .styled-select-menu button[aria-checked="true"]{color:#0B1020;text-decoration:underline}
 @media(max-width:520px){.shop-sort>span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}.shop-controls .styled-select-trigger{min-width:145px}}
+.styled-select-choice{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.styled-select-icon{width:16px;height:16px;flex:none}
+.styled-select-trigger .styled-select-chevron{width:13px;height:13px;flex:none}
+.footer-appearance .styled-select{min-width:130px}
+.shop-controls .styled-select-trigger{min-width:150px;border-color:var(--line);background:transparent;font-weight:500}
+.shop-controls .shop-sort{opacity:.82}
+.shop-controls .shop-sort:hover,.shop-controls .shop-sort:focus-within{opacity:1}
+.shop-controls>div>button:first-child{font-weight:900;border:1px solid currentColor;padding:9px 12px;min-height:38px}
+@media(max-width:520px){.shop-controls .styled-select-trigger{min-width:135px}.shop-controls>div>button:first-child{padding:8px 9px}}

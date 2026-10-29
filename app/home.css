@@ -124,3 +124,14 @@ body:has(.home-page) .site-header{height:78px}
 @media(max-width:600px){.home-registration-mark{width:10px;height:10px}.home-registration-mark-top-left{top:12px;left:12px}.home-registration-mark-top-right{top:12px;right:12px}.home-registration-mark-bottom-left{bottom:12px;left:12px}.home-registration-mark-bottom-right{bottom:12px;right:12px}}
 .home-pill-spaced{letter-spacing:.15em}
 @media(prefers-reduced-motion:reduce){.home-slide-video .home-slide-media video{visibility:hidden}}
+
+.mono-section-heading{letter-spacing:.13em!important}
+.home-slider .home-registration-mark-bottom-left{left:4%;bottom:20px}
+.home-slider .home-registration-mark-bottom-right{right:4%;bottom:20px}
+.home-founders{grid-template-columns:minmax(260px,340px) minmax(0,1fr)}
+.home-founders-badge{grid-column:1;min-width:0}
+.home-founders-badge .home-founders-logo{width:100%;max-width:340px;height:auto;margin:0}
+.home-founders-logo-dark{display:none!important}
+@media(max-width:800px){.home-slider .home-registration-mark-bottom-left{bottom:62px;left:18px}.home-slider .home-registration-mark-bottom-right{bottom:62px;right:18px}}
+@media(max-width:600px){.home-founders{grid-template-columns:1fr}.home-founders-badge,.home-founders-copy{grid-column:1}.home-founders-badge{width:min(260px,70%)}.home-slider .home-registration-mark-bottom-left,.home-slider .home-registration-mark-bottom-right{bottom:64px}}
+@media(max-width:600px){.home-bottom-photo{display:none}.home-bottom .brand-film{grid-column:1;grid-row:2}.home-bottom{gap:22px}}

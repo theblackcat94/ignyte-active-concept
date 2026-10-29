@@ -67,3 +67,39 @@ html[data-appearance="ignyte"] .pdf-footer-consent input{border-color:#0B1020}
 html[data-appearance="ignyte"] .pdp-story-icon,html[data-appearance="ignyte"] .home-value-arrow,html[data-appearance="ignyte"] .about-features .home-value-arrow{border-color:#0B1020;color:#0B1020}
 html[data-appearance="ignyte"] .home-slider .home-hero-content h1,html[data-appearance="ignyte"] .about-hero h1,html[data-appearance="ignyte"] .shop-banner h1{color:#fff4ed;animation:fx-ember 1.7s ease-in-out infinite alternate}
 @media(prefers-reduced-motion:reduce){html[data-appearance="ignyte"] .home-slider .home-hero-content h1,html[data-appearance="ignyte"] .about-hero h1,html[data-appearance="ignyte"] .shop-banner h1{animation:none;text-shadow:0 -2px 6px #ffab40,0 -6px 14px #ff6d00,0 -12px 28px #dd2c00,0 -20px 44px rgba(213,0,0,.55)}}
+
+/* Surface and form contrast across the customer account and checkout flows. */
+html[data-appearance="dark"] .account-auth-card,html[data-appearance="dark"] .account-tabs,html[data-appearance="dark"] .account-sidebar,html[data-appearance="dark"] .account-order-empty,html[data-appearance="dark"] .account-orders article,html[data-appearance="dark"] .order-detail-card{background:#151c2e;color:#f5f0e8;border-color:#545b6a}
+html[data-appearance="dark"] .account-tabs button,html[data-appearance="dark"] .account-auth-card .account-form label,html[data-appearance="dark"] .account-confirmation strong,html[data-appearance="dark"] .account-sidebar nav a,html[data-appearance="dark"] .account-signout{color:#f5f0e8}
+html[data-appearance="dark"] .account-tabs button.active,html[data-appearance="dark"] .account-sidebar nav a:hover,html[data-appearance="dark"] .account-signout:hover{background:#303a50;color:#fff}
+html[data-appearance="dark"] .account-auth-intro p,html[data-appearance="dark"] .account-confirmation p,html[data-appearance="dark"] .account-auth-card .account-password-hint,html[data-appearance="dark"] .account-auth-card .account-legal,html[data-appearance="dark"] .account-auth-card .account-auth-note,html[data-appearance="dark"] .account-heading>p,html[data-appearance="dark"] .account-member small,html[data-appearance="dark"] .account-order-empty p,html[data-appearance="dark"] .account-orders p,html[data-appearance="dark"] .order-detail-card>p,html[data-appearance="dark"] .order-detail-item span{color:#cbd0da}
+html[data-appearance="dark"] .account-auth-card .account-form input:not([type="checkbox"]),html[data-appearance="dark"] .checkout-fields input,html[data-appearance="dark"] .checkout-fields select,html[data-appearance="dark"] .checkout-coupon input{background:#0B1020;color:#f5f0e8;border-color:#8790a0;caret-color:#fff}
+html[data-appearance="dark"] input:-webkit-autofill{box-shadow:0 0 0 1000px #151c2e inset!important;-webkit-text-fill-color:#f5f0e8!important}
+html[data-appearance="dark"] .account-auth-card .account-auth-message,html[data-appearance="dark"] .checkout-payment-notice,html[data-appearance="dark"] .checkout-payment-notice:has(.checkout-payment-provider),html[data-appearance="dark"] .checkout-guidance>div,html[data-appearance="dark"] .checkout-summary .bag-shipping-progress,html[data-appearance="dark"] .order-message{background:#202b40;color:#f5f0e8;border-color:#8790a0}
+html[data-appearance="dark"] .checkout-page .checkout-guidance p,html[data-appearance="dark"] .checkout-page .checkout-address-head p,html[data-appearance="dark"] .checkout-page .checkout-payment-notice p,html[data-appearance="dark"] .checkout-page .checkout-form>p,html[data-appearance="dark"] .checkout-page .checkout-summary>p,html[data-appearance="dark"] .checkout-page .checkout-panel p{color:#d0d5df}
+html[data-appearance="dark"] .checkout-steps button,html[data-appearance="dark"] .checkout-edit,html[data-appearance="dark"] .checkout-payment-provider{color:#f5f0e8}
+html[data-appearance="dark"] .checkout-steps button.active{color:#fff;border-color:#ff8c78}
+html[data-appearance="dark"] .checkout-error{color:#ff9c8d}
+html[data-appearance="dark"] .checkout-fields input:focus-visible,html[data-appearance="dark"] .checkout-fields select:focus-visible,html[data-appearance="dark"] .account-auth-card input:focus-visible{outline:2px solid #ff8c78;outline-offset:2px}
+html[data-appearance="dark"] .pdf-footer-signup{background:#151c2e;color:#f5f0e8;border-top:1px solid #6c7586;border-bottom:1px solid #6c7586}
+html[data-appearance="dark"] .pdf-footer-signup p,html[data-appearance="dark"] .pdf-footer-consent{color:#d0d5df}
+html[data-appearance="dark"] .pdf-footer-perks{border-top:1px solid #6c7586}
+@media(max-width:767px){html[data-appearance="dark"] .product-card .quick-add{background:#f5f0e8;color:#0B1020;border-top:1px solid #8790a0}html[data-appearance="dark"] .product-card .quick-add:hover,html[data-appearance="dark"] .product-card .quick-add:focus-visible{background:#ff8c78;color:#0B1020}html[data-appearance="dark"] .product-card .quick-add:disabled{background:#303a50;color:#cbd0da}}
+
+/* IGNYTE mode uses ink surfaces to pace the orange sections. */
+html[data-appearance="ignyte"] .home-story,html[data-appearance="ignyte"] .home-fit,html[data-appearance="ignyte"] .home-bottom,html[data-appearance="ignyte"] .pdf-footer-signup{background:#0B1020;color:#fff4ed}
+html[data-appearance="ignyte"] .home-products:nth-of-type(even){background:#FF4533;color:#0B1020}
+html[data-appearance="ignyte"] .home-story p,html[data-appearance="ignyte"] .home-fit-card p,html[data-appearance="ignyte"] .pdf-footer-signup p{color:#e7e9ee}
+html[data-appearance="ignyte"] .home-story .home-underlined,html[data-appearance="ignyte"] .home-fit .home-underlined,html[data-appearance="ignyte"] .home-bottom .home-pill{color:#fff4ed;border-color:#fff4ed}
+html[data-appearance="ignyte"] .home-bottom .home-pill{background:#FF4533;color:#0B1020;border-color:#FF4533}
+html[data-appearance="ignyte"] .home-story h2 span,html[data-appearance="ignyte"] .about-page h2 em{color:#0B1020}
+html[data-appearance="ignyte"] .home-fit .home-registration-mark{color:#fff4ed}
+html[data-appearance="ignyte"] .breadcrumb,html[data-appearance="ignyte"] .breadcrumb a,html[data-appearance="ignyte"] .breadcrumb span,html[data-appearance="ignyte"] .product-page .detail-description,html[data-appearance="ignyte"] .product-page .detail-accordions p,html[data-appearance="ignyte"] .shop-page .product-meta{color:#0B1020}
+html[data-appearance="ignyte"] .home-founders-badge{background:#0B1020;padding:18px}
+html[data-appearance="dark"] .home-founders-logo-light,html[data-appearance="ignyte"] .home-founders-logo-light{display:none!important}
+html[data-appearance="dark"] .home-founders-logo-dark,html[data-appearance="ignyte"] .home-founders-logo-dark{display:block!important}
+html[data-appearance="ignyte"] .pdf-footer-email-row,html[data-appearance="ignyte"] .pdf-footer-signup-form input,html[data-appearance="ignyte"] .pdf-footer-signup-form button,html[data-appearance="ignyte"] .pdf-footer-consent,html[data-appearance="ignyte"] .pdf-footer-consent a{color:#fff4ed;border-color:#fff4ed}
+html[data-appearance="ignyte"] .pdf-footer-signup-form input::placeholder{color:#d0d5df}
+html[data-appearance="ignyte"] .pdp-story p,html[data-appearance="ignyte"] .pdp-story li,html[data-appearance="ignyte"] .pdp-review-note{color:#0B1020}
+html[data-appearance="ignyte"] .catalog-preview-note,html[data-appearance="ignyte"] .home-products .catalog-preview-note,html[data-appearance="ignyte"] .shop-page .catalog-preview-note{color:#0B1020}
+html[data-appearance="ignyte"] .home-products .product-card .product-meta,html[data-appearance="ignyte"] .home-products .product-card-colours>span,html[data-appearance="ignyte"] .home-products .product-card-colours strong{color:#0B1020}

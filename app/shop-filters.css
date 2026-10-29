@@ -10,6 +10,8 @@
 .filter-panel{gap:25px 35px;padding:25px 0 30px;border-top:1px solid #d8d2c9;border-bottom:1px solid #d8d2c9}
 .filter-panel fieldset{display:block;min-width:150px;max-width:220px}
 .filter-panel legend{margin-bottom:14px;font:700 11px var(--font-ignyte-mono),monospace;letter-spacing:.15em}
+.shop-products.products-grid{row-gap:46px}
+@media(max-width:700px){.shop-products.products-grid{row-gap:36px}}
 .filter-panel label{display:flex;margin:6px 0;font-size:13px}
 .filter-panel label.selected{font-weight:700;color:#FF4533}
 .filter-panel input:checked+span{font-weight:700}

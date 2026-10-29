@@ -27,7 +27,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const { products, addToBag, bagOpen, wishlist, toggleWishlist, catalogLoading, catalogError } = useStore();
   const product = !catalogLoading && !catalogError ? products.find(item => item.slug === initialProduct.slug) ?? initialProduct : initialProduct;
   const [selection, setSelection] = useState({ slug: product.slug, size: "" });
-  const [openInfo, setOpenInfo] = useState<string | null>(null);
+  const [openInfo, setOpenInfo] = useState<string[]>([]);
   const [guideOpen, setGuideOpen] = useState(false);
   const [showMobilePurchase, setShowMobilePurchase] = useState(false);
   const sizeRef = useRef<HTMLDivElement>(null);
@@ -86,7 +86,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       {product.coverageAttribute && <p><strong>Coverage</strong><span>{product.coverageAttribute}</span></p>}
       {isSock ? <p><strong>Fit and sizing advice</strong><span>{sockSizing.productText}</span></p> : pdp.fit && <p><strong>Fit and sizing advice</strong><span>{pdp.fit}</span></p>}
       {fabricCompositions(pdp.fabric).map((part, index) => <p key={`${part.label}-${index}`}><strong>{part.label}</strong><span>{part.composition}</span></p>)}
-      {pdp.oeko_certified && <div className="pdp-oeko"><strong>OEKO-TEX® STANDARD 100</strong>{pdp.oeko_certificate && <a href="https://www.oeko-tex.com/en/label-check" target="_blank" rel="noreferrer">Check certificate {pdp.oeko_certificate} ↗</a>}</div>}
+      {pdp.oeko_certified && <div className="pdp-oeko"><strong>OEKO-TEX® STANDARD 100</strong>{pdp.oeko_certificate.trim() && <><p>Made with OEKO-TEX® STANDARD 100 certified fabrics, tested for harmful substances so you can feel confident in what’s against your skin.</p><a href="https://www.oeko-tex.com/en/label-check" target="_blank" rel="noreferrer">Check certificate {pdp.oeko_certificate} ↗</a></>}</div>}
     </div>;
     if (label === "MODEL DETAILS") {
       const name = pdp.model_details.split("\n", 1)[0].trim();
@@ -115,7 +115,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       <BuildYourSet bra={product} braSize={size} />
       <button type="button" className="wishlist-button" aria-pressed={wishlist.includes(product.slug)} onClick={() => toggleWishlist(product.slug)}><span className="wishlist-glyph" key={wishlist.includes(product.slug) ? "saved" : "unsaved"} aria-hidden="true"><HeartIcon filled={wishlist.includes(product.slug)} /></span> {wishlist.includes(product.slug) ? "SAVED TO WISHLIST" : "ADD TO WISHLIST"}</button>
       <div className="pdp-purchase-reassurance"><Link href="/returns#shipping"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M2 5h12v11H2zM14 9h4l4 4v3h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Free shipping on AU orders $100 or more</span></Link><Link href="/returns"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="m3 12 6 6L21 6"/><path d="M3 5h10"/></svg><span>Fast, easy returns</span></Link></div>
-      <div className="detail-accordions">{sections.map(label => <div key={label}><button type="button" aria-expanded={openInfo === label} onClick={() => setOpenInfo(openInfo === label ? null : label)}>{label}<span>{openInfo === label ? "−" : "+"}</span></button>{openInfo === label && content(label)}</div>)}</div>
+      <div className="detail-accordions">{sections.map(label => <div key={label}><button type="button" aria-expanded={openInfo.includes(label)} onClick={() => setOpenInfo(current => current.includes(label) ? current.filter(item => item !== label) : [...current, label])}>{label}<span>{openInfo.includes(label) ? "−" : "+"}</span></button>{openInfo.includes(label) && content(label)}</div>)}</div>
     </div></div>
     <div className="pdp-brand-callout"><div><span className="eyebrow">PERFORMANCE MEETS EXPRESSION ↘</span><h2>Built for the burn<sup>™</sup></h2><p>For women who train with purpose and express themselves with confidence. From the first warm-up to the final rep, bring your energy and make every session your own.</p><Link href="/about" className="button button-dark pdp-brand-about">MEET IGNYTE ↗</Link></div><BrandFilm label="IGNYTE Built for the Burn brand film" /></div>
     {pdp.show_brand_story && <div className="pdp-story"><section><span className="pdp-story-icon" aria-hidden="true">↘</span><h2>Made for movement</h2><p>Fit, feel and freedom of movement guide the details, from warm-up to final rep.</p></section><section><span className="pdp-story-icon" aria-hidden="true">↘</span><h2>Tested in real training</h2><p>Built for sweat, pressure, and repeat wear.</p></section><section><span className="pdp-story-icon" aria-hidden="true">↘</span><h2>No distractions</h2><p>Designed to stay put, feel secure and let you focus on the work.</p></section></div>}

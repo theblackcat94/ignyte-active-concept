@@ -35,6 +35,7 @@
 .product-page .detail-accordions .size-guide-content table{font-size:12px}
 .product-page .detail-accordions .size-guide-content th,.product-page .detail-accordions .size-guide-content td{font-size:12px;line-height:1.4}
 @media(max-width:520px){.product-page .detail-accordions{--pdp-body:14px;--pdp-heading:16px}}
+
 .product-page.pdp-stacked .pdp-detail-breadcrumb{padding:0;font-size:9px;gap:8px;flex-wrap:wrap}
 .product-page.pdp-stacked .pdp-detail-breadcrumb a{position:relative;z-index:1;display:inline-flex;align-items:center;min-height:44px;padding:10px 5px;margin:-10px -5px;text-decoration:none}.product-page.pdp-stacked .pdp-detail-breadcrumb a:focus-visible{outline:2px solid #FF4533;outline-offset:2px}
 .product-page .detail-accordions .pdp-fit-fabric{display:grid;gap:16px;padding:5px 0 24px}.product-page .detail-accordions .pdp-fit-fabric>p{display:grid;gap:4px;margin:0;padding:0;line-height:1.5}.product-page .detail-accordions .pdp-fit-fabric>p strong{font-size:12px;letter-spacing:.02em}.product-page .detail-accordions .pdp-fit-fabric>p span{font-size:13px;color:#555}
@@ -48,3 +49,5 @@
 @media(min-width:901px){.product-page.pdp-stacked .detail-info{position:sticky;top:12px;align-self:start;max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior-y:auto;scrollbar-width:none;-ms-overflow-style:none;padding:12px 8px 12px 0}.product-page.pdp-stacked .detail-info::-webkit-scrollbar{display:none}.product-page.pdp-stacked .detail-info:focus-visible{outline:2px solid #FF4533;outline-offset:2px}}
 @media(min-width:901px) and (max-width:1300px){.product-page.pdp-stacked .detail-info h1{font-size:clamp(35px,3.25vw,48px);line-height:.98;margin-bottom:10px}.product-page.pdp-stacked .detail-price{padding-bottom:15px;font-size:19px}.product-page.pdp-stacked .detail-description{font-size:13px;line-height:1.5;padding:13px 0 5px}.product-page.pdp-stacked .size-heading{margin-top:22px}.product-page.pdp-stacked .size-grid button{padding:12px 0}}
 @media(max-width:900px){.product-page.pdp-stacked .detail-info{max-height:none;overflow:visible;padding:0}}
+/* Let the page, rather than a nested sidebar, carry expanded accordion content. */
+@media(min-width:901px){.product-page.pdp-stacked .detail-info{position:static;top:auto;max-height:none;overflow:visible;overscroll-behavior-y:auto;padding:0}}
