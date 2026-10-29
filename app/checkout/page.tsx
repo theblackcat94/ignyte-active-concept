@@ -27,6 +27,7 @@ export default function CheckoutPage() {
   const [couponCode, setCouponCode] = useState("");
   const [coupon, setCoupon] = useState<{ code: string; discountCents: number; subtotalCents: number } | null>(null);
   const [couponMessage, setCouponMessage] = useState("");
+  const [ewayMode, setEwayMode] = useState<"sandbox" | "production" | "none" | null>(null);
   const [shippingQuote, setShippingQuote] = useState<{ state: string; subtotalCents: number; amount: number | null } | null>(null);
   const request = useRef<{ id: string; fingerprint: string } | null>(null);
   const previousView = useRef<string | null>(null);
@@ -44,6 +45,13 @@ export default function CheckoutPage() {
       setEmail(data.user?.email ?? "");
       setSignedIn(Boolean(data.user?.email));
     });
+  }, []);
+
+  useEffect(() => {
+    void fetch("/api/eway/status", { cache: "no-store" })
+      .then(response => response.json())
+      .then(result => setEwayMode(result.available ? result.environment === "sandbox" ? "sandbox" : "production" : "none"))
+      .catch(() => setEwayMode("none"));
   }, []);
 
   const lines = bag.map(item => {
@@ -85,6 +93,7 @@ export default function CheckoutPage() {
     if (step === "delivery") { setStep("payment"); return; }
     setBusy(true);
     setError("");
+    let savedOrderId = "";
     try {
       const { data: { session } } = await browserDb().auth.getSession();
       const items = lines.map(item => ({ variantId: item.variant!.id, quantity: item.quantity }));
@@ -99,13 +108,24 @@ export default function CheckoutPage() {
       });
       const result = await response.json();
       if (!response.ok || !result.orderId) throw new Error(result.error || "Your order could not be placed.");
+      savedOrderId = result.orderId;
+      if (ewayMode !== "none" && ewayMode !== null && result.amountDueCents !== null) {
+        const paymentResponse = await fetch("/api/eway/start", {
+          method: "POST", headers,
+          body: JSON.stringify({ orderId: result.orderId }),
+        });
+        const payment = await paymentResponse.json();
+        if (!paymentResponse.ok || !payment.url) throw new Error(payment.error || "Payment could not be opened.");
+        window.location.assign(payment.url);
+        return;
+      }
       setOrderId(result.orderId);
       setGuestOrder(Boolean(result.guest));
       setAmountDueCents(result.amountDueCents ?? null);
       clearBag();
     } catch (cause) {
-      request.current = null;
-      setError(cause instanceof Error ? cause.message : "Your order could not be placed.");
+      if (!savedOrderId) request.current = null;
+      setError(`${cause instanceof Error ? cause.message : "Your order could not be placed."}${savedOrderId ? ` Order ${savedOrderId} was saved; retrying will use the same order.` : ""}`);
     } finally { setBusy(false); }
   }
 
@@ -136,10 +156,10 @@ export default function CheckoutPage() {
           <label>COUNTRY<input readOnly value="Australia" /></label>
         </div>
         <p className="checkout-email">{signedIn ? "Your order will also appear in your account." : "No account needed. Your guest order link will be shown after you save the request; save the order number for support."}</p>
-        <button className="button button-orange" disabled={!valid}>CONTINUE TO PAYMENT ↗</button></> : <><h2>Review &amp; payment</h2><p>Deliver to {shipping.name}, {shipping.line1}, {shipping.city} {shipping.state} {shipping.postal_code}.</p><button type="button" className="checkout-edit" onClick={() => setStep("delivery")}>EDIT DELIVERY ADDRESS ↗</button><div className="checkout-payment-notice"><span className="eyebrow">SECURE PAYMENT</span><h3>Card payments coming soon</h3><p>The merchant connection is being prepared. Do not enter card details on this site. Save your order below and the team will confirm delivery and payment before fulfilment.</p></div>
+        <button className="button button-orange" disabled={!valid}>CONTINUE TO PAYMENT ↗</button></> : <><h2>Review &amp; payment</h2><p>Deliver to {shipping.name}, {shipping.line1}, {shipping.city} {shipping.state} {shipping.postal_code}.</p><button type="button" className="checkout-edit" onClick={() => setStep("delivery")}>EDIT DELIVERY ADDRESS ↗</button><div className="checkout-payment-notice"><span className="eyebrow">SECURE PAYMENT</span>{ewayMode === "sandbox" && quotedShipping !== null ? <><h3>Test payment with eWAY</h3><p>You will continue to eWAY&apos;s hosted payment page. This is a sandbox test; no real charge will be made.</p></> : ewayMode === "production" && quotedShipping !== null ? <><h3>Pay securely with eWAY</h3><p>You will continue to eWAY&apos;s hosted payment page to complete your purchase.</p></> : <><h3>Card payments coming soon</h3><p>The merchant connection is being prepared. Do not enter card details on this site. Save your order below and the team will confirm delivery and payment before fulfilment.</p></>}</div>
         <p className="checkout-email">{quotedShipping === null ? "Delivery cost will be confirmed before payment." : `Estimated delivery is ${money(quotedShipping / 100)}; the team will confirm the final amount before payment.`} <Link href="/returns">Review shipping and returns ↗</Link></p>
         {error && <p className="checkout-error" role="alert">{error}</p>}
-        <button className="button button-orange" disabled={!valid || busy}>{busy ? "SAVING ORDER…" : "SAVE ORDER FOR PAYMENT ↗"}</button></>}
+        <button className="button button-orange" disabled={!valid || busy || ewayMode === null}>{busy ? "PROCESSING…" : ewayMode === null ? "CHECKING PAYMENT OPTIONS…" : ewayMode !== "none" && quotedShipping !== null ? "CONTINUE TO EWAY ↗" : "SAVE ORDER FOR PAYMENT ↗"}</button></>}
       </form><aside className="checkout-summary"><h2>YOUR ORDER</h2>
         {lines.map(item => <div className="checkout-item" key={`${item.slug}-${item.size}`}>
           {item.product && <img src={item.product.image} alt={item.product.name} />}
