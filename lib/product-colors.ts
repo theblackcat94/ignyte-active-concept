@@ -3,6 +3,7 @@
 const swatchColors: Record<string, string> = {
   espresso: "#443D42",
   jacaranda: "#9698E6",
+  aurora: "#9698E6",
   black: "#1C1C20",
   mauve: "#7B5865",
   white: "#FFFFFF",

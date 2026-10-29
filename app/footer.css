@@ -11,7 +11,12 @@
 .pdf-footer-signup-form button{background:none;border:0;color:#fff;font-size:32px;line-height:1;cursor:pointer}
 .pdf-footer-signup-form button:disabled{opacity:.5;cursor:wait}
 .pdf-footer-consent{display:flex;align-items:center;gap:13px;min-height:48px;padding:6px 0;color:#e1e1e7;font-size:12px;line-height:1.45;cursor:pointer}
-.pdf-footer-consent input{flex:none;width:24px;height:24px;min-width:24px;margin:0;accent-color:#FF4533;cursor:pointer}
+.pdf-footer-consent input{flex:none;width:24px;height:24px;min-width:24px;margin:0;accent-color:#0B1020;cursor:pointer}
+.pdf-footer-email-row:focus-within{border-color:#FF4533;box-shadow:0 0 0 1px #FF4533}
+.pdf-footer-consent input{appearance:none;display:grid;place-items:center;border:2px solid #0B1020;background:#fff;border-radius:3px}
+.pdf-footer-consent input:checked{background:#0B1020;border-color:#0B1020}
+.pdf-footer-consent input:checked::after{content:"✓";color:#fff;font-size:18px;font-weight:900;line-height:1}
+.pdf-footer-consent input:focus-visible{outline:2px solid #FF4533;outline-offset:3px}
 .pdf-footer-consent span{flex:1}
 .pdf-footer-consent a{color:#fff;text-decoration:underline}
 .pdf-footer-signup-form small{display:block;color:#b9bdc7;font-size:11px;margin-top:12px}

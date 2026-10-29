@@ -1,6 +1,7 @@
 import { asset } from "./asset";
 import prepared from "@/data/jacob-catalog-2026-10-27.json";
 import { pdpFor, type PdpContent } from "@/data/pdp-planner";
+import { displayColour } from "./display-colour";
 
 export type Category = string;
 export type Product = {
@@ -23,10 +24,10 @@ const coverImage = (name: string) => asset(`/images/collection-covers/${name}`);
 // Local preview mirrors the approved media set. Live prices and stock come from Supabase.
 const featuredSlugs = ["aura-halter-lavender", "seamless-legging-lavender", "seamless-short-espresso", "seamless-sports-bra-espresso"];
 export const products: Product[] = prepared.products.map(item => ({
-  slug: item.slug, name: item.name, category: item.category, color: item.color,
-  description: item.description, image: asset(item.image_path),
+  slug: item.slug, name: item.name, category: item.category, color: displayColour(item.color),
+  description: displayColour(item.description), image: asset(item.image_path),
   pdp: pdpFor(item.name, null, item.slug),
-  gallery: item.gallery.map(entry => ({ image: asset(entry.image), alt: entry.alt })),
+  gallery: item.gallery.map(entry => ({ image: asset(entry.image), alt: displayColour(entry.alt) })),
   price: Math.min(...item.variants.map(variant => variant.price_cents)) / 100,
   variants: item.variants.map(variant => ({ id: variant.sku, size: variant.size,
     price: variant.price_cents / 100, stock: 0 })),

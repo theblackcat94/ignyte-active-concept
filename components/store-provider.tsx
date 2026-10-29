@@ -15,6 +15,8 @@ type Store = {
   products: Product[];
   categories: { id: string; label: string; cover: string }[];
   catalogPreview: boolean;
+  catalogLoading: boolean;
+  catalogError: boolean;
   bag: BagItem[];
   bagOpen: boolean;
   setBagOpen: (open: boolean) => void;
@@ -35,6 +37,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [products, setProducts] = useState<Product[]>(conceptProducts);
   const [categories, setCategories] = useState(conceptCategories);
   const [catalogPreview, setCatalogPreview] = useState(true);
+  const [catalogLoading, setCatalogLoading] = useState(commerceConfigured);
+  const [catalogError, setCatalogError] = useState(false);
   const [bag, setBag] = useState<BagItem[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [bagOpen, setBagOpen] = useState(false);
@@ -55,7 +59,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (!commerceConfigured) return;
     void activeProducts().then(active => {
       if (active.length) { setProducts(active); setCatalogPreview(false); }
-    }).catch(() => setCheckoutMessage("Products could not be loaded. Please refresh."));
+    }).catch(() => { setCatalogError(true); setCheckoutMessage("Products could not be loaded. Please refresh."); }).finally(() => setCatalogLoading(false));
     void activeCategories().then(active => {
       if (active.length) setCategories([
         conceptCategories[0],
@@ -123,7 +127,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const recommendations = bagRecommendations(bag.map(item => item.slug), products);
 
   return (
-    <StoreContext.Provider value={{ products, categories, catalogPreview, bag, bagOpen, setBagOpen, addToBag, changeBagQuantity, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
+    <StoreContext.Provider value={{ products, categories, catalogPreview, catalogLoading, catalogError, bag, bagOpen, setBagOpen, addToBag, changeBagQuantity, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
       {children}
       {actionNotice && <div key={actionNotice.id} className="store-action-toast" role="status" aria-live="polite"><span aria-hidden="true">✦</span>{actionNotice.message}</div>}
       {bagOpen && <div className="drawer-backdrop" onClick={() => setBagOpen(false)} />}
@@ -138,8 +142,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             <div><Link className="bag-product-name" href={`/product/${product.slug}`} onClick={() => setBagOpen(false)}>{product.name}</Link><span>{product.color} / {item.size}</span><div className="bag-quantity" aria-label={`${product.name} quantity`}><button type="button" onClick={() => changeBagQuantity(item.slug, item.size, -1)} aria-label={`Decrease ${product.name} quantity`}>−</button><span aria-live="polite">{item.quantity}</span><button type="button" onClick={() => changeBagQuantity(item.slug, item.size, 1)} disabled={Boolean(product.variants?.some(variant => variant.size === item.size && item.quantity >= variant.stock))} aria-label={`Increase ${product.name} quantity`}>+</button></div><span>{money(price * item.quantity)}</span><button className="text-button" onClick={() => removeFromBag(item.slug, item.size)}>Remove</button></div>
           </div>;
         })}{recommendations.length > 0 && <section className="bag-recommendations" aria-label="You may also like"><h3>YOU MAY ALSO LIKE</h3>{recommendations.map(product => {
-          const chosen = recommendationSizes[product.slug] ?? "";
           const variants = product.variants ?? [];
+          const chosen = recommendationSizes[product.slug] ?? (variants.length === 1 && variants[0].stock > 0 ? variants[0].size : "");
           return <div className="bag-recommendation" key={product.slug}><Link href={`/product/${product.slug}`} onClick={() => setBagOpen(false)}><img src={product.image} alt="" /></Link><div><Link href={`/product/${product.slug}`} onClick={() => setBagOpen(false)}><strong>{product.name}</strong></Link><span>{product.color} · {money(product.price)}</span><div className="bag-recommendation-sizes" aria-label={`Choose ${product.name} size`}>{variants.map(variant => <button type="button" key={variant.id} disabled={variant.stock <= 0} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} aria-pressed={chosen === variant.size} onClick={() => setRecommendationSizes(current => ({ ...current, [product.slug]: variant.size }))}>{variant.size}</button>)}</div><button type="button" className="bag-recommendation-add" disabled={!variants.some(variant => variant.size === chosen && variant.stock > 0)} onClick={() => { addToBag(product.slug, chosen); setRecommendationSizes(current => ({ ...current, [product.slug]: "" })); }}>ADD TO BAG ↗</button></div></div>;
         })}</section>}</div> : <div className="empty-bag"><svg className="empty-bag-mark" viewBox="0 0 80 80" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" aria-hidden="true"><path d="M40 5v70M5 40h70M15 15l50 50M65 15 15 65" /></svg><h3>Nothing in your bag yet.</h3><p>Find your next training favourite.</p><Link href="/shop" className="button button-dark" onClick={() => setBagOpen(false)}>SHOP THE COLLECTION <span>↗</span></Link></div>}
         <div className="drawer-foot">{validBag.length > 0 && <FreeShippingProgress amountCents={Math.round(subtotal * 100)} />}<div><span>SUBTOTAL</span><strong>{money(subtotal)}</strong></div><p>Australian delivery only. Shipping is quoted after your order request; no payment is taken at checkout.</p>{checkoutMessage && <p role="status">{checkoutMessage}</p>}<button className="button button-orange" disabled={!validBag.length} onClick={() => { setBagOpen(false); router.push("/checkout"); }}>CHECKOUT ↗</button></div>
