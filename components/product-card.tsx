@@ -30,7 +30,7 @@ export default function ProductCard({ product, index = 0, showOptions = false }:
         : <button type="button" className="quick-add" disabled={catalogLoading || catalogError || !hasStock} aria-expanded={false} onClick={() => setQuickOpen(true)}>{catalogLoading ? "CHECKING STOCK" : catalogError ? "STOCK UNAVAILABLE" : hasStock ? "QUICK ADD — CHOOSE SIZE" : "SOLD OUT"} <span>↗</span></button>}
     </div>
     {showOptions && <div className="product-card-colours" aria-label={`Choose ${product.name} colour`}><span>COLOUR <strong>{displayed.color}</strong></span><div className="product-card-swatches">{colours.map(item => <button type="button" key={item.slug} className={item.slug === displayed.slug ? "selected" : ""} aria-pressed={item.slug === displayed.slug} aria-label={`${item.color}${!catalogLoading && item.variants && !item.variants.some(variant => variant.stock > 0) ? ", sold out" : ""}`} onClick={() => changeColour(item.slug)}><span style={{ backgroundColor: productColourHex(item.color) ?? "#D6D1CB" }} /></button>)}</div></div>}
-    <div className="product-meta"><span>{displayed.category.replace("-", " ").toUpperCase()}</span><span>{displayed.color.toUpperCase()}</span></div>
+    <div className="product-meta"><span>{displayed.category.replace("-", " ").toUpperCase()}</span>{!showOptions && <span>{displayed.color.toUpperCase()}</span>}</div>
     <div className="product-name"><Link href={`/product/${displayed.slug}`}>{displayed.name}</Link><span className={displayed.originalPrice ? "sale-price" : ""}>{displayed.originalPrice && <del>{money(displayed.originalPrice)}</del>}<strong>{money(displayed.price)}</strong><CurrencyEstimate aud={displayed.price} /></span></div>
   </article>;
 }
