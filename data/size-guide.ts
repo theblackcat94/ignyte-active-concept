@@ -1,5 +1,6 @@
 // One source for the standalone guide and every product page.
-// Jade approved the supplied ranges for customer use on 28 October 2026.
+// Jade approved the original bust, waist and hip ranges on 28 October 2026.
+// Underbust and AU bra equivalents are approximate references pending brand fit review.
 export type SizeGuideCategory = "sports-bras" | "bottoms" | "tops" | "socks";
 export type SizeGuideRow = { label: string; ranges: Partial<Record<"S" | "M" | "L", readonly [number, number]>> };
 export type CategoryGuide = { label: string; approved: boolean; sizes: readonly ["S", "M", "L"]; rows: SizeGuideRow[]; tips: string[]; note?: string; auBraEquivalents?: Record<"S" | "M" | "L", string> };
