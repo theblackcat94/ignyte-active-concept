@@ -13,15 +13,13 @@
 @media(hover:hover) and (pointer:fine){.product-card:hover .product-image-hover{opacity:1}}
 .product-image:focus-within .quick-add{transform:translateY(0)}
 @media(max-width:520px){.product-card .quick-add-panel{padding:9px}.quick-add-sizes button{min-width:32px;min-height:32px}.quick-add-confirm{padding:9px 7px}}
-.product-card-variants{display:grid;gap:10px;margin-top:13px;min-width:0}
-.product-card-option-group{display:grid;gap:6px;min-width:0}
-.product-card-option-group>span{font-family:var(--font-ignyte-mono),"Courier New",monospace;font-size:10px;letter-spacing:.12em;color:#555}
-.product-card-option-group strong{font-weight:600;color:#0B1020;letter-spacing:0}
-.product-card-choice-list{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
-.product-card-choice-list button{flex:none;min-height:34px;padding:5px 9px;border:1px solid #b7b7b7;background:#fff;color:#0B1020;font-size:11px;line-height:1.2;cursor:pointer}
-.product-card-choice-list button.selected{border-color:#0B1020;background:#0B1020;color:#fff}
-.product-card-choice-list button:disabled{color:#888;background:#f1f1f1;text-decoration:line-through;cursor:not-allowed}
-.product-card-choice-list button:focus-visible,.product-card-add:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
-.product-card-add{display:flex;align-items:center;justify-content:space-between;min-height:40px;padding:8px 11px;border:1px solid #0B1020;background:#0B1020;color:#fff;font-size:10px;font-weight:700;letter-spacing:.1em;cursor:pointer}
-.product-card-add:disabled{border-color:#aaa;background:#eee;color:#555;cursor:not-allowed}
-@media(max-width:520px){.product-card-variants{gap:9px}.product-card-choice-list button{min-height:38px}}
+.product-card-colours{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px;min-height:36px}
+.product-card-colours>span{font-family:var(--font-ignyte-mono),"Courier New",monospace;font-size:9px;letter-spacing:.1em;color:#666}
+.product-card-colours strong{font-weight:500;letter-spacing:0;color:#0B1020}
+.product-card-swatches{display:flex;align-items:center;gap:2px}
+.product-card-swatches button{display:grid;place-items:center;flex:none;width:36px;height:36px;padding:0;border:0;border-radius:50%;background:transparent;cursor:pointer}
+.product-card-swatches button>span{display:block;width:16px;height:16px;border:1px solid #0003;border-radius:50%;transition:transform .2s ease}
+.product-card-swatches button.selected>span{outline:1px solid #0B1020;outline-offset:3px}
+.product-card-swatches button:hover>span{transform:scale(1.14)}
+.product-card-swatches button:focus-visible{outline:2px solid var(--orange);outline-offset:0}
+@media(prefers-reduced-motion:reduce){.product-card-swatches button>span{transition:none}}
