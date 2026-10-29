@@ -1,3 +1,12 @@
+export type OrderItem = {
+  variant_id: string | null;
+  product_name: string;
+  sku: string;
+  size: string;
+  quantity: number;
+  unit_price_cents: number;
+};
+
 export type OrderDetail = {
   id: string;
   user_id: string | null;
@@ -24,13 +33,7 @@ export type OrderDetail = {
       country?: string;
     };
   } | null;
-  order_items: {
-    product_name: string;
-    sku: string;
-    size: string;
-    quantity: number;
-    unit_price_cents: number;
-  }[];
+  order_items: OrderItem[];
 };
 
-export const orderSelect = "id,user_id,stock_reserved,status,customer_email,subtotal_cents,discount_cents,coupon_code,shipping_cents,total_cents,created_at,paid_at,shipping_details,order_items(product_name,sku,size,quantity,unit_price_cents)";
+export const orderSelect = "id,user_id,stock_reserved,status,customer_email,subtotal_cents,discount_cents,coupon_code,shipping_cents,total_cents,created_at,paid_at,shipping_details,order_items(variant_id,product_name,sku,size,quantity,unit_price_cents)";

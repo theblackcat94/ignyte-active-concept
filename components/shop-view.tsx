@@ -6,6 +6,7 @@ import { useState } from "react";
 import type { Category } from "@/lib/catalog";
 import { useStore } from "./store-provider";
 import ProductCard from "./product-card";
+import StyledSelect from "./styled-select";
 import "@/app/shop-filters.css";
 
 export default function ShopView({ category }: { category: Category }) {
@@ -53,7 +54,7 @@ export default function ShopView({ category }: { category: Category }) {
       <div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><span>{currentCategory.label.toUpperCase()}</span></div>
       <div className="shop-category-links">{categories.map(item => <Link className={item.id === category ? "active" : ""} href={item.id === "all" ? "/shop" : `/shop/${item.id}`} key={item.id}>{item.label}</Link>)}</div>
       {catalogPreview && !catalogLoading && <p className="catalog-preview-note">Collection preview. Ordering opens when product sizes and stock are confirmed.</p>}
-      <div className="shop-controls"><span>{visible.length} {visible.length === 1 ? "PIECE" : "PIECES"}</span><div><button type="button" aria-expanded={filterOpen} onClick={() => setFilterOpen(!filterOpen)}>FILTER {selectedCount ? `(${selectedCount})` : ""} <span>{filterOpen ? "−" : "+"}</span></button><label>SORT <select value={sort} onChange={event => setSort(event.target.value)}><option value="featured">Featured</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="name">Name</option></select></label></div></div>
+      <div className="shop-controls"><span>{visible.length} {visible.length === 1 ? "PIECE" : "PIECES"}</span><div><button type="button" aria-expanded={filterOpen} onClick={() => setFilterOpen(!filterOpen)}>FILTER {selectedCount ? `(${selectedCount})` : ""} <span>{filterOpen ? "−" : "+"}</span></button><div className="shop-sort"><span>SORT</span><StyledSelect value={sort} onChange={setSort} ariaLabel="Sort products" options={[{ value: "featured", label: "Featured" }, { value: "price-low", label: "Price: low to high" }, { value: "price-high", label: "Price: high to low" }, { value: "name", label: "Name" }]} /></div></div></div>
       {filterOpen && <><button type="button" className="filter-backdrop" aria-label="Close filters" onClick={() => setFilterOpen(false)} /><div className="filter-panel" aria-label="Shop filters"><div className="filter-drawer-head"><strong>FILTER PRODUCTS</strong><button type="button" onClick={() => setFilterOpen(false)} aria-label="Close filters">×</button></div>
         <fieldset><legend>COLOUR</legend>{availableColors.map(color => <label key={color} className={colors.includes(color) ? "selected" : ""}><input type="checkbox" checked={colors.includes(color)} onChange={() => toggle(colors, color, setColors)} />{color}</label>)}</fieldset>
         {availableSizes.length > 0 && <fieldset><legend>SIZE</legend>{availableSizes.map(size => <label key={size} className={sizes.includes(size) ? "selected" : ""}><input type="checkbox" checked={sizes.includes(size)} onChange={() => toggle(sizes, size, setSizes)} />{size}</label>)}</fieldset>}

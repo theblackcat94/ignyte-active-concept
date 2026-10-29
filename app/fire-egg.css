@@ -1,0 +1,52 @@
+.ignyte-fire-egg{
+  --glitter:url("/assets/ignyte-fire-noise.webp");
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:39;
+  pointer-events:none;
+  overflow:hidden;
+  background:#000;
+  mix-blend-mode:screen;
+  isolation:isolate;
+}
+html[data-appearance="ignyte"] .ignyte-fire-egg{
+  display:block;
+  animation:ignyte-fire-lifetime 8s linear forwards;
+}
+.ignyte-fire-egg::before{
+  content:"";
+  position:absolute;
+  inset:20% 0 0;
+  background-image:
+    var(--glitter),
+    var(--glitter),
+    linear-gradient(0deg,#fff 0px,#ff8951 5px,rgba(255,69,51,.6) 30%,transparent 70%),
+    radial-gradient(ellipse at bottom,transparent 30%,#000 60%);
+  background-size:350px 500px,400px 650px,100% 100%,100% 100%;
+  background-repeat:repeat,repeat,no-repeat,no-repeat;
+  background-blend-mode:hard-light,color-dodge,multiply;
+  mix-blend-mode:color-dodge;
+  filter:brightness(3.7) blur(7px) contrast(6);
+  opacity:.65;
+}
+html[data-appearance="ignyte"] .ignyte-fire-egg::before{
+  animation:ignyte-fire-rise 1.75s linear;
+  animation-iteration-count:4.5714285714;
+  animation-fill-mode:forwards;
+}
+@keyframes ignyte-fire-rise{
+  from{background-position:center 0,center 0,50% 100%,center center}
+  to{background-position:center -500px,center -650px,50% 100%,center center}
+}
+@keyframes ignyte-fire-lifetime{
+  0%{opacity:0;visibility:visible}
+  7.5%{opacity:1}
+  81.25%{opacity:1}
+  99.99%{visibility:visible}
+  100%{opacity:0;visibility:hidden}
+}
+@media (prefers-reduced-motion:reduce),(max-width:767px),(hover:none),(pointer:coarse){
+  html[data-appearance="ignyte"] .ignyte-fire-egg{display:none;animation:none}
+  html[data-appearance="ignyte"] .ignyte-fire-egg::before{animation:none}
+}

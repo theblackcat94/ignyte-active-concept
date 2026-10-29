@@ -1,0 +1,20 @@
+.styled-select{position:relative;display:inline-block;min-width:112px}
+.styled-select-trigger{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:34px;padding:6px 8px;border:1px solid #a9a39c;background:#fff;color:#0B1020;text-align:left;cursor:pointer}
+.styled-select-trigger svg{width:13px;height:13px;flex:none;transition:transform .15s}
+.styled-select-trigger[aria-expanded="true"] svg{transform:rotate(180deg)}
+.styled-select-trigger:focus-visible,.styled-select-menu button:focus-visible{outline:2px solid #FF4533;outline-offset:2px}
+.styled-select-menu{position:absolute;top:calc(100% + 6px);right:0;z-index:90;min-width:max(100%,180px);padding:5px;border:1px solid #b8b1aa;background:#fff;color:#0B1020;box-shadow:0 12px 30px #0002}
+.styled-select-menu button{display:block;width:100%;min-height:36px;padding:9px 11px;border:0;background:transparent;color:inherit;text-align:left;white-space:nowrap;cursor:pointer}
+.styled-select-menu button:hover,.styled-select-menu button:focus-visible{background:#f3eee8}
+.styled-select-menu button[aria-checked="true"]{color:#ad2619;font-weight:700}
+.shop-sort{display:flex;align-items:center;gap:8px}
+.shop-controls .styled-select-trigger{min-width:165px;padding:7px 10px;border:1px solid #a9a39c;background:#fff;color:#0B1020;font-size:12px;font-weight:600;letter-spacing:0}
+.shop-controls .styled-select-menu button{padding:9px 11px;font-size:12px;font-weight:500;letter-spacing:0}
+.footer-appearance .styled-select-menu{top:auto;bottom:calc(100% + 6px)}
+html[data-appearance="dark"] .styled-select-trigger,html[data-appearance="dark"] .styled-select-menu{background:#151c2e;border-color:#8790a0;color:#f5f0e8}
+html[data-appearance="dark"] .styled-select-menu button:hover,html[data-appearance="dark"] .styled-select-menu button:focus-visible{background:#303a50}
+html[data-appearance="dark"] .styled-select-menu button[aria-checked="true"]{color:#ff8c78}
+html[data-appearance="ignyte"] .styled-select-trigger,html[data-appearance="ignyte"] .styled-select-menu{background:#ff8067;border-color:#0B1020;color:#0B1020}
+html[data-appearance="ignyte"] .styled-select-menu button:hover,html[data-appearance="ignyte"] .styled-select-menu button:focus-visible{background:#FF4533}
+html[data-appearance="ignyte"] .styled-select-menu button[aria-checked="true"]{color:#0B1020;text-decoration:underline}
+@media(max-width:520px){.shop-sort>span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}.shop-controls .styled-select-trigger{min-width:145px}}
