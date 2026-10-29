@@ -20,8 +20,8 @@ body:has(#eway-payment-window)::before {
   position: fixed !important;
   top: 50% !important;
   left: 50% !important;
-  width: min(500px, calc(100vw - 24px)) !important;
-  height: min(720px, calc(100dvh - 24px)) !important;
+  width: min(680px, calc(100vw - 24px)) !important;
+  height: min(760px, calc(100dvh - 24px)) !important;
   transform: translate(-50%, -50%);
   border: 0;
   border-radius: 8px;
