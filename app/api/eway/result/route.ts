@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     const transaction = await getEwayTransaction(accessCode);
     if (transaction.invoiceReference !== order.id ||
         transaction.totalCents !== order.total_cents ||
-        !["AUD", "036"].includes(transaction.currencyCode)) {
+        (transaction.currencyCode !== null && transaction.currencyCode !== "AUD")) {
       console.error("Eway payment result did not match order", order.id);
       return NextResponse.json({ error: "Payment needs manual review. Please contact support with your order number.", orderId: order.id }, { status: 409 });
     }

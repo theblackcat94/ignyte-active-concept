@@ -26,7 +26,7 @@ export type EwayTransaction = {
   paid: boolean;
   totalCents: number;
   invoiceReference: string;
-  currencyCode: string;
+  currencyCode: string | null;
   responseCode: string;
 };
 
@@ -117,6 +117,7 @@ export async function createEwaySharedPage(input: EwaySharedPageRequest): Promis
 export async function getEwayTransaction(accessCode: string): Promise<EwayTransaction> {
   if (!accessCode || accessCode.length > 512) throw new Error("Invalid payment reference");
   const body = await request(`/Transaction/${encodeURIComponent(accessCode)}`);
+  if (body.Errors) throw new Error("Eway transaction query failed");
   const rows = body.Transactions;
   const result = Array.isArray(rows) ? rows[0] : body;
   if (!result || typeof result !== "object") throw new Error("Eway returned no transaction");
@@ -131,7 +132,7 @@ export async function getEwayTransaction(accessCode: string): Promise<EwayTransa
   const responseCode = transaction.ResponseCode;
   if ((typeof transactionId !== "number" && typeof transactionId !== "string") ||
       typeof totalCents !== "number" || typeof invoiceReference !== "string" ||
-      typeof currencyCode !== "string" || typeof status !== "boolean" ||
+      (currencyCode != null && typeof currencyCode !== "string") || typeof status !== "boolean" ||
       typeof responseCode !== "string") {
     throw new Error("Eway returned incomplete transaction details");
   }
@@ -140,7 +141,7 @@ export async function getEwayTransaction(accessCode: string): Promise<EwayTransa
     paid: status && responseCode === "00",
     totalCents,
     invoiceReference,
-    currencyCode,
+    currencyCode: currencyCode ?? null,
     responseCode,
   };
 }
