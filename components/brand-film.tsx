@@ -7,7 +7,7 @@ import "@/app/brand-film.css";
 export default function BrandFilm({ className = "", label = "IGNYTE brand film" }: { className?: string; label?: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(false);
   const [failed, setFailed] = useState(false);
   function togglePlayback() {
     const video = videoRef.current;

@@ -1,6 +1,7 @@
 // Product-specific review copy transcribed from the supplied Product Upload Planner.
 // The planner marks these entries "To confirm"; edit/approve them in the product manager.
 import { modelDetailsBySlug } from "./model-details";
+import { productFilmFor } from "./product-videos";
 export type PdpContent = {
   features: string[];
   activities: string[];
@@ -38,10 +39,13 @@ export const brandFilmPoster = "/images/home/video-cover-pdp.jpg";
 
 export function pdpFor(name: string, content?: Partial<PdpContent> | null, slug?: string): PdpContent {
   const merged = { ...(plannerPdp[name] ?? emptyPdp), featured_best_seller: Boolean(slug && homeBestSellerSlugs.includes(slug)), ...content };
+  const suppliedFilm = productFilmFor(slug);
+  const oldBrandFilms = ["", brandFilmUrl, "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4"];
+  const useSuppliedFilm = oldBrandFilms.includes(merged.video_url || "");
   return {
     ...merged,
     model_details: (merged.model_details || (slug ? modelDetailsBySlug[slug] : "") || "").replace(/\s*\((?:Blonde|Brunette)\)/gi, ""),
-    video_url: !merged.video_url || merged.video_url === "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4" ? brandFilmUrl : merged.video_url,
-    video_poster: !merged.video_url || merged.video_url === brandFilmUrl || merged.video_url === "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4" ? brandFilmPoster : merged.video_poster || brandFilmPoster,
+    video_url: useSuppliedFilm ? suppliedFilm?.video_url || "" : merged.video_url,
+    video_poster: useSuppliedFilm ? suppliedFilm?.video_poster || "" : merged.video_poster || "",
   };
 }

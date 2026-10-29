@@ -15,7 +15,7 @@ export type HomeHeroSlide = {
 export type HomeHeroSettings = { slides: HomeHeroSlide[] };
 
 export const defaultHomeHeroSettings: HomeHeroSettings = { slides: [
-  { id: "hero-film", enabled: true, kind: "video", desktopSrc: "/images/home/Ignyte-Hero-Trimmed-11sec.mp4", mobileSrc: "/images/home/Ignyte-Hero-Trimmed-11sec.mp4", poster: "/images/home/Home-Hero-Video-Fallback.jpg", alt: "Ignyte training campaign video", kicker: "HIGH-PERFORMANCE ACTIVEWEAR_", title: "Built for the burn", href: "/shop", action: "SHOP ALL" },
+  { id: "hero-film", enabled: true, kind: "video", desktopSrc: "/images/home/Ignyte-Hero-Trimmed-11sec.mp4", mobileSrc: "/images/home/Ignyte-Vertical-NoSound-11sec-Compressed.mp4", poster: "/images/home/Home-Hero-Video-Fallback.jpg", alt: "Ignyte training campaign video", kicker: "HIGH-PERFORMANCE ACTIVEWEAR_", title: "Built for the burn", href: "/shop", action: "SHOP ALL" },
   { id: "sports-bras", enabled: true, kind: "image", desktopSrc: "/images/home/Home-Hero-1.jpg", mobileSrc: "", poster: "", alt: "Blonde athlete training with battle ropes", kicker: "SPORTS BRAS_", title: "Support every move.", href: "/shop/sports-bras", action: "SHOP SPORTS BRAS" },
   { id: "tops", enabled: true, kind: "image", desktopSrc: "/images/home/Home-Hero-Alt-3.jpg", mobileSrc: "", poster: "", alt: "Athlete training in an Ignyte brown top", kicker: "TOPS_", title: "Made to move.", href: "/shop/tops", action: "SHOP TOPS" },
   { id: "shorts", enabled: true, kind: "image", desktopSrc: "/images/home/Home-Hero-Alt-4.jpg", mobileSrc: "", poster: "", alt: "Two athletes training on ergs", kicker: "SHORTS_", title: "Move your way.", href: "/shop/shorts", action: "SHOP SHORTS" },

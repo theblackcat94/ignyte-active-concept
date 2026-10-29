@@ -37,7 +37,7 @@ export async function readHomeHeroSettings() {
     return { slides: settings.slides.map(slide => slide.id === "hero-film" ? {
       ...slide,
       desktopSrc: oldFilms.has(slide.desktopSrc) ? defaultHomeHeroSettings.slides[0].desktopSrc : slide.desktopSrc,
-      mobileSrc: oldFilms.has(slide.mobileSrc) ? defaultHomeHeroSettings.slides[0].mobileSrc : slide.mobileSrc,
+      mobileSrc: oldFilms.has(slide.mobileSrc) || slide.mobileSrc === "/images/home/Ignyte-Hero-Trimmed-11sec.mp4" ? defaultHomeHeroSettings.slides[0].mobileSrc : slide.mobileSrc,
     } : slide) };
   }
   catch (error) {

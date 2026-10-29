@@ -27,7 +27,6 @@
 .wishlist-button[aria-pressed="true"] .wishlist-glyph{color:#FF4533}
 .pdp-sock-size-note{margin:9px 0 0;color:#56514d;font-size:13px;line-height:1.5}
 .pdp-story h2{font-weight:500;letter-spacing:-.04em}
-.pdp-story .pdp-see-move{margin-top:12px}
 .product-page .detail-accordions{--pdp-body:14px;--pdp-heading:16px}
 .product-page .detail-accordions>div>button{font-size:11px;line-height:1.35}
 .product-page .detail-accordions p,.product-page .detail-accordions li,.product-page .detail-accordions .pdp-model-details{font-size:var(--pdp-body);line-height:1.6}

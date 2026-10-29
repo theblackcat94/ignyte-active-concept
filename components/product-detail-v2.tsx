@@ -8,7 +8,6 @@ import { commerceConfigured } from "@/lib/commerce";
 import { useStore } from "./store-provider";
 import ProductCard from "./product-card";
 import StackedProductGallery from "./stacked-product-gallery";
-import type { ProductGalleryHandle } from "./stacked-product-gallery";
 import BuildYourSet from "./build-your-set";
 import PdpSocialStrip from "./pdp-social-strip";
 import SizeGuideContent from "./size-guide-content";
@@ -32,7 +31,6 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const [showMobilePurchase, setShowMobilePurchase] = useState(false);
   const purchaseRef = useRef<HTMLButtonElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
-  const galleryHandle = useRef<ProductGalleryHandle>(null);
   const sizeRef = useRef<HTMLDivElement>(null);
   const related = pairedProducts(product.slug, products, "related");
   const upsells = pairedProducts(product.slug, products, "upsell");
@@ -102,7 +100,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   }
 
   return <div className="product-page pdp-stacked section-wrap">
-    <div className="detail-grid"><div ref={galleryRef}><StackedProductGallery ref={galleryHandle} product={product} /></div><div className="detail-info" tabIndex={0} aria-label="Product details and purchase options"><div className="breadcrumb pdp-detail-breadcrumb"><Link href="/">IGNYTE</Link><span>/</span><Link href={`/shop/${product.category}`}>{product.category.toUpperCase().replace("-", " ")}</Link><span>/</span><span>{product.name.toUpperCase()}</span></div><h1>{product.name.toUpperCase()}<em>.</em></h1>
+    <div className="detail-grid"><div ref={galleryRef}><StackedProductGallery product={product} /></div><div className="detail-info" tabIndex={0} aria-label="Product details and purchase options"><div className="breadcrumb pdp-detail-breadcrumb"><Link href="/">IGNYTE</Link><span>/</span><Link href={`/shop/${product.category}`}>{product.category.toUpperCase().replace("-", " ")}</Link><span>/</span><span>{product.name.toUpperCase()}</span></div><h1>{product.name.toUpperCase()}<em>.</em></h1>
       <div className="detail-price">{(selectedVariant?.originalPrice ?? product.originalPrice) && <del>{money((selectedVariant?.originalPrice ?? product.originalPrice)!)}</del>}<span>{money(selectedVariant?.price ?? product.price)}<CurrencyEstimate aud={selectedVariant?.price ?? product.price} /></span></div>
       <p className="detail-description">{product.description}</p>{commerceConfigured && !product.variants && <p className="catalog-preview-note">Preview item. Available to order after sizes and stock are confirmed.</p>}
       <div className="detail-color">COLOUR: <strong>{product.color.toUpperCase()}</strong></div>
@@ -122,7 +120,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       <div className="detail-accordions">{sections.map(label => <div key={label}><button type="button" aria-expanded={openInfo === label} onClick={() => setOpenInfo(openInfo === label ? null : label)}>{label}<span>{openInfo === label ? "−" : "+"}</span></button>{openInfo === label && content(label)}</div>)}</div>
     </div></div>
     <div className="pdp-brand-callout"><div><span className="eyebrow">PERFORMANCE MEETS EXPRESSION ↘</span><h2>Built for the burn<sup>™</sup></h2><p>For women who train with purpose and express themselves with confidence. From the first warm-up to the final rep, bring your energy and make every session your own.</p><Link href="/about" className="button button-dark pdp-brand-about">MEET IGNYTE ↗</Link></div><BrandFilm label="IGNYTE Built for the Burn brand film" /></div>
-    {pdp.show_brand_story && <div className="pdp-story"><section><span className="pdp-story-icon" aria-hidden="true">↓</span><h2>Made for movement</h2><p>Fit, feel and freedom of movement guide the details, from warm-up to final rep.</p></section><section><span className="pdp-story-icon" aria-hidden="true">↓</span><h2>Tested in real training</h2><p>Built for sweat, pressure, and repeat wear.</p>{pdp.video_url && <button type="button" className="pdp-see-move" onClick={() => galleryHandle.current?.showVideo()}>SEE IN MOTION ↗</button>}</section><section><span className="pdp-story-icon" aria-hidden="true">↓</span><h2>No distractions</h2><p>Designed to stay put, feel secure and let you focus on the work.</p></section></div>}
+    {pdp.show_brand_story && <div className="pdp-story"><section><span className="pdp-story-icon" aria-hidden="true">↓</span><h2>Made for movement</h2><p>Fit, feel and freedom of movement guide the details, from warm-up to final rep.</p></section><section><span className="pdp-story-icon" aria-hidden="true">↓</span><h2>Tested in real training</h2><p>Built for sweat, pressure, and repeat wear.</p></section><section><span className="pdp-story-icon" aria-hidden="true">↓</span><h2>No distractions</h2><p>Designed to stay put, feel secure and let you focus on the work.</p></section></div>}
     {related.length > 0 && <div className="related-section"><div className="section-heading"><div><span className="eyebrow">COMPLETE YOUR EDIT</span><h2>PAIR IT <em>WITH.</em></h2></div><Link href="/shop" className="text-link">SHOP ALL ↗</Link></div><div className="products-grid">{related.map((p, i) => <ProductCard product={p} index={i} key={p.slug} />)}</div></div>}
     {upsells.length > 0 && <div className="related-section"><div className="section-heading"><div><span className="eyebrow">ANOTHER WAY TO MOVE</span><h2>CONSIDER <em>THIS.</em></h2></div></div><div className="products-grid">{upsells.map((p, i) => <ProductCard product={p} index={i} key={p.slug} />)}</div></div>}
     <PdpSocialStrip productSlug={product.slug} />

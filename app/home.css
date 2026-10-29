@@ -100,3 +100,9 @@ body:has(.home-page) .site-header{height:78px}
 @media(max-width:900px){.home-bottom .brand-film{max-width:300px}}
 @media(max-width:600px){.home-bottom .brand-film{max-width:320px}.home-founders-logo{width:min(300px,82%)}}
 @media(prefers-reduced-motion:reduce){.home-slide-video .home-slide-media video{transition:none}}
+.home-hero-content,.home-hero-content h1{overflow:visible}.home-slide-media{overflow:hidden}
+.home-story .home-underlined,.home-collection span,.home-fit-card .home-underlined{letter-spacing:.15em}
+.home-pill-spaced{letter-spacing:.15em}
+.fx-ember{--ink:#ffd9a0;--ink-2:#ffab40;--ink-3:#ff6d00;font:inherit;letter-spacing:inherit;color:var(--ink);animation:fx-ember 1.7s ease-in-out infinite alternate}
+@keyframes fx-ember{0%{text-shadow:0 -2px 6px var(--ink-2),0 -6px 14px var(--ink-3),0 -12px 28px #dd2c00,0 -20px 44px rgba(213,0,0,.55)}100%{text-shadow:0 -3px 8px #ffc46b,0 -9px 20px #ff8f1f,0 -18px 38px #ff3d00,0 -30px 60px rgba(213,0,0,.8)}}
+@media(prefers-reduced-motion:reduce){.fx-ember{animation:none;text-shadow:0 -2px 6px var(--ink-2),0 -6px 14px var(--ink-3),0 -12px 28px #dd2c00,0 -20px 44px rgba(213,0,0,.55)}.home-slide-video .home-slide-media video{visibility:hidden}}
