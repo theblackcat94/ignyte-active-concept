@@ -21,8 +21,15 @@ export function loadEwayModal(): Promise<EwayModal> {
       const script = document.createElement("script");
       script.src = "https://secure.ewaypayments.com/scripts/eCrypt.min.js";
       script.async = true;
-      script.onload = () => window.eCrypt?.showModalPayment
-        ? resolve(window.eCrypt) : reject(new Error("eWAY payment form did not load."));
+      script.onload = () => {
+        let checks = 0;
+        const waitForInitialisation = () => {
+          if (window.eCrypt?.showModalPayment) resolve(window.eCrypt);
+          else if (++checks < 100) window.setTimeout(waitForInitialisation, 20);
+          else reject(new Error("eWAY payment form did not initialise."));
+        };
+        waitForInitialisation();
+      };
       script.onerror = () => reject(new Error("eWAY payment form could not be loaded."));
       document.head.appendChild(script);
     }).catch(error => { scriptPromise = null; throw error; });
