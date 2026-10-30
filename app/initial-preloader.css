@@ -1,0 +1,36 @@
+.ignyte-initial-preloader {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  place-items: center;
+  background: var(--paper);
+  opacity: 0;
+  pointer-events: none;
+}
+
+html.ignyte-preloader-visible .ignyte-initial-preloader,
+html.ignyte-preloader-fading .ignyte-initial-preloader {
+  display: grid;
+}
+
+html.ignyte-preloader-visible .ignyte-initial-preloader {
+  opacity: 1;
+}
+
+html.ignyte-preloader-fading .ignyte-initial-preloader {
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.ignyte-initial-preloader img {
+  display: block;
+  width: 43px;
+  height: 72px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.ignyte-preloader-fading .ignyte-initial-preloader {
+    transition: none;
+  }
+}

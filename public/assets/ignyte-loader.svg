@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 -8 94 160" role="img" aria-labelledby="title"><title id="title">IGNYTE loading</title>
+<style>
+.flame{transform-origin:39px 137px;animation:breathe 1.8s ease-in-out infinite}
+.reveal{animation:rise 1.8s cubic-bezier(.4,0,.2,1) infinite}
+@keyframes breathe{0%,100%{transform:scale(.97);opacity:.8}50%{transform:scale(1);opacity:1}}
+@keyframes rise{0%{transform:translateY(150px)}65%,80%{transform:translateY(0)}100%{transform:translateY(-150px)}}
+@media(prefers-reduced-motion:reduce){.flame,.reveal{animation:none}}
+</style>
+<defs><clipPath id="flame"><path d="M31.3439,122.2619c-15.9682-28.2974,16.1705-56.4106,13.0772-77.6332,25.9746,33.6145,11.3191,101.4652-44.4211,92.371,0,0,41.5151,21.5878,68.7074-18.4742,27.1924-40.062-14.9454-95.0695-14.9454-95.0695,0,0-13.9075-20.7575-14.1151-23.456-8.1027,39.6488-55.4335,78.4109-8.303,122.2619Z"/></clipPath></defs>
+<g class="flame"><path d="M31.3439,122.2619c-15.9682-28.2974,16.1705-56.4106,13.0772-77.6332,25.9746,33.6145,11.3191,101.4652-44.4211,92.371,0,0,41.5151,21.5878,68.7074-18.4742,27.1924-40.062-14.9454-95.0695-14.9454-95.0695,0,0-13.9075-20.7575-14.1151-23.456-8.1027,39.6488-55.4335,78.4109-8.303,122.2619Z" fill="#ff4533" opacity=".22"/><g clip-path="url(#flame)"><rect class="reveal" x="-4" y="-4" width="86" height="151" fill="#ff4533"/></g></g></svg>

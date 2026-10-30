@@ -14,6 +14,7 @@ html[data-appearance="dark"] .pdp-brand-callout .home-registration-mark{--regist
 
 .shop-banner .home-registration-mark{color:#fff!important}
 .pdp-brand-callout .home-registration-mark{color:#0B1020!important}
+.pdp-brand-callout .home-registration-mark{filter:none}
 .pdp-gallery-mark-frame .home-registration-mark{color:#fff!important}
 html[data-appearance="dark"] .pdp-brand-callout .home-registration-mark{color:#fff!important}
 html[data-appearance="ignyte"] .shop-banner .home-registration-mark,html[data-appearance="ignyte"] .pdp-brand-callout .home-registration-mark{color:#0B1020!important}
