@@ -19,7 +19,7 @@ const featuredCover: Record<string, string> = {
   leggings: "Ignyte-Leggings-Vertical.jpg", shorts: "Ignyte-Shorts-Vertical.jpg",
 };
 
-export default function HomeAlternative() {
+export default function HomeAlternative({ preview = false }: { preview?: boolean }) {
   const { products, categories } = useStore();
   const collections = ["sports-bras", "leggings", "shorts", "tops"].map(id => categories.find(category => category.id === id)).filter((category): category is (typeof categories)[number] => Boolean(category));
   const apparel = products.filter(product => product.category !== "accessories" && !product.slug.includes("socks"));
@@ -33,9 +33,9 @@ export default function HomeAlternative() {
     { name: "FULL-LENGTH COVERAGE", copy: "High-waisted leggings with seamless knit construction and soft stretch.", action: "SHOP LEGGINGS ↗", category: "leggings", slug: "seamless-legging-lavender" },
   ].map(card => ({ ...card, product: products.find(product => product.slug === card.slug) }));
   return <div className="home-page home-alternative" id="top">
-    <div className="home-alternative-banner">ALTERNATIVE HOMEPAGE PREVIEW <Link href="/">VIEW CURRENT HOMEPAGE ↗</Link></div>
+    {preview && <div className="home-alternative-banner">NEW HOMEPAGE PREVIEW <Link href="/home-original">VIEW ORIGINAL HOMEPAGE ↗</Link></div>}
     <HomeHeroSlider />
-    <section className="home-collections home-container" id="collections"><div className="home-section-head"><h2 className="mono-section-heading">SHOP CATEGORIES_</h2><Link href="/shop">SHOP ALL ↗</Link></div><div className="home-collection-grid">{collections.map((collection) => <Link href={`/shop/${collection.id}`} className="home-collection" key={collection.id}><img src={featuredCover[collection.id] ? homeImage(featuredCover[collection.id]) : collection.cover} alt={`${collection.label} collection`} loading="lazy" /><div><h3>{collection.label}</h3><span>SHOP NOW ↗</span></div></Link>)}</div></section>
+    <section className="home-collections home-container" id="collections" aria-labelledby="home-categories-title"><div className="home-section-head"><h2 id="home-categories-title" className="mono-section-heading">SHOP CATEGORIES_</h2><Link href="/shop">SHOP ALL ↗</Link></div><div className="home-collection-mosaic">{collections.map((collection) => <Link href={`/shop/${collection.id}`} className={`home-collection home-collection-${collection.id}`} key={collection.id} aria-label={`Shop ${collection.label}`}><img src={featuredCover[collection.id] ? homeImage(featuredCover[collection.id]) : collection.cover} alt="" loading="lazy" /><span className="home-collection-label"><span>{collection.label}</span><span aria-hidden="true">↗</span></span></Link>)}</div></section>
     {bestSellers.length > 0 && <section className="home-products home-container home-edit" aria-labelledby="best-sellers-title"><div className="home-section-head"><h2 id="best-sellers-title" className="mono-section-heading">THE IGNYTE EDIT_</h2><Link href="/shop">SHOP ALL ↗</Link></div><p className="home-edit-subcopy">Our favourites, ready for your next move.</p><HomeProductCarousel products={bestSellers} label="The Ignyte Edit" /></section>}
     <section className="home-story home-container" id="story"><div className="ignyte-fire-content"><div><span className="home-kicker">IGNYTE® ACTIVEWEAR ↘</span><h2><span className="home-story-keep">High-performance</span> gear for women who bring the fire.</h2></div><div><p>We’re here for those who bring the fire to their training and expect their gear to match it. Discover what makes Ignyte different.</p><Link href="/about" className="home-underlined">EXPLORE IGNYTE ↗</Link></div></div></section>
     <section className="home-values home-container" aria-label="Why Ignyte"><div><FeatureArrow /><h3>No distractions</h3><p>Designed to stay put, feel secure, and let you focus on the work.</p></div><div><FeatureArrow /><h3>Moves with you</h3><p>Flexible support that responds to every rep, hold, stretch, and session.</p></div><div><FeatureArrow /><h3>Tested in real training</h3><p>Built for sweat, pressure, and repeat wear.</p></div></section>
