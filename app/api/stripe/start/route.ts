@@ -65,6 +65,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "The order items could not be verified." }, { status: 409 });
   }
 
+  const { error: reserveError } = await db.rpc("prepare_stripe_order", { p_order_id: order.id });
+  if (reserveError) {
+    console.error("Stripe order reservation failed", reserveError.message);
+    return NextResponse.json({ error: "An item is unavailable or the order has changed. Please review your bag." }, { status: 409 });
+  }
+
   try {
     const discounts: Stripe.Checkout.SessionCreateParams.Discount[] = [];
     if (order.discount_cents > 0) {
