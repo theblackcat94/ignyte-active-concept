@@ -58,7 +58,10 @@ html[data-appearance="ignyte"] .checkout-summary p,
 html[data-appearance="ignyte"] .account-page p,
 html[data-appearance="ignyte"] .filter-panel,
 html[data-appearance="ignyte"] .home-edit-subcopy { color: #0B1020; }
-html[data-appearance="ignyte"] .mobile-menu { background:#ff4533df;backdrop-filter:blur(18px); }
+html[data-appearance="ignyte"] .mobile-menu { background:#FF4533;color:#0B1020;backdrop-filter:none; }
+html[data-appearance="ignyte"] .mobile-menu :is(a,button,p){color:#0B1020}
+html[data-appearance="ignyte"] .mobile-menu :is(a,button) :is(span,svg),html[data-appearance="ignyte"] .mobile-menu .chevron{color:#000}
+html[data-appearance="ignyte"] .mobile-menu>a{border-color:#0B10204d}
 
 html[data-appearance="ignyte"] .home-story p,
 html[data-appearance="ignyte"] .home-fit-card p,

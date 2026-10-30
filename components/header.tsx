@@ -2,24 +2,53 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "./store-provider";
 import HeartIcon from "./heart-icon";
 import AnnouncementBar from "./announcement-bar";
 import HeaderLogo from "./header-logo";
 
 export default function Header() {
-  const { products, categories, bag, setBagOpen, searchOpen, setSearchOpen, wishlist } = useStore();
+  const { products, categories, bag, bagOpen, setBagOpen, searchOpen, setSearchOpen, wishlist } = useStore();
   const nav = categories.map(category => [category.label.toUpperCase(), category.id === "all" ? "/shop" : `/shop/${category.id}`]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [headerHidden, setHeaderHidden] = useState(false);
   const [query, setQuery] = useState("");
   const pathname = usePathname();
   const router = useRouter();
   const results = query.trim() ? products.filter(p => `${p.name} ${p.color} ${p.category}`.toLowerCase().includes(query.toLowerCase())).slice(0, 5) : [];
 
+  useEffect(() => {
+    let lastY = Math.max(0, window.scrollY);
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const y = Math.max(0, window.scrollY);
+      if (window.innerWidth > 1100 || y <= 2 || menuOpen || searchOpen || bagOpen) {
+        setHeaderHidden(false);
+        lastY = y;
+        return;
+      }
+      const change = y - lastY;
+      if (Math.abs(change) >= 5) {
+        setHeaderHidden(change > 0 && y > 96);
+        lastY = y;
+      }
+    };
+    const onScroll = () => { if (!frame) frame = window.requestAnimationFrame(update); };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    setHeaderHidden(false);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [pathname, menuOpen, searchOpen, bagOpen]);
+
   return <>
     <AnnouncementBar />
-    <header className="site-header">
+    <header className={`site-header${headerHidden ? " site-header-hidden" : ""}`}>
       <div className="header-mobile-left"><button className="header-icon mobile-menu-toggle" aria-label="Open menu" onClick={() => setMenuOpen(true)}><span className="hamburger"><i /><i /></span></button><button className="header-icon mobile-search-trigger" aria-label="Search" onClick={() => setSearchOpen(true)}><Icon name="search" /></button></div>
       <Link className="brand brand-image" href="/" aria-label="Ignyte home"><HeaderLogo /></Link>
       <nav className="desktop-nav" aria-label="Main navigation">{nav.map(([label, href]) => <Link className={pathname === href ? "active" : ""} href={href} key={href}>{label}</Link>)}</nav>
