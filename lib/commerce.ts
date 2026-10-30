@@ -75,17 +75,19 @@ export function browserDb() {
 }
 
 export function toDisplayProduct(product: StoreProduct): Product {
+  const preserveJacaranda = product.slug === "seamless-short-jacaranda";
   const variants = product.product_variants.filter(variant => variant.active)
     .map(variant => ({ id: variant.id, size: product.name.toLowerCase().includes("sock") && variant.size.toLowerCase() === "one size" ? sockSizing.variant : variant.size,
       price: (variant.sale_price_cents ?? variant.price_cents) / 100,
       originalPrice: variant.sale_price_cents == null ? undefined : variant.price_cents / 100,
-      stock: variant.stock_on_hand }));
+      stock: variant.stock_on_hand }))
+    .sort((a, b) => ["XS", "S", "M", "L", "XL", "One size"].indexOf(a.size) - ["XS", "S", "M", "L", "XL", "One size"].indexOf(b.size));
   const cheapest = variants.length ? [...variants].sort((a, b) => a.price - b.price)[0] : undefined;
   return {
     slug: product.slug, name: product.name, category: product.category,
     ...mappedProductAttributes(product.product_variants.map(variant => variant.sku)),
-    color: displayColour(product.color), description: displayColour(product.description),
-    image: product.image_path, gallery: (product.gallery ?? []).map(item => ({ ...item, alt: displayColour(item.alt) })), label: product.label ?? undefined,
+    color: displayColour(product.color, preserveJacaranda), description: displayColour(product.description, preserveJacaranda),
+    image: product.image_path, gallery: (product.gallery ?? []).map(item => ({ ...item, alt: displayColour(item.alt, preserveJacaranda) })), label: product.label ?? undefined,
     pdp: pdpFor(product.name, product.pdp_content, product.slug),
     price: cheapest?.price ?? 0, originalPrice: cheapest?.originalPrice,
     variants,

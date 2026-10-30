@@ -27,7 +27,7 @@ const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Produc
   const photos = [
     { image: product.image, alt: `${product.name} in ${product.color}` },
     ...product.gallery,
-  ].filter((_, index) => index !== 4);
+  ].filter((_, index) => product.slug === "seamless-short-jacaranda" || index !== 4);
   const mediaCount = photos.length + (product.pdp.video_url ? 1 : 0);
   useEffect(() => {
     if (activeIndex !== photos.length || !product.pdp.video_url) return;
