@@ -23,7 +23,13 @@ export default function HomeProductCarousel({ products, label }: { products: Pro
     return () => { observer.disconnect(); element.removeEventListener("scroll", update); };
   }, [products]);
 
-  const move = (direction: number) => track.current?.scrollBy({ left: direction * track.current.clientWidth * 0.8, behavior: "smooth" });
+  const move = (direction: number) => {
+    const element = track.current;
+    const card = element?.querySelector<HTMLElement>(".product-card");
+    if (!element || !card) return;
+    const gap = Number.parseFloat(getComputedStyle(element).columnGap) || 0;
+    element.scrollBy({ left: direction * (card.getBoundingClientRect().width + gap), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+  };
   return <div className="home-product-carousel">
     <div className="home-product-track" ref={track} role="region" aria-label={label} tabIndex={0}>
       {products.map((product, index) => <ProductCard key={product.slug} product={product} index={index} showOptions />)}

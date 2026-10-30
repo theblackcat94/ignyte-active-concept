@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import type { Category } from "@/lib/catalog";
 import { useStore } from "./store-provider";
@@ -13,15 +13,32 @@ import "@/app/shop-filters.css";
 
 export default function ShopView({ category }: { category: Category }) {
   const { products, categories, catalogPreview, catalogLoading } = useStore();
-  const [sort, setSort] = useState("featured");
-  const [colors, setColors] = useState<string[]>([]);
-  const [sizes, setSizes] = useState<string[]>([]);
-  const [activities, setActivities] = useState<string[]>([]);
-  const [fits, setFits] = useState<string[]>([]);
-  const [coverages, setCoverages] = useState<string[]>([]);
-  const [availability, setAvailability] = useState<"all" | "in-stock" | "sold-out">("all");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const updateFilter = (key: string, values: string[]) => {
+    const next = new URLSearchParams(searchParams.toString());
+    next.delete(key);
+    values.forEach(value => next.append(key, value));
+    router.replace(`${pathname}${next.size ? `?${next}` : ""}`, { scroll: false });
+  };
+  const sort = searchParams.get("sort") ?? "featured";
+  const setSort = (value: string) => updateFilter("sort", value === "featured" ? [] : [value]);
+  const colors = searchParams.getAll("color");
+  const sizes = searchParams.getAll("size");
+  const activities = searchParams.getAll("activity");
+  const fits = searchParams.getAll("fit");
+  const coverages = searchParams.getAll("coverage");
+  const setColors = (values: string[]) => updateFilter("color", values);
+  const setSizes = (values: string[]) => updateFilter("size", values);
+  const setActivities = (values: string[]) => updateFilter("activity", values);
+  const setFits = (values: string[]) => updateFilter("fit", values);
+  const setCoverages = (values: string[]) => updateFilter("coverage", values);
+  const rawAvailability = searchParams.get("availability");
+  const availability = rawAvailability === "in-stock" || rawAvailability === "sold-out" ? rawAvailability : "all";
+  const setAvailability = (value: "all" | "in-stock" | "sold-out") => updateFilter("availability", value === "all" ? [] : [value]);
   const [filterOpen, setFilterOpen] = useState(false);
-  const query = useSearchParams().get("q")?.toLowerCase() || "";
+  const query = searchParams.get("q")?.toLowerCase() || "";
   const currentCategory = categories.find(item => item.id === category) || categories[0];
   const categoryProducts = products.filter(product => category === "all" || product.category === category);
   const availableColors = [...new Set(categoryProducts.map(product => product.color))].sort(compareProductColours);
@@ -40,7 +57,11 @@ export default function ShopView({ category }: { category: Category }) {
     (catalogLoading || availability === "all" || (product.variants?.some(variant => variant.stock > 0 && (!sizes.length || sizes.includes(variant.size))) ?? false) === (availability === "in-stock")));
   const visible = [...found].sort((a, b) => sort === "price-low" ? a.price - b.price : sort === "price-high" ? b.price - a.price : sort === "name" ? a.name.localeCompare(b.name) : 0);
   const toggle = (current: string[], value: string, setter: (next: string[]) => void) => setter(current.includes(value) ? current.filter(item => item !== value) : [...current, value]);
-  const clearFilters = () => { setColors([]); setSizes([]); setActivities([]); setFits([]); setCoverages([]); setAvailability("all"); };
+  const clearFilters = () => {
+    const next = new URLSearchParams(searchParams.toString());
+    ["color", "size", "activity", "fit", "coverage", "availability"].forEach(key => next.delete(key));
+    router.replace(`${pathname}${next.size ? `?${next}` : ""}`, { scroll: false });
+  };
   const activeFilters = [
     ...colors.map(value => ({ label: value, remove: () => setColors(colors.filter(item => item !== value)) })),
     ...sizes.map(value => ({ label: value, remove: () => setSizes(sizes.filter(item => item !== value)) })),

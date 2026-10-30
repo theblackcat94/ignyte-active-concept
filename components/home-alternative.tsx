@@ -11,6 +11,7 @@ import RegistrationMarks from "@/components/registration-marks";
 import { homeBestSellerSlugs } from "@/data/pdp-planner";
 import { useStore } from "@/components/store-provider";
 import { asset } from "@/lib/asset";
+import { inStock } from "@/lib/product-merchandising";
 import "@/app/home.css";
 
 const homeImage = (name: string) => asset(`/images/home/${name}`);
@@ -20,13 +21,20 @@ const featuredCover: Record<string, string> = {
 };
 
 export default function HomeAlternative({ preview = false }: { preview?: boolean }) {
-  const { products, categories } = useStore();
+  const { products, categories, catalogLoading, catalogError } = useStore();
   const collections = ["sports-bras", "leggings", "shorts", "tops"].map(id => categories.find(category => category.id === id)).filter((category): category is (typeof categories)[number] => Boolean(category));
   const apparel = products.filter(product => product.category !== "accessories" && !product.slug.includes("socks"));
   const bestSellers = apparel.filter(product => product.pdp.featured_best_seller).sort((a, b) => {
     const rank = (slug: string) => { const index = homeBestSellerSlugs.indexOf(slug); return index < 0 ? 999 : index; };
     return rank(a.slug) - rank(b.slug);
   });
+  const bestSellerSlugs = new Set(bestSellers.map(product => product.slug));
+  const shopCategories = ["sports-bras", "leggings", "shorts", "tops"];
+  const shopCandidates = shopCategories.map(category => {
+    const names = [...new Set(apparel.filter(product => product.category === category && inStock(product)).map(product => product.name))];
+    return names.map(name => apparel.filter(product => product.category === category && product.name === name && inStock(product)).sort((a, b) => Number(bestSellerSlugs.has(a.slug)) - Number(bestSellerSlugs.has(b.slug)))[0]);
+  });
+  const shopMix = Array.from({ length: Math.max(...shopCandidates.map(group => group.length), 0) }, (_, index) => shopCandidates.map(group => group[index])).flat().filter((product): product is (typeof apparel)[number] => Boolean(product)).slice(0, 12);
   const fitCards = [
     { name: "RELAXED FIT", copy: "Lightweight shorts with an inner short and a zip pocket for small essentials.", action: "SHOP SHORTS ↗", category: "shorts", slug: "all-in-motion-shorts-black" },
     { name: "CLOSE FIT", copy: "Bike shorts with a crossover waistband and a supportive, compressive feel.", action: "SHOP SHORTS ↗", category: "shorts", slug: "sculpt-shorts-mauve" },
@@ -45,5 +53,6 @@ export default function HomeAlternative({ preview = false }: { preview?: boolean
     <section className="home-bottom" aria-labelledby="bottom-title"><RegistrationMarks /><div className="home-bottom-copy"><span className="home-kicker mono-section-heading">BUILT FOR THE BURN_</span><h2 id="bottom-title">See IGNYTE in motion.</h2><Link href="/shop" className="home-pill">SHOP THE COLLECTION <span>↗</span></Link></div><BrandFilm label="IGNYTE brand film" /><img className="home-bottom-photo" src={homeImage("Home-Hero-Alt-2-v2.jpg")} alt="Two IGNYTE athletes in the gym" loading="lazy" /></section>
     <section className="home-founders home-container" aria-labelledby="home-founders-title"><div className="home-founders-badge"><img className="home-founders-logo home-founders-logo-light" src={homeImage("ignyte-founder-badge.svg")} alt="IGNYTE Built for the Burn badge" /><img className="home-founders-logo home-founders-logo-dark" src={homeImage("ignyte-founder-badge-dark.svg")} alt="" aria-hidden="true" /></div><div className="home-founders-copy"><span className="home-kicker mono-section-heading">OUR STORY ↘</span><h2 id="home-founders-title">What fuels IGNYTE</h2><p>Founded in 2026, IGNYTE began with the belief that women shouldn’t have to choose between performance and self-expression. Our founders set out to create activewear that supports hard training while giving you the confidence to make it your own.</p><Link href="/about" className="home-underlined">MEET IGNYTE ↗</Link></div></section>
     <div className="home-container"><PdpSocialStrip /></div>
+    {!catalogLoading && !catalogError && shopMix.length > 0 && <section className="home-products home-container home-shop-ignyte" aria-labelledby="shop-ignyte-title"><div className="home-section-head"><h2 id="shop-ignyte-title" className="mono-section-heading">SHOP IGNYTE_</h2><Link href="/shop">SHOP ALL ↗</Link></div><HomeProductCarousel products={shopMix} label="Shop Ignyte products" /></section>}
   </div>;
 }
