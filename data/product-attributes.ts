@@ -6,7 +6,7 @@ const mapped = [
   { productId: "IGN003", skuFamilies: ["IGN-MOTSBR-BLK", "IGN-MOTSBR-JAC"], fit: "Close fit", coverage: "" },
   { productId: "IGN004", skuFamilies: ["IGN-VSCLP-BLK", "IGN-VSCLP-BRN"], fit: "Close fit", coverage: "" },
   { productId: "IGN008", skuFamilies: ["IGN-LGS-DRKBRN", "IGN-LGS-JAC"], fit: "Close fit", coverage: "Full length" },
-  { productId: "IGN009", skuFamilies: ["IGN-LVR-SHTS-BRN"], fit: "Close fit", coverage: "Short length" },
+  { productId: "IGN009", skuFamilies: ["IGN-LVR-SHTS-BRN", "IGN-LVR-SHTS-JAC"], fit: "Close fit", coverage: "Short length" },
   { productId: "IGN010", skuFamilies: ["IGN-MOMSBR-BLK", "IGN-MOMSBR-BRN"], fit: "Close fit", coverage: "" },
 ] as const;
 
