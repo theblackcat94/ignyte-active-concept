@@ -22,3 +22,9 @@ Before delivery: apply `supabase/migrations/202610290002_order_email_outbox.sql`
 ## Sending and complaint process
 
 The Sydney SES account has verified `ignyteactive.com` and `support@ignyteactive.com` identities. Its **account-level suppression list is enabled for both bounces and complaints** (checked in the SES console on 28 October 2026). Do not remove a suppressed address merely to retry a send. The team should review SES reputation and suppression after each test batch and at least daily once live; investigate complaint or bounce spikes, stop affected sends, and correct address/data problems before resuming. Before automated sending, add bounce/complaint event publishing and a monitored alert, and keep application recipient suppression in sync with SES. Record the monitoring owner and escalation path with Jade and Marcus.
+
+## Supplied collection campaign
+
+`marketing-collection.html` and `marketing-collection.txt` preserve the supplied 600px collection campaign as a reusable marketing design. Its five raster images are in `public/images/email/`; use `https://dev.ignyteactive.com/images/email` as `{{asset_base_url}}` for staging previews, and the approved production HTTPS host when sending. The Shipping & returns link was corrected to `/returns/`.
+
+This campaign is not connected to a send event. Before sending, supply `{{site_url}}`, `{{asset_base_url}}`, `{{preferences_url}}`, `{{unsubscribe_url}}`, `{{business_postal_address}}` and `{{year}}`, verify the product and policy links, and test the rendered email in Gmail, Apple Mail and Outlook with images blocked and dark mode. The site currently has an unsubscribe endpoint but no separate preferences page, so `{{preferences_url}}` needs a working destination before launch. The promotional copy makes no discount or certification promise.

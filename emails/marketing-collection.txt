@@ -1,0 +1,33 @@
+Subject: Meet your next training kit
+Preview: Discover the first IGNYTE collection. Make it your own.
+
+BUILT FOR THE BURN™
+
+Take your training seriously. Make it your own.
+
+Meet IGNYTE. Performance activewear for women who move with purpose and express themselves with confidence.
+
+Find your fit, choose your colour and bring your own energy to every session.
+
+SHOP THE COLLECTION: {{site_url}}/shop/
+
+FIND YOUR FIT
+Relaxed fit: All In Motion Shorts. Lightweight, with an inner short and a zip pocket for small essentials.
+Close fit: Sculpt Shorts. A crossover waistband and compressive stretch for a supportive feel.
+Full length: Seamless Leggings. High-waisted coverage with seamless knit construction and soft stretch.
+
+Shorts: {{site_url}}/shop/shorts/
+Leggings: {{site_url}}/shop/leggings/
+
+Free shipping on AU orders $100 or more.
+Size guide: {{site_url}}/size-guide/
+Shipping & returns: {{site_url}}/returns/
+Support: {{site_url}}/support/
+Contact: {{site_url}}/contact/
+Instagram: https://www.instagram.com/ignyteactive/
+
+You’re receiving this because you subscribed to IGNYTE Active updates.
+Manage preferences: {{preferences_url}}
+Unsubscribe: {{unsubscribe_url}}
+IGNYTE Active · {{business_postal_address}}
+© {{year}} IGNYTE Active.
