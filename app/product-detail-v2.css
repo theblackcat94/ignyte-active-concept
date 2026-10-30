@@ -85,3 +85,8 @@
 .pdp-desktop-purchase-add:active:not(:disabled),.pdp-mobile-purchase button:active:not(:disabled){transform:scale(.98);background:#cf3022}
 .pdp-desktop-purchase-add:disabled,.pdp-mobile-purchase button:disabled{opacity:.55;cursor:not-allowed;transform:none}
 html[data-appearance="ignyte"] .pdp-brand-callout{position:relative}
+
+html[data-appearance="dark"] .product-page .detail-add{color:#fff}
+html[data-appearance="ignyte"] .product-page .detail-add,html[data-appearance="ignyte"] .pdp-desktop-purchase-add,html[data-appearance="ignyte"] .pdp-mobile-purchase button{background:#0B1020;color:#fff;border-color:transparent}
+html[data-appearance="ignyte"] .product-page .detail-add:hover:not(:disabled),html[data-appearance="ignyte"] .pdp-desktop-purchase-add:hover:not(:disabled),html[data-appearance="ignyte"] .pdp-mobile-purchase button:hover:not(:disabled){background:#25304b;color:#fff}
+html[data-appearance="ignyte"] .product-page .detail-add:active:not(:disabled),html[data-appearance="ignyte"] .pdp-desktop-purchase-add:active:not(:disabled),html[data-appearance="ignyte"] .pdp-mobile-purchase button:active:not(:disabled){background:#060a14;color:#fff}
