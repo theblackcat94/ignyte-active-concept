@@ -135,3 +135,9 @@ body:has(.home-page) .site-header{height:78px}
 @media(max-width:800px){.home-slider .home-registration-mark-bottom-left{bottom:62px;left:18px}.home-slider .home-registration-mark-bottom-right{bottom:62px;right:18px}}
 @media(max-width:600px){.home-founders{grid-template-columns:1fr}.home-founders-badge,.home-founders-copy{grid-column:1}.home-founders-badge{width:min(260px,70%)}.home-slider .home-registration-mark-bottom-left,.home-slider .home-registration-mark-bottom-right{bottom:64px}}
 @media(max-width:600px){.home-bottom-photo{display:none}.home-bottom .brand-film{grid-column:1;grid-row:2}.home-bottom{gap:22px}}
+
+.home-story:has(.ignyte-fire-content){display:block}
+.home-story .ignyte-fire-content{display:grid;grid-template-columns:1.4fr .6fr;gap:8%;align-items:end}
+@media(max-width:800px){.home-story .ignyte-fire-content{grid-template-columns:1fr;gap:30px}}
+
+@media(min-width:901px){.home-founders h2{font-size:clamp(44px,4.1vw,64px);max-width:none}}

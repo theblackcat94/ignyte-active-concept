@@ -103,3 +103,49 @@ html[data-appearance="ignyte"] .pdf-footer-signup-form input::placeholder{color:
 html[data-appearance="ignyte"] .pdp-story p,html[data-appearance="ignyte"] .pdp-story li,html[data-appearance="ignyte"] .pdp-review-note{color:#0B1020}
 html[data-appearance="ignyte"] .catalog-preview-note,html[data-appearance="ignyte"] .home-products .catalog-preview-note,html[data-appearance="ignyte"] .shop-page .catalog-preview-note{color:#0B1020}
 html[data-appearance="ignyte"] .home-products .product-card .product-meta,html[data-appearance="ignyte"] .home-products .product-card-colours>span,html[data-appearance="ignyte"] .home-products .product-card-colours strong{color:#0B1020}
+
+/* Final mode-specific surfaces and selection states. */
+html[data-appearance="dark"] .account-page{background:#0B1020;color:#f5f0e8}
+html[data-appearance="dark"] .account-tabs{background:#151c2e;border-color:#545b6a}
+html[data-appearance="dark"] .account-tabs button{background:transparent;color:#f5f0e8}
+html[data-appearance="dark"] .account-tabs button.active{background:#303a50;color:#fff;border-color:#ff8c78}
+html[data-appearance="dark"] .account-auth-card,html[data-appearance="dark"] .account-sidebar,html[data-appearance="dark"] .account-order-empty,html[data-appearance="dark"] .account-orders article,html[data-appearance="dark"] .order-detail-card{background:#151c2e;color:#f5f0e8;border-color:#545b6a}
+html[data-appearance="dark"] .account-auth-card h2,html[data-appearance="dark"] .account-page>h1,html[data-appearance="dark"] .account-page>.text-link,html[data-appearance="dark"] .account-auth-card .text-button,html[data-appearance="dark"] .account-auth-card .account-legal a,html[data-appearance="dark"] .account-auth-card .account-show-password{color:#f5f0e8}
+html[data-appearance="dark"] .account-page>.account-form label,html[data-appearance="dark"] .account-page>p[role="status"]{color:#f5f0e8}
+html[data-appearance="dark"] .account-page>.account-form input{background:#151c2e;color:#f5f0e8;border-color:#8790a0;caret-color:#fff}
+html[data-appearance="dark"] .account-page>.account-form input:focus-visible{outline:2px solid #ff8c78;outline-offset:2px}
+html[data-appearance="dark"] .account-page input:-webkit-autofill{box-shadow:0 0 0 1000px #151c2e inset!important;-webkit-text-fill-color:#f5f0e8!important}
+html[data-appearance="dark"] .account-auth-card .account-auth-message,html[data-appearance="dark"] .account-page>p[role="status"]{background:#202b40;border-left:3px solid #ff8c78;padding:13px 16px}
+html[data-appearance="dark"] .account-auth-card .account-form input::placeholder,html[data-appearance="dark"] .account-page>.account-form input::placeholder{color:#cbd0da}
+html[data-appearance="dark"] .pdp-colour-option{background:#151c2e;border-color:#8790a0;color:#f5f0e8}
+html[data-appearance="dark"] .pdp-colour-option.selected{background:#f5f0e8;border:2px solid #ff8c78;color:#0B1020}
+html[data-appearance="dark"] .product-page .size-grid button{background:#151c2e;border-color:#8790a0;color:#f5f0e8}
+html[data-appearance="dark"] .product-page .size-grid button.selected{background:#ff8c78;border:2px solid #fff4ed;color:#0B1020}
+html[data-appearance="dark"] .product-page .size-grid button:disabled{background:#0B1020;border:1px dashed #667084;color:#9ca4b2;text-decoration:line-through}
+html[data-appearance="dark"] .product-card .quick-add-sizes button.selected{background:#ff8c78;border:2px solid #fff4ed;color:#0B1020}
+html[data-appearance="dark"] .product-card .quick-add-sizes button:disabled{background:transparent;border:1px dashed #667084;color:#9ca4b2}
+html[data-appearance="dark"] .pdp-mobile-purchase{background:#151c2ef5;color:#f5f0e8;border-color:#8790a0}
+html[data-appearance="dark"] .announcement,html[data-appearance="dark"] .home-bottom{background:#060A14;color:#f5f0e8}
+html[data-appearance="dark"] .announcement a,html[data-appearance="dark"] .home-bottom h2{color:#f5f0e8}
+html[data-appearance="dark"] .pdf-footer-perks{border-top:0}
+
+html[data-appearance="ignyte"] .home-fit,html[data-appearance="ignyte"] .home-founders,html[data-appearance="ignyte"] .pdp-brand-callout{background:#fff4ed;color:#0B1020}
+html[data-appearance="ignyte"] .home-bottom,html[data-appearance="ignyte"] .home-values{background:#FF4533;color:#0B1020}
+html[data-appearance="ignyte"] .home-story h2,html[data-appearance="ignyte"] .home-story p,html[data-appearance="ignyte"] .home-story .home-underlined,html[data-appearance="ignyte"] .home-fit h2,html[data-appearance="ignyte"] .home-fit h3,html[data-appearance="ignyte"] .home-fit-card p,html[data-appearance="ignyte"] .home-fit .home-underlined,html[data-appearance="ignyte"] .home-bottom h2,html[data-appearance="ignyte"] .home-bottom .home-kicker{color:#0B1020}
+html[data-appearance="ignyte"] .home-story .home-underlined,html[data-appearance="ignyte"] .home-fit .home-underlined{border-color:#0B1020}
+html[data-appearance="ignyte"] .home-fit .home-registration-mark{color:#0B1020}
+html[data-appearance="ignyte"] .home-bottom .home-pill{background:#0B1020;color:#fff4ed;border-color:#0B1020}
+html[data-appearance="ignyte"] .pdf-footer-signup{background:#fff4ed;color:#0B1020;border-block:1px solid #0B1020}
+html[data-appearance="ignyte"] .pdf-footer-signup p,html[data-appearance="ignyte"] .pdf-footer-email-row,html[data-appearance="ignyte"] .pdf-footer-signup-form input,html[data-appearance="ignyte"] .pdf-footer-signup-form button,html[data-appearance="ignyte"] .pdf-footer-consent,html[data-appearance="ignyte"] .pdf-footer-consent a{color:#0B1020;border-color:#0B1020}
+html[data-appearance="ignyte"] .pdf-footer-signup-form input::placeholder{color:#493729}
+html[data-appearance="ignyte"] .pdf-footer-signup .fx-ember{color:#0B1020}
+html[data-appearance="ignyte"] .pdf-footer-main,html[data-appearance="ignyte"] .pdf-footer-bottom,html[data-appearance="ignyte"] .pdf-footer-brand p,html[data-appearance="ignyte"] .pdf-footer-column a,html[data-appearance="ignyte"] .pdf-footer-credit,html[data-appearance="ignyte"] .pdf-footer-controls,html[data-appearance="ignyte"] .pdf-footer-controls a{color:#0B1020}
+html[data-appearance="ignyte"] .pdp-social-heading h2 em,html[data-appearance="ignyte"] .not-found h1 em{color:#0B1020}
+html[data-appearance="ignyte"] .breadcrumb,html[data-appearance="ignyte"] .breadcrumb a,html[data-appearance="ignyte"] .breadcrumb span,html[data-appearance="ignyte"] .pdp-social-controls a,html[data-appearance="ignyte"] .pdp-social-controls button{color:#0B1020}
+html[data-appearance="ignyte"] .pdp-social-controls button{border-color:#0B1020}
+html[data-appearance="ignyte"] .pdp-social-controls button:hover{background:#0B1020;color:#fff4ed}
+html[data-appearance="ignyte"] .pdp-oeko{background:#fff4ed;border-color:#0B1020;color:#0B1020}
+html[data-appearance="ignyte"] .pdp-oeko>strong,html[data-appearance="ignyte"] .pdp-oeko p,html[data-appearance="ignyte"] .pdp-oeko a{color:#0B1020;border-color:#0B1020}
+html[data-appearance="ignyte"] .account-auth-card,html[data-appearance="ignyte"] .checkout-panel,html[data-appearance="ignyte"] .checkout-summary{background:#fff4ed;color:#0B1020;border-color:#0B1020}
+html[data-appearance="ignyte"] .account-auth-card input,html[data-appearance="ignyte"] .checkout-fields input,html[data-appearance="ignyte"] .checkout-fields select{background:#fff;color:#0B1020;border-color:#0B1020}
+html[data-appearance="ignyte"] .account-auth-card input:focus-visible,html[data-appearance="ignyte"] .checkout-fields input:focus-visible{outline:2px solid #0B1020;outline-offset:2px}

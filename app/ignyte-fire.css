@@ -1,0 +1,216 @@
+.ignyte-fire {
+  position: relative;
+  isolation: isolate;
+}
+
+.ignyte-fire-field {
+  display: none;
+}
+
+.ignyte-fire-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Activate only in IGNYTE Mode. */
+html[data-appearance="ignyte"] .ignyte-fire {
+  background-color: #FF4533;
+  color: #0B1020;
+}
+
+html[data-appearance="ignyte"] .ignyte-fire-field {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+
+  background: linear-gradient(
+    150deg,
+    #FF4533 3%,
+    #FA492D 45%,
+    #FF6D21 100%
+  );
+}
+
+.ig-heat-base {
+  position: absolute;
+  inset: 20% -35% -65%;
+
+  background: radial-gradient(
+    ellipse at 52% 74%,
+    #FFE78B 0%,
+    #FFBC3F 25%,
+    rgba(255, 139, 32, 0.9) 40%,
+    rgba(255, 111, 26, 0) 68%
+  );
+
+  filter: blur(23px);
+  animation: ig-base-breathe 3.5s ease-in-out infinite alternate;
+}
+
+.ig-heat {
+  position: absolute;
+  bottom: -47%;
+  width: 68%;
+  height: 150%;
+  border-radius: 45% 65% 30% 60%;
+  filter: blur(30px);
+  transform-origin: 50% 90%;
+}
+
+.ig-heat-a {
+  left: -28%;
+
+  background: radial-gradient(
+    ellipse at 53% 66%,
+    #FFE89A 0%,
+    #FFD15C 21%,
+    rgba(255, 178, 49, 0.88) 36%,
+    rgba(255, 125, 32, 0) 64%
+  );
+
+  animation: ig-plume-left 3.2s ease-in-out infinite alternate;
+}
+
+.ig-heat-b {
+  left: 18%;
+  bottom: -64%;
+  width: 53%;
+
+  background: radial-gradient(
+    ellipse at 47% 63%,
+    #FFF0AF 0%,
+    #FFD56A 19%,
+    rgba(255, 161, 36, 0.8) 38%,
+    rgba(255, 133, 25, 0) 65%
+  );
+
+  animation: ig-plume-centre 4.1s ease-in-out infinite alternate;
+  animation-delay: -2s;
+}
+
+.ig-heat-c {
+  right: -23%;
+  bottom: -43%;
+  width: 75%;
+
+  background: radial-gradient(
+    ellipse at 46% 64%,
+    #FFE48B 0%,
+    #FFC449 22%,
+    rgba(255, 163, 30, 0.9) 40%,
+    rgba(255, 108, 31, 0) 65%
+  );
+
+  animation: ig-plume-right 3.65s ease-in-out infinite alternate;
+  animation-delay: -1.5s;
+}
+
+.ig-heat-d {
+  left: 0;
+  bottom: -65%;
+  width: 105%;
+  height: 145%;
+
+  background: radial-gradient(
+    ellipse at 35% 55%,
+    rgba(255, 69, 51, 0.95) 0%,
+    rgba(255, 75, 36, 0.85) 27%,
+    rgba(255, 91, 28, 0) 62%
+  );
+
+  animation: ig-orange-fold 4.5s ease-in-out infinite alternate;
+  animation-delay: -3s;
+}
+
+.ig-heat-veil {
+  position: absolute;
+  inset: -30%;
+
+  background: radial-gradient(
+    ellipse at 80% 12%,
+    rgba(255, 69, 51, 0.85),
+    rgba(255, 69, 51, 0) 58%
+  );
+
+  animation: ig-veil-drift 5.5s ease-in-out infinite alternate;
+}
+
+@keyframes ig-base-breathe {
+  from {
+    transform: translate(-5%, 6%) scale(0.95);
+  }
+  to {
+    transform: translate(6%, -10%) scale(1.12);
+  }
+}
+
+@keyframes ig-plume-left {
+  from {
+    transform: translate(-5%, 14%) rotate(-20deg)
+      scale(0.92, 1.02);
+  }
+  to {
+    transform: translate(23%, -21%) rotate(12deg)
+      scale(1.17, 1.22);
+  }
+}
+
+@keyframes ig-plume-centre {
+  from {
+    transform: translate(-28%, 12%) rotate(16deg)
+      scale(0.85, 1.05);
+  }
+  to {
+    transform: translate(20%, -20%) rotate(-15deg)
+      scale(1.1, 1.18);
+  }
+}
+
+@keyframes ig-plume-right {
+  from {
+    transform: translate(8%, 16%) rotate(17deg)
+      scale(1.02, 0.95);
+  }
+  to {
+    transform: translate(-24%, -18%) rotate(-17deg)
+      scale(0.94, 1.2);
+  }
+}
+
+@keyframes ig-orange-fold {
+  from {
+    transform: translate(-10%, 10%) rotate(8deg) scale(1.05);
+  }
+  to {
+    transform: translate(19%, -19%) rotate(-16deg) scale(1.2);
+  }
+}
+
+@keyframes ig-veil-drift {
+  from {
+    transform: translate(-8%, 0) rotate(-8deg);
+  }
+  to {
+    transform: translate(8%, 8%) rotate(10deg);
+  }
+}
+
+/* Connect to the existing motion preference, if available. */
+html[data-motion="paused"] .ignyte-fire-field > div {
+  animation-play-state: paused;
+}
+
+@media (max-width: 540px) {
+  .ig-heat {
+    filter: blur(20px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ignyte-fire-field > div {
+    animation: none;
+  }
+}

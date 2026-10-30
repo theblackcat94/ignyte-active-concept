@@ -6,6 +6,7 @@ import "./ember.css";
 import "./product-gallery.css";
 import "./footer.css";
 import "./appearance.css";
+import "./ignyte-fire.css";
 import "./fire-egg.css";
 import { StoreProvider } from "@/components/store-provider";
 import Header from "@/components/header";

@@ -86,7 +86,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       {product.coverageAttribute && <p><strong>Coverage</strong><span>{product.coverageAttribute}</span></p>}
       {isSock ? <p><strong>Fit and sizing advice</strong><span>{sockSizing.productText}</span></p> : pdp.fit && <p><strong>Fit and sizing advice</strong><span>{pdp.fit}</span></p>}
       {fabricCompositions(pdp.fabric).map((part, index) => <p key={`${part.label}-${index}`}><strong>{part.label}</strong><span>{part.composition}</span></p>)}
-      {pdp.oeko_certified && <div className="pdp-oeko"><strong>OEKO-TEX® STANDARD 100</strong>{pdp.oeko_certificate.trim() && <><p>Made with OEKO-TEX® STANDARD 100 certified fabrics, tested for harmful substances so you can feel confident in what’s against your skin.</p><a href="https://www.oeko-tex.com/en/label-check" target="_blank" rel="noreferrer">Check certificate {pdp.oeko_certificate} ↗</a></>}</div>}
+      {pdp.oeko_certified && pdp.oeko_certificate.trim() && <div className="pdp-oeko"><strong>OEKO-TEX® STANDARD 100</strong>{pdp.oeko_certificate.trim() && <><p>Made with OEKO-TEX® STANDARD 100 certified fabrics, tested for harmful substances so you can feel confident in what’s against your skin.</p><a href="https://www.oeko-tex.com/en/label-check" target="_blank" rel="noreferrer">Check certificate {pdp.oeko_certificate} ↗</a></>}</div>}
     </div>;
     if (label === "MODEL DETAILS") {
       const name = pdp.model_details.split("\n", 1)[0].trim();
