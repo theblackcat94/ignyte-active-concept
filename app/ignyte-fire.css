@@ -1,8 +1,3 @@
-.ignyte-fire {
-  position: relative;
-  isolation: isolate;
-}
-
 .ignyte-fire-field {
   display: none;
 }
@@ -12,17 +7,17 @@
   z-index: 1;
 }
 
-/* Activate only in IGNYTE Mode. */
-html[data-appearance="ignyte"] .ignyte-fire {
-  background-color: #FF4533;
-  color: #0B1020;
+/* One fixed field follows the viewport so it stays continuous while scrolling. */
+html[data-appearance="ignyte"] body {
+  isolation: isolate;
+  background: transparent;
 }
 
-html[data-appearance="ignyte"] .ignyte-fire-field {
+html[data-appearance="ignyte"] body > .ignyte-fire-field {
   display: block;
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   overflow: hidden;
   pointer-events: none;
 
@@ -33,6 +28,47 @@ html[data-appearance="ignyte"] .ignyte-fire-field {
     #FF6D21 100%
   );
 }
+
+/* Let the field show through story and editorial sections. Keep buying surfaces solid. */
+html[data-appearance="ignyte"] .home-story,
+html[data-appearance="ignyte"] .home-values,
+html[data-appearance="ignyte"] .home-collections,
+html[data-appearance="ignyte"] .home-fit,
+html[data-appearance="ignyte"] .home-bottom,
+html[data-appearance="ignyte"] .pdf-footer-main,
+html[data-appearance="ignyte"] .pdf-footer-perks,
+html[data-appearance="ignyte"] .about-page,
+html[data-appearance="ignyte"] .about-mindset {
+  background: transparent;
+  color: #0B1020;
+}
+
+html[data-appearance="ignyte"] .home-products,
+html[data-appearance="ignyte"] .home-products:nth-of-type(even),
+html[data-appearance="ignyte"] .home-founders,
+html[data-appearance="ignyte"] .pdf-footer-signup {
+  background: #fff4ed;
+  color: #0B1020;
+}
+
+html[data-appearance="ignyte"] .home-story p,
+html[data-appearance="ignyte"] .home-fit-card p,
+html[data-appearance="ignyte"] .home-bottom h2,
+html[data-appearance="ignyte"] .home-bottom .home-kicker,
+html[data-appearance="ignyte"] .home-bottom .home-pill,
+html[data-appearance="ignyte"] .home-bottom .home-pill span {
+  color: #0B1020;
+}
+
+html[data-appearance="ignyte"] .home-bottom .home-pill {
+  background: #fff4ed;
+  border-color: #0B1020;
+}
+
+html[data-appearance="ignyte"] .home-story h2 span { color: #0B1020; }
+html[data-appearance="ignyte"] .home-story .home-underlined,
+html[data-appearance="ignyte"] .home-fit .home-underlined { color: #0B1020; border-color: #0B1020; }
+html[data-appearance="ignyte"] .pdf-footer { background: transparent; color: #0B1020; }
 
 .ig-heat-base {
   position: absolute;

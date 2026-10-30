@@ -12,6 +12,7 @@ import { StoreProvider } from "@/components/store-provider";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import AnalyticsTracker from "@/components/analytics-tracker";
+import IgnyteFireField from "@/components/ignyte-fire-field";
 
 const ignyteSans = localFont({
   src: [
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: "try{var a=localStorage.getItem('ignyte-appearance');document.documentElement.dataset.appearance=(a==='dark'||a==='ignyte')?a:'light'}catch(e){document.documentElement.dataset.appearance='light'}" }} /></head>
       <body className={`${ignyteSans.variable} ${ignyteMono.variable}`}>
+        <IgnyteFireField />
         <div className="ignyte-fire-egg" aria-hidden="true" />
         <StoreProvider>
           <AnalyticsTracker />
