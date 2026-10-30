@@ -10,7 +10,7 @@ import "./shop-the-look.css";
 
 type Look = { title: string; description: string; top: string; bottom: string };
 const looks: Look[] = [
-  { title: "The studio set", description: "Soft colour, strong intent.", top: "aura-halter-lavender", bottom: "seamless-legging-lavender" },
+  { title: "The studio set", description: "Soft colour, strong intent.", top: "seamless-sports-bra-jacaranda", bottom: "seamless-legging-lavender" },
   { title: "The training edit", description: "Ready for every round.", top: "motion-sports-bra-black", bottom: "all-in-motion-shorts-black" },
 ];
 
@@ -35,7 +35,7 @@ function LookCard({ look, products }: { look: Look; products: Product[] }) {
     </div></div>;
   };
   return <article className="look-card">
-    <Link href={`/product/${top.slug}/`} className="look-image" aria-label={`View ${look.title}`}><img src={top.image} alt={`${top.name} in ${top.color}, part of ${look.title}`} loading="lazy" /></Link>
+    <Link href={`/product/${top.slug}/`} className="look-image" aria-label={`View ${look.title}`}><img src={top.gallery[0]?.image ?? top.image} alt={`${top.name} and coordinated bottoms in ${top.color}`} loading="lazy" /></Link>
     <div className="look-card-content"><span className="home-kicker">CURATED TO MOVE_</span><h3>{look.title}</h3><p>{look.description}</p>
       {renderProduct(top, selectedTopSize, setTopSize, slug => { const next = products.find(item => item.slug === slug); setTopSlug(slug); if (!next?.variants?.some(v => v.size === topSize && v.stock > 0)) setTopSize(""); })}
       {renderProduct(bottom, selectedBottomSize, setBottomSize, slug => { const next = products.find(item => item.slug === slug); setBottomSlug(slug); if (!next?.variants?.some(v => v.size === bottomSize && v.stock > 0)) setBottomSize(""); })}
