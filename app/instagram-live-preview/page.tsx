@@ -5,7 +5,7 @@ import "./instagram-live-preview.css";
 
 export const metadata: Metadata = {
   title: "Instagram Feed Preview | Ignyte Active",
-  description: "Preview the same live-connected Instagram carousel used on the Ignyte Active homepage.",
+  description: "Preview the curated Instagram carousel used on the Ignyte Active homepage and product pages.",
   robots: { index: false, follow: false },
 };
 
@@ -24,8 +24,8 @@ export default function InstagramLivePreviewPage() {
         <aside className="ig-live-note">
           <span className="ig-live-note-mark" aria-hidden="true">↘</span>
           <div>
-            <h2>Connected feed preview</h2>
-            <p>This is the same carousel used on the homepage and product pages. It reads from the site’s Instagram feed endpoint; once Meta access is authorized and automatic updates are enabled, the connected account’s posts appear here.</p>
+            <h2>Curated Instagram feed</h2>
+            <p>This carousel is also shown on the homepage and product pages. The team can manage post links and cover images in the admin; no Instagram login or account connection is needed. Each card opens its post or reel on Instagram.</p>
             <Link href="/admin/pdp-social">MANAGE INSTAGRAM FEED ↗</Link>
           </div>
         </aside>
