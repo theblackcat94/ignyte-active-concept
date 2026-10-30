@@ -82,7 +82,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     addToBag(product.slug, size);
   }
   const sections = ["FEATURES", "DESIGNED FOR", "FIT & FABRIC", "MODEL DETAILS", "SIZE GUIDE", "CARE GUIDE", "DELIVERY & RETURNS"].filter(label =>
-    label === "FEATURES" ? pdp.features.length || isSock : label === "DESIGNED FOR" ? pdp.activities.length : label === "FIT & FABRIC" ? Boolean(isSock || pdp.fit || pdp.fabric || product.fitAttribute || product.coverageAttribute || pdp.oeko_certified) : label === "MODEL DETAILS" ? Boolean(pdp.show_model_details && pdp.model_details.trim()) : label === "CARE GUIDE" ? product.category !== "accessories" && (Boolean(pdp.care_approved) || showDraftCareGuide) : true);
+    label === "FEATURES" ? pdp.features.length || isSock : label === "DESIGNED FOR" ? pdp.activities.length : label === "MODEL DETAILS" ? Boolean(pdp.show_model_details && pdp.model_details.trim()) : label === "CARE GUIDE" ? product.category !== "accessories" && (Boolean(pdp.care_approved) || showDraftCareGuide) : true);
 
   function content(label: string) {
     if (label === "FEATURES") return <ul className="pdp-feature-list">{pdp.features.map(feature => <li key={feature}>{feature}</li>)}{isSock && <li>{sockSizing.productText}</li>}</ul>;
@@ -90,9 +90,12 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     if (label === "FIT & FABRIC") return <div className="pdp-fit-fabric">
       {product.fitAttribute && <p><strong>Fit</strong><span>{product.fitAttribute}</span></p>}
       {product.coverageAttribute && <p><strong>Coverage</strong><span>{product.coverageAttribute}</span></p>}
+      {pdp.support_level?.trim() && <p><strong>Support</strong><span>{pdp.support_level.trim()}</span></p>}
       {isSock ? <p><strong>Fit and sizing advice</strong><span>{sockSizing.productText}</span></p> : pdp.fit && <p><strong>Fit and sizing advice</strong><span>{pdp.fit}</span></p>}
       {fabricCompositions(pdp.fabric).map((part, index) => <p key={`${part.label}-${index}`}><strong>{part.label}</strong><span>{part.composition}</span></p>)}
-      {pdp.oeko_certified && pdp.oeko_certificate.trim() && <div className="pdp-oeko"><strong>OEKO-TEX® STANDARD 100</strong>{pdp.oeko_certificate.trim() && <><p>Made with OEKO-TEX® STANDARD 100 certified fabrics, tested for harmful substances so you can feel confident in what’s against your skin.</p><a href="https://www.oeko-tex.com/en/label-check" target="_blank" rel="noreferrer">Check certificate {pdp.oeko_certificate} ↗</a></>}</div>}
+      {(pdp.care_instructions?.trim() || pdp.care_approved) && <p><strong>Care</strong><span>{pdp.care_instructions?.trim() || "Machine wash cold at 30°C on a gentle cycle. Air dry in the shade. Always follow the garment care label."}</span></p>}
+      {!isSock && !pdp.fit && !pdp.fabric && !pdp.support_level && !pdp.care_instructions && !product.fitAttribute && !product.coverageAttribute && !pdp.care_approved && !pdp.oeko_certified && <p>Fit and fabric details are being confirmed for this product.</p>}
+      {pdp.oeko_certified && <div className="pdp-oeko"><strong>OEKO-TEX® STANDARD 100</strong><p>Made with OEKO-TEX® STANDARD 100 certified fabrics, tested for harmful substances so you can feel confident in what’s against your skin.</p>{pdp.oeko_certificate_url?.trim() && <a href={pdp.oeko_certificate_url.trim()} target="_blank" rel="noopener noreferrer">View certificate{pdp.oeko_certificate.trim() ? ` ${pdp.oeko_certificate.trim()}` : ""} ↗</a>}</div>}
     </div>;
     if (label === "MODEL DETAILS") {
       const name = pdp.model_details.split("\n", 1)[0].trim();

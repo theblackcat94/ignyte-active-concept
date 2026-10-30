@@ -32,6 +32,8 @@ function LookCard({ look, products }: { look: Look; products: Product[] }) {
   const bottomVariant = bottom.variants?.find(variant => variant.size === selectedBottomSize);
   const topPrice = topVariant?.price ?? top.price;
   const bottomPrice = bottomVariant?.price ?? bottom.price;
+  const primaryLookImage = top.gallery[0]?.image ?? top.image;
+  const frontLookImage = (top.slug === "motion-sports-bra-black" ? top.gallery.find(item => item.image.includes("-gallery-06.jpg"))?.image : undefined) ?? (top.image !== primaryLookImage ? top.image : top.gallery.find(item => item.image !== primaryLookImage)?.image) ?? primaryLookImage;
   const atBagLimit = (item: Product, selected: string) => {
     const variant = item.variants?.find(value => value.size === selected);
     return Boolean(variant && (bag.find(entry => entry.slug === item.slug && entry.size === selected)?.quantity ?? 0) >= variant.stock);
@@ -73,7 +75,7 @@ function LookCard({ look, products }: { look: Look; products: Product[] }) {
     </div></div>;
   };
   return <article className="look-card">
-    <Link href={`/product/${top.slug}/`} className="look-image" aria-label={`View ${look.title}`}><Image className="look-image-primary" src={top.gallery[0]?.image ?? top.image} alt={`${top.name} and coordinated bottoms in ${top.color}`} fill sizes="(max-width: 650px) 85vw, (max-width: 1100px) 35vw, 19vw" /><Image className="look-image-secondary" src={top.gallery[1]?.image ?? top.gallery[0]?.image ?? top.image} alt="" aria-hidden="true" fill sizes="(max-width: 650px) 85vw, (max-width: 1100px) 35vw, 19vw" /></Link>
+    <Link href={`/product/${top.slug}/`} className="look-image" aria-label={`View ${look.title}`}><Image className="look-image-primary" src={primaryLookImage} alt={`${top.name} and coordinated bottoms in ${top.color}`} fill sizes="(max-width: 650px) 85vw, (max-width: 1100px) 35vw, 19vw" /><Image className="look-image-secondary" src={frontLookImage} alt="" aria-hidden="true" fill sizes="(max-width: 650px) 85vw, (max-width: 1100px) 35vw, 19vw" /></Link>
     <div className="look-card-content"><span className="home-kicker">{look.eyebrow}</span><h3>{look.title}</h3><p>{look.description}</p>
       {renderProduct(top, selectedTopSize, setTopSize, selectTopColour)}
       {renderProduct(bottom, selectedBottomSize, setBottomSize, selectBottomColour)}

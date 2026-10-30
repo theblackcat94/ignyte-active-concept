@@ -86,6 +86,13 @@
 .pdp-desktop-purchase-add:disabled,.pdp-mobile-purchase button:disabled{opacity:.55;cursor:not-allowed;transform:none}
 html[data-appearance="ignyte"] .pdp-brand-callout{position:relative}
 
+/* Keep the brand copy and portrait film visually connected at every width. */
+.pdp-brand-callout{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr)}
+.pdp-brand-copy{align-items:flex-start;text-align:left;padding:clamp(38px,4.5vw,72px);padding-right:clamp(20px,2.5vw,42px)}
+.pdp-brand-callout .brand-film{justify-self:start;max-width:390px;width:min(100% - 24px,390px);margin:28px 0}
+@media(max-width:900px){.pdp-brand-callout{grid-template-columns:1fr}.pdp-brand-copy{padding:clamp(34px,6vw,56px)}.pdp-brand-callout .brand-film{justify-self:center;width:min(calc(100% - 48px),360px);margin:0 auto 36px}}
+@media(max-width:650px){.pdp-brand-copy{padding:42px 25px}.pdp-brand-callout .brand-film{width:min(calc(100% - 50px),320px)}}
+
 html[data-appearance="dark"] .product-page .detail-add{color:#fff}
 html[data-appearance="ignyte"] .product-page .detail-add,html[data-appearance="ignyte"] .pdp-desktop-purchase-add,html[data-appearance="ignyte"] .pdp-mobile-purchase button{background:#0B1020;color:#fff;border-color:transparent}
 html[data-appearance="ignyte"] .product-page .detail-add:hover:not(:disabled),html[data-appearance="ignyte"] .pdp-desktop-purchase-add:hover:not(:disabled),html[data-appearance="ignyte"] .pdp-mobile-purchase button:hover:not(:disabled){background:#25304b;color:#fff}

@@ -30,3 +30,7 @@
 html[data-appearance="dark"] .look-total{border-color:#6c7585}
 @media(max-width:1100px){.look-grid{grid-template-columns:1fr}.look-card{grid-template-columns:minmax(0,.72fr) minmax(0,1fr);max-width:850px;margin-inline:auto;width:100%}.look-image{height:min(58vh,490px)}}
 @media(max-width:650px){.look-card{grid-template-columns:1fr;gap:16px}.look-image{width:100%;height:auto;min-height:0;aspect-ratio:4/3}.look-image img{object-fit:contain}.look-card-content{padding:0}.look-grid{gap:48px}.look-options{justify-content:flex-start;gap:18px}}
+
+.home-shop-look{padding-block:clamp(82px,7.5vw,116px) clamp(90px,8vw,122px)}
+.home-shop-look .home-section-head{margin-bottom:clamp(26px,3vw,42px)}
+@media(max-width:650px){.home-shop-look{padding-block:66px 82px}.home-shop-look .home-section-head{margin-bottom:25px}}
