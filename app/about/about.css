@@ -15,5 +15,12 @@
 .about-hero h1 .about-hero-line{color:inherit}
 .about-hero h1 .fx-ember{color:var(--ink,#ffd9a0)}
 @media(max-width:900px){.about-hero-line{display:inline;white-space:normal}}
+.about-hero .home-registration-mark{position:absolute;z-index:3;width:12px;height:12px;color:#fff;opacity:.88;filter:drop-shadow(0 0 2px #000c);pointer-events:none}
+.about-hero .home-registration-mark::before,.about-hero .home-registration-mark::after{content:"";position:absolute;display:block;background:currentColor}
+.about-hero .home-registration-mark::before{width:100%;height:1px;left:0;top:50%;transform:translateY(-50%)}
+.about-hero .home-registration-mark::after{height:100%;width:1px;top:0;left:50%;transform:translateX(-50%)}
+.about-hero .home-registration-mark-top-left{top:20px;left:20px}.about-hero .home-registration-mark-top-right{top:20px;right:20px}
+.about-hero .home-registration-mark-bottom-left{bottom:20px;left:20px}.about-hero .home-registration-mark-bottom-right{bottom:20px;right:20px}
+@media(max-width:600px){.about-hero .home-registration-mark{width:10px;height:10px}.about-hero .home-registration-mark-top-left{top:12px;left:12px}.about-hero .home-registration-mark-top-right{top:12px;right:12px}.about-hero .home-registration-mark-bottom-left{bottom:12px;left:12px}.about-hero .home-registration-mark-bottom-right{bottom:12px;right:12px}}
 .about-mission img{object-position:center 32%}
 @media(max-width:800px){.about-mission img{object-position:center 26%}}

@@ -29,27 +29,36 @@ html[data-appearance="ignyte"] body > .ignyte-fire-field {
   );
 }
 
-/* Let the field show through story and editorial sections. Keep buying surfaces solid. */
-html[data-appearance="ignyte"] .home-story,
-html[data-appearance="ignyte"] .home-values,
-html[data-appearance="ignyte"] .home-collections,
-html[data-appearance="ignyte"] .home-fit,
-html[data-appearance="ignyte"] .home-bottom,
-html[data-appearance="ignyte"] .pdf-footer-main,
-html[data-appearance="ignyte"] .pdf-footer-perks,
-html[data-appearance="ignyte"] .about-page,
-html[data-appearance="ignyte"] .about-mindset {
-  background: transparent;
+/* The same fixed field is visible through every page and section. */
+html[data-appearance="ignyte"] :is(main,footer,.site-header,.announcement,.home-page,.about-page,.product-page,.shop-page,.checkout-page,.account-page,.wishlist-page,.size-guide-page,.support-page,.collections-page,.contact-page,.not-found,.pdf-footer,.pdf-footer-main,.pdf-footer-perks,.home-founders-badge,.pdp-brand-callout,.shop-banner,.account-auth-card,.account-sidebar,.account-order-empty,.account-orders article,.checkout-panel,.checkout-summary,.filter-panel,.build-set) {
+  background: transparent !important;
   color: #0B1020;
 }
-
-html[data-appearance="ignyte"] .home-products,
-html[data-appearance="ignyte"] .home-products:nth-of-type(even),
-html[data-appearance="ignyte"] .home-founders,
+html[data-appearance="ignyte"] main :is(section,article),
+html[data-appearance="ignyte"] footer section:not(.pdf-footer-signup) {
+  background: transparent !important;
+}
 html[data-appearance="ignyte"] .pdf-footer-signup {
-  background: #fff4ed;
+  background: #fff4ed !important;
   color: #0B1020;
 }
+html[data-appearance="ignyte"] .site-header,
+html[data-appearance="ignyte"] .announcement { color: #0B1020; }
+html[data-appearance="ignyte"] .announcement-center,
+html[data-appearance="ignyte"] .shop-banner :is(h1,p,.eyebrow) { color: #0B1020; }
+html[data-appearance="ignyte"] .shop-banner h1 { animation: none; text-shadow: none; }
+html[data-appearance="ignyte"] .home-slide-media :is(img,video),
+html[data-appearance="ignyte"] .home-feature > img,
+html[data-appearance="ignyte"] .about-hero > img,
+html[data-appearance="ignyte"] .home-bottom-photo { opacity: .78; }
+html[data-appearance="ignyte"] .home-products .product-meta,
+html[data-appearance="ignyte"] .related-section .product-meta,
+html[data-appearance="ignyte"] .checkout-panel p,
+html[data-appearance="ignyte"] .checkout-summary p,
+html[data-appearance="ignyte"] .account-page p,
+html[data-appearance="ignyte"] .filter-panel,
+html[data-appearance="ignyte"] .home-edit-subcopy { color: #0B1020; }
+html[data-appearance="ignyte"] .mobile-menu { background:#ff4533df;backdrop-filter:blur(18px); }
 
 html[data-appearance="ignyte"] .home-story p,
 html[data-appearance="ignyte"] .home-fit-card p,
@@ -61,9 +70,11 @@ html[data-appearance="ignyte"] .home-bottom .home-pill span {
 }
 
 html[data-appearance="ignyte"] .home-bottom .home-pill {
-  background: #fff4ed;
+  background: #0B1020;
+  color: #fff4ed;
   border-color: #0B1020;
 }
+html[data-appearance="ignyte"] .home-bottom .home-pill span{color:#fff4ed}
 
 html[data-appearance="ignyte"] .home-story h2 span { color: #0B1020; }
 html[data-appearance="ignyte"] .home-story .home-underlined,

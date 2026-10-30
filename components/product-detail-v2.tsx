@@ -30,7 +30,9 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const [openInfo, setOpenInfo] = useState<string[]>([]);
   const [guideOpen, setGuideOpen] = useState(false);
   const [showMobilePurchase, setShowMobilePurchase] = useState(false);
+  const [showDesktopPurchase, setShowDesktopPurchase] = useState(false);
   const sizeRef = useRef<HTMLDivElement>(null);
+  const addRef = useRef<HTMLButtonElement>(null);
   const related = pairedProducts(product.slug, products, "related");
   const upsells = pairedProducts(product.slug, products, "upsell");
   const colours = [product, ...products.filter(p => p.slug !== product.slug && p.name === product.name && p.category === product.category)]
@@ -65,6 +67,8 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     const update = () => {
       const footerTop = document.querySelector("footer")?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY;
       setShowMobilePurchase(window.scrollY > 1 && footerTop > window.innerHeight);
+      const addBottom = addRef.current?.getBoundingClientRect().bottom ?? Number.POSITIVE_INFINITY;
+      setShowDesktopPurchase(window.innerWidth > 900 && addBottom < 0 && footerTop > window.innerHeight);
     };
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
@@ -97,7 +101,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     return <div className="pdp-delivery"><p>Australia only. Free shipping on Australian orders of AU$100 or more after discounts. Delivery rates for smaller orders and prepaid return labels are being confirmed with the fulfilment team.</p><Link className="text-link" href="/returns">VIEW RETURNS POLICY ↗</Link></div>;
   }
 
-  return <div className={`product-page pdp-stacked section-wrap${showMobilePurchase && !bagOpen && !guideOpen ? " has-sticky-purchase" : ""}`}>
+  return <div className={`product-page pdp-stacked section-wrap${(showMobilePurchase || showDesktopPurchase) && !bagOpen && !guideOpen ? " has-sticky-purchase" : ""}`}>
     <div className="detail-grid"><div><StackedProductGallery product={product} /></div><div className="detail-info" tabIndex={0} aria-label="Product details and purchase options"><div className="breadcrumb pdp-detail-breadcrumb"><Link href="/">IGNYTE</Link><span>/</span><Link href={`/shop/${product.category}`}>{product.category.toUpperCase().replace("-", " ")}</Link><span>/</span><span>{product.name.toUpperCase()}</span></div><h1>{product.name.toUpperCase()}<em>.</em></h1>
       <div className="detail-price">{(selectedVariant?.originalPrice ?? product.originalPrice) && <del>{money((selectedVariant?.originalPrice ?? product.originalPrice)!)}</del>}<span>{money(selectedVariant?.price ?? product.price)}<CurrencyEstimate aud={selectedVariant?.price ?? product.price} /></span></div>
       <p className="detail-description">{product.description}</p>{commerceConfigured && !product.variants && <p className="catalog-preview-note">Preview item. Available to order after sizes and stock are confirmed.</p>}
@@ -111,7 +115,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       <div className="size-heading"><span>SELECT SIZE</span><button type="button" onClick={() => setGuideOpen(true)}>SIZE GUIDE ↗</button></div>
       <div className="size-grid" ref={sizeRef}>{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} disabled={variant.stock <= 0} onClick={() => setSelection({ slug: product.slug, size: variant.size })} key={variant.id}>{variant.size}</button>)}</div>
       {isSock && <p className="pdp-sock-size-note">{sockSizing.productText}</p>}
-      <button type="button" className="button button-orange detail-add" onClick={() => size && addToBag(product.slug, size)} disabled={!canAdd}>{addLabel}<span>↗</span></button>
+      <button type="button" ref={addRef} className="button button-orange detail-add" onClick={() => size && addToBag(product.slug, size)} disabled={!canAdd}>{addLabel}<span>↗</span></button>
       <BuildYourSet bra={product} braSize={size} />
       <button type="button" className="wishlist-button" aria-pressed={wishlist.includes(product.slug)} onClick={() => toggleWishlist(product.slug)}><span className="wishlist-glyph" key={wishlist.includes(product.slug) ? "saved" : "unsaved"} aria-hidden="true"><HeartIcon filled={wishlist.includes(product.slug)} /></span> {wishlist.includes(product.slug) ? "SAVED TO WISHLIST" : "ADD TO WISHLIST"}</button>
       <div className="pdp-purchase-reassurance"><Link href="/returns#shipping"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M2 5h12v11H2zM14 9h4l4 4v3h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Free shipping on AU orders $100 or more</span></Link><Link href="/returns"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="m3 12 6 6L21 6"/><path d="M3 5h10"/></svg><span>Fast, easy returns</span></Link></div>
@@ -123,6 +127,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     {upsells.length > 0 && <div className="related-section"><div className="section-heading"><div><span className="eyebrow">ANOTHER WAY TO MOVE</span><h2>CONSIDER <em>THIS.</em></h2></div></div><div className="products-grid">{upsells.map((p, i) => <ProductCard product={p} index={i} key={p.slug} showOptions />)}</div></div>}
     <PdpSocialStrip productSlug={product.slug} />
     {showMobilePurchase && !guideOpen && !bagOpen && <div className="pdp-mobile-purchase" role="region" aria-label="Sticky purchase controls"><div className="pdp-mobile-purchase-summary"><span>{product.name} · {product.color}</span><strong>{size || "Choose size"} · {money(selectedVariant?.price ?? product.price)}</strong></div><button type="button" onClick={mobilePurchase} disabled={catalogLoading || catalogError || !sizes.some(variant => variant.stock > 0)} aria-label={size ? `Add ${product.name} in ${product.color}, size ${size}, to bag` : `Choose a size before adding ${product.name} to bag`}>{stickyAddLabel}</button></div>}
+    {showDesktopPurchase && !guideOpen && !bagOpen && <div className="pdp-desktop-purchase" role="region" aria-label="Sticky desktop purchase controls"><div className="pdp-desktop-purchase-inner"><div className="pdp-desktop-purchase-summary"><strong>{product.name}</strong><span>{product.color} · {money(selectedVariant?.price ?? product.price)}</span></div><div className="pdp-desktop-purchase-sizes" role="group" aria-label={`Choose ${product.name} size in sticky bar`}>{sizes.map(variant => <button type="button" key={variant.id} disabled={variant.stock <= 0} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} onClick={() => setSelection({ slug: product.slug, size: variant.size })}>{variant.size}</button>)}</div><button type="button" className="pdp-desktop-purchase-add" disabled={!canAdd} onClick={() => addToBag(product.slug, size)}>{addLabel} ↗</button></div></div>}
     {guideOpen && <div className="pdp-guide-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setGuideOpen(false); }}><div className="pdp-guide-dialog" role="dialog" aria-modal="true" aria-label="Size guide"><div className="pdp-guide-head"><h2>FIND YOUR FIT.</h2><button type="button" onClick={() => setGuideOpen(false)} aria-label="Close size guide">×</button></div><SizeGuideContent productCategory={product.category} /><Link href={isSock ? "/size-guide#socks" : "/size-guide"} className="text-link">OPEN FULL SIZE GUIDE ↗</Link></div></div>}
   </div>;
 }

@@ -161,3 +161,6 @@ html[data-appearance="ignyte"] .wishlist-page h1 em{color:#0B1020}
 html[data-appearance="ignyte"] .related-section .text-link:hover,
 html[data-appearance="ignyte"] .home-story .home-underlined:hover,
 html[data-appearance="ignyte"] .home-fit .home-underlined:hover{color:#0B1020;border-color:#0B1020}
+html[data-appearance="dark"] .checkout-page .button-orange{background:#FF4533;color:#0B1020}
+html[data-appearance="dark"] .checkout-page .button-orange:hover:not(:disabled){background:#ff6958;color:#0B1020}
+html[data-appearance="dark"] .checkout-page .button-orange:active:not(:disabled){background:#e83727;color:#0B1020}

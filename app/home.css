@@ -144,3 +144,5 @@ body:has(.home-page) .site-header{height:78px}
 @media(max-width:800px){.home-story .ignyte-fire-content{grid-template-columns:1fr;gap:30px}}
 
 @media(min-width:901px){.home-founders h2{font-size:clamp(44px,4.1vw,64px);max-width:none}}
+.home-edit-subcopy{text-align:left}
+@media(min-width:901px){.home-founders{grid-template-columns:minmax(280px,400px) minmax(0,760px);justify-content:center;align-items:center;gap:clamp(44px,6vw,110px);min-height:520px;padding-block:85px}.home-founders-badge .home-founders-logo{max-width:390px}.home-founders-copy{align-self:center}}

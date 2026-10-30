@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import FeatureArrow from "@/components/feature-arrow";
+import RegistrationMarks from "@/components/registration-marks";
 import "./about.css";
 
 export const metadata: Metadata = { title: "About Ignyte Active | Built for the Burn", description: "Meet Ignyte Active, the activewear brand bringing performance and self-expression together. Discover our purpose and what it means to bring your own fire." };
@@ -9,6 +10,7 @@ export default function AboutPage() {
   return <div className="about-page">
     <section className="about-hero">
       <img src="/images/about/About-Hero-1.webp" alt="Ignyte athlete training with battle ropes" />
+      <RegistrationMarks />
       <div><span className="eyebrow">IGNYTE® ACTIVEWEAR ↘</span><h1>High-performance gear<br className="about-hero-desktop-break" /><span className="about-hero-line">for women who <span className="fx-ember">bring the fire</span>.</span></h1><p>IGNYTE brings together training, style and individuality. For women who love a challenge and bring their own energy to every session.</p></div>
     </section>
     <section className="about-features section-wrap">
