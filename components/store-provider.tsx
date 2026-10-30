@@ -164,13 +164,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const shippingEligible = qualifiesForFreeShipping(shippingBasisCents);
   useEffect(() => {
     if (!storageReady || catalogLoading) return;
-    if (previousShippingEligibility.current === false && shippingEligible) {
+    if (previousShippingEligibility.current === false && shippingEligible && bagOpen) {
       setShippingCelebrationId(++shippingCelebrationSequence.current);
     } else if (!shippingEligible) {
       setShippingCelebrationId(null);
     }
     previousShippingEligibility.current = shippingEligible;
-  }, [storageReady, catalogLoading, shippingEligible]);
+  }, [storageReady, catalogLoading, shippingEligible, bagOpen]);
   useEffect(() => {
     if (shippingCelebrationId === null) return;
     const timer = window.setTimeout(() => setShippingCelebrationId(null), 4000);
