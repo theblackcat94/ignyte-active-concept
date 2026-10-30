@@ -36,6 +36,9 @@ const checked = (result, label) => {
 };
 
 const slug = "seamless-short-jacaranda";
+const aurora = checked(await db.from("products").select("id")
+  .eq("slug", "seamless-short-aurora").maybeSingle(), "Check Aurora replacement");
+if (aurora) throw new Error("Aurora is already published; the retired Jacaranda listing must not be recreated");
 const directory = "/images/jacob-2026-10/ign-lvr-shts-jac/";
 const prefix = "ign-lvr-shts-jac-seamless-shorts-jacaranda-";
 const imagePath = `${directory}${prefix}main-01.jpg`;
