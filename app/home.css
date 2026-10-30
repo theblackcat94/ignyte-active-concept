@@ -152,3 +152,5 @@ body:has(.home-page) .site-header{height:78px}
 @media(min-width:901px){.home-founders{grid-template-columns:minmax(280px,400px) minmax(0,760px);justify-content:center;align-items:center;gap:clamp(44px,6vw,110px);min-height:520px;padding-block:85px}.home-founders-badge .home-founders-logo{max-width:390px}.home-founders-copy{align-self:center}}
 
 .home-alternative .home-collections{padding-top:90px}@media(max-width:600px){.home-alternative .home-collections{padding-top:65px}}
+.home-alternative .home-bottom .home-registration-mark{filter:none;color:#fff;opacity:.8}
+html[data-appearance="ignyte"] .home-alternative .home-bottom .home-registration-mark{color:#0B1020}

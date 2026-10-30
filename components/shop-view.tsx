@@ -8,6 +8,7 @@ import { useStore } from "./store-provider";
 import ProductCard from "./product-card";
 import StyledSelect from "./styled-select";
 import RegistrationMarks from "./registration-marks";
+import { compareProductColours } from "@/lib/product-colors";
 import "@/app/shop-filters.css";
 
 export default function ShopView({ category }: { category: Category }) {
@@ -23,7 +24,7 @@ export default function ShopView({ category }: { category: Category }) {
   const query = useSearchParams().get("q")?.toLowerCase() || "";
   const currentCategory = categories.find(item => item.id === category) || categories[0];
   const categoryProducts = products.filter(product => category === "all" || product.category === category);
-  const availableColors = [...new Set(categoryProducts.map(product => product.color))].sort();
+  const availableColors = [...new Set(categoryProducts.map(product => product.color))].sort(compareProductColours);
   const availableSizes = [...new Set(categoryProducts.flatMap(product => product.variants?.map(variant => variant.size) ?? []))].sort((a, b) => ["XS", "S", "M", "L", "XL", "ONE SIZE"].indexOf(a) - ["XS", "S", "M", "L", "XL", "ONE SIZE"].indexOf(b));
   const availableActivities = [...new Set(categoryProducts.flatMap(product => product.pdp.activities.map(activity => activity.trim()).filter(Boolean)))].sort();
   const availableFits = [...new Set(categoryProducts.map(product => product.fitAttribute).filter((value): value is string => Boolean(value)))].sort();

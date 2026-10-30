@@ -13,7 +13,7 @@ import BuildYourSet from "./build-your-set";
 import PdpSocialStrip from "./pdp-social-strip";
 import SizeGuideContent from "./size-guide-content";
 import { CurrencyEstimate } from "./currency-estimate";
-import { productColourHex } from "@/lib/product-colors";
+import { compareProductColours, productColourHex } from "@/lib/product-colors";
 import { pairedProducts } from "@/lib/product-merchandising";
 import { modelPortraits } from "@/data/model-details";
 import { sockSizing } from "@/data/size-guide";
@@ -37,7 +37,8 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const related = pairedProducts(product.slug, products, "related");
   const upsells = pairedProducts(product.slug, products, "upsell");
   const colours = [product, ...products.filter(p => p.slug !== product.slug && p.name === product.name && p.category === product.category)]
-    .filter((item, index, all) => all.findIndex(candidate => candidate.color.toLowerCase() === item.color.toLowerCase()) === index);
+    .filter((item, index, all) => all.findIndex(candidate => candidate.color.toLowerCase() === item.color.toLowerCase()) === index)
+    .sort((a, b) => compareProductColours(a.color, b.color));
   const isSock = product.name.toLowerCase().includes("sock");
   const sizes: NonNullable<Product["variants"]> = product.variants ? product.variants : (isSock ? [sockSizing.variant] : ["XS", "S", "M", "L", "XL"]).map(value => ({ id: value, size: value, price: product.price, stock: commerceConfigured ? 0 : 1 }));
   const defaultSize = sizes.length === 1 && sizes[0].stock > 0 ? sizes[0].size : "";

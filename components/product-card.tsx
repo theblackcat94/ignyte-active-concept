@@ -5,7 +5,7 @@ import { useState } from "react";
 import { CurrencyEstimate } from "./currency-estimate";
 import { type Product, money } from "@/lib/catalog";
 import { commerceConfigured } from "@/lib/commerce";
-import { productColourHex } from "@/lib/product-colors";
+import { compareProductColours, productColourHex } from "@/lib/product-colors";
 import { useStore } from "./store-provider";
 import HeartIcon from "./heart-icon";
 import "@/app/product-card.css";
@@ -16,7 +16,7 @@ export default function ProductCard({ product, index = 0, showOptions = false }:
   const [selectedSlug, setSelectedSlug] = useState(product.slug);
   const [quickOpen, setQuickOpen] = useState(false);
   const [quickSize, setQuickSize] = useState("");
-  const colours = showOptions ? products.filter(item => item.name === product.name && item.category === product.category) : [product];
+  const colours = showOptions ? products.filter(item => item.name === product.name && item.category === product.category).sort((a, b) => compareProductColours(a.color, b.color)) : [product];
   const displayed = colours.find(item => item.slug === selectedSlug) ?? product;
   const liked = wishlist.includes(displayed.slug);
   const sizes = displayed.variants ?? (commerceConfigured ? [] : ["S", "M", "L"].map(size => ({ id: size, size, price: displayed.price, stock: 1 })));

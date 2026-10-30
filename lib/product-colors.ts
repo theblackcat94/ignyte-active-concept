@@ -14,3 +14,15 @@ const swatchColors: Record<string, string> = {
 export function productColourHex(color: string): string | undefined {
   return swatchColors[color.trim().toLowerCase()];
 }
+
+// One storefront order for every product selector and colour filter.
+const colourOrder = ["black", "espresso", "merlot", "blue", "jacaranda", "lavender", "aurora", "mauve", "white"];
+
+export function compareProductColours(a: string, b: string): number {
+  const first = a.trim().toLowerCase();
+  const second = b.trim().toLowerCase();
+  const firstRank = colourOrder.indexOf(first);
+  const secondRank = colourOrder.indexOf(second);
+  return (firstRank < 0 ? colourOrder.length : firstRank) - (secondRank < 0 ? colourOrder.length : secondRank)
+    || first.localeCompare(second);
+}
