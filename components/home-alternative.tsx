@@ -1,0 +1,46 @@
+"use client";
+
+import Link from "next/link";
+import HomeProductCarousel from "@/components/home-product-carousel";
+import HomeHeroSlider from "@/components/home-hero-slider";
+import ShopTheLook from "@/components/shop-the-look";
+import FeatureArrow from "@/components/feature-arrow";
+import BrandFilm from "@/components/brand-film";
+import RegistrationMarks from "@/components/registration-marks";
+import { homeBestSellerSlugs } from "@/data/pdp-planner";
+import { useStore } from "@/components/store-provider";
+import { asset } from "@/lib/asset";
+import "@/app/home.css";
+
+const homeImage = (name: string) => asset(`/images/home/${name}`);
+const featuredCover: Record<string, string> = {
+  "sports-bras": "Ignyte-Sports-Bras-Vertical.jpg", tops: "Ignyte-Tops-Vertical.jpg",
+  leggings: "Ignyte-Leggings-Vertical.jpg", shorts: "Ignyte-Shorts-Vertical.jpg",
+};
+
+export default function HomeAlternative() {
+  const { products, categories } = useStore();
+  const collections = ["sports-bras", "leggings", "shorts", "tops"].map(id => categories.find(category => category.id === id)).filter((category): category is (typeof categories)[number] => Boolean(category));
+  const apparel = products.filter(product => product.category !== "accessories" && !product.slug.includes("socks"));
+  const bestSellers = apparel.filter(product => product.pdp.featured_best_seller).sort((a, b) => {
+    const rank = (slug: string) => { const index = homeBestSellerSlugs.indexOf(slug); return index < 0 ? 999 : index; };
+    return rank(a.slug) - rank(b.slug);
+  });
+  const fitCards = [
+    { name: "RELAXED FIT", copy: "Lightweight shorts with an inner short and a zip pocket for small essentials.", action: "SHOP SHORTS ↗", category: "shorts", slug: "all-in-motion-shorts-black" },
+    { name: "CLOSE FIT", copy: "Bike shorts with a crossover waistband and a supportive, compressive feel.", action: "SHOP SHORTS ↗", category: "shorts", slug: "sculpt-shorts-mauve" },
+    { name: "FULL-LENGTH COVERAGE", copy: "High-waisted leggings with seamless knit construction and soft stretch.", action: "SHOP LEGGINGS ↗", category: "leggings", slug: "seamless-legging-lavender" },
+  ].map(card => ({ ...card, product: products.find(product => product.slug === card.slug) }));
+  return <div className="home-page home-alternative" id="top">
+    <div className="home-alternative-banner">ALTERNATIVE HOMEPAGE PREVIEW <Link href="/">VIEW CURRENT HOMEPAGE ↗</Link></div>
+    <HomeHeroSlider />
+    <section className="home-collections home-container" id="collections"><div className="home-section-head"><h2 className="mono-section-heading">SHOP CATEGORIES_</h2><Link href="/shop">SHOP ALL ↗</Link></div><div className="home-collection-grid">{collections.map((collection) => <Link href={`/shop/${collection.id}`} className="home-collection" key={collection.id}><img src={featuredCover[collection.id] ? homeImage(featuredCover[collection.id]) : collection.cover} alt={`${collection.label} collection`} loading="lazy" /><div><h3>{collection.label}</h3><span>SHOP NOW ↗</span></div></Link>)}</div></section>
+    {bestSellers.length > 0 && <section className="home-products home-container home-edit" aria-labelledby="best-sellers-title"><div className="home-section-head"><h2 id="best-sellers-title" className="mono-section-heading">THE IGNYTE EDIT_</h2><Link href="/shop">SHOP ALL ↗</Link></div><p className="home-edit-subcopy">Our favourites, ready for your next move.</p><HomeProductCarousel products={bestSellers} label="The Ignyte Edit" /></section>}
+    <section className="home-story home-container" id="story"><div className="ignyte-fire-content"><div><span className="home-kicker">IGNYTE® ACTIVEWEAR ↘</span><h2><span className="home-story-keep">High-performance</span> gear for women who bring the fire.</h2></div><div><p>We’re here for those who bring the fire to their training and expect their gear to match it. Discover what makes Ignyte different.</p><Link href="/about" className="home-underlined">EXPLORE IGNYTE ↗</Link></div></div></section>
+    <section className="home-values home-container" aria-label="Why Ignyte"><div><FeatureArrow /><h3>No distractions</h3><p>Designed to stay put, feel secure, and let you focus on the work.</p></div><div><FeatureArrow /><h3>Moves with you</h3><p>Flexible support that responds to every rep, hold, stretch, and session.</p></div><div><FeatureArrow /><h3>Tested in real training</h3><p>Built for sweat, pressure, and repeat wear.</p></div></section>
+    <section className="home-fit home-container" aria-labelledby="find-fit-title"><div className="home-section-head"><h2 id="find-fit-title" className="mono-section-heading">FIND YOUR FIT_</h2></div><div className="home-fit-grid">{fitCards.map(({ name, copy, action, category, product }) => product && <article className="home-fit-card" key={name}><Link href={`/shop/${category}`} className="home-fit-image" aria-label={`Shop ${name.toLowerCase()} ${category}`}><img src={product.image} alt={`${product.name} in ${product.color}`} loading="lazy" /><RegistrationMarks /></Link><h3>{name}</h3><p>{copy}</p><Link href={`/shop/${category}`} className="home-underlined">{action}</Link></article>)}</div></section>
+    <ShopTheLook products={products} />
+    <section className="home-bottom" aria-labelledby="bottom-title"><div className="home-bottom-copy"><span className="home-kicker mono-section-heading">BUILT FOR THE BURN_</span><h2 id="bottom-title">See IGNYTE in motion.</h2><Link href="/shop" className="home-pill">SHOP THE COLLECTION <span>↗</span></Link></div><BrandFilm label="IGNYTE brand film" /><img className="home-bottom-photo" src={homeImage("Home-Hero-Alt-2-v2.jpg")} alt="Two IGNYTE athletes in the gym" loading="lazy" /></section>
+    <section className="home-founders home-container" aria-labelledby="home-founders-title"><div className="home-founders-badge"><img className="home-founders-logo home-founders-logo-light" src={homeImage("ignyte-founder-badge.svg")} alt="IGNYTE Built for the Burn badge" /><img className="home-founders-logo home-founders-logo-dark" src={homeImage("ignyte-founder-badge-dark.svg")} alt="" aria-hidden="true" /></div><div className="home-founders-copy"><span className="home-kicker mono-section-heading">OUR STORY ↘</span><h2 id="home-founders-title">What fuels IGNYTE</h2><p>Founded in 2026, IGNYTE began with the belief that women shouldn’t have to choose between performance and self-expression. Our founders set out to create activewear that supports hard training while giving you the confidence to make it your own.</p><Link href="/about" className="home-underlined">MEET IGNYTE ↗</Link></div></section>
+  </div>;
+}

@@ -78,3 +78,10 @@
 @media(min-width:901px) and (max-width:1100px){.pdp-desktop-purchase-inner{gap:14px;padding-inline:20px}.pdp-desktop-purchase-summary{min-width:120px}.pdp-desktop-purchase-add{min-width:145px}}
 /* Let the page, rather than a nested sidebar, carry expanded accordion content. */
 @media(min-width:901px){.product-page.pdp-stacked .detail-info{position:static;top:auto;max-height:none;overflow:visible;overscroll-behavior-y:auto;padding:0}}
+
+/* Sticky purchase actions match the main Add to Bag control in every mode. */
+.pdp-desktop-purchase-add,.pdp-mobile-purchase button,html[data-appearance="dark"] .pdp-desktop-purchase-add,html[data-appearance="ignyte"] .pdp-desktop-purchase-add{background:#FF4533;color:#fff;border:1px solid transparent;font-size:11px;font-weight:800;letter-spacing:.11em;transition:background .2s,color .2s,transform .2s}
+.pdp-desktop-purchase-add:hover:not(:disabled),.pdp-mobile-purchase button:hover:not(:disabled){background:#e73724;transform:translateY(-2px)}
+.pdp-desktop-purchase-add:active:not(:disabled),.pdp-mobile-purchase button:active:not(:disabled){transform:scale(.98);background:#cf3022}
+.pdp-desktop-purchase-add:disabled,.pdp-mobile-purchase button:disabled{opacity:.55;cursor:not-allowed;transform:none}
+html[data-appearance="ignyte"] .pdp-brand-callout{position:relative}

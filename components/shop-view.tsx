@@ -7,6 +7,7 @@ import type { Category } from "@/lib/catalog";
 import { useStore } from "./store-provider";
 import ProductCard from "./product-card";
 import StyledSelect from "./styled-select";
+import RegistrationMarks from "./registration-marks";
 import "@/app/shop-filters.css";
 
 export default function ShopView({ category }: { category: Category }) {
@@ -49,7 +50,7 @@ export default function ShopView({ category }: { category: Category }) {
   ];
 
   return <div className="shop-page">
-    <div className={`shop-banner ${category === "sports-bras" ? "shop-banner-bras" : ""}`} style={{ backgroundImage: `linear-gradient(90deg, rgba(0,0,0,.88), rgba(0,0,0,.25)), url("${currentCategory.cover}")` }}><span className="eyebrow light">IGNYTE / THE COLLECTION</span><h1>{query ? "SEARCH RESULTS" : currentCategory.label.toUpperCase()}<em>.</em></h1><p>Pieces for every rep, every rest day, every version of you.</p></div>
+    <div className={`shop-banner ${category === "sports-bras" ? "shop-banner-bras" : ""}`} style={{ backgroundImage: `linear-gradient(90deg, rgba(0,0,0,.88), rgba(0,0,0,.25)), url("${currentCategory.cover}")` }}><RegistrationMarks /><span className="eyebrow light">IGNYTE / THE COLLECTION</span><h1>{query ? "SEARCH RESULTS" : currentCategory.label.toUpperCase()}<em>.</em></h1><p>Pieces for every rep, every rest day, every version of you.</p></div>
     <div className="section-wrap">
       <div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><span>{currentCategory.label.toUpperCase()}</span></div>
       <div className="shop-category-links">{categories.map(item => <Link className={item.id === category ? "active" : ""} href={item.id === "all" ? "/shop" : `/shop/${item.id}`} key={item.id}>{item.label}</Link>)}</div>

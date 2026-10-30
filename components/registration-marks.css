@@ -1,0 +1,19 @@
+.home-registration-mark{position:absolute;z-index:3;width:12px;height:12px;color:var(--registration-mark-color,#fff);opacity:.88;filter:drop-shadow(0 0 2px #000c);pointer-events:none}
+.home-registration-mark::before,.home-registration-mark::after{content:"";position:absolute;display:block;background:currentColor}
+.home-registration-mark::before{width:100%;height:1px;left:0;top:50%;transform:translateY(-50%)}
+.home-registration-mark::after{height:100%;width:1px;top:0;left:50%;transform:translateX(-50%)}
+.home-registration-mark-top-left{top:20px;left:20px}.home-registration-mark-top-right{top:20px;right:20px}
+.home-registration-mark-bottom-left{bottom:20px;left:20px}.home-registration-mark-bottom-right{bottom:20px;right:20px}
+@media(max-width:600px){.home-registration-mark{width:10px;height:10px}.home-registration-mark-top-left{top:12px;left:12px}.home-registration-mark-top-right{top:12px;right:12px}.home-registration-mark-bottom-left{bottom:12px;left:12px}.home-registration-mark-bottom-right{bottom:12px;right:12px}}
+.shop-banner,.pdp-brand-callout,.pdp-gallery-mark-frame{position:relative}
+.shop-banner .home-registration-mark,.pdp-brand-callout .home-registration-mark,.pdp-gallery-mark-frame .home-registration-mark{--registration-mark-color:#fff}
+.pdp-brand-callout .home-registration-mark{--registration-mark-color:#0B1020}
+html[data-appearance="ignyte"] .shop-banner .home-registration-mark,html[data-appearance="ignyte"] .pdp-brand-callout .home-registration-mark{--registration-mark-color:#0B1020}
+html[data-appearance="dark"] .pdp-brand-callout .home-registration-mark{--registration-mark-color:#fff}
+.pdp-gallery-mark-frame .home-registration-mark{z-index:5}
+
+.shop-banner .home-registration-mark{color:#fff!important}
+.pdp-brand-callout .home-registration-mark{color:#0B1020!important}
+.pdp-gallery-mark-frame .home-registration-mark{color:#fff!important}
+html[data-appearance="dark"] .pdp-brand-callout .home-registration-mark{color:#fff!important}
+html[data-appearance="ignyte"] .shop-banner .home-registration-mark,html[data-appearance="ignyte"] .pdp-brand-callout .home-registration-mark{color:#0B1020!important}

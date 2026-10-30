@@ -164,3 +164,5 @@ html[data-appearance="ignyte"] .home-fit .home-underlined:hover{color:#0B1020;bo
 html[data-appearance="dark"] .checkout-page .button-orange{background:#FF4533;color:#0B1020}
 html[data-appearance="dark"] .checkout-page .button-orange:hover:not(:disabled){background:#ff6958;color:#0B1020}
 html[data-appearance="dark"] .checkout-page .button-orange:active:not(:disabled){background:#e83727;color:#0B1020}
+
+html[data-appearance="ignyte"] .home-founders-logo-dark{filter:brightness(0) invert(1)}

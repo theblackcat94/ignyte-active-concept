@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import type { Product } from "@/lib/catalog";
+import RegistrationMarks from "./registration-marks";
 import ProductPhotoLightbox from "./product-photo-lightbox";
 import "@/app/pdp-stack-preview.css";
 
@@ -82,7 +83,7 @@ const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Produc
   }
 
   return <section className="pdp-stack-media" aria-label={`${product.name} media gallery`}>
-    <div className="pdp-stack-grid" ref={gridRef} onScroll={updateActiveIndex}
+    <div className="pdp-gallery-mark-frame">{product.slug === "aura-halter-lavender" && <RegistrationMarks />}<div className="pdp-stack-grid" ref={gridRef} onScroll={updateActiveIndex}
       onTouchStart={event => { if (!mobile) return; const touch = event.touches[0]; touchStart.current = { x: touch.clientX, y: touch.clientY, left: gridRef.current?.scrollLeft ?? 0, horizontal: false }; }}
       onTouchMove={event => { const start = touchStart.current; const grid = gridRef.current; if (!mobile || !start || !grid) return; const touch = event.touches[0]; const dx = touch.clientX - start.x; const dy = touch.clientY - start.y; if (!start.horizontal && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy) * 1.2) { start.horizontal = true; grid.style.scrollSnapType = "none"; } if (start.horizontal) grid.scrollLeft = start.left - dx; }}
       onTouchEnd={() => { const start = touchStart.current; const grid = gridRef.current; touchStart.current = null; if (!start?.horizontal || !grid) return; suppressTap.current = true; window.setTimeout(() => { suppressTap.current = false; }, 500); const step = (grid.children[0] as HTMLElement).getBoundingClientRect().width + Number.parseFloat(getComputedStyle(grid).columnGap || "0"); const target = Math.max(0, Math.min(mediaCount - 1, Math.round(grid.scrollLeft / step))); grid.style.scrollSnapType = ""; goToMedia(target); }}
@@ -101,6 +102,7 @@ const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Produc
           <button type="button" aria-label="View product film full screen" onClick={() => { const video = videoRef.current as (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null; if (!video) return; if (video.webkitEnterFullscreen) video.webkitEnterFullscreen(); else if (video.requestFullscreen) void video.requestFullscreen(); }}><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" /></svg></button>
         </div>}
       </figure>}
+    </div>
     </div>
     {mediaCount > 1 && <div className="pdp-stack-controls"><button type="button" onClick={() => goToMedia(Math.max(0, activeIndex - 1))} disabled={activeIndex === 0} aria-label="Previous product image">←</button><span>{activeIndex + 1} / {mediaCount}</span><button type="button" onClick={() => goToMedia(Math.min(mediaCount - 1, activeIndex + 1))} disabled={activeIndex === mediaCount - 1} aria-label="Next product image">→</button></div>}
     {mediaCount > 1 && <nav className="pdp-stack-thumbnails" aria-label="Product media thumbnails">{photos.map((photo, index) => <button type="button" key={`${photo.image}-thumb`} className={activeIndex === index ? "active" : ""} onClick={() => goToMedia(index)} aria-label={`Show product photo ${index + 1}`} aria-current={activeIndex === index ? "true" : undefined}><img src={photo.image} alt="" loading="lazy" /></button>)}{product.pdp.video_url && <button type="button" className={activeIndex === photos.length ? "active" : ""} onClick={() => goToMedia(photos.length)} aria-label="Show product film" aria-current={activeIndex === photos.length ? "true" : undefined}><img src={product.pdp.video_poster || product.image} alt="" loading="lazy" /><span aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5.5v13l10-6.5z" /></svg></span></button>}</nav>}

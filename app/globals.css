@@ -49,3 +49,5 @@ button{color:inherit;-webkit-tap-highlight-color:transparent}
 @media(max-width:520px){.header-actions>a[href="/account"]{display:none}.currency-trigger{gap:3px}}
 .currency-trigger img,.currency-flag{width:21px;height:16px;object-fit:cover;display:block;border:1px solid #0002}.currency-trigger img{flex:none}
 .product-heart{display:flex;align-items:center;justify-content:center;padding:0}.product-heart svg{width:20px;height:20px;flex:none}
+
+.shop-banner{position:relative}
