@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import type { Product } from "@/lib/catalog";
 import { money } from "@/lib/catalog";
@@ -67,12 +68,12 @@ function LookCard({ look, products }: { look: Look; products: Product[] }) {
   const renderProduct = (item: Product, selectedSize: string, onSize: (size: string) => void, onColour: (slug: string) => void) => {
     const colours = products.filter(option => option.name === item.name && option.category === item.category).sort((a, b) => compareProductColours(a.color, b.color));
     return <div className="look-product" key={item.slug}>
-      <div className="look-product-detail"><img src={item.image} alt={`${item.name} in ${item.color}`} loading="lazy" /><div><div className="look-product-heading"><Link href={`/product/${item.slug}/`}>{item.name} · {item.color}</Link><strong>{money(item.variants?.find(v => v.size === selectedSize)?.price ?? item.price)}</strong></div>
+      <div className="look-product-detail"><Image src={item.image} alt={`${item.name} in ${item.color}`} width={46} height={59} sizes="46px" /><div><div className="look-product-heading"><Link href={`/product/${item.slug}/`}>{item.name} · {item.color}</Link><strong>{money(item.variants?.find(v => v.size === selectedSize)?.price ?? item.price)}</strong></div>
       <div className="look-options"><div className="look-colours" aria-label={`${item.name} colour`}>{colours.map(option => <button key={option.slug} type="button" className={option.slug === item.slug ? "selected" : ""} style={{ backgroundColor: productColourHex(option.color) ?? "#d3cdc9" }} aria-label={`${option.color}${option.slug === item.slug ? ", selected" : ""}`} aria-pressed={option.slug === item.slug} onClick={() => { setFeedback(""); onColour(option.slug); }} />)}</div><div className="look-sizes" aria-label={`${item.name} size`}>{item.variants?.map(variant => <button type="button" key={variant.id} disabled={variant.stock <= 0} aria-pressed={selectedSize === variant.size} onClick={() => { setFeedback(""); onSize(variant.size); }}>{variant.size}</button>)}</div></div></div>
     </div></div>;
   };
   return <article className="look-card">
-    <Link href={`/product/${top.slug}/`} className="look-image" aria-label={`View ${look.title}`}><img className="look-image-primary" src={top.gallery[0]?.image ?? top.image} alt={`${top.name} and coordinated bottoms in ${top.color}`} loading="lazy" /><img className="look-image-secondary" src={top.gallery[1]?.image ?? top.gallery[0]?.image ?? top.image} alt="" aria-hidden="true" loading="lazy" /></Link>
+    <Link href={`/product/${top.slug}/`} className="look-image" aria-label={`View ${look.title}`}><Image className="look-image-primary" src={top.gallery[0]?.image ?? top.image} alt={`${top.name} and coordinated bottoms in ${top.color}`} fill sizes="(max-width: 650px) 85vw, (max-width: 1100px) 35vw, 19vw" /><Image className="look-image-secondary" src={top.gallery[1]?.image ?? top.gallery[0]?.image ?? top.image} alt="" aria-hidden="true" fill sizes="(max-width: 650px) 85vw, (max-width: 1100px) 35vw, 19vw" /></Link>
     <div className="look-card-content"><span className="home-kicker">{look.eyebrow}</span><h3>{look.title}</h3><p>{look.description}</p>
       {renderProduct(top, selectedTopSize, setTopSize, selectTopColour)}
       {renderProduct(bottom, selectedBottomSize, setBottomSize, selectBottomColour)}
