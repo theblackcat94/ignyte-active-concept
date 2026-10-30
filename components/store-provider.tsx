@@ -7,6 +7,7 @@ import { categories as conceptCategories, legacyProductSlugs, money, products as
 import { activeCategories, activeProducts, commerceConfigured } from "@/lib/commerce";
 import { track } from "@/lib/analytics-client";
 import { bagRecommendations } from "@/lib/product-merchandising";
+import { FREE_SHIPPING_THRESHOLD_CENTS, qualifiesForFreeShipping } from "@/lib/shipping-policy";
 import "@/app/bag-recommendations.css";
 import FreeShippingProgress from "./free-shipping-progress";
 
@@ -19,6 +20,7 @@ type Store = {
   catalogError: boolean;
   bag: BagItem[];
   bagOpen: boolean;
+  setBagDiscount: (discount: { subtotalCents: number; discountCents: number } | null) => void;
   setBagOpen: (open: boolean) => void;
   addToBag: (slug: string, size: string) => void;
   addSetToBag: (braSlug: string, braSize: string, bottomSlug: string, bottomSize: string) => boolean;
@@ -46,6 +48,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [checkoutMessage, setCheckoutMessage] = useState("");
   const [storageReady, setStorageReady] = useState(false);
+  const [bagDiscount, setBagDiscount] = useState<{ subtotalCents: number; discountCents: number } | null>(null);
+  const [shippingCelebrationId, setShippingCelebrationId] = useState<number | null>(null);
+  const shippingCelebrationSequence = useRef(0);
+  const previousShippingEligibility = useRef<boolean | null>(null);
   const [recommendationSizes, setRecommendationSizes] = useState<Record<string, string>>({});
   const [actionNotice, setActionNotice] = useState<{ message: string; id: number } | null>(null);
   const noticeSequence = useRef(0);
@@ -153,10 +159,27 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     const product = products.find(product => product.slug === item.slug);
     return sum + (product?.variants?.find(variant => variant.size === item.size)?.price ?? product?.price ?? 0) * item.quantity;
   }, 0);
+  const subtotalCents = Math.round(subtotal * 100);
+  const shippingBasisCents = subtotalCents - (bagDiscount?.subtotalCents === subtotalCents ? bagDiscount.discountCents : 0);
+  const shippingEligible = qualifiesForFreeShipping(shippingBasisCents);
+  useEffect(() => {
+    if (!storageReady || catalogLoading) return;
+    if (previousShippingEligibility.current === false && shippingEligible) {
+      setShippingCelebrationId(++shippingCelebrationSequence.current);
+    } else if (!shippingEligible) {
+      setShippingCelebrationId(null);
+    }
+    previousShippingEligibility.current = shippingEligible;
+  }, [storageReady, catalogLoading, shippingEligible]);
+  useEffect(() => {
+    if (shippingCelebrationId === null) return;
+    const timer = window.setTimeout(() => setShippingCelebrationId(null), 4000);
+    return () => window.clearTimeout(timer);
+  }, [shippingCelebrationId]);
   const recommendations = bagRecommendations(bag.map(item => item.slug), products);
 
   return (
-    <StoreContext.Provider value={{ products, categories, catalogPreview, catalogLoading, catalogError, bag, bagOpen, setBagOpen, addToBag, addSetToBag, changeBagQuantity, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
+    <StoreContext.Provider value={{ products, categories, catalogPreview, catalogLoading, catalogError, bag, bagOpen, setBagOpen, setBagDiscount, addToBag, addSetToBag, changeBagQuantity, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
       {children}
       {actionNotice && <div key={actionNotice.id} className="store-action-toast" role="status" aria-live="polite"><span aria-hidden="true">✦</span>{actionNotice.message}</div>}
       {bagOpen && <div className="drawer-backdrop" onClick={() => setBagOpen(false)} />}
@@ -175,7 +198,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           const chosen = recommendationSizes[product.slug] ?? (variants.length === 1 && variants[0].stock > 0 ? variants[0].size : "");
           return <div className="bag-recommendation" key={product.slug}><Link href={`/product/${product.slug}`} onClick={() => setBagOpen(false)}><img src={product.image} alt="" /></Link><div><Link href={`/product/${product.slug}`} onClick={() => setBagOpen(false)}><strong>{product.name}</strong></Link><span>{product.color} · {money(product.price)}</span><div className="bag-recommendation-sizes" aria-label={`Choose ${product.name} size`}>{variants.map(variant => <button type="button" key={variant.id} disabled={variant.stock <= 0} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} aria-pressed={chosen === variant.size} onClick={() => setRecommendationSizes(current => ({ ...current, [product.slug]: variant.size }))}>{variant.size}</button>)}</div><button type="button" className="bag-recommendation-add" disabled={!variants.some(variant => variant.size === chosen && variant.stock > 0)} onClick={() => { addToBag(product.slug, chosen); setRecommendationSizes(current => ({ ...current, [product.slug]: "" })); }}>ADD TO BAG ↗</button></div></div>;
         })}</section>}</div> : <div className="empty-bag"><svg className="empty-bag-mark" viewBox="0 0 80 80" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" aria-hidden="true"><path d="M40 5v70M5 40h70M15 15l50 50M65 15 15 65" /></svg><h3>Nothing in your bag yet.</h3><p>Find your next training favourite.</p><Link href="/shop" className="button button-dark" onClick={() => setBagOpen(false)}>SHOP THE COLLECTION <span>↗</span></Link></div>}
-        <div className="drawer-foot">{validBag.length > 0 && <FreeShippingProgress amountCents={Math.round(subtotal * 100)} />}<div><span>SUBTOTAL</span><strong>{money(subtotal)}</strong></div><p>Australian delivery: AU$15 below AU$100 after discounts, or free at AU$100 or more. Your delivery charge is shown at checkout.</p>{checkoutMessage && <p role="status">{checkoutMessage}</p>}<button className="button button-orange" disabled={!validBag.length} onClick={() => { setBagOpen(false); router.push("/checkout"); }}>CHECKOUT ↗</button></div>
+        <div className="drawer-foot">{validBag.length > 0 && <FreeShippingProgress amountCents={shippingBasisCents} celebrationId={shippingCelebrationId} />}<div><span>SUBTOTAL</span><strong>{money(subtotal)}</strong></div><p>Australian delivery: AU$15 below {money(FREE_SHIPPING_THRESHOLD_CENTS / 100)} after discounts, or free at {money(FREE_SHIPPING_THRESHOLD_CENTS / 100)} or more. Your delivery charge is shown at checkout.</p>{checkoutMessage && <p role="status">{checkoutMessage}</p>}<button className="button button-orange" disabled={!validBag.length} onClick={() => { setBagOpen(false); router.push("/checkout"); }}>CHECKOUT ↗</button></div>
       </aside>
     </StoreContext.Provider>
   );

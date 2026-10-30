@@ -17,7 +17,7 @@ const states = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"];
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { bag, products, clearBag } = useStore();
+  const { bag, products, clearBag, setBagDiscount } = useStore();
   const [shipping, setShipping] = useState<Shipping>(emptyShipping);
   const [email, setEmail] = useState("");
   const [newsletterOptIn, setNewsletterOptIn] = useState(false);
@@ -72,6 +72,10 @@ export default function CheckoutPage() {
   const subtotalCents = Math.round(subtotal * 100);
   const appliedCoupon = coupon?.subtotalCents === subtotalCents ? coupon : null;
   const shippingBasisCents = subtotalCents - (appliedCoupon?.discountCents ?? 0);
+  useEffect(() => {
+    setBagDiscount(appliedCoupon ? { subtotalCents, discountCents: appliedCoupon.discountCents } : null);
+    return () => setBagDiscount(null);
+  }, [appliedCoupon, subtotalCents, setBagDiscount]);
   const quotedShipping = shippingQuote?.state === shipping.state && shippingQuote.subtotalCents === shippingBasisCents ? shippingQuote.amount : null;
 
   useEffect(() => {
