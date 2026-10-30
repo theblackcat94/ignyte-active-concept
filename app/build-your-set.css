@@ -12,3 +12,32 @@
 .build-set-toggle span:last-child{font:400 24px var(--font-ignyte-sans),sans-serif;line-height:1}
 .build-set-toggle:focus-visible{outline:2px solid #FF4533;outline-offset:3px}
 .build-set-heading{padding-top:18px}
+
+/* Keep the entire set builder on one theme surface, including its controls. */
+.build-set{
+  --set-surface:#f4f0eb;--set-ink:#0B1020;--set-muted:#5e5b56;
+  --set-line:#c8c3bc;--set-option:#f4f0eb;--set-option-line:#bdb8b0;
+  --set-selected:#0B1020;--set-selected-ink:#fff;--set-action:#FF4533;--set-action-ink:#fff;
+  background:var(--set-surface);color:var(--set-ink);border-color:var(--set-line);
+}
+html[data-appearance="dark"] .build-set{
+  --set-surface:#151c2e;--set-ink:#f5f0e8;--set-muted:#cbd0da;
+  --set-line:#687286;--set-option:#202b40;--set-option-line:#8790a0;
+  --set-selected:#ff8c78;--set-selected-ink:#0B1020;--set-action:#ff8c78;--set-action-ink:#0B1020;
+}
+html[data-appearance="ignyte"] .build-set{
+  --set-surface:#fff4ed;--set-ink:#0B1020;--set-muted:#493729;
+  --set-line:#8a6457;--set-option:#fffaf4;--set-option-line:#8a6457;
+  --set-selected:#0B1020;--set-selected-ink:#fff4ed;--set-action:#0B1020;--set-action-ink:#fff4ed;
+}
+.build-set .build-set-toggle,.build-set .build-set-heading h2,.build-set .build-set-item strong,.build-set .build-set-item b,.build-set .build-set-size>span,.build-set .build-set-total{color:var(--set-ink)}
+.build-set .build-set-heading,.build-set .build-set-total{border-color:var(--set-line)}
+.build-set .build-set-heading p,.build-set .build-set-item span,.build-set .build-set-hint{color:var(--set-muted)}
+.build-set .build-set-choice button,.build-set .build-set-size button{background:var(--set-option);color:var(--set-ink);border-color:var(--set-option-line)}
+.build-set .build-set-choice button[aria-pressed="true"],.build-set .build-set-size button[aria-pressed="true"]{background:var(--set-selected);color:var(--set-selected-ink);border-color:var(--set-selected)}
+.build-set .build-set-choice button:hover:not([aria-pressed="true"]),.build-set .build-set-size button:hover:not(:disabled):not([aria-pressed="true"]){border-color:var(--set-ink)}
+.build-set .build-set-size button:disabled{background:transparent;color:var(--set-muted);border-style:dashed;opacity:.75}
+.build-set .build-set-add{background:var(--set-action);color:var(--set-action-ink)}
+.build-set .build-set-add:hover:not(:disabled){filter:brightness(.92)}
+.build-set button:focus-visible{outline:2px solid var(--set-ink);outline-offset:2px}
+.build-set .build-set-add:disabled{opacity:.55}

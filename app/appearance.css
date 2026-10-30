@@ -149,3 +149,15 @@ html[data-appearance="ignyte"] .pdp-oeko>strong,html[data-appearance="ignyte"] .
 html[data-appearance="ignyte"] .account-auth-card,html[data-appearance="ignyte"] .checkout-panel,html[data-appearance="ignyte"] .checkout-summary{background:#fff4ed;color:#0B1020;border-color:#0B1020}
 html[data-appearance="ignyte"] .account-auth-card input,html[data-appearance="ignyte"] .checkout-fields input,html[data-appearance="ignyte"] .checkout-fields select{background:#fff;color:#0B1020;border-color:#0B1020}
 html[data-appearance="ignyte"] .account-auth-card input:focus-visible,html[data-appearance="ignyte"] .checkout-fields input:focus-visible{outline:2px solid #0B1020;outline-offset:2px}
+
+/* Accents that sit on the orange field use ink throughout editorial and PDP content. */
+html[data-appearance="ignyte"] .home-page,
+html[data-appearance="ignyte"] .product-page,
+html[data-appearance="ignyte"] .about-page,
+html[data-appearance="ignyte"] .wishlist-page{--orange:#0B1020}
+html[data-appearance="ignyte"] .related-section h2 em,
+html[data-appearance="ignyte"] .about-mission h2 em,
+html[data-appearance="ignyte"] .wishlist-page h1 em{color:#0B1020}
+html[data-appearance="ignyte"] .related-section .text-link:hover,
+html[data-appearance="ignyte"] .home-story .home-underlined:hover,
+html[data-appearance="ignyte"] .home-fit .home-underlined:hover{color:#0B1020;border-color:#0B1020}
