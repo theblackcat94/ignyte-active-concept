@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Product } from "@/lib/catalog";
 import ProductCard from "./product-card";
+import "./home-product-carousel.css";
 
 export default function HomeProductCarousel({ products, label }: { products: Product[]; label: string }) {
   const track = useRef<HTMLDivElement>(null);

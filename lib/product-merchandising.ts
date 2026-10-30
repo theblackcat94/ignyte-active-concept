@@ -18,6 +18,42 @@ export function pairedProducts(slug: string, catalog: Product[], kind: "related"
   return slugs.flatMap(target => target ? catalog.filter(product => product.slug === target && inStock(product)) : []);
 }
 
+export function productFamily(product: Product): string {
+  return `${product.category}:${product.name.trim().toLowerCase()}`;
+}
+
+export function distinctAvailableProducts(candidates: Product[], excluded: Product[] = []): Product[] {
+  const seen = new Set(excluded.map(productFamily));
+  return candidates.filter(product => {
+    const family = productFamily(product);
+    if (!inStock(product) || seen.has(family)) return false;
+    seen.add(family);
+    return true;
+  });
+}
+
+export function youMayAlsoLikeProducts(current: Product, catalog: Product[], alreadyShown: Product[]): Product[] {
+  const excluded = new Set([current, ...alreadyShown].map(productFamily));
+  const activities = new Set(current.pdp.activities.map(activity => activity.trim().toLowerCase()));
+  const candidates = catalog.filter(product => inStock(product) && !excluded.has(productFamily(product)))
+    .map(product => ({
+      product,
+      score: (product.category === current.category ? 4 : 0)
+        + product.pdp.activities.filter(activity => activities.has(activity.trim().toLowerCase())).length * 2
+        + (product.fitAttribute && product.fitAttribute === current.fitAttribute ? 1 : 0),
+    }))
+    .sort((a, b) => b.score - a.score || a.product.slug.localeCompare(b.product.slug))
+    .map(({ product }) => product);
+  const unique = distinctAvailableProducts(candidates);
+  const categories = new Set<string>();
+  const mix = unique.filter(product => {
+    if (categories.has(product.category)) return false;
+    categories.add(product.category);
+    return true;
+  });
+  return [...mix, ...unique.filter(product => !mix.includes(product))].slice(0, 12);
+}
+
 export function bagRecommendations(slugs: string[], catalog: Product[]): Product[] {
   const excluded = new Set(slugs);
   const candidates = slugs.flatMap(slug => {

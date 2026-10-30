@@ -35,7 +35,10 @@
 .pdf-footer-logo .header-brand-flame{fill:#FF4533}
 .pdf-footer-brand h3{font-family:var(--font-ignyte-mono),"Courier New",monospace;font-size:15px;font-weight:400;letter-spacing:.15em!important;margin:33px 0 20px}
 .pdf-footer-brand p{font-size:15px;line-height:1.5;margin:0 0 28px}
+.pdf-footer-socials{display:flex;align-items:center;gap:10px}
 .pdf-footer-social{display:inline-flex;width:39px;height:39px;border-radius:50%;background:#fff;align-items:center;justify-content:center;font-size:25px}
+.pdf-footer-social:hover{color:#FF4533}
+.pdf-footer-social:focus-visible{outline:2px solid #FF4533;outline-offset:3px}
 .pdf-footer-column{display:flex;flex-direction:column;align-items:flex-start;gap:17px}
 .pdf-footer-column h3{font-family:var(--font-ignyte-mono),"Courier New",monospace;font-size:13px;font-weight:400;letter-spacing:.15em!important;margin:5px 0 17px}
 .pdf-footer-column a{font-size:14px;line-height:1.3}

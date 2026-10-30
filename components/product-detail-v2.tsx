@@ -8,13 +8,14 @@ import { type Product, money } from "@/lib/catalog";
 import { commerceConfigured } from "@/lib/commerce";
 import { useStore } from "./store-provider";
 import ProductCard from "./product-card";
+import HomeProductCarousel from "./home-product-carousel";
 import StackedProductGallery from "./stacked-product-gallery";
 import BuildYourSet from "./build-your-set";
 import PdpSocialStrip from "./pdp-social-strip";
 import SizeGuideContent from "./size-guide-content";
 import { CurrencyEstimate } from "./currency-estimate";
 import { compareProductColours, productColourHex } from "@/lib/product-colors";
-import { pairedProducts } from "@/lib/product-merchandising";
+import { distinctAvailableProducts, pairedProducts, youMayAlsoLikeProducts } from "@/lib/product-merchandising";
 import { modelPortraits } from "@/data/model-details";
 import { sockSizing } from "@/data/size-guide";
 import { asset } from "@/lib/asset";
@@ -34,8 +35,9 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const [showDesktopPurchase, setShowDesktopPurchase] = useState(false);
   const sizeRef = useRef<HTMLDivElement>(null);
   const addRef = useRef<HTMLButtonElement>(null);
-  const related = pairedProducts(product.slug, products, "related");
-  const upsells = pairedProducts(product.slug, products, "upsell");
+  const related = distinctAvailableProducts(pairedProducts(product.slug, products, "related"), [product]);
+  const upsells = distinctAvailableProducts(pairedProducts(product.slug, products, "upsell"), [product, ...related]);
+  const alsoLike = youMayAlsoLikeProducts(product, products, [...related, ...upsells]);
   const colours = [product, ...products.filter(p => p.slug !== product.slug && p.name === product.name && p.category === product.category)]
     .filter((item, index, all) => all.findIndex(candidate => candidate.color.toLowerCase() === item.color.toLowerCase()) === index)
     .sort((a, b) => compareProductColours(a.color, b.color));
@@ -126,10 +128,11 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       <div className="pdp-purchase-reassurance"><Link href="/returns#shipping"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M2 5h12v11H2zM14 9h4l4 4v3h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Free shipping on AU orders $100 or more</span></Link><Link href="/returns"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="m3 12 6 6L21 6"/><path d="M3 5h10"/></svg><span>Fast, easy returns</span></Link></div>
       <div className="detail-accordions">{sections.map(label => <div key={label}><button type="button" aria-expanded={openInfo.includes(label)} onClick={() => setOpenInfo(current => current.includes(label) ? current.filter(item => item !== label) : [...current, label])}>{label}<span>{openInfo.includes(label) ? "−" : "+"}</span></button>{openInfo.includes(label) && content(label)}</div>)}</div>
     </div></div>
+    {related.length > 0 && <div className="related-section pdp-recommendations"><div className="section-heading"><div><span className="eyebrow">COMPLETE YOUR EDIT</span><h2>PAIR IT <em>WITH.</em></h2></div><Link href="/shop" className="text-link">SHOP ALL ↗</Link></div><div className="products-grid">{related.map((p, i) => <ProductCard product={p} index={i} key={p.slug} showOptions />)}</div></div>}
+    {upsells.length > 0 && <div className="related-section pdp-recommendations"><div className="section-heading"><div><span className="eyebrow">ANOTHER WAY TO MOVE</span><h2>CONSIDER <em>THIS.</em></h2></div></div><div className="products-grid">{upsells.map((p, i) => <ProductCard product={p} index={i} key={p.slug} showOptions />)}</div></div>}
     <div className="pdp-brand-callout"><RegistrationMarks /><div className="pdp-brand-copy"><span className="eyebrow">PERFORMANCE MEETS EXPRESSION ↘</span><h2>Built for the burn<sup>™</sup></h2><p>For women who train with purpose and express themselves with confidence. From the first warm-up to the final rep, bring your energy and make every session your own.</p><Link href="/about" className="button button-dark pdp-brand-about">MEET IGNYTE ↗</Link></div><BrandFilm label="IGNYTE Built for the Burn brand film" /></div>
     {pdp.show_brand_story && <div className="pdp-story"><section><span className="pdp-story-icon" aria-hidden="true">↘</span><h2>Made for movement</h2><p>Fit, feel and freedom of movement guide the details, from warm-up to final rep.</p></section><section><span className="pdp-story-icon" aria-hidden="true">↘</span><h2>Tested in real training</h2><p>Built for sweat, pressure, and repeat wear.</p></section><section><span className="pdp-story-icon" aria-hidden="true">↘</span><h2>No distractions</h2><p>Designed to stay put, feel secure and let you focus on the work.</p></section></div>}
-    {related.length > 0 && <div className="related-section"><div className="section-heading"><div><span className="eyebrow">COMPLETE YOUR EDIT</span><h2>PAIR IT <em>WITH.</em></h2></div><Link href="/shop" className="text-link">SHOP ALL ↗</Link></div><div className="products-grid">{related.map((p, i) => <ProductCard product={p} index={i} key={p.slug} showOptions />)}</div></div>}
-    {upsells.length > 0 && <div className="related-section"><div className="section-heading"><div><span className="eyebrow">ANOTHER WAY TO MOVE</span><h2>CONSIDER <em>THIS.</em></h2></div></div><div className="products-grid">{upsells.map((p, i) => <ProductCard product={p} index={i} key={p.slug} showOptions />)}</div></div>}
+    {alsoLike.length > 0 && <section className="related-section pdp-also-like" aria-labelledby="pdp-also-like-heading"><div className="section-heading"><div><span className="eyebrow">MORE TO MOVE IN</span><h2 id="pdp-also-like-heading">YOU MAY ALSO <em>LIKE_</em></h2></div><Link href="/shop" className="text-link">SHOP ALL ↗</Link></div><HomeProductCarousel products={alsoLike} label={`You may also like for ${product.name}`} /></section>}
     <PdpSocialStrip productSlug={product.slug} />
     {showMobilePurchase && !guideOpen && !bagOpen && <div className="pdp-mobile-purchase" role="region" aria-label="Sticky purchase controls"><div className="pdp-mobile-purchase-summary"><span>{product.name} · {product.color}</span><strong>{size || "Choose size"} · {money(selectedVariant?.price ?? product.price)}</strong></div><button type="button" onClick={mobilePurchase} disabled={catalogLoading || catalogError || !sizes.some(variant => variant.stock > 0)} aria-label={size ? `Add ${product.name} in ${product.color}, size ${size}, to bag` : `Choose a size before adding ${product.name} to bag`}>{stickyAddLabel}</button></div>}
     {showDesktopPurchase && !guideOpen && !bagOpen && <div className="pdp-desktop-purchase" role="region" aria-label="Sticky desktop purchase controls"><div className="pdp-desktop-purchase-inner"><div className="pdp-desktop-purchase-summary"><strong>{product.name}</strong><span>{product.color} · {money(selectedVariant?.price ?? product.price)}</span></div><div className="pdp-desktop-purchase-sizes" role="group" aria-label={`Choose ${product.name} size in sticky bar`}>{sizes.map(variant => <button type="button" key={variant.id} disabled={variant.stock <= 0} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} onClick={() => setSelection({ slug: product.slug, size: variant.size })}>{variant.size}</button>)}</div><button type="button" className="pdp-desktop-purchase-add" disabled={!canAdd} onClick={() => addToBag(product.slug, size)}>{addLabel} ↗</button></div></div>}
