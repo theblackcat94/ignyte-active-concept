@@ -44,6 +44,7 @@ export const products: Product[] = prepared.products.map(item => ({
 });
 
 export const legacyProductSlugs: Record<string, string> = {
+  "seamless-short-jacaranda": "seamless-short-aurora",
   "seamless-legging-black": "seamless-legging-lavender",
   "seamless-short-black": "seamless-short-espresso",
   "aura-halter-black": "aura-halter-lavender",

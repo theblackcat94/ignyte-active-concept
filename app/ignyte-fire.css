@@ -44,6 +44,10 @@ html[data-appearance="ignyte"] .pdf-footer-signup {
 }
 html[data-appearance="ignyte"] .site-header,
 html[data-appearance="ignyte"] .announcement { color: #0B1020; }
+@media(max-width:1100px){
+  html[data-appearance="ignyte"] .site-header{border-bottom-color:transparent}
+  html[data-appearance="ignyte"] .site-header.site-header-scrolled{background:#FF4533!important;border-bottom-color:#0B102033}
+}
 html[data-appearance="ignyte"] .announcement-center,
 html[data-appearance="ignyte"] .shop-banner :is(h1,p,.eyebrow) { color: #0B1020; }
 html[data-appearance="ignyte"] .shop-banner h1 { animation: none; text-shadow: none; }

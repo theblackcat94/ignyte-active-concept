@@ -18,7 +18,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const { product, live } = await findProduct(slug);
   if (!product) return { title: "Product not found | Ignyte Active", robots: { index: false } };
-  const { title, description } = productSeo(product.name, product.color, product.description);
+  const seo = productSeo(product.name, product.color, product.description);
+  const { title } = seo;
+  const description = product.slug === "seamless-short-aurora" ? `Shop Seamless Shorts in Aurora. ${seo.description}` : seo.description;
   const url = new URL(`/product/${product.slug}/`, siteUrl).toString();
   const image = new URL(product.image, siteUrl).toString();
   return {

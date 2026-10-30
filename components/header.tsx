@@ -13,6 +13,7 @@ export default function Header() {
   const nav = categories.map(category => [category.label.toUpperCase(), category.id === "all" ? "/shop" : `/shop/${category.id}`]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerHidden, setHeaderHidden] = useState(false);
+  const [headerScrolled, setHeaderScrolled] = useState(false);
   const [query, setQuery] = useState("");
   const pathname = usePathname();
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function Header() {
     const update = () => {
       frame = 0;
       const y = Math.max(0, window.scrollY);
+      setHeaderScrolled(y > 8);
       if (window.innerWidth > 1100 || y <= 2 || menuOpen || searchOpen || bagOpen) {
         setHeaderHidden(false);
         lastY = y;
@@ -39,6 +41,7 @@ export default function Header() {
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     setHeaderHidden(false);
+    update();
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
@@ -48,7 +51,7 @@ export default function Header() {
 
   return <>
     <AnnouncementBar />
-    <header className={`site-header${headerHidden ? " site-header-hidden" : ""}`}>
+    <header className={`site-header${headerHidden ? " site-header-hidden" : ""}${headerScrolled ? " site-header-scrolled" : ""}`}>
       <div className="header-mobile-left"><button className="header-icon mobile-menu-toggle" aria-label="Open menu" onClick={() => setMenuOpen(true)}><span className="hamburger"><i /><i /></span></button><button className="header-icon mobile-search-trigger" aria-label="Search" onClick={() => setSearchOpen(true)}><Icon name="search" /></button></div>
       <Link className="brand brand-image" href="/" aria-label="Ignyte home"><HeaderLogo /></Link>
       <nav className="desktop-nav" aria-label="Main navigation">{nav.map(([label, href]) => <Link className={pathname === href ? "active" : ""} href={href} key={href}>{label}</Link>)}</nav>
