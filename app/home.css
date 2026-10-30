@@ -123,6 +123,11 @@ body:has(.home-page) .site-header{height:78px}
 .home-registration-mark-top-left{top:20px;left:20px}.home-registration-mark-top-right{top:20px;right:20px}
 .home-registration-mark-bottom-left{bottom:20px;left:20px}.home-registration-mark-bottom-right{bottom:20px;right:20px}
 .home-fit-image .home-registration-mark{color:#0B1020;opacity:.6;filter:drop-shadow(0 0 1px #fff)}
+.home-fit-card{display:block;color:inherit;text-decoration:none}
+.home-fit-card:hover .home-fit-image img,.home-fit-card:focus-visible .home-fit-image img{transform:scale(1.045)}
+.home-fit-card:focus-visible{outline:3px solid #FF4533;outline-offset:5px}
+html[data-appearance="ignyte"] .home-fit-card:focus-visible{outline-color:#0B1020}
+@media(prefers-reduced-motion:reduce){.home-fit-card:hover .home-fit-image img,.home-fit-card:focus-visible .home-fit-image img{transform:none}}
 .home-bottom{background:#0B1020;grid-template-columns:minmax(0,.8fr) minmax(0,.65fr) minmax(0,.75fr)}
 .home-bottom .brand-film{grid-column:2;grid-row:1;max-width:340px;min-width:0;top:auto;left:auto;right:auto}
 .home-bottom-photo{grid-column:3;grid-row:1;min-width:0;max-width:100%;height:auto;aspect-ratio:4/5}
