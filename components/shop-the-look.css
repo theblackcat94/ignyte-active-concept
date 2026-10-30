@@ -6,8 +6,8 @@
 .home-shop-look{padding-block:58px 90px}
 .look-grid{gap:clamp(16px,2vw,28px)}
 .look-card{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1fr);align-items:stretch;gap:clamp(16px,2vw,26px)}
-.look-image{position:relative;aspect-ratio:auto;height:min(59vh,510px);min-height:390px;background:#d9d2cb}
-.look-image img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center center;transition:opacity .35s ease-in-out}
+.look-image{position:relative;aspect-ratio:auto;height:min(59vh,510px);min-height:390px;background:#e4e4e4}
+.look-image img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;transition:opacity .35s ease-in-out}
 .look-image-secondary{opacity:0}
 @media(hover:hover) and (pointer:fine){.look-image:hover .look-image-primary{opacity:0}.look-image:hover .look-image-secondary{opacity:1}}
 @media(prefers-reduced-motion:reduce){.look-image img{transition:none}}
