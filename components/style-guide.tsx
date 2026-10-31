@@ -13,7 +13,6 @@ const palette = [
   ["Cream", "#EEEAE4", "Brand paper neutral"],
   ["Light Neutral", "#F7F3EA", "Warm supporting surface"],
   ["Site Paper", "#F5F3EE", "Default page background"],
-  ["Green", "#1B3F35", "Supporting brand colour"],
   ["White", "#FFFFFF", "Light surface and dark text inverse"],
   ["Black", "#000000", "High contrast icon detail"],
   ["Line", "#DEDBD6", "Default dividers and borders"],

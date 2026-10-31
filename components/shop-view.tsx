@@ -11,6 +11,14 @@ import RegistrationMarks from "./registration-marks";
 import { compareProductColours } from "@/lib/product-colors";
 import "@/app/shop-filters.css";
 
+const collectionIntroductions: Record<string, string> = {
+  "sports-bras": "Explore sports bras for different ways to train, from seamless support to cross-back and strappy designs.",
+  leggings: "Find close-fitting leggings made for comfortable movement through training and beyond.",
+  shorts: "Choose from relaxed training shorts, close-fitting bike shorts and seamless silhouettes.",
+  tops: "Explore fitted training tops with versatile, expressive styling for your next session.",
+  accessories: "Finish your look with practical training essentials, including IGNYTE crew socks.",
+};
+
 export default function ShopView({ category }: { category: Category }) {
   const { products, categories, catalogPreview, catalogLoading } = useStore();
   const router = useRouter();
@@ -72,7 +80,7 @@ export default function ShopView({ category }: { category: Category }) {
   ];
 
   return <div className="shop-page">
-    <div className={`shop-banner ${category === "sports-bras" ? "shop-banner-bras" : ""}`} style={{ backgroundImage: `linear-gradient(90deg, rgba(0,0,0,.88), rgba(0,0,0,.25)), url("${currentCategory.cover}")` }}><RegistrationMarks /><span className="eyebrow light">IGNYTE / THE COLLECTION</span><h1>{query ? "SEARCH RESULTS" : currentCategory.label.toUpperCase()}<em>.</em></h1><p>Pieces for every rep, every rest day, every version of you.</p></div>
+    <div className={`shop-banner ${category === "sports-bras" ? "shop-banner-bras" : ""}`} style={{ backgroundImage: `linear-gradient(90deg, rgba(0,0,0,.88), rgba(0,0,0,.25)), url("${currentCategory.cover}")` }}><RegistrationMarks /><span className="eyebrow light">IGNYTE / THE COLLECTION</span><h1>{query ? "SEARCH RESULTS" : currentCategory.label.toUpperCase()}<em>.</em></h1><p>{collectionIntroductions[category] ?? "Pieces for every rep, every rest day, every version of you."}</p></div>
     <div className="section-wrap">
       <div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><span>{currentCategory.label.toUpperCase()}</span></div>
       <div className="shop-category-links">{categories.map(item => <Link className={item.id === category ? "active" : ""} href={item.id === "all" ? "/shop" : `/shop/${item.id}`} key={item.id}>{item.label}</Link>)}</div>
