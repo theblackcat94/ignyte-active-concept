@@ -49,6 +49,12 @@ export default function Footer() {
     const next = saved === "dark" || saved === "ignyte" ? saved : "light";
     setAppearance(next);
     document.documentElement.dataset.appearance = next;
+    const syncAppearance = () => {
+      const current = document.documentElement.dataset.appearance;
+      if (current === "light" || current === "dark" || current === "ignyte") setAppearance(current);
+    };
+    window.addEventListener("ignyte-appearance-change", syncAppearance);
+    return () => window.removeEventListener("ignyte-appearance-change", syncAppearance);
   }, []);
   function changeAppearance(next: "light" | "dark" | "ignyte") {
     setAppearance(next);

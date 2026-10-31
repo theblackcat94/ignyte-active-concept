@@ -11,7 +11,7 @@ export default function AboutPage() {
     <section className="about-hero">
       <img src="/images/about/About-Hero-1.webp" alt="Ignyte athlete training with battle ropes" />
       <RegistrationMarks />
-      <div><span className="eyebrow">IGNYTE® ACTIVEWEAR ↘</span><h1>High-performance gear<br className="about-hero-desktop-break" /><span className="about-hero-line">for women who <span className="fx-ember">bring the fire</span>.</span></h1><p>IGNYTE brings together training, style and individuality. For women who love a challenge and bring their own energy to every session.</p></div>
+      <div><span className="eyebrow">IGNYTE® ACTIVEWEAR ↘</span><h1>High-performance gear<br className="about-hero-desktop-break" />{" "}<span className="about-hero-line">for women who <span className="fx-ember">bring the fire</span>.</span></h1><p>IGNYTE brings together training, style and individuality. For women who love a challenge and bring their own energy to every session.</p></div>
     </section>
     <section className="about-features section-wrap">
       <div><FeatureArrow /><h2>No distractions</h2><p>Designed to stay put, feel secure, and let you focus on the work.</p></div>
