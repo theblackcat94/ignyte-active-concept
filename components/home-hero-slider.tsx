@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal, flushSync } from "react-dom";
+import { asset } from "@/lib/asset";
 import { defaultHomeHeroSettings, homeHeroMediaUrl, type HomeHeroSettings, type HomeHeroSlide } from "@/data/home-hero";
 import RegistrationMarks from "./registration-marks";
 
-export default function HomeHeroSlider({ comparison = false }: { comparison?: boolean }) {
+export default function HomeHeroSlider({ comparison = false, watchFilm = false }: { comparison?: boolean; watchFilm?: boolean }) {
   const [settings, setSettings] = useState<HomeHeroSettings>(defaultHomeHeroSettings);
   const [active, setActive] = useState(0);
   const [viewport, setViewport] = useState<"unknown" | "mobile" | "desktop">("unknown");
@@ -15,9 +17,14 @@ export default function HomeHeroSlider({ comparison = false }: { comparison?: bo
   const [timerReset, setTimerReset] = useState(0);
   const [outgoing, setOutgoing] = useState<HomeHeroSlide | null>(null);
   const [transitioning, setTransitioning] = useState(false);
+  const [filmOpen, setFilmOpen] = useState(false);
+  const [filmNeedsPlay, setFilmNeedsPlay] = useState(false);
   const transitionRef = useRef<number | null>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const filmRef = useRef<HTMLVideoElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const watchRef = useRef<HTMLButtonElement>(null);
   const slides = settings.slides.filter(item => item.enabled);
   const slide = slides[active % slides.length];
   const mediaSrc = homeHeroMediaUrl(viewport === "mobile" && slide.mobileSrc ? slide.mobileSrc : slide.desktopSrc);
@@ -59,15 +66,52 @@ export default function HomeHeroSlider({ comparison = false }: { comparison?: bo
     if (slide.kind !== "video" || reducedMotion || viewport === "unknown") return;
     const video = videoRef.current;
     if (video) {
+      if (filmOpen) { video.pause(); return; }
       if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) setReadySrc(mediaSrc);
       void video.play().catch(() => setFailedSrc(mediaSrc));
     }
-  }, [active, mediaSrc, reducedMotion, slide.kind, viewport]);
+  }, [active, filmOpen, mediaSrc, reducedMotion, slide.kind, viewport]);
   useEffect(() => {
-    if (viewport === "unknown" || outgoing || slides.length < 2 || (slide.kind === "video" && !reducedMotion && readySrc !== mediaSrc && failedSrc !== mediaSrc)) return;
+    if (filmOpen || viewport === "unknown" || outgoing || slides.length < 2 || (slide.kind === "video" && !reducedMotion && readySrc !== mediaSrc && failedSrc !== mediaSrc)) return;
     const timeout = window.setTimeout(() => changeSlide((active + 1) % slides.length), active === 0 ? 11000 : 5000);
     return () => window.clearTimeout(timeout);
-  }, [active, timerReset, reducedMotion, slides.length, viewport, outgoing, slide.kind, readySrc, failedSrc, mediaSrc]);
+  }, [active, filmOpen, timerReset, reducedMotion, slides.length, viewport, outgoing, slide.kind, readySrc, failedSrc, mediaSrc]);
+
+  const closeFilm = useCallback(() => {
+    filmRef.current?.pause();
+    setFilmOpen(false);
+    setFilmNeedsPlay(false);
+    setTimerReset(value => value + 1);
+    window.requestAnimationFrame(() => watchRef.current?.focus());
+  }, []);
+  const openFilm = () => {
+    videoRef.current?.pause();
+    setFilmNeedsPlay(false);
+    flushSync(() => setFilmOpen(true));
+    const film = filmRef.current;
+    if (film) {
+      film.muted = false;
+      void film.play().catch(() => setFilmNeedsPlay(true));
+    }
+  };
+  useEffect(() => {
+    if (!filmOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeFilm();
+      if (event.key === "Tab") {
+        const controls = Array.from(document.querySelectorAll<HTMLElement>(".home-film-lightbox button, .home-film-lightbox video[controls]"));
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => { document.body.style.overflow = previousOverflow; window.removeEventListener("keydown", onKeyDown); };
+  }, [filmOpen, closeFilm]);
 
   useEffect(() => () => { if (transitionRef.current !== null) window.clearTimeout(transitionRef.current); }, []);
 
@@ -81,7 +125,7 @@ export default function HomeHeroSlider({ comparison = false }: { comparison?: bo
         {item.kind === "video" ? <><picture className="home-slide-poster">{item.id === "hero-film" && <source media="(max-width: 800px)" srcSet={homeHeroMediaUrl("/images/home/mobile-hero-poster.webp")} />}<img src={homeHeroMediaUrl(item.poster)} alt="" aria-hidden="true" fetchPriority={isOutgoing ? "auto" : "high"} /></picture>{!reducedMotion && viewport !== "unknown" && <video key={src} ref={isOutgoing ? undefined : videoRef} src={src} poster={poster} className={readySrc === src && failedSrc !== src ? "is-ready" : ""} autoPlay muted playsInline preload="metadata" onLoadedData={() => setReadySrc(src)} onError={() => setFailedSrc(src)} aria-label={item.alt} />}</> : <img src={src} alt={item.alt} loading={isOutgoing || active === 0 ? "eager" : "lazy"} />}
       </div>
       <div className="home-hero-shade" />
-      <div className="home-hero-content"><span className={item.kicker === "HIGH-PERFORMANCE ACTIVEWEAR_" ? "home-kicker mono-section-heading" : "home-kicker"}>{item.kicker}</span><h1>{emberParts ? <>{emberParts[1]}<span className="fx-ember">{emberParts[2]}</span>{emberParts[3]}</> : title}{item.id === "hero-film" && <sup>™</sup>}</h1><Link href={item.href} className={`home-pill${item.action === "SHOP SHORTS" ? " home-pill-spaced" : ""}`}>{item.action} <span>↗</span></Link></div>
+      <div className="home-hero-content"><span className={item.kicker === "HIGH-PERFORMANCE ACTIVEWEAR_" ? "home-kicker mono-section-heading" : "home-kicker"}>{item.kicker}</span><h1>{emberParts ? <>{emberParts[1]}<span className="fx-ember">{emberParts[2]}</span>{emberParts[3]}</> : title}{item.id === "hero-film" && <sup>™</sup>}</h1><div className="home-hero-actions"><Link href={item.href} className={`home-pill${item.action === "SHOP SHORTS" ? " home-pill-spaced" : ""}`}>{item.action} <span>↗</span></Link>{watchFilm && item.id === "hero-film" && !isOutgoing && <button ref={watchRef} className="home-hero-watch" type="button" onClick={openFilm}><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.5v15l12-7.5z" fill="currentColor" /></svg> WATCH IGNYTE IN MOTION</button>}</div></div>
     </div>;
   };
 
@@ -91,5 +135,6 @@ export default function HomeHeroSlider({ comparison = false }: { comparison?: bo
     <RegistrationMarks corners={["top-left", "top-right"]} />
     <div className="home-slider-controls"><button type="button" onClick={() => move(-1)} aria-label="Previous slide">←</button><span>{String(active + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}</span><button type="button" onClick={() => move(1)} aria-label="Next slide">→</button></div>
     <div className="home-slider-dots" aria-label="Choose a slide">{slides.map((item, index) => <button key={item.id} type="button" className={index === active ? "active" : ""} onClick={() => changeSlide(index)} aria-label={`Show slide ${index + 1}: ${item.kicker.replace("_", "")}`} aria-current={index === active ? "true" : undefined} />)}</div>
+    {filmOpen && createPortal(<div className="home-film-lightbox" role="dialog" aria-modal="true" aria-label="Watch IGNYTE in Motion" onMouseDown={event => { if (event.target === event.currentTarget) closeFilm(); }}><div className="home-film-frame"><button ref={closeRef} type="button" className="home-film-close" aria-label="Close film" onClick={closeFilm}>×</button><video ref={filmRef} src={asset("/images/home/Ignyte-Vertical-Compressed-Sound.mp4")} poster={asset("/images/home/Ignyte-Vertical-First-Frame.jpg")} controls playsInline preload="auto" tabIndex={0} onPlay={() => setFilmNeedsPlay(false)} onError={() => setFilmNeedsPlay(true)} aria-label="IGNYTE full brand film" />{filmNeedsPlay && <button type="button" className="home-film-retry" onClick={() => { const film = filmRef.current; if (!film) return; film.muted = false; void film.play().then(() => setFilmNeedsPlay(false)).catch(() => setFilmNeedsPlay(true)); }}>PLAY FILM</button>}</div></div>, document.body)}
   </section>;
 }
