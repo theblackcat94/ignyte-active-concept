@@ -2,13 +2,15 @@
 .ig-live-preview-inner{width:min(100% - 56px,1500px);margin:0 auto}
 .ig-live-breadcrumb{display:flex;align-items:center;gap:12px;margin:8px 0 6px;font-family:var(--font-ignyte-mono),monospace;font-size:9px;letter-spacing:.12em}
 .ig-live-breadcrumb a{color:var(--muted)}
-.ig-live-preview-feed{min-width:0}
-.ig-live-preview-feed .pdp-social{margin-top:44px}
+.ig-live-profile{margin-top:44px;margin-bottom:0}
+.ig-live-profile .pdp-social-heading h1{font-size:clamp(34px,4vw,64px);line-height:1;margin:13px 0 0}
+.ig-live-profile-frame{display:block;width:100%;height:660px;border:0;background:#fff;color-scheme:light}
 .ig-live-note{display:grid;grid-template-columns:48px 1fr;gap:18px;align-items:start;max-width:860px;margin:20px 0 0;padding:20px 0;border-top:1px solid var(--line)}
 .ig-live-note-mark{width:42px;height:42px;border:1px solid var(--orange);border-radius:50%;display:grid;place-items:center;color:var(--orange);font-size:19px}
 .ig-live-note h2{margin:1px 0 7px;font-size:17px}
 .ig-live-note p{margin:0 0 9px;color:#625e58;line-height:1.6;font-size:13px}
 .ig-live-note a{font-size:10px;font-weight:800;letter-spacing:.1em;text-decoration:underline;text-underline-offset:4px}
 .ig-live-note a:hover{color:var(--orange)}
-@media(max-width:760px){.ig-live-preview{padding-top:20px}.ig-live-preview-inner{width:min(100% - 32px,1500px)}.ig-live-breadcrumb{margin-bottom:0}.ig-live-preview-feed .pdp-social{margin-top:32px}.ig-live-note{grid-template-columns:38px 1fr;gap:12px;margin-top:12px}.ig-live-note-mark{width:34px;height:34px;font-size:16px}}
+@media(max-width:760px){.ig-live-preview{padding-top:20px}.ig-live-preview-inner{width:min(100% - 32px,1500px)}.ig-live-breadcrumb{margin-bottom:0}.ig-live-note{grid-template-columns:38px 1fr;gap:12px;margin-top:12px}.ig-live-note-mark{width:34px;height:34px;font-size:16px}}
+@media(max-width:760px){.ig-live-profile{margin-top:32px}.ig-live-profile .pdp-social-heading h1{font-size:clamp(36px,9vw,50px)}.ig-live-profile-frame{height:580px}}
 @media(prefers-reduced-motion:reduce){.ig-live-preview *{scroll-behavior:auto!important}}
