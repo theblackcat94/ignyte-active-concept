@@ -12,5 +12,5 @@
 .ig-live-note a{font-size:10px;font-weight:800;letter-spacing:.1em;text-decoration:underline;text-underline-offset:4px}
 .ig-live-note a:hover{color:var(--orange)}
 @media(max-width:760px){.ig-live-preview{padding-top:20px}.ig-live-preview-inner{width:min(100% - 32px,1500px)}.ig-live-breadcrumb{margin-bottom:0}.ig-live-note{grid-template-columns:38px 1fr;gap:12px;margin-top:12px}.ig-live-note-mark{width:34px;height:34px;font-size:16px}}
-@media(max-width:760px){.ig-live-profile{margin-top:32px}.ig-live-profile .pdp-social-heading h1{font-size:clamp(36px,9vw,50px)}.ig-live-profile-frame{height:580px}}
+@media(max-width:760px){.ig-live-profile{margin-top:32px}.ig-live-profile .pdp-social-heading h1{font-size:clamp(36px,9vw,50px)}.ig-live-profile-frame{height:420px}}
 @media(prefers-reduced-motion:reduce){.ig-live-preview *{scroll-behavior:auto!important}}
