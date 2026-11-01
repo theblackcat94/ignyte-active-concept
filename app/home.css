@@ -186,7 +186,7 @@ html[data-appearance="ignyte"] .home-alternative .home-bottom .home-registration
 .home-alternative .home-bottom-copy{grid-column:1;grid-row:1;max-width:660px}
 .home-alternative .home-bottom h2{font-size:clamp(54px,5.6vw,92px);margin:28px 0 24px}
 .home-alternative .home-bottom-copy p{max-width:490px;margin:0 0 34px;color:#e9e8e3;font-size:clamp(16px,1.15vw,19px);line-height:1.55}
-.home-alternative .home-bottom .brand-film{grid-column:2;grid-row:1;width:min(100%,47.25svh,427.5px);max-width:430px;aspect-ratio:9/16;justify-self:center}
+.home-alternative .home-bottom .brand-film{grid-column:2;grid-row:1;width:min(100%,55svh,440px);max-width:440px;aspect-ratio:9/16;justify-self:center}
 .home-alternative .home-bottom .brand-film video,.home-alternative .home-bottom .brand-film-poster{object-fit:contain}
 html[data-appearance="ignyte"] .home-alternative .home-bottom-copy p{color:#0B1020}
 @media(max-width:800px){.home-alternative .home-bottom{grid-template-columns:1fr;gap:42px;padding:76px 24px}.home-alternative .home-bottom-copy{grid-column:1;grid-row:1}.home-alternative .home-bottom .brand-film{grid-column:1;grid-row:2;width:min(100%,41.625svh,382.5px);max-width:380px}}
