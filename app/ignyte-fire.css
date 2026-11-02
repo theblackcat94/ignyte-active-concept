@@ -48,6 +48,23 @@ html[data-appearance="ignyte"] .announcement { color: #0B1020; }
   html[data-appearance="ignyte"] .site-header{border-bottom-color:transparent}
   html[data-appearance="ignyte"] .site-header.site-header-scrolled{background:#FF4533!important;border-bottom-color:#0B102033}
 }
+@media (max-width:767px),(hover:none) and (pointer:coarse){
+  html[data-appearance="ignyte"] .site-header,
+  html[data-appearance="ignyte"] .site-header.site-header-scrolled,
+  html[data-appearance="ignyte"] .site-header :is(.header-mobile-left,.header-actions,.brand),
+  html[data-appearance="ignyte"] .pdf-footer :is(.pdf-footer-bottom,.pdf-footer-controls,.footer-appearance,.footer-currency){
+    background:transparent!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  html[data-appearance="ignyte"] .site-header{will-change:auto}
+  html[data-appearance="ignyte"] .pdf-footer-controls :is(.styled-select-trigger,.currency-trigger){
+    -webkit-appearance:none;
+    appearance:none;
+    background:transparent!important;
+    color:#0B1020;
+  }
+}
 html[data-appearance="ignyte"] .announcement-center,
 html[data-appearance="ignyte"] .shop-banner :is(h1,p,.eyebrow) { color: #0B1020; }
 html[data-appearance="ignyte"] .shop-banner h1 { animation: none; text-shadow: none; }
