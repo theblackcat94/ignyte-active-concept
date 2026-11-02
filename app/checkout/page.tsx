@@ -8,7 +8,7 @@ import { browserDb, commerceConfigured } from "@/lib/commerce";
 import { useStore } from "@/components/store-provider";
 import { track } from "@/lib/analytics-client";
 import FreeShippingProgress from "@/components/free-shipping-progress";
-import FreeReturnsReassurance from "@/components/free-returns-reassurance";
+import PurchaseReassurance from "@/components/purchase-reassurance";
 import { loadEwayModal, openEwayModal } from "@/lib/eway-modal";
 import "./checkout.css";
 
@@ -211,7 +211,7 @@ export default function CheckoutPage() {
         <FreeShippingProgress amountCents={shippingBasisCents} />
         <div className="checkout-total"><span>SHIPPING</span><strong>{quotedShipping === null ? "To be quoted" : money(quotedShipping / 100)}</strong></div>
         {quotedShipping !== null && <div className="checkout-total checkout-grand"><span>{ewayMode !== "none" && ewayMode !== null ? "TOTAL DUE" : "ESTIMATED TOTAL"}</span><strong>{money((subtotalCents - (appliedCoupon?.discountCents ?? 0) + quotedShipping) / 100)}</strong></div>}
-        <FreeReturnsReassurance compact />
+        <PurchaseReassurance returnsOnly />
         <p>Prices are in AUD and include GST. {quotedShipping === null ? "Delivery rates for your state are pending; the team will quote shipping before payment." : ewayMode !== "none" && ewayMode !== null ? payment?.provider === "stripe" ? "The total due includes delivery; Stripe will confirm your card payment." : "The total due includes delivery; eWAY will confirm your card payment." : "Delivery is estimated from your state and order value; the team confirms the final amount before payment."}</p>
       </aside></div>}
   </div>;

@@ -14,12 +14,8 @@
 .pdp-stack-photo:focus-visible{outline:3px solid #FF4533;outline-offset:-3px}
 .pdp-stack-zoom-cue{position:absolute;right:10px;bottom:10px;display:grid;place-items:center;width:42px;height:42px;border:1px solid #0b102055;border-radius:50%;background:#f4f0ebdd;color:#0B1020;pointer-events:none}
 .pdp-stack-zoom-cue svg{width:17px;height:17px}
-.pdp-stack-video{background:#0B1020}
-.pdp-stack-video video{object-fit:contain}
-/* Framing trial: the existing Aura Halter Aurora film fills its photo tile.
-   Other product films retain their current framing pending visual approval. */
-.pdp-stack-media[data-product-slug="aura-halter-aurora"] .pdp-stack-video video{object-fit:cover;object-position:center 40%}
-.pdp-stack-media[data-product-slug="aura-halter-aurora"] .pdp-stack-video{background:#e8e5df}
+.pdp-stack-video{background:#e8e5df}
+.pdp-stack-video video{object-fit:cover;object-position:center 40%}
 .pdp-film-actions{position:absolute;top:9px;right:9px;display:flex;gap:5px;z-index:2}
 .pdp-film-actions button{display:grid;place-items:center;min-width:34px;min-height:34px;border:1px solid #ffffff99;background:#0B1020dd;color:#fff;font-size:14px;cursor:pointer}
 .pdp-film-actions button svg{width:18px;height:18px}
@@ -34,7 +30,7 @@
 .pdp-stack-thumbnails button{position:relative;flex:none;width:56px;height:68px;padding:0;border:2px solid transparent;background:#e8e5df;cursor:pointer}
 .pdp-stack-thumbnails button.active{border-color:#FF4533}
 .pdp-stack-thumbnails img{display:block;width:100%;height:100%;object-fit:cover}
-.pdp-stack-media[data-product-slug="aura-halter-aurora"] .pdp-stack-thumbnails button:has(span) img{object-position:center 40%}
+.pdp-stack-thumbnails button:has(span) img{object-position:center 40%}
 .pdp-stack-thumbnails button span{position:absolute;inset:0;display:grid;place-items:center;background:#0B102066;color:#fff}
 .pdp-stack-pagination{display:none}
 .pdp-zoom-backdrop{position:fixed;inset:0;z-index:200;background:rgba(11,16,32,.94);padding:clamp(10px,2vw,28px);display:grid;place-items:center}
@@ -67,7 +63,7 @@
   .pdp-stack-tile img,.pdp-stack-tile video,.pdp-stack-photo{aspect-ratio:auto;height:clamp(320px,min(118vw,62dvh),660px)}
   .pdp-stack-photo{touch-action:auto}
   .pdp-stack-photo.is-pinched{touch-action:none;cursor:grab}
-  .pdp-stack-photo img{will-change:transform;transform-origin:center center}
+  .pdp-stack-photo img{object-fit:contain;will-change:transform;transform-origin:center center}
   .pdp-stack-photo.is-pinched:hover img{transform:none}
-  .pdp-stack-video video{object-fit:contain}
+  .pdp-stack-video video{object-fit:contain;object-position:center center}
 }
