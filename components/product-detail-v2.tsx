@@ -26,6 +26,15 @@ import FreeReturnsReassurance from "./free-returns-reassurance";
 import { fabricCompositions } from "@/lib/fabric-composition";
 import "@/app/product-detail-v2.css";
 
+const fitScale = ["RUNS SMALLER", "TRUE TO SIZE", "RUNS LARGER"] as const;
+function fitScalePosition(advice: string): number | null {
+  const normalized = advice.trim().toLowerCase().replace(/[.!]+$/, "");
+  if (normalized === "runs smaller" || normalized === "runs small") return 0;
+  if (normalized === "true to size") return 1;
+  if (normalized === "runs larger" || normalized === "runs large") return 2;
+  return null;
+}
+
 export default function ProductDetail({ product: initialProduct }: { product: Product }) {
   const { products, addToBag, bagOpen, wishlist, toggleWishlist, catalogLoading, catalogError } = useStore();
   const product = !catalogLoading && !catalogError ? products.find(item => item.slug === initialProduct.slug) ?? initialProduct : initialProduct;
@@ -45,8 +54,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const isSock = product.name.toLowerCase().includes("sock");
   const pdp = product.pdp;
   const fitAdvice = pdp.fit?.trim();
-  const fitLabel = isSock ? "One size" : fitAdvice || product.fitAttribute?.trim();
-  const fitNote = isSock ? sockSizing.productText : /^true to size$/i.test(fitLabel || "") ? "We recommend choosing your usual size." : "";
+  const fitPosition = !isSock && fitAdvice ? fitScalePosition(fitAdvice) : null;
   const sizes: NonNullable<Product["variants"]> = product.variants ? product.variants : (isSock ? [sockSizing.variant] : ["XS", "S", "M", "L", "XL"]).map(value => ({ id: value, size: value, price: product.price, stock: commerceConfigured ? 0 : 1 }));
   const defaultSize = sizes.length === 1 && sizes[0].stock > 0 ? sizes[0].size : "";
   const size = selection.slug === product.slug && sizes.some(variant => variant.size === selection.size && variant.stock > 0) ? selection.size : defaultSize;
@@ -94,13 +102,16 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     if (label === "FEATURES") return <ul className="pdp-feature-list">{pdp.features.map(feature => <li key={feature}>{feature}</li>)}{isSock && <li>{sockSizing.productText}</li>}</ul>;
     if (label === "DESIGNED FOR") return <div className="pdp-activity-list">{pdp.activities.map(activity => <span key={activity}>{activity}</span>)}</div>;
     if (label === "FIT & FABRIC") return <div className="pdp-fit-fabric">
+      {isSock ? <p><strong>Fit and sizing advice</strong><span>{sockSizing.productText}</span></p> : fitAdvice && <p><strong>Fit and sizing advice</strong><span>{fitAdvice}</span></p>}
       {product.fitAttribute && <p><strong>Fit</strong><span>{product.fitAttribute}</span></p>}
       {product.coverageAttribute && <p><strong>Coverage</strong><span>{product.coverageAttribute}</span></p>}
       {pdp.support_level?.trim() && <p><strong>Support</strong><span>{pdp.support_level.trim()}</span></p>}
-      {isSock ? <p><strong>Fit and sizing advice</strong><span>{sockSizing.productText}</span></p> : pdp.fit && <p><strong>Fit and sizing advice</strong><span>{pdp.fit}</span></p>}
       {fabricCompositions(pdp.fabric).map((part, index) => <p key={`${part.label}-${index}`}><strong>{part.label}</strong><span>{part.composition}</span></p>)}
       {(pdp.care_instructions?.trim() || pdp.care_approved) && <p><strong>Care</strong><span>{pdp.care_instructions?.trim() || "Machine wash cold at 30°C on a gentle cycle. Air dry in the shade. Always follow the garment care label."}</span></p>}
       {!isSock && !pdp.fit && !pdp.fabric && !pdp.support_level && !pdp.care_instructions && !product.fitAttribute && !product.coverageAttribute && !pdp.care_approved && !pdp.oeko_certified && <p>Fit and fabric details are being confirmed for this product.</p>}
+      {fitPosition !== null && <div className="pdp-fit-scale" role="img" aria-label={`IGNYTE sizing guidance: ${fitScale[fitPosition].toLowerCase()}`}>
+        {fitScale.map((label, index) => <span key={label} className={index === fitPosition ? "is-current" : ""} aria-hidden="true">{label}</span>)}
+      </div>}
       {pdp.oeko_certified && <div className="pdp-oeko"><strong>OEKO-TEX® STANDARD 100</strong><p>Made with OEKO-TEX® STANDARD 100 certified fabrics, tested for harmful substances so you can feel confident in what’s against your skin.</p>{pdp.oeko_certificate_url?.trim() && <a href={pdp.oeko_certificate_url.trim()} target="_blank" rel="noopener noreferrer">View certificate{pdp.oeko_certificate.trim() ? ` ${pdp.oeko_certificate.trim()}` : ""} ↗</a>}</div>}
     </div>;
     if (label === "MODEL DETAILS") {
@@ -109,7 +120,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     }
     if (label === "SIZE GUIDE") return <><SizeGuideContent productCategory={product.category} /><div className="pdp-size-guide-link"><Link className="text-link" href={isSock ? "/size-guide#socks" : "/size-guide"}>OPEN FULL SIZE GUIDE ↗</Link></div></>;
     if (label === "CARE GUIDE") return <div className="pdp-care"><strong>Care for your kit</strong><p>Keep your IGNYTE activewear ready for your next move.</p><ul><li>Machine wash cold at 30°C on a gentle cycle.</li><li>Turn inside out and wash with similar colours.</li><li>Use a mild detergent. Avoid fabric softener and bleach.</li><li>Wash separately from towels and items with exposed zips or Velcro.</li><li>Air dry in the shade. Do not tumble dry.</li><li>Do not iron or dry clean.</li></ul><p>After a sweaty session, let your gear air out before placing it in the laundry basket. Always follow the care label on your garment.</p></div>;
-    return <div className="pdp-delivery"><p>Australia only. Free shipping on Australian orders of AU$100 or more after discounts. Delivery rates for smaller orders and prepaid return labels are being confirmed with the fulfilment team.</p><Link className="text-link" href="/returns">VIEW RETURNS POLICY ↗</Link></div>;
+    return <div className="pdp-delivery"><p>Australia only. Free shipping on Australian orders of AU$100 or more after discounts. IGNYTE pays return postage for Australian returns accepted by our team.</p><Link className="text-link" href="/returns">VIEW RETURNS POLICY ↗</Link></div>;
   }
 
   return <div className={`product-page pdp-stacked section-wrap${(showMobilePurchase || showDesktopPurchase) && !bagOpen && !guideOpen ? " has-sticky-purchase" : ""}`}>
@@ -125,7 +136,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       </div>
       <div className="size-heading"><span>SELECT SIZE</span><button type="button" onClick={() => setGuideOpen(true)}>SIZE GUIDE ↗</button></div>
       <div className="size-grid" ref={sizeRef}>{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} disabled={variant.stock <= 0} onClick={() => setSelection({ slug: product.slug, size: variant.size })} key={variant.id}>{variant.size}</button>)}</div>
-      {fitLabel && <div className="pdp-fit-confidence"><span>IGNYTE FIT GUIDANCE</span><strong>FIT: {fitLabel.toUpperCase()}{/^true to size$/i.test(fitLabel) && <span aria-hidden="true"> ✓</span>}</strong>{fitNote && <p>{fitNote}</p>}<button type="button" onClick={() => setGuideOpen(true)}>VIEW SIZE GUIDE ↗</button></div>}
+      {isSock ? <p className="pdp-sock-size-note">{sockSizing.productText}</p> : fitPosition !== null && <p className="pdp-fit-confidence">FIT: {fitScale[fitPosition]} <span aria-hidden="true">✓</span></p>}
       <button type="button" ref={addRef} className="button button-orange detail-add" onClick={() => size && addToBag(product.slug, size)} disabled={!canAdd}>{addLabel}<span>↗</span></button>
       <FreeReturnsReassurance />
       <BuildYourSet bra={product} braSize={size} />
