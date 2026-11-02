@@ -22,6 +22,7 @@ import { asset } from "@/lib/asset";
 import HeartIcon from "./heart-icon";
 import BrandFilm from "./brand-film";
 import RegistrationMarks from "./registration-marks";
+import FreeReturnsReassurance from "./free-returns-reassurance";
 import { fabricCompositions } from "@/lib/fabric-composition";
 import "@/app/product-detail-v2.css";
 
@@ -126,9 +127,10 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       <div className="size-grid" ref={sizeRef}>{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} disabled={variant.stock <= 0} onClick={() => setSelection({ slug: product.slug, size: variant.size })} key={variant.id}>{variant.size}</button>)}</div>
       {fitLabel && <div className="pdp-fit-confidence"><span>IGNYTE FIT GUIDANCE</span><strong>FIT: {fitLabel.toUpperCase()}{/^true to size$/i.test(fitLabel) && <span aria-hidden="true"> ✓</span>}</strong>{fitNote && <p>{fitNote}</p>}<button type="button" onClick={() => setGuideOpen(true)}>VIEW SIZE GUIDE ↗</button></div>}
       <button type="button" ref={addRef} className="button button-orange detail-add" onClick={() => size && addToBag(product.slug, size)} disabled={!canAdd}>{addLabel}<span>↗</span></button>
+      <FreeReturnsReassurance />
       <BuildYourSet bra={product} braSize={size} />
       <button type="button" className="wishlist-button" aria-pressed={wishlist.includes(product.slug)} onClick={() => toggleWishlist(product.slug)}><span className="wishlist-glyph" key={wishlist.includes(product.slug) ? "saved" : "unsaved"} aria-hidden="true"><HeartIcon filled={wishlist.includes(product.slug)} /></span> {wishlist.includes(product.slug) ? "SAVED TO WISHLIST" : "ADD TO WISHLIST"}</button>
-      <div className="pdp-purchase-reassurance"><Link href="/returns#shipping"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M2 5h12v11H2zM14 9h4l4 4v3h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Free shipping on AU orders $100 or more</span></Link><Link href="/returns"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="m3 12 6 6L21 6"/><path d="M3 5h10"/></svg><span>Fast, easy returns</span></Link></div>
+      <div className="pdp-purchase-reassurance"><Link href="/returns#shipping"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M2 5h12v11H2zM14 9h4l4 4v3h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Free shipping on AU orders $100 or more</span></Link></div>
       <div className="detail-accordions">{sections.map(label => <div key={label} id={label === "FIT & FABRIC" ? "pdp-fit-fabric" : undefined}><button type="button" aria-expanded={openInfo.includes(label)} onClick={() => setOpenInfo(current => current.includes(label) ? current.filter(item => item !== label) : [...current, label])}>{label}<span>{openInfo.includes(label) ? "−" : "+"}</span></button>{openInfo.includes(label) && content(label)}</div>)}</div>
     </div></div>
     {related.length > 0 && <div className="related-section pdp-recommendations"><div className="section-heading"><div><span className="eyebrow">COMPLETE YOUR EDIT</span><h2>PAIR IT <em>WITH.</em></h2></div><Link href="/shop" className="text-link">SHOP ALL ↗</Link></div><div className="products-grid">{related.map((p, i) => <ProductCard product={p} index={i} key={p.slug} showOptions />)}</div></div>}
