@@ -53,7 +53,7 @@ export default function AboutAlternativePage() {
 
     <section className="about-alt-commitment about-alt-wrap" aria-labelledby="about-alt-commitment-title">
       <div className="about-alt-commitment-copy"><span className="eyebrow">OUR COMMITMENT ↘</span><h2 id="about-alt-commitment-title">Built for the burn.</h2><p>Built for the Burn is our product promise: performance-led activewear that brings function, style and expression together.</p><p>Our approach starts with training, with attention to how each piece fits, feels and moves. Expressive silhouettes and considered details bring individuality into the mix.</p><p>For women who care about their training and how they show up.</p><Link className="button button-orange" href="/collections">EXPLORE THE COLLECTION ↗</Link></div>
-      <div className="about-alt-commitment-media"><BrandFilm label="IGNYTE brand film" poster="/images/home/video-cover-2.jpg" /></div>
+      <div className="about-alt-commitment-media"><BrandFilm label="IGNYTE brand film" /></div>
     </section>
 
     <section className="about-alt-founders" aria-labelledby="about-alt-founders-title">

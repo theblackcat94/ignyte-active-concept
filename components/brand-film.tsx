@@ -2,73 +2,93 @@
 
 import { useEffect, useRef, useState } from "react";
 import { asset } from "@/lib/asset";
+import { brandFilmFull, brandFilmPoster, brandFilmPreview } from "@/lib/brand-film-media";
 import "@/app/brand-film.css";
 
-const previewFilm = asset("/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4");
-const fullFilm = asset("/images/home/Ignyte-Vertical-Compressed-Sound.mp4");
+type PlayerState = "idle" | "preview" | "loading" | "full" | "error" | "ended";
 
-export default function BrandFilm({ className = "", label = "IGNYTE brand film", poster = "/images/home/Ignyte-Vertical-First-Frame.jpg" }: { className?: string; label?: string; poster?: string }) {
+export default function BrandFilm({ className = "", label = "IGNYTE brand film" }: { className?: string; label?: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const previewDone = useRef(false);
-  const fullPlayback = useRef(false);
+  const fullRequested = useRef(false);
+  const pendingFullPlay = useRef(false);
   const previewTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [playing, setPlaying] = useState(false);
-  const [previewing, setPreviewing] = useState(false);
+  const [state, setState] = useState<PlayerState>("idle");
   const [posterVisible, setPosterVisible] = useState(true);
-  const [muted, setMuted] = useState(false);
-  const [failed, setFailed] = useState(false);
-  const [source, setSource] = useState(previewFilm);
+  const [showControls, setShowControls] = useState(false);
+
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !window.IntersectionObserver) return;
+    if (!video) return;
+    video.src = asset(brandFilmPreview);
+    if (!window.IntersectionObserver) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) {
         if (previewTimer.current) clearTimeout(previewTimer.current);
         if (!video.paused) video.pause();
-        if (!fullPlayback.current) { setPreviewing(false); setPosterVisible(true); }
+        if (!fullRequested.current) { setState("idle"); setPosterVisible(true); }
         return;
       }
-      if (previewDone.current || fullPlayback.current || reduced || saveData) return;
+      if (previewDone.current || fullRequested.current || reduced || saveData) return;
       previewDone.current = true;
       video.muted = true;
       video.currentTime = 0;
       void video.play().then(() => {
-        setPreviewing(true);
+        if (fullRequested.current) return;
+        setState("preview");
         setPosterVisible(false);
         previewTimer.current = setTimeout(() => {
-          video.pause(); video.currentTime = 0;
-          setPreviewing(false); setPosterVisible(true);
+          if (fullRequested.current) return;
+          video.pause();
+          video.currentTime = 0;
+          setState("idle");
+          setPosterVisible(true);
         }, 2800);
-      }).catch(() => { setFailed(true); setPosterVisible(true); });
+      }).catch(() => { if (!fullRequested.current) setPosterVisible(true); });
     }, { threshold: 0.4 });
     observer.observe(video);
-    return () => { observer.disconnect(); if (previewTimer.current) clearTimeout(previewTimer.current); };
+    return () => { observer.disconnect(); if (previewTimer.current) clearTimeout(previewTimer.current); video.pause(); };
   }, []);
-  function togglePlayback() {
+
+  function requestFullPlayback() {
     const video = videoRef.current;
     if (!video) return;
-    if (!video.paused && fullPlayback.current) { video.pause(); return; }
     if (previewTimer.current) clearTimeout(previewTimer.current);
-    fullPlayback.current = true;
-    setPreviewing(false); setPosterVisible(false);
-    setSource(fullFilm);
-    if (video.src !== new URL(fullFilm, window.location.href).href) {
-      video.src = fullFilm;
+    previewDone.current = true;
+    fullRequested.current = true;
+    pendingFullPlay.current = true;
+    setState("loading");
+    setPosterVisible(true);
+    setShowControls(true);
+    video.controls = true;
+    video.muted = false;
+    if (video.src !== new URL(asset(brandFilmFull), window.location.href).href) {
+      video.pause();
+      video.src = asset(brandFilmFull);
       video.load();
     }
-    video.currentTime = 0;
-    video.muted = muted;
-    void video.play().catch(() => { setFailed(true); setPosterVisible(true); });
+    // Request playback during the tap gesture. A pending load resumes via onCanPlay.
+    void video.play().catch(error => {
+      if (error?.name === "NotAllowedError" || video.error) {
+        pendingFullPlay.current = false;
+        setState("error");
+      }
+    });
   }
+
+  const previewing = state === "preview";
+  const showPlay = state === "idle" || previewing || state === "error" || state === "ended";
+
   return <div className={`brand-film ${className}`}>
-    <video ref={videoRef} src={source} poster={asset(poster)} playsInline muted={muted} preload="none" aria-label={label} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => { fullPlayback.current = false; setPlaying(false); setPosterVisible(true); }} onError={() => { setFailed(true); setPosterVisible(true); }} />
-    {posterVisible && <img className="brand-film-poster" src={asset(poster)} alt="" aria-hidden="true" loading="eager" />}
-    {(!playing || previewing) && <button type="button" className="brand-film-play" onClick={togglePlayback} aria-label={failed ? "Retry IGNYTE film" : "Play full IGNYTE film"}><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M11 6v20l16-10z" fill="currentColor" /></svg></button>}
-    {!previewing && <div className="brand-film-controls">
-      {playing && <button type="button" onClick={togglePlayback} aria-label="Pause IGNYTE film">Ⅱ</button>}
-      <button type="button" onClick={() => setMuted(value => { const next = !value; if (videoRef.current) videoRef.current.muted = next; return next; })} aria-label={muted ? "Enable film sound" : "Mute film"}>{muted ? "SOUND OFF" : "SOUND ON"}</button>
-    </div>}
+    <video ref={videoRef} poster={asset(brandFilmPoster)} playsInline preload="none" controls={showControls} aria-label={label}
+      onCanPlay={() => { const video = videoRef.current; if (pendingFullPlay.current && video?.paused) void video.play().catch(() => { pendingFullPlay.current = false; setState("error"); }); }}
+      onPlay={() => { if (fullRequested.current) { pendingFullPlay.current = false; setState("full"); setPosterVisible(false); } }}
+      onEnded={() => { if (fullRequested.current) { pendingFullPlay.current = false; setState("ended"); setPosterVisible(true); } }}
+      onError={() => { pendingFullPlay.current = false; setState("error"); setPosterVisible(true); }} />
+    {posterVisible && <img className="brand-film-poster" src={asset(brandFilmPoster)} alt="" aria-hidden="true" loading="eager" />}
+    {showPlay && <button type="button" className="brand-film-play" onClick={requestFullPlayback} aria-label={state === "error" ? "Retry IGNYTE film" : "Play full IGNYTE film"}><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M11 6v20l16-10z" fill="currentColor" /></svg></button>}
+    {state === "loading" && <div className="brand-film-loading" role="status" aria-live="polite"><span className="brand-film-spinner" aria-hidden="true" />Loading film…</div>}
   </div>;
 }

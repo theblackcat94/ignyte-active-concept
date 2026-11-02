@@ -38,6 +38,7 @@ export async function readHomeHeroSettings() {
       ...slide,
       desktopSrc: oldFilms.has(slide.desktopSrc) ? defaultHomeHeroSettings.slides[0].desktopSrc : slide.desktopSrc,
       mobileSrc: oldFilms.has(slide.mobileSrc) || slide.mobileSrc === "/images/home/Ignyte-Hero-Trimmed-11sec.mp4" ? defaultHomeHeroSettings.slides[0].mobileSrc : slide.mobileSrc,
+      poster: slide.poster === "/images/home/Home-Hero-Video-Fallback.jpg" ? defaultHomeHeroSettings.slides[0].poster : slide.poster,
     } : slide) };
   }
   catch (error) {

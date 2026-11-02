@@ -4,7 +4,8 @@
 .brand-film-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:76px;height:76px;border:1px solid #0B1020;border-radius:50%;background:#FF4533;color:#0B1020;cursor:pointer;transition:background .2s,transform .2s}
 .brand-film-play:hover{background:#FF4533;transform:translate(-50%,-50%) scale(1.05)}
 .brand-film-play svg{width:32px;height:32px;transform:translateX(1px)}
-.brand-film-controls{position:absolute;right:12px;bottom:12px;display:flex;gap:7px}
-.brand-film-controls button{min-height:40px;padding:9px 12px;border:1px solid #fff9;background:#0B1020c9;color:#fff;font:700 10px var(--font-ignyte-mono),monospace;letter-spacing:.06em;cursor:pointer}
+.brand-film-loading{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;padding:10px 13px;background:#0B1020d9;color:#fff;font:700 10px var(--font-ignyte-mono),monospace;letter-spacing:.05em;pointer-events:none;white-space:nowrap}
+.brand-film-spinner{width:14px;height:14px;border:2px solid #fff6;border-top-color:#FF4533;border-radius:50%;animation:brand-film-spin .8s linear infinite}
+@keyframes brand-film-spin{to{transform:rotate(360deg)}}
 .brand-film button:focus-visible{outline:2px solid #FF4533;outline-offset:3px}
-@media(prefers-reduced-motion:reduce){.brand-film-play{transition:none}}
+@media(prefers-reduced-motion:reduce){.brand-film-play{transition:none}.brand-film-spinner{animation:none}}
