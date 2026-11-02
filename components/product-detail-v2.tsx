@@ -24,6 +24,9 @@ import BrandFilm from "./brand-film";
 import RegistrationMarks from "./registration-marks";
 import { fabricCompositions } from "@/lib/fabric-composition";
 import ProductReviews from "./product-reviews";
+import PurchaseReassurance from "./purchase-reassurance";
+import ProductDescription from "./product-description";
+import PdpEditShortcut from "./pdp-edit-shortcut";
 import "@/app/product-detail-v2.css";
 
 const fitScale = ["RUNS SMALLER", "TRUE TO SIZE", "RUNS LARGER"] as const;
@@ -123,9 +126,9 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   }
 
   return <div className={`product-page pdp-stacked section-wrap${(showMobilePurchase || showDesktopPurchase) && !bagOpen && !guideOpen ? " has-sticky-purchase" : ""}`}>
-    <div className="detail-grid"><div><StackedProductGallery product={product} /></div><div className="detail-info" tabIndex={0} aria-label="Product details and purchase options"><div className="breadcrumb pdp-detail-breadcrumb"><Link href="/">IGNYTE</Link><span>/</span><Link href={`/shop/${product.category}`}>{product.category.toUpperCase().replace("-", " ")}</Link><span>/</span><span>{product.name.toUpperCase()}</span></div><h1>{product.name.toUpperCase()}<em>.</em></h1>
+    <div className="detail-grid"><div><StackedProductGallery product={product} /></div><div className="detail-info" tabIndex={0} aria-label="Product details and purchase options"><div className="pdp-breadcrumb-row"><div className="breadcrumb pdp-detail-breadcrumb"><Link href="/">IGNYTE</Link><span>/</span><Link href={`/shop/${product.category}`}>{product.category.toUpperCase().replace("-", " ")}</Link><span>/</span><span>{product.name.toUpperCase()}</span></div><PdpEditShortcut slug={product.slug} /></div><h1>{product.name.toUpperCase()}<em>.</em></h1>
       <div className="detail-price">{(selectedVariant?.originalPrice ?? product.originalPrice) && <del>{money((selectedVariant?.originalPrice ?? product.originalPrice)!)}</del>}<span>{money(selectedVariant?.price ?? product.price)}<CurrencyEstimate aud={selectedVariant?.price ?? product.price} /></span></div>
-      <p className="detail-description">{product.description}</p>{commerceConfigured && !product.variants && <p className="catalog-preview-note">Preview item. Available to order after sizes and stock are confirmed.</p>}
+      <ProductDescription key={product.slug} description={product.description} />{commerceConfigured && !product.variants && <p className="catalog-preview-note">Preview item. Available to order after sizes and stock are confirmed.</p>}
       <div className="detail-color">COLOUR: <strong>{product.color.toUpperCase()}</strong></div>
       <div className="pdp-colour-options" aria-label={`Available ${product.name} colours`}>
         {colours.map(option => <Link key={option.slug} href={`/product/${option.slug}/`} scroll={false} prefetch className={`pdp-colour-option ${option.slug === product.slug ? "selected" : ""}`} aria-label={`${option.color}${option.slug === product.slug ? ", selected" : ""}`} aria-current={option.slug === product.slug ? "page" : undefined} title={option.color} onPointerEnter={() => { const image = new window.Image(); image.src = option.image; }} onClick={() => { if (option.slug === product.slug) return; try { sessionStorage.setItem("ignyte-pdp-colour-size", JSON.stringify({ slug: option.slug, size })); } catch {} }}>
@@ -137,10 +140,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       <div className="size-grid" ref={sizeRef}>{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} disabled={variant.stock <= 0} onClick={() => setSelection({ slug: product.slug, size: variant.size })} key={variant.id}>{variant.size}</button>)}</div>
       {isSock ? <p className="pdp-sock-size-note">{sockSizing.productText}</p> : fitPosition !== null && <div className="pdp-fit-confidence" aria-label={`Our fit advice: ${fitScale[fitPosition].toLowerCase()}. IGNYTE's own sizing recommendation, not customer review data.`}><span>OUR FIT ADVICE</span><span className="pdp-fit-mini-track" aria-hidden="true">{fitScale.map((label, index) => <i key={label} className={index === fitPosition ? "is-current" : ""} />)}</span><strong>{fitScale[fitPosition]}</strong><span className="pdp-fit-info" aria-hidden="true" title="IGNYTE's own sizing recommendation, not customer review data">ⓘ</span></div>}
       <button type="button" ref={addRef} className="button button-orange detail-add" onClick={() => size && addToBag(product.slug, size)} disabled={!canAdd}>{addLabel}<span>↗</span></button>
-      <div className="pdp-purchase-reassurance">
-        <Link href="/returns#shipping" aria-label="Free shipping on eligible Australian orders of AU$100 or more after discounts. View shipping policy."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M2 5h12v11H2zM14 9h4l4 4v3h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>FREE SHIPPING ON AU$100+ ORDERS</span></Link>
-        <Link href="/returns#free-returns"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M4 8h12a5 5 0 0 1 0 10H9"/><path d="m8 4-4 4 4 4"/></svg><span>FREE, EASY &amp; FAST RETURNS</span></Link>
-      </div>
+      <PurchaseReassurance />
       <BuildYourSet bra={product} braSize={size} />
       <button type="button" className="wishlist-button" aria-pressed={wishlist.includes(product.slug)} onClick={() => toggleWishlist(product.slug)}><span className="wishlist-glyph" key={wishlist.includes(product.slug) ? "saved" : "unsaved"} aria-hidden="true"><HeartIcon filled={wishlist.includes(product.slug)} /></span> {wishlist.includes(product.slug) ? "SAVED TO WISHLIST" : "ADD TO WISHLIST"}</button>
       <div className="detail-accordions">{sections.map(label => <div key={label} id={label === "FIT & FABRIC" ? "pdp-fit-fabric" : undefined}><button type="button" aria-expanded={openInfo.includes(label)} onClick={() => setOpenInfo(current => current.includes(label) ? current.filter(item => item !== label) : [...current, label])}>{label}<span>{openInfo.includes(label) ? "−" : "+"}</span></button>{openInfo.includes(label) && content(label)}</div>)}</div>

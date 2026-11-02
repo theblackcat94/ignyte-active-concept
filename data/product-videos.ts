@@ -1,7 +1,8 @@
-// Film files come from the matching product and colour SKU folders in the supplied upload.
-// Each uses the folder's cut-02 web export; alternate cuts remain available for review.
+// Gallery films are verified 9:16 rotation clips from IGNYTE Organised Rotation Clips.
+// See docs/product-rotation-video-mapping.md for the source and product/colour audit.
 const filmedSlugs = [
   "aura-halter-espresso",
+  "aura-halter-lavender",
   "seamless-legging-espresso",
   "seamless-legging-lavender",
   "seamless-sports-bra-espresso",
@@ -22,7 +23,7 @@ const availableFilms = new Set<string>(filmedSlugs);
 export function productFilmFor(slug?: string) {
   if (!slug || !availableFilms.has(slug)) return null;
   return {
-    video_url: `/images/product-videos/${slug}.mp4`,
-    video_poster: `/images/product-videos/${slug}-poster.jpg`,
+    video_url: `/images/product-videos/${slug}.mp4?v=20261102`,
+    video_poster: `/images/product-videos/${slug}-poster.jpg?v=20261102`,
   };
 }

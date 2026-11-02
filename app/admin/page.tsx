@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { browserDb, commerceConfigured, type StoreCategory, type StoreProduct, type StoreVariant } from "@/lib/commerce";
 import AdminToolsNav from "@/components/admin-tools-nav";
@@ -27,6 +27,7 @@ export default function AdminPage() {
   const [selected, setSelected] = useState<EditableProduct | null>(null);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const deepLinkHandled = useRef(false);
 
   useEffect(() => {
     if (!commerceConfigured) return;
@@ -40,23 +41,29 @@ export default function AdminPage() {
     return () => data.subscription.unsubscribe();
   }, []);
 
-  useEffect(() => { if (token) void load(token); }, [token]);
+  const edit = useCallback((product: StoreProduct) => {
+    setSelected({ ...product, pdp_content: pdpFor(product.name, product.pdp_content, product.slug), variants: product.product_variants.map(variant => ({ ...variant })) });
+    setMessage("");
+  }, []);
 
-  async function load(accessToken: string) {
+  const load = useCallback(async (accessToken: string) => {
     const response = await fetch("/api/admin/products", { headers: { Authorization: `Bearer ${accessToken}` } });
     if (!response.ok) { setMessage(response.status === 403 ? "This account does not have team access." : "Could not load products."); return null; }
     const refreshed = await response.json() as StoreProduct[];
     setProducts(refreshed);
+    if (!deepLinkHandled.current) {
+      deepLinkHandled.current = true;
+      const requestedId = new URLSearchParams(window.location.search).get("edit");
+      const requested = refreshed.find(item => item.id === requestedId);
+      if (requested) edit(requested);
+    }
     const categoryResponse = await fetch("/api/admin/categories", { headers: { Authorization: `Bearer ${accessToken}` } });
     if (categoryResponse.ok) setCategories(await categoryResponse.json() as StoreCategory[]);
     setMessage("");
     return refreshed;
-  }
+  }, [edit]);
 
-  function edit(product: StoreProduct) {
-    setSelected({ ...product, pdp_content: pdpFor(product.name, product.pdp_content, product.slug), variants: product.product_variants.map(variant => ({ ...variant })) });
-    setMessage("");
-  }
+  useEffect(() => { if (token) { const timer = setTimeout(() => { void load(token); }, 0); return () => clearTimeout(timer); } }, [token, load]);
 
   function change<K extends keyof EditableProduct>(field: K, value: EditableProduct[K]) {
     setSelected(current => current ? { ...current, [field]: value } : current);
