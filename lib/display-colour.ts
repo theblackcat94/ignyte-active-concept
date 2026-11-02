@@ -1,7 +1,11 @@
-// Only Seamless Shorts was renamed from Jacaranda to Aurora.
-// Legacy Lavender copy is also displayed as Aurora for that product only.
+// Approved purple colourways use Aurora in customer-facing copy, while
+// historical media filenames and SKU identifiers remain stable.
+const auroraSlugs = new Set([
+  "aura-halter-aurora", "seamless-legging-aurora", "seamless-sports-bra-aurora",
+  "motion-sports-bra-aurora", "all-in-motion-shorts-aurora", "seamless-short-aurora",
+]);
 export function displayColour(text: string, productSlug?: string): string {
-  return productSlug === "seamless-short-aurora"
-    ? text.replace(/\b(?:Jacaranda|Lavender)\b/gi, "Aurora")
+  return productSlug && auroraSlugs.has(productSlug)
+    ? text.replace(/\b(?:Jacaranda|Lavender|Lilac)\b/gi, "Aurora")
     : text;
 }

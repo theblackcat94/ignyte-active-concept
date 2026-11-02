@@ -1,5 +1,5 @@
 {
-  "source": "Jacob Cass approved MEDIA READY image package, 2026-10-27",
+  "source": "Jacob Cass MEDIA READY image package, 2026-10-27; Aurora colour naming approved 2026-11-02",
   "products": [
     {
       "slug": "aura-halter-espresso",
@@ -50,28 +50,28 @@
       ]
     },
     {
-      "slug": "aura-halter-lavender",
+      "slug": "aura-halter-aurora",
       "name": "Aura Halter Top",
       "category": "tops",
-      "color": "Jacaranda",
+      "color": "Aurora",
       "description": "A close fit with room to express yourself. Aura pairs a sculpted halter neckline with soft stretch fabric that moves with you. The extended length adds coverage, taking you from Pilates and yoga to whatever comes after.",
-      "image_path": "/images/jacob-2026-10/ign-halt-jac/ign-halt-jac-aura-halter-top-jacaranda-main-01.jpg",
+      "image_path": "/images/jacob-2026-10/ign-halt-jac/ign-halt-jac-aura-halter-top-aurora-main-01.jpg",
       "gallery": [
         {
-          "image": "/images/jacob-2026-10/ign-halt-jac/ign-halt-jac-aura-halter-top-jacaranda-gallery-02.jpg",
-          "alt": "Aura Halter Top in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-halt-jac/ign-halt-jac-aura-halter-top-aurora-gallery-02.jpg",
+          "alt": "Aura Halter Top in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-halt-jac/ign-halt-jac-aura-halter-top-jacaranda-gallery-03.jpg",
-          "alt": "Aura Halter Top in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-halt-jac/ign-halt-jac-aura-halter-top-aurora-gallery-03.jpg",
+          "alt": "Aura Halter Top in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-halt-jac/ign-halt-jac-aura-halter-top-jacaranda-gallery-04.jpg",
-          "alt": "Aura Halter Top in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-halt-jac/ign-halt-jac-aura-halter-top-aurora-gallery-04.jpg",
+          "alt": "Aura Halter Top in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-halt-jac/ign-halt-jac-aura-halter-top-jacaranda-gallery-05.jpg",
-          "alt": "Aura Halter Top in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-halt-jac/ign-halt-jac-aura-halter-top-aurora-gallery-05.jpg",
+          "alt": "Aura Halter Top in Aurora — gallery view"
         }
       ],
       "source_family": "IGN-HALT-JAC",
@@ -142,32 +142,32 @@
       ]
     },
     {
-      "slug": "seamless-legging-lavender",
+      "slug": "seamless-legging-aurora",
       "name": "Seamless Leggings",
       "category": "leggings",
-      "color": "Jacaranda",
+      "color": "Aurora",
       "description": "Full-length coverage. Freedom to move. These high-waisted leggings combine soft, compressive stretch with a wide waistband for a supportive feel. Seamless knit construction creates a smooth fit for gym sessions, yoga, Pilates and everyday wear.",
-      "image_path": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-jacaranda-main-01.jpg",
+      "image_path": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-aurora-main-01.jpg",
       "gallery": [
         {
-          "image": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-jacaranda-gallery-02.jpg",
-          "alt": "Seamless Leggings in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-aurora-gallery-02.jpg",
+          "alt": "Seamless Leggings in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-jacaranda-gallery-03.jpg",
-          "alt": "Seamless Leggings in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-aurora-gallery-03.jpg",
+          "alt": "Seamless Leggings in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-jacaranda-gallery-04.jpg",
-          "alt": "Seamless Leggings in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-aurora-gallery-04.jpg",
+          "alt": "Seamless Leggings in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-jacaranda-gallery-05.jpg",
-          "alt": "Seamless Leggings in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-aurora-gallery-05.jpg",
+          "alt": "Seamless Leggings in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-jacaranda-gallery-06.jpg",
-          "alt": "Seamless Leggings in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-aurora-gallery-06.jpg",
+          "alt": "Seamless Leggings in Aurora — gallery view"
         }
       ],
       "source_family": "IGN-LGS-JAC",
@@ -233,32 +233,32 @@
       ]
     },
     {
-      "slug": "seamless-sports-bra-jacaranda",
+      "slug": "seamless-sports-bra-aurora",
       "name": "Seamless Sports Bra",
       "category": "sports-bras",
-      "color": "Jacaranda",
+      "color": "Aurora",
       "description": "Keep your look simple and your styling options open. A scoop neckline, narrow straps and a straight back band give this fitted sports bra a clean silhouette. Pair it with matching seamless bottoms or mix your colours.",
-      "image_path": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-jacaranda-main-01.jpg",
+      "image_path": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-aurora-main-01.jpg",
       "gallery": [
         {
-          "image": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-jacaranda-gallery-02.jpg",
-          "alt": "Seamless Sports Bra in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-aurora-gallery-02.jpg",
+          "alt": "Seamless Sports Bra in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-jacaranda-gallery-03.jpg",
-          "alt": "Seamless Sports Bra in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-aurora-gallery-03.jpg",
+          "alt": "Seamless Sports Bra in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-jacaranda-gallery-04.jpg",
-          "alt": "Seamless Sports Bra in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-aurora-gallery-04.jpg",
+          "alt": "Seamless Sports Bra in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-jacaranda-gallery-05.jpg",
-          "alt": "Seamless Sports Bra in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-aurora-gallery-05.jpg",
+          "alt": "Seamless Sports Bra in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-jacaranda-gallery-06.jpg",
-          "alt": "Seamless Sports Bra in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-lvr-bra-jac/ign-lvr-bra-jac-seamless-sports-bra-aurora-gallery-06.jpg",
+          "alt": "Seamless Sports Bra in Aurora — gallery view"
         }
       ],
       "source_family": "IGN-LVR-BRA-JAC",
@@ -473,32 +473,32 @@
       ]
     },
     {
-      "slug": "motion-sports-bra-jacaranda",
+      "slug": "motion-sports-bra-aurora",
       "name": "Motion Sports Bra",
       "category": "sports-bras",
-      "color": "Jacaranda",
+      "color": "Aurora",
       "description": "Support for the work. Freedom for the movement. Motion combines a wide, supportive underband with cross-back straps and an open back so you can move freely. Breathable mesh panels help airflow through running, boxing and HIIT.",
-      "image_path": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-jacaranda-main-01.jpg",
+      "image_path": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-aurora-main-01.jpg",
       "gallery": [
         {
-          "image": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-jacaranda-gallery-02.jpg",
-          "alt": "Motion Sports Bra in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-aurora-gallery-02.jpg",
+          "alt": "Motion Sports Bra in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-jacaranda-gallery-03.jpg",
-          "alt": "Motion Sports Bra in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-aurora-gallery-03.jpg",
+          "alt": "Motion Sports Bra in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-jacaranda-gallery-04.jpg",
-          "alt": "Motion Sports Bra in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-aurora-gallery-04.jpg",
+          "alt": "Motion Sports Bra in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-jacaranda-gallery-05.jpg",
-          "alt": "Motion Sports Bra in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-aurora-gallery-05.jpg",
+          "alt": "Motion Sports Bra in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-jacaranda-gallery-06.jpg",
-          "alt": "Motion Sports Bra in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-motsbr-jac/ign-motsbr-jac-motion-sports-bra-aurora-gallery-06.jpg",
+          "alt": "Motion Sports Bra in Aurora — gallery view"
         }
       ],
       "source_family": "IGN-MOTSBR-JAC",
@@ -569,32 +569,32 @@
       ]
     },
     {
-      "slug": "all-in-motion-shorts-jacaranda",
+      "slug": "all-in-motion-shorts-aurora",
       "name": "All In Motion Shorts",
       "category": "shorts",
-      "color": "Jacaranda",
+      "color": "Aurora",
       "description": "Move freely. Keep the essentials close. All In Motion combines a lightweight, relaxed fit with curved side hems for room through every stride. A wide waistband keeps things comfortable, while a zip pocket holds your small essentials.",
-      "image_path": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-jacaranda-main-01.jpg",
+      "image_path": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-aurora-main-01.jpg",
       "gallery": [
         {
-          "image": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-jacaranda-gallery-02.jpg",
-          "alt": "All In Motion Shorts in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-aurora-gallery-02.jpg",
+          "alt": "All In Motion Shorts in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-jacaranda-gallery-03.jpg",
-          "alt": "All In Motion Shorts in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-aurora-gallery-03.jpg",
+          "alt": "All In Motion Shorts in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-jacaranda-gallery-04.jpg",
-          "alt": "All In Motion Shorts in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-aurora-gallery-04.jpg",
+          "alt": "All In Motion Shorts in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-jacaranda-gallery-05.jpg",
-          "alt": "All In Motion Shorts in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-aurora-gallery-05.jpg",
+          "alt": "All In Motion Shorts in Aurora — gallery view"
         },
         {
-          "image": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-jacaranda-gallery-06.jpg",
-          "alt": "All In Motion Shorts in Jacaranda — gallery view"
+          "image": "/images/jacob-2026-10/ign-motshts-jac/ign-motshts-jac-all-in-motion-shorts-aurora-gallery-06.jpg",
+          "alt": "All In Motion Shorts in Aurora — gallery view"
         }
       ],
       "source_family": "IGN-MOTSHTS-JAC",

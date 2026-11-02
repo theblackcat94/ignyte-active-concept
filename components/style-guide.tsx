@@ -20,7 +20,7 @@ const palette = [
   ["Muted", "#77736F", "Secondary text on light surfaces"],
 ] as const;
 const sections = ["Foundations", "Typography", "Actions", "Commerce", "Navigation & forms", "Modes", "Spacing & motion", "Notes"];
-const example = products.find(p => p.slug === "aura-halter-lavender") ?? products[0];
+const example = products.find(p => p.slug === "aura-halter-aurora") ?? products[0];
 const alternate = products.find(p => p.slug === "aura-halter-espresso") ?? example;
 
 function rgb(hex: string) { const value = hex.slice(1); return `${parseInt(value.slice(0,2),16)}, ${parseInt(value.slice(2,4),16)}, ${parseInt(value.slice(4,6),16)}`; }

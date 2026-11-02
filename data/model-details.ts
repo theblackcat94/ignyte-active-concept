@@ -10,18 +10,18 @@ export const modelPortraits: Record<string, string> = {
 
 export const modelDetailsBySlug: Record<string, string> = {
   "aura-halter-espresso": mel,
-  "aura-halter-lavender": lauren,
+  "aura-halter-aurora": lauren,
   "all-in-motion-shorts-black": lauren,
-  "all-in-motion-shorts-jacaranda": mel,
+  "all-in-motion-shorts-aurora": mel,
   "motion-sports-bra-black": lauren,
-  "motion-sports-bra-jacaranda": mel,
+  "motion-sports-bra-aurora": mel,
   "sculpt-shorts-black": mel,
   "sculpt-shorts-mauve": mel,
   "seamless-legging-espresso": mel,
-  "seamless-legging-lavender": mel,
+  "seamless-legging-aurora": mel,
   "seamless-short-espresso": mel,
   "vyper-sports-bra-black": mel,
   "vyper-sports-bra-mauve": mel,
   "seamless-sports-bra-espresso": mel,
-  "seamless-sports-bra-jacaranda": mel,
+  "seamless-sports-bra-aurora": mel,
 };

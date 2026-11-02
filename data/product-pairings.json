@@ -7,10 +7,10 @@
     "upsell": null,
     "crossSell": "ignyte-socks-white"
   },
-  "aura-halter-lavender": {
+  "aura-halter-aurora": {
     "related": [
-      "seamless-legging-lavender",
-      "all-in-motion-shorts-jacaranda"
+      "seamless-legging-aurora",
+      "all-in-motion-shorts-aurora"
     ],
     "upsell": null,
     "crossSell": "ignyte-socks-white"
@@ -23,10 +23,10 @@
     "upsell": null,
     "crossSell": "ignyte-socks-white"
   },
-  "all-in-motion-shorts-jacaranda": {
+  "all-in-motion-shorts-aurora": {
     "related": [
-      "motion-sports-bra-jacaranda",
-      "aura-halter-lavender"
+      "motion-sports-bra-aurora",
+      "aura-halter-aurora"
     ],
     "upsell": null,
     "crossSell": "ignyte-socks-white"
@@ -39,10 +39,10 @@
     "upsell": null,
     "crossSell": "ignyte-socks-white"
   },
-  "motion-sports-bra-jacaranda": {
+  "motion-sports-bra-aurora": {
     "related": [
-      "all-in-motion-shorts-jacaranda",
-      "seamless-legging-lavender"
+      "all-in-motion-shorts-aurora",
+      "seamless-legging-aurora"
     ],
     "upsell": null,
     "crossSell": "ignyte-socks-white"
@@ -70,10 +70,10 @@
     "upsell": null,
     "crossSell": "ignyte-socks-white"
   },
-  "seamless-legging-lavender": {
+  "seamless-legging-aurora": {
     "related": [
-      "seamless-sports-bra-jacaranda",
-      "aura-halter-lavender"
+      "seamless-sports-bra-aurora",
+      "aura-halter-aurora"
     ],
     "upsell": null,
     "crossSell": "ignyte-socks-white"
@@ -109,12 +109,12 @@
     "upsell": null,
     "crossSell": "ignyte-socks-white"
   },
-  "seamless-sports-bra-jacaranda": {
+  "seamless-sports-bra-aurora": {
     "related": [
-      "seamless-legging-lavender",
-      "all-in-motion-shorts-jacaranda"
+      "seamless-legging-aurora",
+      "all-in-motion-shorts-aurora"
     ],
-    "upsell": "motion-sports-bra-jacaranda",
+    "upsell": "motion-sports-bra-aurora",
     "crossSell": "ignyte-socks-white"
   },
   "ignyte-socks-white": {

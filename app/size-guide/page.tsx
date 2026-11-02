@@ -15,8 +15,8 @@ export default function SizeGuidePage() {
     <div className="size-guide-layout">
       <SizeGuideContent showTabs />
       <aside className="size-guide-editorial" aria-label="Explore Ignyte products">
-        <Link href="/product/seamless-legging-lavender/" className="size-guide-product">
-          <Image src={asset("/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-jacaranda-main-01.jpg")} alt="Model wearing Ignyte Seamless Leggings in Jacaranda" width={1800} height={2400} sizes="(min-width: 1200px) 340px, 50vw" />
+        <Link href="/product/seamless-legging-aurora/" className="size-guide-product">
+          <Image src={asset("/images/jacob-2026-10/ign-lgs-jac/ign-lgs-jac-seamless-leggings-aurora-main-01.jpg")} alt="Model wearing Ignyte Seamless Leggings in Aurora" width={1800} height={2400} sizes="(min-width: 1200px) 340px, 50vw" />
           <span>SEAMLESS LEGGINGS <span aria-hidden="true">↗</span></span>
         </Link>
         <Link href="/product/motion-sports-bra-black/" className="size-guide-product">

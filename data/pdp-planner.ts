@@ -36,7 +36,7 @@ export const plannerPdp: Record<string, PdpContent> = {
 };
 
 export const emptyPdp: PdpContent = { ...shared, oeko_certified: false, features: [], activities: [], fit: "", fabric: "" };
-export const homeBestSellerSlugs = ["aura-halter-lavender", "motion-sports-bra-black", "seamless-legging-lavender", "all-in-motion-shorts-black", "vyper-sports-bra-mauve", "sculpt-shorts-mauve"];
+export const homeBestSellerSlugs = ["aura-halter-aurora", "motion-sports-bra-black", "seamless-legging-aurora", "all-in-motion-shorts-black", "vyper-sports-bra-mauve", "sculpt-shorts-mauve"];
 export const brandFilmUrl = "/images/home/Ignyte-Vertical-Compressed-Sound.mp4";
 export const brandFilmPoster = "/images/home/video-cover-pdp.jpg";
 

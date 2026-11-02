@@ -11,7 +11,7 @@ const options: { id: Mode; label: string; description: string }[] = [
   { id: "dark", label: "Dark", description: "Night blue with light type and orange accents" },
   { id: "ignyte", label: "IGNYTE", description: "An expressive take on Bring the Fire" },
 ];
-const featured = ["aura-halter-lavender", "all-in-motion-shorts-black", "seamless-legging-espresso"]
+const featured = ["aura-halter-aurora", "all-in-motion-shorts-black", "seamless-legging-espresso"]
   .map(slug => products.find(product => product.slug === slug)).filter((product): product is (typeof products)[number] => Boolean(product));
 
 export default function AppearancePreview() {

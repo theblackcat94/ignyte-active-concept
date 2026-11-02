@@ -48,7 +48,7 @@ export default function HomeAlternative({ preview = false }: { preview?: boolean
   const fitCards = [
     { name: "CLOSE FIT", copy: "Close-fitting styles across bras, tops, leggings and shorts.", action: "SHOP CLOSE FIT ↗", filterKey: "fit", filterValue: "Close fit", slug: "sculpt-shorts-mauve" },
     { name: "RELAXED FIT", copy: "Lightweight shorts with an inner short and a zip pocket for small essentials.", action: "SHOP RELAXED FIT ↗", filterKey: "fit", filterValue: "Relaxed fit", slug: "all-in-motion-shorts-black" },
-    { name: "FULL LENGTH", copy: "High-waisted leggings with seamless knit construction and soft stretch.", action: "SHOP FULL LENGTH ↗", filterKey: "coverage", filterValue: "Full length", slug: "seamless-legging-lavender" },
+    { name: "FULL LENGTH", copy: "High-waisted leggings with seamless knit construction and soft stretch.", action: "SHOP FULL LENGTH ↗", filterKey: "coverage", filterValue: "Full length", slug: "seamless-legging-aurora" },
   ].map(card => ({ ...card, product: products.find(product => product.slug === card.slug) }));
   return <BrandFilmModalProvider><div className="home-page home-alternative" id="top">
     {preview && <div className="home-alternative-banner">NEW HOMEPAGE PREVIEW <Link href="/home-original">VIEW ORIGINAL HOMEPAGE ↗</Link></div>}

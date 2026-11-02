@@ -11,7 +11,7 @@ import "./shop-the-look.css";
 
 type Look = { title: string; description: string; eyebrow: string; top: string; bottom: string };
 const looks: Look[] = [
-  { title: "The studio set", description: "Soft colour, strong intent.", eyebrow: "CURATED TO MOVE_", top: "seamless-sports-bra-jacaranda", bottom: "seamless-legging-lavender" },
+  { title: "The studio set", description: "Soft colour, strong intent.", eyebrow: "CURATED TO MOVE_", top: "seamless-sports-bra-aurora", bottom: "seamless-legging-aurora" },
   { title: "The training edit", description: "Ready for every round.", eyebrow: "TWO PIECES. ONE LOOK.", top: "motion-sports-bra-black", bottom: "all-in-motion-shorts-black" },
 ];
 

@@ -4,11 +4,11 @@ const image = z.string().trim().min(1).max(1000).refine(value =>
   value.startsWith("/images/") || value.startsWith("https://"), "Use a local image path or HTTPS URL");
 
 const approvedPurpleSkuColours = new Map([
-  ["IGN-HALT-JAC-", "Jacaranda"],
-  ["IGN-LGS-JAC-", "Jacaranda"],
-  ["IGN-LVR-BRA-JAC-", "Jacaranda"],
-  ["IGN-MOTSBR-JAC-", "Jacaranda"],
-  ["IGN-MOTSHTS-JAC-", "Jacaranda"],
+  ["IGN-HALT-JAC-", "Aurora"],
+  ["IGN-LGS-JAC-", "Aurora"],
+  ["IGN-LVR-BRA-JAC-", "Aurora"],
+  ["IGN-MOTSBR-JAC-", "Aurora"],
+  ["IGN-MOTSHTS-JAC-", "Aurora"],
   ["IGN-LVR-SHTS-JAC-", "Aurora"],
 ]);
 

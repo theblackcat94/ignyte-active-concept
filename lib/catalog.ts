@@ -4,6 +4,7 @@ import { pdpFor, type PdpContent } from "@/data/pdp-planner";
 import { displayColour } from "./display-colour";
 import { productShortDescription } from "./product-short-description";
 import { mappedProductAttributes } from "@/data/product-attributes";
+import { auroraProductSlugs, currentProductSlug } from "@/data/aurora-product-slugs";
 
 export type Category = string;
 export type Product = {
@@ -27,13 +28,13 @@ export type Product = {
 const coverImage = (name: string) => asset(`/images/collection-covers/${name}`);
 
 // Local preview mirrors the approved media set. Live prices and stock come from Supabase.
-const featuredSlugs = ["aura-halter-lavender", "seamless-legging-lavender", "seamless-short-espresso", "seamless-sports-bra-espresso"];
+const featuredSlugs = ["aura-halter-aurora", "seamless-legging-aurora", "seamless-short-espresso", "seamless-sports-bra-espresso"];
 export const products: Product[] = prepared.products.map(item => ({
-  slug: item.slug, name: item.name, category: item.category, color: displayColour(item.color, item.slug),
+  slug: currentProductSlug(item.slug), name: item.name, category: item.category, color: displayColour(item.color, currentProductSlug(item.slug)),
   ...mappedProductAttributes(item.variants.map(variant => variant.sku)),
-  description: productShortDescription(item.name, item.slug, displayColour(item.description, item.slug)), image: asset(item.image_path),
-  pdp: pdpFor(item.name, null, item.slug),
-  gallery: item.gallery.map(entry => ({ image: asset(entry.image), alt: displayColour(entry.alt, item.slug) })),
+  description: productShortDescription(item.name, currentProductSlug(item.slug), displayColour(item.description, currentProductSlug(item.slug))), image: asset(item.image_path),
+  pdp: pdpFor(item.name, null, currentProductSlug(item.slug)),
+  gallery: item.gallery.map(entry => ({ image: asset(entry.image), alt: displayColour(entry.alt, currentProductSlug(item.slug)) })),
   price: Math.min(...item.variants.map(variant => variant.price_cents)) / 100,
   variants: item.variants.map(variant => ({ id: variant.sku, size: variant.size,
     price: variant.price_cents / 100, stock: 0 })),
@@ -44,10 +45,10 @@ export const products: Product[] = prepared.products.map(item => ({
 });
 
 export const legacyProductSlugs: Record<string, string> = {
-  "seamless-short-jacaranda": "seamless-short-aurora",
-  "seamless-legging-black": "seamless-legging-lavender",
+  ...auroraProductSlugs,
+  "seamless-legging-black": "seamless-legging-aurora",
   "seamless-short-black": "seamless-short-espresso",
-  "aura-halter-black": "aura-halter-lavender",
+  "aura-halter-black": "aura-halter-aurora",
 };
 
 export const categories: { id: Category; label: string; cover: string }[] = [

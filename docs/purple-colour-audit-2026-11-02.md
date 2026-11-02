@@ -1,5 +1,7 @@
 # Purple colour and media audit · 2 November 2026
 
+**Superseded later on 2 November:** Jacob approved Aurora as the customer-facing name for all five purple colourways. See `aurora-colour-migration-2026-11-02.md` for the current mapping and URLs. This earlier report remains as an audit trail of the initial data correction.
+
 Scope: development catalogue. Compared active product records with the approved 27 October media catalogue, SKU families, current gallery image paths, and the 2 November rotation-video mapping. The five product rows had `color = Aurora` while their approved catalogue records, active `-JAC-` SKUs, gallery alt text and image paths identify Jacaranda. The database colour field was corrected in place. No image, video, variant, price or stock row was changed.
 
 | Product | Before | After | URL |

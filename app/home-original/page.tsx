@@ -31,7 +31,7 @@ export default function Home() {
   const fitCards = [
     { name: "RELAXED FIT", copy: "Lightweight shorts with an inner short and a zip pocket for small essentials.", action: "SHOP SHORTS ↗", category: "shorts", slug: "all-in-motion-shorts-black" },
     { name: "CLOSE FIT", copy: "Bike shorts with a crossover waistband and a supportive, compressive feel.", action: "SHOP SHORTS ↗", category: "shorts", slug: "sculpt-shorts-mauve" },
-    { name: "FULL-LENGTH COVERAGE", copy: "High-waisted leggings with seamless knit construction and soft stretch.", action: "SHOP LEGGINGS ↗", category: "leggings", slug: "seamless-legging-lavender" },
+    { name: "FULL-LENGTH COVERAGE", copy: "High-waisted leggings with seamless knit construction and soft stretch.", action: "SHOP LEGGINGS ↗", category: "leggings", slug: "seamless-legging-aurora" },
   ].map(card => ({ ...card, product: products.find(product => product.slug === card.slug) }));
   return <div className="home-page" id="top">
     <HomeHeroSlider />

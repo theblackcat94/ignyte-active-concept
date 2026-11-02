@@ -2,18 +2,18 @@
 // See docs/product-rotation-video-mapping.md for the source and product/colour audit.
 const filmedSlugs = [
   "aura-halter-espresso",
-  "aura-halter-lavender",
+  "aura-halter-aurora",
   "seamless-legging-espresso",
-  "seamless-legging-lavender",
+  "seamless-legging-aurora",
   "seamless-sports-bra-espresso",
-  "seamless-sports-bra-jacaranda",
+  "seamless-sports-bra-aurora",
   "seamless-short-espresso",
   "vyper-sports-bra-black",
   "vyper-sports-bra-mauve",
   "motion-sports-bra-black",
-  "motion-sports-bra-jacaranda",
+  "motion-sports-bra-aurora",
   "all-in-motion-shorts-black",
-  "all-in-motion-shorts-jacaranda",
+  "all-in-motion-shorts-aurora",
   "sculpt-shorts-black",
   "sculpt-shorts-mauve",
 ] as const;

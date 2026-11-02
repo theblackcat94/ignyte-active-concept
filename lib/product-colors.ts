@@ -16,7 +16,7 @@ export function productColourHex(color: string): string | undefined {
 }
 
 // One storefront order for every product selector and colour filter.
-const colourOrder = ["black", "espresso", "merlot", "blue", "jacaranda", "lavender", "aurora", "mauve", "white"];
+const colourOrder = ["black", "espresso", "merlot", "blue", "aurora", "mauve", "white"];
 
 export function compareProductColours(a: string, b: string): number {
   const first = a.trim().toLowerCase();
