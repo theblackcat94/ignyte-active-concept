@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { asset } from "@/lib/asset";
 import "@/app/brand-film.css";
 
-export default function BrandFilm({ className = "", label = "IGNYTE brand film" }: { className?: string; label?: string }) {
+export default function BrandFilm({ className = "", label = "IGNYTE brand film", poster = "/images/home/Ignyte-Vertical-First-Frame.jpg" }: { className?: string; label?: string; poster?: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const previewDone = useRef(false);
   const fullPlayback = useRef(false);
@@ -54,8 +54,8 @@ export default function BrandFilm({ className = "", label = "IGNYTE brand film" 
     void video.play().catch(() => { setFailed(true); setPosterVisible(true); });
   }
   return <div className={`brand-film ${className}`}>
-    <video ref={videoRef} src={asset("/images/home/Ignyte-Vertical-Compressed-Sound.mp4")} poster={asset("/images/home/Ignyte-Vertical-First-Frame.jpg")} playsInline muted={muted} preload="none" aria-label={label} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => { fullPlayback.current = false; setPlaying(false); setPosterVisible(true); }} onError={() => { setFailed(true); setPosterVisible(true); }} />
-    {posterVisible && <img className="brand-film-poster" src={asset("/images/home/Ignyte-Vertical-First-Frame.jpg")} alt="" aria-hidden="true" />}
+    <video ref={videoRef} src={asset("/images/home/Ignyte-Vertical-Compressed-Sound.mp4")} poster={asset(poster)} playsInline muted={muted} preload="none" aria-label={label} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => { fullPlayback.current = false; setPlaying(false); setPosterVisible(true); }} onError={() => { setFailed(true); setPosterVisible(true); }} />
+    {posterVisible && <img className="brand-film-poster" src={asset(poster)} alt="" aria-hidden="true" />}
     {(!playing || previewing) && <button type="button" className="brand-film-play" onClick={togglePlayback} aria-label={failed ? "Retry IGNYTE film" : "Play full IGNYTE film"}><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M11 6v20l16-10z" fill="currentColor" /></svg></button>}
     {!previewing && <div className="brand-film-controls">
       {playing && <button type="button" onClick={togglePlayback} aria-label="Pause IGNYTE film">Ⅱ</button>}
