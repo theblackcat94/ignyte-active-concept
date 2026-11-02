@@ -4,6 +4,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "re
 import Image from "next/image";
 import type { Product } from "@/lib/catalog";
 import ProductPhotoLightbox from "./product-photo-lightbox";
+import PdpPinchPhoto from "./pdp-pinch-photo";
 import "@/app/pdp-stack-preview.css";
 
 export type ProductGalleryHandle = { showVideo: () => void };
@@ -110,10 +111,7 @@ const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Produc
   return <section className="pdp-stack-media" data-product-slug={product.slug} aria-label={`${product.name} media gallery`}>
     <div className="pdp-gallery-mark-frame"><div className="pdp-stack-grid" ref={gridRef} onScroll={updateActiveIndex}>
       {photos.map((photo, index) => <figure className="pdp-stack-tile" key={`${photo.image}-${index}`}>
-        <button type="button" className="pdp-stack-photo" onClick={() => setOpenIndex(index)} aria-label={`Enlarge photo ${index + 1} of ${photos.length}: ${photo.alt}`}>
-          <Image src={photo.image} alt={photo.alt} fill sizes="(max-width: 900px) 100vw, (max-width: 1400px) 36vw, 31vw" loading={index === 0 ? "eager" : "lazy"} fetchPriority={index === 0 ? "high" : "auto"} />
-          <span className="pdp-stack-zoom-cue" aria-hidden="true"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></svg></span>
-        </button>
+        <PdpPinchPhoto src={photo.image} alt={photo.alt} index={index} total={photos.length} active={activeIndex === index} onOpen={() => setOpenIndex(index)} />
       </figure>)}
       {product.pdp.video_url && <figure className="pdp-stack-tile pdp-stack-video">
         <video ref={videoRef} src={product.pdp.video_url} poster={product.pdp.video_poster} muted playsInline preload="none" aria-label={`${product.name} product film`} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} />

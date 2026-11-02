@@ -24,7 +24,8 @@ import BrandFilm from "./brand-film";
 import RegistrationMarks from "./registration-marks";
 import { fabricCompositions } from "@/lib/fabric-composition";
 import ProductReviews from "./product-reviews";
-import PurchaseReassurance from "./purchase-reassurance";
+import PurchaseReassurance, { ReturnsIcon, ShippingIcon } from "./purchase-reassurance";
+import { FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping-policy";
 import ProductDescription from "./product-description";
 import PdpEditShortcut from "./pdp-edit-shortcut";
 import "@/app/product-detail-v2.css";
@@ -45,7 +46,8 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const [selection, setSelection] = useState({ slug: product.slug, size: "" });
   const [openInfo, setOpenInfo] = useState<string[]>([]);
   const [guideOpen, setGuideOpen] = useState(false);
-  const [fitTipOpen, setFitTipOpen] = useState(false);
+  const [fitTipSlug, setFitTipSlug] = useState<string | null>(null);
+  const fitTipRef = useRef<HTMLSpanElement>(null);
   const [showMobilePurchase, setShowMobilePurchase] = useState(false);
   const [showDesktopPurchase, setShowDesktopPurchase] = useState(false);
   const sizeRef = useRef<HTMLDivElement>(null);
@@ -60,6 +62,15 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const pdp = product.pdp;
   const fitAdvice = pdp.fit?.trim();
   const fitPosition = !isSock && fitAdvice ? fitScalePosition(fitAdvice) : null;
+  const fitTipOpen = fitTipSlug === product.slug;
+  useEffect(() => {
+    if (!fitTipOpen) return;
+    const closeOutside = (event: PointerEvent) => { if (!fitTipRef.current?.contains(event.target as Node)) setFitTipSlug(null); };
+    const closeEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setFitTipSlug(null); };
+    document.addEventListener("pointerdown", closeOutside);
+    document.addEventListener("keydown", closeEscape);
+    return () => { document.removeEventListener("pointerdown", closeOutside); document.removeEventListener("keydown", closeEscape); };
+  }, [fitTipOpen]);
   const sizes: NonNullable<Product["variants"]> = product.variants ? product.variants : (isSock ? [sockSizing.variant] : ["XS", "S", "M", "L", "XL"]).map(value => ({ id: value, size: value, price: product.price, stock: commerceConfigured ? 0 : 1 }));
   const defaultSize = sizes.length === 1 && sizes[0].stock > 0 ? sizes[0].size : "";
   const size = selection.slug === product.slug && sizes.some(variant => variant.size === selection.size && variant.stock > 0) ? selection.size : defaultSize;
@@ -124,7 +135,10 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     }
     if (label === "SIZE GUIDE") return <><SizeGuideContent productCategory={product.category} /><div className="pdp-size-guide-link"><Link className="text-link" href={isSock ? "/size-guide#socks" : "/size-guide"}>OPEN FULL SIZE GUIDE ↗</Link></div></>;
     if (label === "CARE GUIDE") return <div className="pdp-care"><strong>Care for your kit</strong><p>Keep your IGNYTE activewear ready for your next move.</p><ul><li>Machine wash cold at 30°C on a gentle cycle.</li><li>Turn inside out and wash with similar colours.</li><li>Use a mild detergent. Avoid fabric softener and bleach.</li><li>Wash separately from towels and items with exposed zips or Velcro.</li><li>Air dry in the shade. Do not tumble dry.</li><li>Do not iron or dry clean.</li></ul><p>After a sweaty session, let your gear air out before placing it in the laundry basket. Always follow the care label on your garment.</p></div>;
-    return <div className="pdp-delivery"><p>Australia only. Free shipping on Australian orders of AU$100 or more after discounts. IGNYTE pays return postage for Australian returns accepted by our team.</p><Link className="text-link" href="/returns">VIEW RETURNS POLICY ↗</Link></div>;
+    return <div className="pdp-delivery">
+      <section><span className="pdp-delivery-icon"><ShippingIcon /></span><div><strong>DELIVERY</strong><p>Free shipping on eligible Australian orders of AU${FREE_SHIPPING_THRESHOLD_CENTS / 100} or more after discounts. AU$15 below the threshold.</p><Link href="/returns#shipping">Shipping policy ↗</Link></div></section>
+      <section><span className="pdp-delivery-icon"><ReturnsIcon /></span><div><strong>RETURNS</strong><p>Free, easy returns for eligible Australian orders. Contact us with your order number before sending an item back so we can arrange return postage.</p><Link href="/returns#free-returns">Returns policy ↗</Link></div></section>
+    </div>;
   }
 
   return <div className={`product-page pdp-stacked section-wrap${(showMobilePurchase || showDesktopPurchase) && !bagOpen && !guideOpen ? " has-sticky-purchase" : ""}`}>
@@ -140,7 +154,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       </div>
       <div className="size-heading"><span>SELECT SIZE</span><button type="button" onClick={() => setGuideOpen(true)}>SIZE GUIDE ↗</button></div>
       <div className="size-grid" ref={sizeRef}>{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} disabled={variant.stock <= 0} onClick={() => setSelection({ slug: product.slug, size: variant.size })} key={variant.id}>{variant.size}</button>)}</div>
-      {isSock ? <p className="pdp-sock-size-note">{sockSizing.productText}</p> : fitPosition !== null && <div className="pdp-fit-confidence"><span>Our fit advice</span><strong>{fitLabels[fitPosition]}</strong><span className={`pdp-fit-info ${fitTipOpen ? "is-open" : ""}`}><button type="button" aria-label="About our fit advice" aria-describedby="pdp-fit-tooltip" aria-expanded={fitTipOpen} onFocus={() => setFitTipOpen(true)} onClick={() => setFitTipOpen(true)} onBlur={() => setFitTipOpen(false)}>ⓘ</button><span id="pdp-fit-tooltip" className="pdp-fit-tooltip" role="tooltip">IGNYTE&apos;s own product fit guidance, based on our assessment, not customer reviews.</span></span></div>}
+      {isSock ? <p className="pdp-sock-size-note">{sockSizing.productText}</p> : fitPosition !== null && <div className="pdp-fit-confidence"><span>Our fit advice</span><strong>{fitLabels[fitPosition]}</strong><span ref={fitTipRef} className={`pdp-fit-info ${fitTipOpen ? "is-open" : ""}`}><button type="button" aria-label="About our fit advice" aria-describedby="pdp-fit-tooltip" aria-expanded={fitTipOpen} onClick={() => setFitTipSlug(open => open === product.slug ? null : product.slug)}>ⓘ</button><span id="pdp-fit-tooltip" className="pdp-fit-tooltip" role="tooltip">IGNYTE&apos;s own product fit guidance, based on our assessment, not customer reviews.</span></span></div>}
       <button type="button" ref={addRef} className="button button-orange detail-add" onClick={() => size && addToBag(product.slug, size)} disabled={!canAdd}>{addLabel}<span>↗</span></button>
       <PurchaseReassurance />
       <BuildYourSet bra={product} braSize={size} />

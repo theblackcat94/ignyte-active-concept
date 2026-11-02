@@ -32,7 +32,10 @@ const configPath = path.join(stateDir, "announcement.json");
 
 export async function readAnnouncementSettings(): Promise<AnnouncementSettings> {
   try {
-    return announcementSettingsSchema.parse(JSON.parse(await readFile(configPath, "utf8")));
+    const stored = announcementSettingsSchema.parse(JSON.parse(await readFile(configPath, "utf8")));
+    // Migrate the previous everyday slogan while preserving any edited announcement.
+    if (stored.default.text === "MOVE WITH PURPOSE. TRAIN WITH FIRE." && !stored.default.action) stored.default = liveAnnouncement;
+    return stored;
   } catch (error) {
     if (error && typeof error === "object" && "code" in error && error.code === "ENOENT") return defaultAnnouncementSettings;
     throw error;

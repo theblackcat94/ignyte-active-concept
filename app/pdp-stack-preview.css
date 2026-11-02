@@ -63,3 +63,11 @@
 
 .pdp-gallery-mark-frame{position:relative;min-width:0}
 @media(max-width:900px){.pdp-stack-photo{aspect-ratio:10/11}}
+@media(max-width:900px){
+  .pdp-stack-tile img,.pdp-stack-tile video,.pdp-stack-photo{aspect-ratio:auto;height:clamp(320px,min(118vw,62dvh),660px)}
+  .pdp-stack-photo{touch-action:auto}
+  .pdp-stack-photo.is-pinched{touch-action:none;cursor:grab}
+  .pdp-stack-photo img{will-change:transform;transform-origin:center center}
+  .pdp-stack-photo.is-pinched:hover img{transform:none}
+  .pdp-stack-video video{object-fit:contain}
+}

@@ -3,5 +3,5 @@ export type AnnouncementSettings = { enabled: boolean; active: "default" | "blac
 
 // The live message stays unchanged until the Black Friday promotion is approved.
 // Edit these settings in one place; preview the draft with ?announcement=black-friday.
-export const liveAnnouncement: Announcement = { mode: "static", text: "MOVE WITH PURPOSE. TRAIN WITH FIRE.", action: "", href: "/shop", theme: "dark" };
+export const liveAnnouncement: Announcement = { mode: "static", text: "FREE SHIPPING ON AU$100+ ORDERS", action: "FREE, EASY RETURNS", href: "/returns#shipping", theme: "dark" };
 export const blackFridayPreview: Announcement = { mode: "ticker", text: "UP TO 50% OFF", action: "SHOP BLACK FRIDAY", href: "/shop", theme: "orange" };
