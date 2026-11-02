@@ -85,8 +85,8 @@ export function toDisplayProduct(product: StoreProduct): Product {
   return {
     slug: product.slug, name: product.name, category: product.category,
     ...mappedProductAttributes(product.product_variants.map(variant => variant.sku)),
-    color: displayColour(product.color), description: displayColour(product.description),
-    image: product.image_path, gallery: (product.gallery ?? []).map(item => ({ ...item, alt: displayColour(item.alt) })), label: product.label ?? undefined,
+    color: displayColour(product.color, product.slug), description: displayColour(product.description, product.slug),
+    image: product.image_path, gallery: (product.gallery ?? []).map(item => ({ ...item, alt: displayColour(item.alt, product.slug) })), label: product.label ?? undefined,
     pdp: pdpFor(product.name, product.pdp_content, product.slug),
     price: cheapest?.price ?? 0, originalPrice: cheapest?.originalPrice,
     variants,

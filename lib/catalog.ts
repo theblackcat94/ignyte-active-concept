@@ -29,11 +29,11 @@ const coverImage = (name: string) => asset(`/images/collection-covers/${name}`);
 // Local preview mirrors the approved media set. Live prices and stock come from Supabase.
 const featuredSlugs = ["aura-halter-lavender", "seamless-legging-lavender", "seamless-short-espresso", "seamless-sports-bra-espresso"];
 export const products: Product[] = prepared.products.map(item => ({
-  slug: item.slug, name: item.name, category: item.category, color: displayColour(item.color),
+  slug: item.slug, name: item.name, category: item.category, color: displayColour(item.color, item.slug),
   ...mappedProductAttributes(item.variants.map(variant => variant.sku)),
-  description: productShortDescription(item.name, item.slug, displayColour(item.description)), image: asset(item.image_path),
+  description: productShortDescription(item.name, item.slug, displayColour(item.description, item.slug)), image: asset(item.image_path),
   pdp: pdpFor(item.name, null, item.slug),
-  gallery: item.gallery.map(entry => ({ image: asset(entry.image), alt: displayColour(entry.alt) })),
+  gallery: item.gallery.map(entry => ({ image: asset(entry.image), alt: displayColour(entry.alt, item.slug) })),
   price: Math.min(...item.variants.map(variant => variant.price_cents)) / 100,
   variants: item.variants.map(variant => ({ id: variant.sku, size: variant.size,
     price: variant.price_cents / 100, stock: 0 })),
