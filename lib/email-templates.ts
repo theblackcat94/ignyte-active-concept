@@ -80,6 +80,14 @@ export function enquiryReceivedEmail(name: string, siteUrl: string): EmailDesign
   return { subject: "We received your IGNYTE message", html: layout("MESSAGE RECEIVED", "Thanks for reaching out.", paragraph(intro), siteUrl), text: `${intro}\n\nQuestions? support@ignyteactive.com` };
 }
 
+/** Preview/template only. A delivery-confirmed scheduler must be enabled before sending. */
+export function reviewRequestEmail(firstName: string, products: { name: string; color: string; slug: string }[], siteUrl: string): EmailDesign {
+  const home = siteUrl.replace(/\/$/, "");
+  const intro = `Hey ${firstName}, it's been a little while since your IGNYTE order arrived, and we'd love to know how it's going! Have you taken your new gear for a spin? Whether you've been lifting, running, boxing or just getting moving, we'd love to hear how it fits, feels and performs. Your feedback helps us improve and makes it easier for other women to find their fit. It only takes a couple of minutes.`;
+  const links = products.map(product => `<p style="margin:0 0 12px">${escapeHtml(product.name)} · ${escapeHtml(product.color)}<br>${button("REVIEW THIS PIECE", `${home}/review/?product=${encodeURIComponent(product.slug)}`)}</p>`).join("");
+  return { subject: "You've put IGNYTE to the test. What do you think? 🔥", html: layout("REVIEW YOUR IGNYTE GEAR", "THE FIRST WORD IS YOURS_", paragraph(intro) + links + paragraph("Bring your own fire. IGNYTE Active"), siteUrl), text: `${intro}\n\n${products.map(product => `${product.name} · ${product.color}: ${home}/review/?product=${encodeURIComponent(product.slug)}`).join("\n")}\n\nBring your own fire.\nIGNYTE Active` };
+}
+
 /** Ready for the consent-based welcome flow; sending is not enabled by this template. */
 export function welcomeEmail(siteUrl: string, unsubscribeUrl: string, offerCode?: string): EmailDesign {
   const home = siteUrl.replace(/\/$/, "");
