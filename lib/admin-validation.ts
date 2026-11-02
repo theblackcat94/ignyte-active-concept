@@ -3,6 +3,15 @@ import { z } from "zod";
 const image = z.string().trim().min(1).max(1000).refine(value =>
   value.startsWith("/images/") || value.startsWith("https://"), "Use a local image path or HTTPS URL");
 
+const approvedPurpleSkuColours = new Map([
+  ["IGN-HALT-JAC-", "Jacaranda"],
+  ["IGN-LGS-JAC-", "Jacaranda"],
+  ["IGN-LVR-BRA-JAC-", "Jacaranda"],
+  ["IGN-MOTSBR-JAC-", "Jacaranda"],
+  ["IGN-MOTSHTS-JAC-", "Jacaranda"],
+  ["IGN-LVR-SHTS-JAC-", "Aurora"],
+]);
+
 export const productInput = z.object({
   slug: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/).max(120),
   name: z.string().trim().min(1).max(160),
@@ -42,4 +51,11 @@ export const productInput = z.object({
     active: z.boolean(),
   }).refine(variant => variant.sale_price_cents === null || variant.sale_price_cents < variant.price_cents,
     "Sale price must be lower than the regular price")).max(50),
+}).superRefine((product, context) => {
+  for (const [prefix, approvedColour] of approvedPurpleSkuColours) {
+    if (product.variants.some(variant => variant.active && variant.sku.startsWith(prefix)) && product.color !== approvedColour) {
+      context.addIssue({ code: "custom", path: ["color"],
+        message: `${prefix} variants are approved as ${approvedColour}; review the SKU family before changing the colour.` });
+    }
+  }
 });

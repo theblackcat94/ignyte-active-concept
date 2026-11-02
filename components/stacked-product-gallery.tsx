@@ -12,8 +12,6 @@ const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Produc
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [mobile, setMobile] = useState(false);
-  const [playing, setPlaying] = useState(false);
-  const [muted, setMuted] = useState(true);
   const gridRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   useEffect(() => {
@@ -37,8 +35,7 @@ const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Produc
     const video = videoRef.current;
     if (!video) return;
     video.muted = true;
-    setMuted(true);
-    if (video.paused) void video.play().catch(() => { video.controls = true; });
+    if (video.paused) void video.play().catch(() => {});
   }, [activeIndex, photos.length, product.pdp.video_url]);
   useEffect(() => {
     const video = videoRef.current;
@@ -46,8 +43,9 @@ const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Produc
     const observer = new IntersectionObserver(entries => {
       if (entries[0]?.isIntersecting && video.paused) {
         video.muted = true;
-        setMuted(true);
-        void video.play().catch(() => { video.controls = true; });
+        void video.play().catch(() => {});
+      } else if (!entries[0]?.isIntersecting && !video.paused) {
+        video.pause();
       }
     }, { threshold: 0.55 });
     observer.observe(video);
@@ -60,9 +58,7 @@ const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Produc
     const video = videoRef.current;
     if (!video) return;
     video.muted = true;
-    setMuted(true);
-    video.controls = true;
-    void video.play().catch(() => { video.controls = true; });
+    void video.play().catch(() => {});
   } }));
 
   function updateActiveIndex() {
@@ -84,7 +80,7 @@ const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Produc
     setActiveIndex(index);
   }
 
-  return <section className="pdp-stack-media" aria-label={`${product.name} media gallery`}>
+  return <section className="pdp-stack-media" data-product-slug={product.slug} aria-label={`${product.name} media gallery`}>
     <div className="pdp-gallery-mark-frame"><div className="pdp-stack-grid" ref={gridRef} onScroll={updateActiveIndex}>
       {photos.map((photo, index) => <figure className="pdp-stack-tile" key={`${photo.image}-${index}`}>
         <button type="button" className="pdp-stack-photo" onClick={() => setOpenIndex(index)} aria-label={`Enlarge photo ${index + 1} of ${photos.length}: ${photo.alt}`}>
@@ -93,12 +89,7 @@ const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Produc
         </button>
       </figure>)}
       {product.pdp.video_url && <figure className="pdp-stack-tile pdp-stack-video">
-        <video ref={videoRef} src={product.pdp.video_url} poster={product.pdp.video_poster} controls={!mobile} muted={muted} playsInline preload="none" aria-label={`${product.name} product film`} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} />
-        {mobile && <div className="pdp-film-actions">
-          <button type="button" aria-label={playing ? "Pause product film" : "Play product film"} onClick={() => { const video = videoRef.current; if (!video) return; if (video.paused) void video.play(); else video.pause(); }}><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{playing ? <><path d="M8 5v14M16 5v14" /></> : <path d="m8 5 11 7-11 7z" />}</svg></button>
-          <button type="button" aria-label={muted ? "Unmute product film" : "Mute product film"} onClick={() => setMuted(value => !value)}><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z" />{muted ? <path d="m16 9 5 6m0-6-5 6" /> : <><path d="M15 9a4 4 0 0 1 0 6" /><path d="M18 6a8 8 0 0 1 0 12" /></>}</svg></button>
-          <button type="button" aria-label="View product film full screen" onClick={() => { const video = videoRef.current as (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null; if (!video) return; if (video.webkitEnterFullscreen) video.webkitEnterFullscreen(); else if (video.requestFullscreen) void video.requestFullscreen(); }}><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" /></svg></button>
-        </div>}
+        <video ref={videoRef} src={product.pdp.video_url} poster={product.pdp.video_poster} controls muted playsInline preload="none" aria-label={`${product.name} product film`} />
       </figure>}
     </div>
     </div>

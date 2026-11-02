@@ -16,6 +16,10 @@
 .pdp-stack-zoom-cue svg{width:17px;height:17px}
 .pdp-stack-video{background:#0B1020}
 .pdp-stack-video video{object-fit:contain}
+/* Framing trial: the existing Aura Halter Jacaranda film fills its photo tile.
+   Other product films retain their current framing pending visual approval. */
+.pdp-stack-media[data-product-slug="aura-halter-lavender"] .pdp-stack-video video{object-fit:cover;object-position:center 40%}
+.pdp-stack-media[data-product-slug="aura-halter-lavender"] .pdp-stack-video{background:#e8e5df}
 .pdp-film-actions{position:absolute;top:9px;right:9px;display:flex;gap:5px;z-index:2}
 .pdp-film-actions button{display:grid;place-items:center;min-width:34px;min-height:34px;border:1px solid #ffffff99;background:#0B1020dd;color:#fff;font-size:14px;cursor:pointer}
 .pdp-film-actions button svg{width:18px;height:18px}
@@ -27,6 +31,7 @@
 .pdp-stack-thumbnails button{position:relative;flex:none;width:56px;height:68px;padding:0;border:2px solid transparent;background:#e8e5df;cursor:pointer}
 .pdp-stack-thumbnails button.active{border-color:#FF4533}
 .pdp-stack-thumbnails img{display:block;width:100%;height:100%;object-fit:cover}
+.pdp-stack-media[data-product-slug="aura-halter-lavender"] .pdp-stack-thumbnails button:has(span) img{object-position:center 40%}
 .pdp-stack-thumbnails button span{position:absolute;inset:0;display:grid;place-items:center;background:#0B102066;color:#fff}
 .pdp-stack-pagination{display:none}
 .pdp-zoom-backdrop{position:fixed;inset:0;z-index:200;background:rgba(11,16,32,.94);padding:clamp(10px,2vw,28px);display:grid;place-items:center}
