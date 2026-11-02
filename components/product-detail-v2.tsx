@@ -30,7 +30,7 @@ import PdpEditShortcut from "./pdp-edit-shortcut";
 import "@/app/product-detail-v2.css";
 
 const fitScale = ["RUNS SMALLER", "TRUE TO SIZE", "RUNS LARGER"] as const;
-const fitLabels = ["Runs Smaller", "True to Size", "Runs Larger"] as const;
+const fitLabels = ["Runs smaller", "True to size", "Runs larger"] as const;
 function fitScalePosition(advice: string): number | null {
   const normalized = advice.trim().toLowerCase().replace(/[.!]+$/, "");
   if (normalized === "runs smaller" || normalized === "runs small") return 0;
@@ -140,7 +140,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       </div>
       <div className="size-heading"><span>SELECT SIZE</span><button type="button" onClick={() => setGuideOpen(true)}>SIZE GUIDE ↗</button></div>
       <div className="size-grid" ref={sizeRef}>{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} disabled={variant.stock <= 0} onClick={() => setSelection({ slug: product.slug, size: variant.size })} key={variant.id}>{variant.size}</button>)}</div>
-      {isSock ? <p className="pdp-sock-size-note">{sockSizing.productText}</p> : fitPosition !== null && <div className="pdp-fit-confidence"><span>Our Fit Advice:</span><strong>{fitLabels[fitPosition]}</strong><span className={`pdp-fit-info ${fitTipOpen ? "is-open" : ""}`}><button type="button" aria-label="About our fit advice" aria-describedby="pdp-fit-tooltip" aria-expanded={fitTipOpen} onFocus={() => setFitTipOpen(true)} onClick={() => setFitTipOpen(true)} onBlur={() => setFitTipOpen(false)}>ⓘ</button><span id="pdp-fit-tooltip" className="pdp-fit-tooltip" role="tooltip">Based on IGNYTE&apos;s product fit assessment, not customer reviews.</span></span></div>}
+      {isSock ? <p className="pdp-sock-size-note">{sockSizing.productText}</p> : fitPosition !== null && <div className="pdp-fit-confidence"><span>Our fit advice</span><strong>{fitLabels[fitPosition]}</strong><span className={`pdp-fit-info ${fitTipOpen ? "is-open" : ""}`}><button type="button" aria-label="About our fit advice" aria-describedby="pdp-fit-tooltip" aria-expanded={fitTipOpen} onFocus={() => setFitTipOpen(true)} onClick={() => setFitTipOpen(true)} onBlur={() => setFitTipOpen(false)}>ⓘ</button><span id="pdp-fit-tooltip" className="pdp-fit-tooltip" role="tooltip">IGNYTE&apos;s own product fit guidance, based on our assessment, not customer reviews.</span></span></div>}
       <button type="button" ref={addRef} className="button button-orange detail-add" onClick={() => size && addToBag(product.slug, size)} disabled={!canAdd}>{addLabel}<span>↗</span></button>
       <PurchaseReassurance />
       <BuildYourSet bra={product} braSize={size} />
