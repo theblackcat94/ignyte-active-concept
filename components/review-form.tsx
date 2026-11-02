@@ -1,5 +1,5 @@
 "use client";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { publicDb } from "@/lib/commerce";
 
@@ -11,7 +11,14 @@ export default function ReviewForm({ products, initialProduct }: { products: Cho
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [ready, setReady] = useState(false);
   const choice = products.find(item => item.slug === product);
+  useEffect(() => {
+    if (!product) return;
+    let active = true;
+    fetch(`/api/reviews?product=${encodeURIComponent(product)}`).then(response => { if (active) setReady(response.ok); }).catch(() => { if (active) setReady(false); });
+    return () => { active = false; };
+  }, [product]);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!rating || !fit || !product) { setError("Choose a product, rating and fit before sending."); return; }
@@ -30,7 +37,7 @@ export default function ReviewForm({ products, initialProduct }: { products: Cho
   }
   if (success) return <section className="review-thanks" role="status"><div className="review-embers" aria-hidden="true"><i/><i/><i/><i/><i/><i/></div><span className="eyebrow">REVIEW RECEIVED_</span><h2>YOU BROUGHT THE FIRE! <span aria-hidden="true">🔥</span></h2><p>Thank you for sharing your experience. Your review is awaiting approval. Your feedback helps us grow, improve and keep the IGNYTE community moving.</p><Link href="/shop" className="button button-orange">KEEP EXPLORING ↗</Link></section>;
   return <form className="review-form" onSubmit={submit}>
-    <label>PRODUCT BEING REVIEWED<select name="product-choice" value={product} onChange={event => setProduct(event.target.value)} required><option value="">Select your IGNYTE product</option>{products.map(item => <option key={item.slug} value={item.slug}>{item.name} · {item.color}</option>)}</select></label>
+    <label>PRODUCT BEING REVIEWED<select name="product-choice" value={product} onChange={event => { setReady(false); setProduct(event.target.value); }} required><option value="">Select your IGNYTE product</option>{products.map(item => <option key={item.slug} value={item.slug}>{item.name} · {item.color}</option>)}</select></label>
     {choice && <div className="review-product"><img src={choice.image} alt={`${choice.name} in ${choice.color}`} /><span><strong>{choice.name}</strong><small>{choice.color}</small></span></div>}
     <fieldset><legend>OVERALL RATING</legend><div className="review-stars" role="group" aria-label="Overall rating from one to five stars">{[1,2,3,4,5].map(value => <button key={value} type="button" aria-label={`${value} ${value === 1 ? "star" : "stars"}`} aria-pressed={rating === value} onClick={() => setRating(value)}>{value <= rating ? "★" : "☆"}</button>)}</div></fieldset>
     <fieldset><legend>HOW DID IT FIT?</legend><div className="review-fit-options">{([["runs_smaller","Runs Smaller"],["true_to_size","True to Size"],["runs_larger","Runs Larger"]] as const).map(([value,label]) => <label key={value}><input type="radio" name="fit-choice" value={value} checked={fit === value} onChange={() => setFit(value)} required />{label}</label>)}</div></fieldset>
@@ -39,7 +46,8 @@ export default function ReviewForm({ products, initialProduct }: { products: Cho
     <p className="review-privacy">Your email is used privately to verify your review and is never shown publicly.</p>
     <label>ADD A PHOTO <span>(OPTIONAL, UP TO 5 MB)</span><input name="photo" type="file" accept="image/jpeg,image/png,image/webp" /></label>
     <input className="review-honeypot" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+    {!ready && product && <p className="review-unavailable" role="status">Review submissions are being prepared. This form is a preview until the review database is ready.</p>}
     {error && <p className="review-error" role="alert">{error}</p>}
-    <button className="button button-orange" type="submit" disabled={sending}>{sending ? "SENDING REVIEW…" : "SHARE YOUR REVIEW ↗"}</button>
+    <button className="button button-orange" type="submit" disabled={sending || !ready}>{sending ? "SENDING REVIEW…" : "SHARE YOUR REVIEW ↗"}</button>
   </form>;
 }
