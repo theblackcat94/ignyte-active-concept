@@ -10,5 +10,5 @@ export default async function ReviewPage({ searchParams }: { searchParams: Promi
   const { product } = await searchParams;
   const catalog = commerceConfigured ? await activeProducts() : fallbackProducts;
   const choices = catalog.map(item => ({ slug: item.slug, name: item.name, color: item.color, image: item.image }));
-  return <main className="review-page section-wrap"><span className="eyebrow">CUSTOMER REVIEWS_</span><h1>YOU BROUGHT THE FIRE.<br />NOW TELL US HOW IT WENT<span>_</span></h1><p className="review-intro">Your feedback helps us improve and helps other women find their perfect fit. Tell us what you loved, how it felt and how it performed.</p><ReviewForm products={choices} initialProduct={product ?? ""} /></main>;
+  return <main className="review-page section-wrap"><span className="eyebrow">CUSTOMER REVIEWS_</span><h1>HOW DID IT GO?<span>_</span></h1><p className="review-intro">Put your IGNYTE gear to the test? Tell us how it fits, feels and performs. Your feedback helps us improve and helps others find their fit.</p><ReviewForm products={choices} initialProduct={product ?? ""} /></main>;
 }

@@ -30,6 +30,7 @@ import PdpEditShortcut from "./pdp-edit-shortcut";
 import "@/app/product-detail-v2.css";
 
 const fitScale = ["RUNS SMALLER", "TRUE TO SIZE", "RUNS LARGER"] as const;
+const fitLabels = ["Runs Smaller", "True to Size", "Runs Larger"] as const;
 function fitScalePosition(advice: string): number | null {
   const normalized = advice.trim().toLowerCase().replace(/[.!]+$/, "");
   if (normalized === "runs smaller" || normalized === "runs small") return 0;
@@ -44,6 +45,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const [selection, setSelection] = useState({ slug: product.slug, size: "" });
   const [openInfo, setOpenInfo] = useState<string[]>([]);
   const [guideOpen, setGuideOpen] = useState(false);
+  const [fitTipOpen, setFitTipOpen] = useState(false);
   const [showMobilePurchase, setShowMobilePurchase] = useState(false);
   const [showDesktopPurchase, setShowDesktopPurchase] = useState(false);
   const sizeRef = useRef<HTMLDivElement>(null);
@@ -138,7 +140,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       </div>
       <div className="size-heading"><span>SELECT SIZE</span><button type="button" onClick={() => setGuideOpen(true)}>SIZE GUIDE ↗</button></div>
       <div className="size-grid" ref={sizeRef}>{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} disabled={variant.stock <= 0} onClick={() => setSelection({ slug: product.slug, size: variant.size })} key={variant.id}>{variant.size}</button>)}</div>
-      {isSock ? <p className="pdp-sock-size-note">{sockSizing.productText}</p> : fitPosition !== null && <div className="pdp-fit-confidence" aria-label={`Our fit advice: ${fitScale[fitPosition].toLowerCase()}. IGNYTE's own sizing recommendation, not customer review data.`}><span>OUR FIT ADVICE</span><span className="pdp-fit-mini-track" aria-hidden="true">{fitScale.map((label, index) => <i key={label} className={index === fitPosition ? "is-current" : ""} />)}</span><strong>{fitScale[fitPosition]}</strong><span className="pdp-fit-info" aria-hidden="true" title="IGNYTE's own sizing recommendation, not customer review data">ⓘ</span></div>}
+      {isSock ? <p className="pdp-sock-size-note">{sockSizing.productText}</p> : fitPosition !== null && <div className="pdp-fit-confidence"><span>Our Fit Advice:</span><strong>{fitLabels[fitPosition]}</strong><span className={`pdp-fit-info ${fitTipOpen ? "is-open" : ""}`}><button type="button" aria-label="About our fit advice: Based on IGNYTE's product fit assessment, not customer reviews." aria-expanded={fitTipOpen} onClick={() => setFitTipOpen(open => !open)} onBlur={() => setFitTipOpen(false)}>ⓘ</button><span className="pdp-fit-tooltip" role="tooltip">Based on IGNYTE&apos;s product fit assessment, not customer reviews.</span></span></div>}
       <button type="button" ref={addRef} className="button button-orange detail-add" onClick={() => size && addToBag(product.slug, size)} disabled={!canAdd}>{addLabel}<span>↗</span></button>
       <PurchaseReassurance />
       <BuildYourSet bra={product} braSize={size} />

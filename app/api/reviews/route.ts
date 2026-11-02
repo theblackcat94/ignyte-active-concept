@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { adminDb, verifiedUser } from "@/lib/commerce";
 import { sendSesMail, sesMailConfigured } from "@/lib/ses-mailer";
+import { reviewConfirmationEmail } from "@/lib/email-templates";
 
 export const runtime = "nodejs";
 const inputSchema = z.object({
@@ -81,6 +82,12 @@ export async function POST(request: Request) {
   if (error) {
     if (photoPath) await db.storage.from("review-photos").remove([photoPath]);
     return NextResponse.json({ error: "We could not save your review. Please try again." }, { status: 503 });
+  }
+  if (sesMailConfigured()) {
+    const firstName = parsed.data.name.split(/\s+/)[0];
+    const site = process.env.NEXT_PUBLIC_SITE_URL || "https://dev.ignyteactive.com";
+    await sendSesMail({ to: parsed.data.email, message: reviewConfirmationEmail(firstName, site) })
+      .catch(() => console.error("Review confirmation delivery failed"));
   }
   const alert = process.env.ORDER_NOTIFICATION_EMAIL;
   if (alert && sesMailConfigured()) {
