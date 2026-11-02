@@ -1,4 +1,3 @@
-/* Keep the mobile effect off the page until the appearance control activates it. */
 .ignyte-mobile-ignition{display:none;background:transparent}
 
 @media (max-width:767px),(hover:none) and (pointer:coarse){
@@ -8,8 +7,7 @@
     left:0;
     right:0;
     bottom:0;
-    height:42vh;
-    height:42svh;
+    height:0;
     z-index:39;
     pointer-events:none;
     background:transparent;
@@ -18,43 +16,69 @@
   .ignyte-mobile-ignition::after{
     content:"";
     position:absolute;
-    display:block;
+    left:50%;
     pointer-events:none;
     background-color:transparent;
     background-repeat:no-repeat;
-    opacity:0;
   }
+  /* The pulse fades to transparent before every edge; the container has no painted panel. */
   .ignyte-mobile-ignition::before{
-    inset:-20% -35% -10%;
-    background-image:radial-gradient(ellipse at 50% 100%,rgba(255,210,145,.68) 0%,rgba(255,137,81,.48) 25%,rgba(255,69,51,.30) 48%,rgba(255,69,51,0) 76%);
-    animation:ignyte-mobile-glow 2.1s ease-out both;
+    bottom:-39vh;
+    bottom:-39svh;
+    width:160vw;
+    height:78vh;
+    height:78svh;
+    background-image:radial-gradient(ellipse closest-side at center,rgba(255,224,160,.78) 0%,rgba(112,21,13,.42) 19%,rgba(255,170,78,.22) 40%,rgba(255,69,51,0) 100%);
+    animation:ignyte-mobile-pulse 2.1s ease-out both;
   }
   .ignyte-mobile-ignition::after{
-    inset:-15% -12% -12%;
-    background-image:
-      radial-gradient(circle 2px at 15% 31%,rgba(255,227,170,.9) 95%,rgba(255,227,170,0) 100%),
-      radial-gradient(circle 2px at 37% 12%,rgba(255,227,170,.8) 95%,rgba(255,227,170,0) 100%),
-      radial-gradient(circle 2px at 72% 26%,rgba(255,227,170,.9) 95%,rgba(255,227,170,0) 100%),
-      radial-gradient(circle 2px at 88% 9%,rgba(255,227,170,.8) 95%,rgba(255,227,170,0) 100%),
-      radial-gradient(ellipse 17% 83% at 10% 100%,rgba(255,218,156,.65) 0%,rgba(255,137,81,.45) 33%,rgba(255,69,51,0) 78%),
-      radial-gradient(ellipse 21% 95% at 38% 100%,rgba(255,225,164,.7) 0%,rgba(255,137,81,.48) 30%,rgba(255,69,51,0) 80%),
-      radial-gradient(ellipse 18% 79% at 66% 100%,rgba(255,218,156,.65) 0%,rgba(255,137,81,.45) 32%,rgba(255,69,51,0) 78%),
-      radial-gradient(ellipse 19% 89% at 92% 100%,rgba(255,225,164,.7) 0%,rgba(255,137,81,.48) 31%,rgba(255,69,51,0) 80%);
-    animation:ignyte-mobile-flames 2.1s ease-out both;
+    bottom:-20vh;
+    bottom:-20svh;
+    width:105vw;
+    height:48vh;
+    height:48svh;
+    background-image:radial-gradient(ellipse closest-side at center,rgba(255,231,174,.55) 0%,rgba(255,171,75,.23) 26%,rgba(255,69,51,0) 100%);
+    animation:ignyte-mobile-heat 1.35s ease-out both;
   }
+  .ignyte-mobile-ignition span{
+    position:absolute;
+    left:var(--x);
+    bottom:8px;
+    bottom:calc(8px + env(safe-area-inset-bottom, 0px));
+    width:var(--size);
+    height:var(--size);
+    border-radius:50%;
+    background:currentColor;
+    color:var(--ember);
+    box-shadow:0 0 7px 2px currentColor;
+    pointer-events:none;
+    animation:ignyte-mobile-ember var(--duration) var(--delay) ease-out both;
+  }
+  .ignyte-mobile-ignition span:nth-child(1){--x:12%;--size:8px;--ember:#ffe1a0;--rise:-42vh;--drift:28px;--duration:1.75s;--delay:.10s}
+  .ignyte-mobile-ignition span:nth-child(2){--x:27%;--size:11px;--ember:#731c12;--rise:-30vh;--drift:-24px;--duration:1.55s;--delay:.02s}
+  .ignyte-mobile-ignition span:nth-child(3){--x:40%;--size:6px;--ember:#ffbd69;--rise:-49vh;--drift:38px;--duration:1.85s;--delay:.20s}
+  .ignyte-mobile-ignition span:nth-child(4){--x:53%;--size:9px;--ember:#0b1020;--rise:-36vh;--drift:-36px;--duration:1.70s;--delay:.08s}
+  .ignyte-mobile-ignition span:nth-child(5){--x:67%;--size:7px;--ember:#ffe1a0;--rise:-45vh;--drift:24px;--duration:1.80s;--delay:.16s}
+  .ignyte-mobile-ignition span:nth-child(6){--x:81%;--size:10px;--ember:#8f2815;--rise:-32vh;--drift:-28px;--duration:1.60s;--delay:.05s}
+  .ignyte-mobile-ignition span:nth-child(7){--x:92%;--size:5px;--ember:#ffbd69;--rise:-40vh;--drift:-22px;--duration:1.65s;--delay:.28s}
 }
 
-@keyframes ignyte-mobile-glow{
-  0%{opacity:0;transform:translateY(18%)}
-  23%{opacity:1;transform:translateY(0)}
-  64%{opacity:.8;transform:translateY(-5%)}
-  100%{opacity:0;transform:translateY(-12%)}
+@keyframes ignyte-mobile-pulse{
+  0%{opacity:0;transform:translateX(-50%) scale(.72)}
+  19%{opacity:.9;transform:translateX(-50%) scale(1)}
+  55%{opacity:.48;transform:translateX(-50%) scale(1.08)}
+  100%{opacity:0;transform:translateX(-50%) scale(1.16)}
 }
-@keyframes ignyte-mobile-flames{
-  0%{opacity:0;transform:translateY(34%)}
-  27%{opacity:.8;transform:translateY(0)}
-  68%{opacity:.7;transform:translateY(-8%)}
-  100%{opacity:0;transform:translateY(-20%)}
+@keyframes ignyte-mobile-heat{
+  0%{opacity:0;transform:translateX(-50%) scale(.8)}
+  27%{opacity:.75;transform:translateX(-50%) scale(1)}
+  100%{opacity:0;transform:translateX(-50%) scale(1.15)}
+}
+@keyframes ignyte-mobile-ember{
+  0%{opacity:0;transform:translate3d(0,0,0) scale(.5)}
+  20%{opacity:.95}
+  67%{opacity:.8}
+  100%{opacity:0;transform:translate3d(var(--drift),var(--rise),0) scale(.55)}
 }
 
 @media (prefers-reduced-motion:reduce){

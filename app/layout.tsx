@@ -99,7 +99,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${ignyteSans.variable} ${ignyteMono.variable}`}>
         <IgnyteFireField />
         <div className="ignyte-fire-egg" aria-hidden="true" />
-        <div className="ignyte-mobile-ignition" aria-hidden="true" />
+        <div className="ignyte-mobile-ignition" aria-hidden="true">
+          <span /><span /><span /><span /><span /><span /><span />
+        </div>
         <StoreProvider>
           <AnalyticsTracker />
           <Header />
