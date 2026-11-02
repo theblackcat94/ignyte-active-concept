@@ -7,12 +7,19 @@
   z-index: 1;
 }
 
-/* One fixed field follows the viewport so it stays continuous while scrolling. */
-html[data-appearance="ignyte"] body {
-  isolation: isolate;
-  background: transparent;
+html[data-appearance="ignyte"]{
+  --ignyte-base-gradient:linear-gradient(150deg,#FF4533 3%,#FA492D 45%,#FF6D21 100%);
 }
 
+/* Safari exposes the page canvas beneath its translucent bottom controls. */
+html[data-appearance="ignyte"] body {
+  isolation: isolate;
+  background-color:#FF4533;
+  background-image:var(--ignyte-base-gradient);
+  background-attachment:fixed;
+}
+
+/* One fixed field follows the viewport so its heat movement stays continuous. */
 html[data-appearance="ignyte"] body > .ignyte-fire-field {
   display: block;
   position: fixed;
@@ -21,12 +28,7 @@ html[data-appearance="ignyte"] body > .ignyte-fire-field {
   overflow: hidden;
   pointer-events: none;
 
-  background: linear-gradient(
-    150deg,
-    #FF4533 3%,
-    #FA492D 45%,
-    #FF6D21 100%
-  );
+  background:var(--ignyte-base-gradient);
 }
 
 /* The same fixed field is visible through every page and section. */
