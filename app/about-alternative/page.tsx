@@ -40,7 +40,7 @@ export default function AboutAlternativePage() {
       <div className="about-alt-mission-copy"><span className="eyebrow">OUR MISSION ↘</span><h2 id="about-alt-mission-title">To inspire women to <em>bring the fire.</em></h2><p>The determination to try something harder. The satisfaction of a strong session, shared with people who get it.</p><strong>Bring your fire.<br />We’ll build for the burn.</strong></div>
       <div className="about-alt-mission-photos" aria-label="IGNYTE training photography">
         <div className="about-alt-photo about-alt-photo-main"><Image src="/images/about/About-bring-the-fire-3-alt.webp" alt="IGNYTE athlete training on a bike in mauve activewear" fill sizes="(max-width: 800px) 70vw, 32vw" /></div>
-        <div className="about-alt-photo about-alt-photo-overlap"><Image src="/images/about/About-bring-the-fire-4.webp" alt="Two IGNYTE athletes in training wear" fill sizes="(max-width: 800px) 42vw, 19vw" /></div>
+        <div className="about-alt-photo about-alt-photo-overlap"><Image src="/images/about/Ignyte-About-Built-for-the-Burn-.jpg" alt="Two IGNYTE athletes training together in performance wear" fill sizes="(max-width: 800px) 42vw, 19vw" /></div>
       </div>
     </section>
 
@@ -53,7 +53,7 @@ export default function AboutAlternativePage() {
 
     <section className="about-alt-commitment about-alt-wrap" aria-labelledby="about-alt-commitment-title">
       <div className="about-alt-commitment-copy"><span className="eyebrow">OUR COMMITMENT ↘</span><h2 id="about-alt-commitment-title">Built for the burn.</h2><p>Built for the Burn is our product promise: performance-led activewear that brings function, style and expression together.</p><p>Our approach starts with training, with attention to how each piece fits, feels and moves. Expressive silhouettes and considered details bring individuality into the mix.</p><p>For women who care about their training and how they show up.</p><Link className="button button-orange" href="/collections">EXPLORE THE COLLECTION ↗</Link></div>
-      <div className="about-alt-commitment-media"><BrandFilm label="IGNYTE brand film" poster="/images/home/Ignyte-Vertical-Poster.jpg" /></div>
+      <div className="about-alt-commitment-media"><BrandFilm label="IGNYTE brand film" poster="/images/home/video-cover-2.jpg" /></div>
     </section>
 
     <section className="about-alt-founders" aria-labelledby="about-alt-founders-title">

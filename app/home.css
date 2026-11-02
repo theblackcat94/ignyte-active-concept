@@ -193,6 +193,7 @@ html[data-appearance="ignyte"] .home-alternative .home-bottom .brand-film{outlin
 .home-bottom-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .home-alternative .home-bottom .home-bottom-watch{background:#FF4533;color:#0B1020;border-color:#FF4533}
 .home-alternative .home-bottom .home-bottom-watch:hover{background:#ff6c5c;border-color:#ff6c5c}
+.home-alternative .home-bottom .home-bottom-watch svg{display:block;width:13px;height:13px}
 .home-alternative .home-bottom .home-bottom-shop{background:transparent;color:#fff4ed;border-color:#fff4ed}
 .home-alternative .home-bottom .home-bottom-shop:hover{background:#fff4ed;color:#0B1020}
 html[data-appearance="ignyte"] .home-alternative .home-bottom .home-bottom-watch{background:#0B1020;color:#fff4ed;border-color:#0B1020}

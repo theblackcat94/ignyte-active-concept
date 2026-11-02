@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { CurrencyEstimate } from "./currency-estimate";
 import { type Product, money } from "@/lib/catalog";
@@ -16,6 +17,8 @@ export default function ProductCard({ product, index = 0, showOptions = false }:
   const [selectedSlug, setSelectedSlug] = useState(product.slug);
   const [quickOpen, setQuickOpen] = useState(false);
   const [quickSize, setQuickSize] = useState("");
+  const [hovered, setHovered] = useState(false);
+  const [hoverReady, setHoverReady] = useState(false);
   const colours = showOptions ? products.filter(item => item.name === product.name && item.category === product.category).sort((a, b) => compareProductColours(a.color, b.color)) : [product];
   const displayed = colours.find(item => item.slug === selectedSlug) ?? product;
   const liked = wishlist.includes(displayed.slug);
@@ -23,9 +26,9 @@ export default function ProductCard({ product, index = 0, showOptions = false }:
   const hasStock = sizes.some(variant => variant.stock > 0);
   const chosenSize = (sizes.some(variant => variant.size === quickSize && variant.stock > 0) ? quickSize : "") || (sizes.length === 1 && sizes[0].stock > 0 ? sizes[0].size : "");
   const selected = sizes.find(variant => variant.size === chosenSize);
-  const changeColour = (slug: string) => { setSelectedSlug(slug); setQuickSize(""); setQuickOpen(false); };
+  const changeColour = (slug: string) => { setSelectedSlug(slug); setQuickSize(""); setQuickOpen(false); setHovered(false); setHoverReady(false); };
   return <article className={`product-card${showOptions ? " product-card-options" : ""}`} style={{ animationDelay: `${index * 65}ms` }}>
-    <div className="product-image"><Link className="product-image-link" href={`/product/${displayed.slug}`} aria-label={`View ${displayed.name} in ${displayed.color}`}><img className="product-image-primary" src={displayed.image} alt={`${displayed.name} in ${displayed.color}`} loading="lazy" draggable={false} />{displayed.gallery[0] && <img className="product-image-hover" src={displayed.gallery[0].image} alt="" loading="lazy" draggable={false} />}</Link>{displayed.label && displayed.label.toLowerCase() !== "popular" && (displayed.label.toLowerCase() !== "new" || showNewProductBadges) && (displayed.label.toLowerCase() !== "best seller" || showBestSellerBadges) && <span className="product-badge">{displayed.label}</span>}<button className={`product-heart ${liked ? "liked" : ""}`} aria-label={liked ? "Remove from wishlist" : "Add to wishlist"} onClick={() => toggleWishlist(displayed.slug)}><HeartIcon filled={liked} /></button>
+    <div className="product-image"><Link className="product-image-link" href={`/product/${displayed.slug}`} aria-label={`View ${displayed.name} in ${displayed.color}`} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}><Image className="product-image-primary" src={displayed.image} alt={`${displayed.name} in ${displayed.color}`} fill sizes="(max-width: 520px) 70vw, (max-width: 900px) 42vw, 23vw" draggable={false} />{displayed.gallery[0] && (hovered || hoverReady) && <Image key={displayed.gallery[0].image} className="product-image-hover" src={displayed.gallery[0].image} alt="" fill sizes="(max-width: 520px) 70vw, (max-width: 900px) 42vw, 23vw" draggable={false} onLoad={() => setHoverReady(true)} />}</Link>{displayed.label && displayed.label.toLowerCase() !== "popular" && (displayed.label.toLowerCase() !== "new" || showNewProductBadges) && (displayed.label.toLowerCase() !== "best seller" || showBestSellerBadges) && <span className="product-badge">{displayed.label}</span>}<button className={`product-heart ${liked ? "liked" : ""}`} aria-label={liked ? "Remove from wishlist" : "Add to wishlist"} onClick={() => toggleWishlist(displayed.slug)}><HeartIcon filled={liked} /></button>
       {quickOpen ? <div className="quick-add-panel"><div className="quick-add-heading"><span>CHOOSE SIZE</span><button type="button" onClick={() => setQuickOpen(false)} aria-label="Close size picker">×</button></div><div className="quick-add-sizes">{sizes.map(variant => <button type="button" key={variant.id} disabled={variant.stock <= 0} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} aria-pressed={chosenSize === variant.size} className={chosenSize === variant.size ? "selected" : ""} onClick={() => setQuickSize(variant.size)}>{variant.size}</button>)}</div><button type="button" className="quick-add-confirm" disabled={!selected || selected.stock <= 0} onClick={() => { addToBag(displayed.slug, chosenSize); setQuickOpen(false); setQuickSize(""); }}>ADD TO BAG <span>↗</span></button></div>
         : <button type="button" className="quick-add" disabled={catalogLoading || catalogError || !hasStock} aria-expanded={false} onClick={() => setQuickOpen(true)}>{catalogLoading ? "CHECKING STOCK" : catalogError ? "STOCK UNAVAILABLE" : hasStock ? "QUICK ADD — CHOOSE SIZE" : "SOLD OUT"} <span>↗</span></button>}
     </div>

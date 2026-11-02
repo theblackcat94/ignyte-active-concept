@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { asset } from "@/lib/asset";
 import "@/app/brand-film.css";
 
+const previewFilm = asset("/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4");
+const fullFilm = asset("/images/home/Ignyte-Vertical-Compressed-Sound.mp4");
+
 export default function BrandFilm({ className = "", label = "IGNYTE brand film", poster = "/images/home/Ignyte-Vertical-First-Frame.jpg" }: { className?: string; label?: string; poster?: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const previewDone = useRef(false);
@@ -14,6 +17,7 @@ export default function BrandFilm({ className = "", label = "IGNYTE brand film",
   const [posterVisible, setPosterVisible] = useState(true);
   const [muted, setMuted] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [source, setSource] = useState(previewFilm);
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !window.IntersectionObserver) return;
@@ -49,13 +53,18 @@ export default function BrandFilm({ className = "", label = "IGNYTE brand film",
     if (previewTimer.current) clearTimeout(previewTimer.current);
     fullPlayback.current = true;
     setPreviewing(false); setPosterVisible(false);
+    setSource(fullFilm);
+    if (video.src !== new URL(fullFilm, window.location.href).href) {
+      video.src = fullFilm;
+      video.load();
+    }
     video.currentTime = 0;
     video.muted = muted;
     void video.play().catch(() => { setFailed(true); setPosterVisible(true); });
   }
   return <div className={`brand-film ${className}`}>
-    <video ref={videoRef} src={asset("/images/home/Ignyte-Vertical-Compressed-Sound.mp4")} poster={asset(poster)} playsInline muted={muted} preload="none" aria-label={label} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => { fullPlayback.current = false; setPlaying(false); setPosterVisible(true); }} onError={() => { setFailed(true); setPosterVisible(true); }} />
-    {posterVisible && <img className="brand-film-poster" src={asset(poster)} alt="" aria-hidden="true" />}
+    <video ref={videoRef} src={source} poster={asset(poster)} playsInline muted={muted} preload="none" aria-label={label} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => { fullPlayback.current = false; setPlaying(false); setPosterVisible(true); }} onError={() => { setFailed(true); setPosterVisible(true); }} />
+    {posterVisible && <img className="brand-film-poster" src={asset(poster)} alt="" aria-hidden="true" loading="eager" />}
     {(!playing || previewing) && <button type="button" className="brand-film-play" onClick={togglePlayback} aria-label={failed ? "Retry IGNYTE film" : "Play full IGNYTE film"}><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M11 6v20l16-10z" fill="currentColor" /></svg></button>}
     {!previewing && <div className="brand-film-controls">
       {playing && <button type="button" onClick={togglePlayback} aria-label="Pause IGNYTE film">Ⅱ</button>}

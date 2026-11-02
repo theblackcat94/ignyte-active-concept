@@ -61,7 +61,7 @@ export default function BrandFilmModalProvider({ children }: { children: React.R
     {filmOpen && createPortal(<div className="home-film-lightbox" role="dialog" aria-modal="true" aria-label="Watch IGNYTE in Motion" onMouseDown={event => { if (event.target === event.currentTarget) closeFilm(); }}>
       <div className="home-film-frame">
         <button ref={closeRef} type="button" className="home-film-close" aria-label="Close film" onClick={closeFilm}>×</button>
-        <video ref={filmRef} src={asset("/images/home/Ignyte-Vertical-Compressed-Sound.mp4")} poster={asset("/images/home/Ignyte-Vertical-Poster.jpg")} controls playsInline preload="auto" tabIndex={0} onPlay={() => setFilmNeedsPlay(false)} onError={() => setFilmNeedsPlay(true)} aria-label="IGNYTE full brand film" />
+        <video ref={filmRef} src={asset("/images/home/Ignyte-Vertical-Compressed-Sound.mp4")} poster={asset("/images/home/video-cover-2.jpg")} controls playsInline preload="auto" tabIndex={0} onPlay={() => setFilmNeedsPlay(false)} onError={() => setFilmNeedsPlay(true)} aria-label="IGNYTE full brand film" />
         {filmNeedsPlay && <button type="button" className="home-film-retry" onClick={() => { const film = filmRef.current; if (!film) return; film.muted = false; void film.play().then(() => setFilmNeedsPlay(false)).catch(() => setFilmNeedsPlay(true)); }}>PLAY FILM</button>}
       </div>
     </div>, document.body)}
