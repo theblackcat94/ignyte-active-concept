@@ -1,0 +1,61 @@
+.ignyte-mobile-ignition{display:none}
+
+@media (max-width:767px),(hover:none) and (pointer:coarse){
+  html[data-appearance="ignyte"][data-ignyte-igniting="true"] .ignyte-mobile-ignition{
+    display:block;
+    position:fixed;
+    inset:0;
+    z-index:39;
+    overflow:hidden;
+    pointer-events:none;
+    isolation:isolate;
+    animation:ignyte-ignition-lifetime 2.1s ease-out both;
+  }
+  .ignyte-mobile-ignition::before{
+    content:"";
+    position:absolute;
+    inset:42% -25% -12%;
+    background:radial-gradient(ellipse 75% 65% at 50% 100%,#ffcf8973 0%,#ff895174 24%,#ff453366 48%,transparent 78%);
+    filter:blur(18px);
+    animation:ignyte-ignition-glow 2.1s ease-out both;
+  }
+  .ignyte-mobile-ignition::after{
+    content:"";
+    position:absolute;
+    inset:auto -12% -12%;
+    height:47%;
+    background:
+      radial-gradient(circle 2px at 15% 35%,#ffe2a3 99%,transparent),
+      radial-gradient(circle 1.5px at 35% 12%,#ffe2a3 99%,transparent),
+      radial-gradient(circle 2px at 72% 28%,#ffe2a3 99%,transparent),
+      radial-gradient(circle 1.5px at 88% 8%,#ffe2a3 99%,transparent),
+      radial-gradient(ellipse 17% 85% at 12% 100%,#ffd496aa 0%,#ff895188 30%,#ff453355 59%,transparent 76%),
+      radial-gradient(ellipse 21% 99% at 38% 100%,#ffe1a6bb 0%,#ff895188 28%,#ff453355 62%,transparent 78%),
+      radial-gradient(ellipse 18% 80% at 65% 100%,#ffd496aa 0%,#ff895188 28%,#ff453355 60%,transparent 76%),
+      radial-gradient(ellipse 19% 93% at 90% 100%,#ffe1a6bb 0%,#ff895188 28%,#ff453355 60%,transparent 78%);
+    filter:blur(6px);
+    animation:ignyte-ignition-flames 2.1s ease-out both;
+  }
+}
+
+@keyframes ignyte-ignition-lifetime{
+  0%{opacity:0;visibility:visible}
+  18%{opacity:1}
+  65%{opacity:1}
+  100%{opacity:0;visibility:hidden}
+}
+@keyframes ignyte-ignition-glow{
+  0%{opacity:0;transform:translateY(20%)}
+  28%{opacity:1;transform:translateY(0)}
+  100%{opacity:0;transform:translateY(-8%)}
+}
+@keyframes ignyte-ignition-flames{
+  0%{opacity:0;transform:translateY(35%)}
+  30%{opacity:.8;transform:translateY(2%)}
+  75%{opacity:.65;transform:translateY(-8%)}
+  100%{opacity:0;transform:translateY(-18%)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html[data-appearance="ignyte"] .ignyte-mobile-ignition{display:none!important;animation:none!important}
+}

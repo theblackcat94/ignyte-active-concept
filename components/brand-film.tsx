@@ -13,6 +13,7 @@ export default function BrandFilm({ className = "", label = "IGNYTE brand film" 
   const fullRequested = useRef(false);
   const pendingFullPlay = useRef(false);
   const previewTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const previewStopTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [state, setState] = useState<PlayerState>("idle");
   const [posterVisible, setPosterVisible] = useState(true);
   const [showControls, setShowControls] = useState(false);
@@ -27,6 +28,7 @@ export default function BrandFilm({ className = "", label = "IGNYTE brand film" 
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) {
         if (previewTimer.current) clearTimeout(previewTimer.current);
+        if (previewStopTimer.current) clearTimeout(previewStopTimer.current);
         if (!video.paused) video.pause();
         if (!fullRequested.current) { setState("idle"); setPosterVisible(true); }
         return;
@@ -41,21 +43,25 @@ export default function BrandFilm({ className = "", label = "IGNYTE brand film" 
         setPosterVisible(false);
         previewTimer.current = setTimeout(() => {
           if (fullRequested.current) return;
-          video.pause();
-          video.currentTime = 0;
-          setState("idle");
           setPosterVisible(true);
-        }, 2800);
+          previewStopTimer.current = setTimeout(() => {
+            if (fullRequested.current) return;
+            video.pause();
+            video.currentTime = 0;
+            setState("idle");
+          }, 500);
+        }, 1800);
       }).catch(() => { if (!fullRequested.current) setPosterVisible(true); });
     }, { threshold: 0.4 });
     observer.observe(video);
-    return () => { observer.disconnect(); if (previewTimer.current) clearTimeout(previewTimer.current); video.pause(); };
+    return () => { observer.disconnect(); if (previewTimer.current) clearTimeout(previewTimer.current); if (previewStopTimer.current) clearTimeout(previewStopTimer.current); video.pause(); };
   }, []);
 
   function requestFullPlayback() {
     const video = videoRef.current;
     if (!video) return;
     if (previewTimer.current) clearTimeout(previewTimer.current);
+    if (previewStopTimer.current) clearTimeout(previewStopTimer.current);
     previewDone.current = true;
     fullRequested.current = true;
     pendingFullPlay.current = true;
@@ -87,7 +93,7 @@ export default function BrandFilm({ className = "", label = "IGNYTE brand film" 
       onPlay={() => { if (fullRequested.current) { pendingFullPlay.current = false; setState("full"); setPosterVisible(false); } }}
       onEnded={() => { if (fullRequested.current) { pendingFullPlay.current = false; setState("ended"); setPosterVisible(true); } }}
       onError={() => { pendingFullPlay.current = false; setState("error"); setPosterVisible(true); }} />
-    {posterVisible && <img className="brand-film-poster" src={asset(brandFilmPoster)} alt="" aria-hidden="true" loading="eager" />}
+    <img className={`brand-film-poster${posterVisible ? " is-visible" : ""}`} src={asset(brandFilmPoster)} alt="" aria-hidden="true" loading="eager" />
     {showPlay && <button type="button" className="brand-film-play" onClick={requestFullPlayback} aria-label={state === "error" ? "Retry IGNYTE film" : "Play full IGNYTE film"}><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M11 6v20l16-10z" fill="currentColor" /></svg></button>}
     {state === "loading" && <div className="brand-film-loading" role="status" aria-live="polite"><span className="brand-film-spinner" aria-hidden="true" />Loading film…</div>}
   </div>;

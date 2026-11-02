@@ -1,6 +1,7 @@
 .brand-film{position:relative;width:100%;aspect-ratio:9/16;background:#0B1020;overflow:hidden}
 .brand-film video{display:block;width:100%;height:100%;object-fit:cover}
-.brand-film-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.brand-film-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;opacity:0;transition:opacity .5s ease-in-out}
+.brand-film-poster.is-visible{opacity:1}
 .brand-film-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:76px;height:76px;border:1px solid #0B1020;border-radius:50%;background:#FF4533;color:#0B1020;cursor:pointer;transition:background .2s,transform .2s}
 .brand-film-play:hover{background:#FF4533;transform:translate(-50%,-50%) scale(1.05)}
 .brand-film-play svg{width:32px;height:32px;transform:translateX(1px)}
@@ -8,4 +9,4 @@
 .brand-film-spinner{width:14px;height:14px;border:2px solid #fff6;border-top-color:#FF4533;border-radius:50%;animation:brand-film-spin .8s linear infinite}
 @keyframes brand-film-spin{to{transform:rotate(360deg)}}
 .brand-film button:focus-visible{outline:2px solid #FF4533;outline-offset:3px}
-@media(prefers-reduced-motion:reduce){.brand-film-play{transition:none}.brand-film-spinner{animation:none}}
+@media(prefers-reduced-motion:reduce){.brand-film-play,.brand-film-poster{transition:none}.brand-film-spinner{animation:none}}

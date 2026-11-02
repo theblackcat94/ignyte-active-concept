@@ -8,6 +8,7 @@ import "./footer.css";
 import "./appearance.css";
 import "./ignyte-fire.css";
 import "./fire-egg.css";
+import "./mobile-ignition.css";
 import "./initial-preloader.css";
 import { StoreProvider } from "@/components/store-provider";
 import Header from "@/components/header";
@@ -98,6 +99,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${ignyteSans.variable} ${ignyteMono.variable}`}>
         <IgnyteFireField />
         <div className="ignyte-fire-egg" aria-hidden="true" />
+        <div className="ignyte-mobile-ignition" aria-hidden="true" />
         <StoreProvider>
           <AnalyticsTracker />
           <Header />

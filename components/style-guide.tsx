@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { products } from "@/lib/catalog";
+import { applySiteAppearance } from "@/lib/site-appearance";
 import RegistrationMarks from "./registration-marks";
 import "@/app/style-guide/style-guide.css";
 
@@ -46,9 +47,7 @@ export default function StyleGuide() {
   }, []);
   function changeMode(next: Mode) {
     setMode(next);
-    document.documentElement.dataset.appearance = next;
-    localStorage.setItem("ignyte-appearance", next);
-    window.dispatchEvent(new Event("ignyte-appearance-change"));
+    applySiteAppearance(next);
   }
   function flash(message: string) { setToast(message); window.setTimeout(() => setToast(""), 2600); }
   async function copy(hex: string) { await navigator.clipboard.writeText(hex); setCopied(hex); window.setTimeout(() => setCopied(""), 1800); }

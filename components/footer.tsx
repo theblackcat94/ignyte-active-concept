@@ -7,6 +7,7 @@ import { CurrencySelector } from "./currency-estimate";
 import HeartIcon from "./heart-icon";
 import HeaderLogo from "./header-logo";
 import StyledSelect from "./styled-select";
+import { applySiteAppearance } from "@/lib/site-appearance";
 
 const footerLinks = [
   { title: "HELP & SUPPORT", items: [
@@ -58,8 +59,7 @@ export default function Footer() {
   }, []);
   function changeAppearance(next: "light" | "dark" | "ignyte") {
     setAppearance(next);
-    localStorage.setItem("ignyte-appearance", next);
-    document.documentElement.dataset.appearance = next;
+    applySiteAppearance(next);
   }
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
