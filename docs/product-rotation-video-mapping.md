@@ -1,6 +1,6 @@
 # Product rotation video replacement · 2 November 2026
 
-Source: [IGNYTE Organised Rotation Clips](https://www.dropbox.com/scl/fo/jbqaut8sm9rscpd6fuuze/AMG-Kt-5BYH1axMoT1qfsSs?rlkey=sw1bmdjz3xt2j4bi5yw0zu5d1&dl=0). The supplied placement index, SKU families and visual contact sheets were checked together. Every downloaded source matched the package SHA-256 checksum. The source MP4s are 1080 × 1920, 13–22 seconds, approximately 2.2–3.4 MB; no further encode was needed. A frame at one second was extracted for each gallery poster. The prior `/images/product-videos/<slug>.mp4` reference remains the same, so the gallery position and brand film are unchanged.
+Source: [IGNYTE Organised Rotation Clips](https://www.dropbox.com/scl/fo/jbqaut8sm9rscpd6fuuze/AMG-Kt-5BYH1axMoT1qfsSs?rlkey=sw1bmdjz3xt2j4bi5yw0zu5d1&dl=0). The supplied placement index, SKU families and visual contact sheets were checked together. Every downloaded source matched the package SHA-256 checksum. The source MP4s are 1080 × 1920, 13–22 seconds, approximately 2.2–3.4 MB; no further encode was needed. Matching front-facing frames were extracted for the gallery posters. The prior `/images/product-videos/<slug>.mp4` reference remains the same, so the gallery position and brand film are unchanged.
 
 | Product / customer colour | Gallery slug (previous clip) | Replacement source clip |
 | --- | --- | --- |

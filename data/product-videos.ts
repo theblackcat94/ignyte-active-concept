@@ -24,6 +24,6 @@ export function productFilmFor(slug?: string) {
   if (!slug || !availableFilms.has(slug)) return null;
   return {
     video_url: `/images/product-videos/${slug}.mp4?v=20261102`,
-    video_poster: `/images/product-videos/${slug}-poster.jpg?v=20261102`,
+    video_poster: `/images/product-videos/${slug}-poster.jpg?v=20261102b`,
   };
 }
