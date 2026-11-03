@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CurrencySelector } from "@/components/currency-estimate";
 import { helpLinks } from "@/data/help-links";
 import { applySiteAppearance, type SiteAppearance } from "@/lib/site-appearance";
+import { OptionIcon } from "@/components/styled-select";
 import "@/app/header-help.css";
 
 function appearanceSubscribe(callback: () => void) {
@@ -27,7 +28,7 @@ export function HelpLinks({ onNavigate, mobile = false }: { onNavigate?: () => v
 
 export function PreferenceControls() {
   const appearance = useSyncExternalStore(appearanceSubscribe, currentAppearance, () => "light");
-  return <div className="header-help-group header-help-preferences"><strong className="desktop-help-label">PREFERENCES</strong><div className="header-help-setting header-help-setting-currency"><span>CURRENCY</span><CurrencySelector inline /></div><p>Display estimates only. Checkout is charged in AUD.</p><div className="header-help-setting header-help-appearance"><span>APPEARANCE</span><div role="group" aria-label="Appearance mode">{(["light", "dark", "ignyte"] as const).map(mode => <button type="button" key={mode} aria-pressed={appearance === mode} onClick={() => applySiteAppearance(mode)}>{mode === "ignyte" ? "IGNYTE" : mode === "dark" ? "Dark" : "Light"}</button>)}</div></div></div>;
+  return <div className="header-help-group header-help-preferences"><strong className="desktop-help-label">PREFERENCES</strong><div className="header-help-setting header-help-setting-currency"><span>CURRENCY</span><CurrencySelector inline /></div><p>Display estimates only. Checkout is charged in AUD.</p><div className="header-help-setting header-help-appearance"><span>APPEARANCE</span><div role="group" aria-label="Appearance mode">{(["light", "dark", "ignyte"] as const).map(mode => <button type="button" key={mode} aria-pressed={appearance === mode} onClick={() => applySiteAppearance(mode)}><OptionIcon icon={mode === "ignyte" ? "flame" : mode === "dark" ? "moon" : "sun"} />{mode === "ignyte" ? "IGNYTE" : mode === "dark" ? "Dark" : "Light"}</button>)}</div></div></div>;
 }
 
 export function HelpContents({ onNavigate }: { onNavigate?: () => void }) {
@@ -50,5 +51,5 @@ export default function HeaderHelp() {
   }, [open]);
   useEffect(() => () => { if (closeTimer.current) clearTimeout(closeTimer.current); }, []);
   const desktopHover = (event: React.PointerEvent) => event.pointerType === "mouse" && window.matchMedia("(min-width: 1101px) and (hover: hover) and (pointer: fine)").matches;
-  return <div className="announcement-utility" ref={root} onPointerEnter={event => { if (desktopHover(event)) clearCloseTimer(); }} onPointerLeave={event => { if (desktopHover(event)) { clearCloseTimer(); closeTimer.current = setTimeout(() => setOpen(false), 150); } }}><Link href="/about/">OUR STORY</Link><span aria-hidden="true">|</span><button ref={trigger} type="button" aria-expanded={open} aria-controls="header-help-panel" onPointerEnter={event => { if (desktopHover(event)) { clearCloseTimer(); setOpen(true); } }} onClick={event => { clearCloseTimer(); const pointerType = (event.nativeEvent as PointerEvent).pointerType; if (pointerType === "mouse" && window.matchMedia("(min-width: 1101px) and (hover: hover) and (pointer: fine)").matches) setOpen(true); else setOpen(value => !value); }}>HELP <span aria-hidden="true" className={open ? "is-open" : ""}>⌄</span></button>{open && <div id="header-help-panel" className="header-help-panel"><HelpContents onNavigate={() => setOpen(false)} /></div>}</div>;
+  return <div className="announcement-utility" ref={root} onPointerEnter={event => { if (desktopHover(event)) clearCloseTimer(); }} onPointerLeave={event => { if (desktopHover(event)) { clearCloseTimer(); closeTimer.current = setTimeout(() => setOpen(false), 150); } }}><Link href="/about/">OUR STORY</Link><span aria-hidden="true">|</span><button ref={trigger} type="button" aria-expanded={open} aria-controls="header-help-panel" onPointerEnter={event => { if (desktopHover(event)) { clearCloseTimer(); setOpen(true); } }} onClick={event => { clearCloseTimer(); const pointerType = (event.nativeEvent as PointerEvent).pointerType; if (pointerType === "mouse" && window.matchMedia("(min-width: 1101px) and (hover: hover) and (pointer: fine)").matches) setOpen(true); else setOpen(value => !value); }}>HELP <svg className={open ? "is-open" : ""} viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 6 5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></button>{open && <div id="header-help-panel" className="header-help-panel"><HelpContents onNavigate={() => setOpen(false)} /></div>}</div>;
 }

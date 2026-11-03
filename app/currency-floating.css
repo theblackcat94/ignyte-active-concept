@@ -1,0 +1,7 @@
+.currency-menu.currency-menu-floating{position:fixed;right:auto;bottom:auto;z-index:200;overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box;color:#0B1020;font:400 11px var(--font-ignyte-sans),sans-serif;letter-spacing:0}
+.currency-menu-floating .currency-flag{width:20px;height:15px}
+html[data-appearance="dark"] .currency-menu-floating{background:#1d2639;color:#f5f0e8;border-color:#8790a0}
+html[data-appearance="dark"] .currency-menu-floating small{color:#c6ccd7}
+html[data-appearance="dark"] .currency-menu-floating button:hover,html[data-appearance="dark"] .currency-menu-floating button:focus-visible,html[data-appearance="dark"] .currency-menu-floating button[aria-checked="true"]{background:#303a50}
+html[data-appearance="ignyte"] .currency-menu-floating{background:#fff4ed;color:#0B1020;border-color:#0B1020}
+html[data-appearance="ignyte"] .currency-menu-floating button:hover,html[data-appearance="ignyte"] .currency-menu-floating button:focus-visible,html[data-appearance="ignyte"] .currency-menu-floating button[aria-checked="true"]{background:#ffcfbf}

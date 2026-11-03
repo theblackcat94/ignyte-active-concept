@@ -1,0 +1,3 @@
+/* Closed drawers previously cast their shadow back into the viewport. */
+.bag-drawer:not(.is-open){visibility:hidden;pointer-events:none;box-shadow:none;transition:transform .35s,visibility 0s .35s}
+.bag-drawer.is-open{visibility:visible;transition:transform .35s,visibility 0s}

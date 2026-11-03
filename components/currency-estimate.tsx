@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import { asset } from "@/lib/asset";
+import "@/app/currency-floating.css";
 
 type Rates = { date: string; rates: Record<string, number> };
 const choices = [
@@ -23,19 +25,46 @@ export function CurrencySelector({ inline = false }: { inline?: boolean }) {
   const currency = useCurrency();
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const menu = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState<{ left: number; top: number; width: number; maxHeight: number } | null>(null);
   const selected = choices.find(choice => choice.code === currency) ?? choices[0];
   useEffect(() => {
     if (!open) return;
-    const outside = (event: PointerEvent) => { if (!root.current?.contains(event.target as Node)) setOpen(false); };
-    const escape = (event: KeyboardEvent) => { if (event.key === "Escape") setOpen(false); };
+    const updatePosition = () => {
+      const rect = trigger.current?.getBoundingClientRect();
+      if (!rect) return;
+      const viewport = window.visualViewport;
+      const leftEdge = viewport?.offsetLeft ?? 0;
+      const topEdge = viewport?.offsetTop ?? 0;
+      const rightEdge = leftEdge + (viewport?.width ?? window.innerWidth);
+      const bottomEdge = topEdge + (viewport?.height ?? window.innerHeight);
+      const width = Math.min(272, rightEdge - leftEdge - 24);
+      const left = Math.max(leftEdge + 12, Math.min(rect.right - width, rightEdge - width - 12));
+      const above = rect.top - topEdge - 12;
+      const below = bottomEdge - rect.bottom - 12;
+      const desiredHeight = menu.current?.scrollHeight ?? 380;
+      const openAbove = below < desiredHeight && above > below;
+      const maxHeight = Math.max(100, Math.min(420, (openAbove ? above : below) - 8));
+      setPosition({ left, top: openAbove ? rect.top - Math.min(desiredHeight, maxHeight) - 8 : rect.bottom + 8, width, maxHeight });
+    };
+    updatePosition();
+    const frame = requestAnimationFrame(updatePosition);
+    const outside = (event: PointerEvent) => { if (!root.current?.contains(event.target as Node) && !menu.current?.contains(event.target as Node)) setOpen(false); };
+    const escape = (event: KeyboardEvent) => { if (event.key === "Escape") { setOpen(false); trigger.current?.focus(); } };
     document.addEventListener("pointerdown", outside);
     document.addEventListener("keydown", escape);
-    return () => { document.removeEventListener("pointerdown", outside); document.removeEventListener("keydown", escape); };
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    window.visualViewport?.addEventListener("resize", updatePosition);
+    window.visualViewport?.addEventListener("scroll", updatePosition);
+    return () => { cancelAnimationFrame(frame); document.removeEventListener("pointerdown", outside); document.removeEventListener("keydown", escape); window.removeEventListener("resize", updatePosition); window.removeEventListener("scroll", updatePosition, true); window.visualViewport?.removeEventListener("resize", updatePosition); window.visualViewport?.removeEventListener("scroll", updatePosition); };
   }, [open]);
-  return <div className={`currency-selector${inline ? " currency-selector-inline" : ""}`} ref={root}>
-    <button type="button" className="currency-trigger" aria-label={`Currency display: ${selected.label}. Prices and checkout are in Australian dollars.`} aria-expanded={open} aria-haspopup="menu" onClick={() => setOpen(value => !value)}><img src={asset(`/icons/flags/${selected.icon}.svg`)} alt="" /><span>{selected.code}</span><span aria-hidden="true">⌄</span></button>
-    {open && <div className="currency-menu" role="menu" aria-label="Choose display currency"><p>Currency display</p><small>Checkout is in AUD. Other prices are estimates.</small>{choices.map(choice => <button type="button" role="menuitemradio" aria-checked={choice.code === currency} key={choice.code} onClick={() => { localStorage.setItem("ignyte_display_currency", choice.code); window.dispatchEvent(new Event("ignyte-currency-change")); setOpen(false); }}><img className="currency-flag" src={asset(`/icons/flags/${choice.icon}.svg`)} alt="" /><span>{choice.label}</span><strong>{choice.code}</strong></button>)}</div>}
-  </div>;
+  const menuContent = <div ref={menu} className={`currency-menu${inline ? "" : " currency-menu-floating"}`} role="menu" aria-label="Choose display currency" style={inline ? undefined : position ?? undefined}><p>Currency display</p><small>Checkout is in AUD. Other prices are estimates.</small>{choices.map(choice => <button type="button" role="menuitemradio" aria-checked={choice.code === currency} key={choice.code} onClick={() => { localStorage.setItem("ignyte_display_currency", choice.code); window.dispatchEvent(new Event("ignyte-currency-change")); setOpen(false); trigger.current?.focus(); }}><img className="currency-flag" src={asset(`/icons/flags/${choice.icon}.svg`)} alt="" /><span>{choice.label}</span><strong>{choice.code}</strong></button>)}</div>;
+  return <><div className={`currency-selector${inline ? " currency-selector-inline" : ""}`} ref={root}>
+    <button ref={trigger} type="button" className="currency-trigger" aria-label={`Currency display: ${selected.label}. Prices and checkout are in Australian dollars.`} aria-expanded={open} aria-haspopup="menu" onClick={() => { setPosition(null); setOpen(value => !value); }}><img src={asset(`/icons/flags/${selected.icon}.svg`)} alt="" /><span>{selected.code}</span><span aria-hidden="true">⌄</span></button>
+    {open && inline && menuContent}
+  </div>{open && !inline && position && createPortal(menuContent, document.body)}</>;
 }
 
 export function CurrencyEstimate({ aud }: { aud: number }) {
