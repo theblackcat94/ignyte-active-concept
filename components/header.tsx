@@ -7,9 +7,10 @@ import { useStore } from "./store-provider";
 import HeartIcon from "./heart-icon";
 import AnnouncementBar from "./announcement-bar";
 import HeaderLogo from "./header-logo";
+import "@/app/header-saved-items.css";
 
 export default function Header() {
-  const { products, categories, bag, bagOpen, setBagOpen, searchOpen, setSearchOpen, wishlist } = useStore();
+  const { products, categories, bag, bagOpen, setBagOpen, searchOpen, setSearchOpen } = useStore();
   const nav = categories.map(category => [category.label.toUpperCase(), category.id === "all" ? "/shop" : `/shop/${category.id}`]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerHidden, setHeaderHidden] = useState(false);
@@ -56,13 +57,12 @@ export default function Header() {
       <Link className="brand brand-image" href="/" aria-label="Ignyte home"><HeaderLogo /></Link>
       <nav className="desktop-nav" aria-label="Main navigation">{nav.map(([label, href]) => <Link className={pathname === href ? "active" : ""} href={href} key={href}>{label}</Link>)}</nav>
       <div className="header-actions">
-        <Link className="header-icon" href="/account" aria-label="Your account"><Icon name="account" /></Link>
+        <details className="header-account"><summary className="header-icon" aria-label="Account menu"><Icon name="account" /></summary><div className="header-account-menu"><Link href="/account">MY ACCOUNT</Link><Link href="/wishlist">SAVED ITEMS ♡</Link></div></details>
         <button className="header-icon search-trigger" aria-label="Search" onClick={() => setSearchOpen(true)}><Icon name="search" /></button>
-        <Link className="header-icon wishlist-trigger" href="/wishlist" aria-label={`Wishlist with ${wishlist.length} items`}><Icon name="heart" />{wishlist.length > 0 && <sup>{wishlist.length}</sup>}</Link>
         <button className="header-icon bag-trigger" aria-label={`Bag with ${bag.length} items`} onClick={() => setBagOpen(true)}><Icon name="bag" /><sup>{bag.reduce((sum, item) => sum + item.quantity, 0)}</sup></button>
       </div>
     </header>
-    {menuOpen && <><div className="drawer-backdrop" onClick={() => setMenuOpen(false)} /><div className="mobile-menu"><div className="mobile-menu-head"><HeaderLogo /><button onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button></div>{nav.map(([label, href]) => <Link href={href} key={href} onClick={() => setMenuOpen(false)}>{label}<span>↗</span></Link>)}<Link href="/account" onClick={() => setMenuOpen(false)}>MY ACCOUNT<span>↗</span></Link><p>BUILT FOR THE BURN™</p></div></>}
+    {menuOpen && <><div className="drawer-backdrop" onClick={() => setMenuOpen(false)} /><div className="mobile-menu"><div className="mobile-menu-head"><HeaderLogo /><button onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button></div>{nav.map(([label, href]) => <Link href={href} key={href} onClick={() => setMenuOpen(false)}>{label}<span>↗</span></Link>)}<Link href="/account" onClick={() => setMenuOpen(false)}>MY ACCOUNT<span>↗</span></Link><Link href="/wishlist" onClick={() => setMenuOpen(false)}>SAVED ITEMS ♡<span>↗</span></Link><p>BUILT FOR THE BURN™</p></div></>}
     {searchOpen && <div className="search-overlay" role="dialog" aria-label="Search products"><div className="search-inner"><div className="search-line"><Icon name="search" /><input autoFocus value={query} onChange={e => setQuery(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && query.trim()) { router.push(`/shop?q=${encodeURIComponent(query)}`); setSearchOpen(false); } }} placeholder="Search the collection" aria-label="Search the collection" /><button onClick={() => { setSearchOpen(false); setQuery(""); }} aria-label="Close search">×</button></div><div className="search-results">{query.trim() ? results.length ? results.map(p => <Link href={`/product/${p.slug}`} key={p.slug} onClick={() => setSearchOpen(false)}><img src={p.image} alt="" /><span>{p.name}<small>{p.color} · ${p.price}</small></span><b>↗</b></Link>) : <p>No matching pieces found.</p> : <p>TRY “HALTER”, “LEGGINGS” OR “ESPRESSO”</p>}</div></div></div>}
   </>;
 }

@@ -54,7 +54,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const shippingCelebrationSequence = useRef(0);
   const previousShippingEligibility = useRef<boolean | null>(null);
   const [recommendationSizes, setRecommendationSizes] = useState<Record<string, string>>({});
-  const [actionNotice, setActionNotice] = useState<{ message: string; id: number } | null>(null);
+  const [actionNotice, setActionNotice] = useState<{ message: string; id: number; href?: string } | null>(null);
   const noticeSequence = useRef(0);
   const setAddLocked = useRef(false);
 
@@ -151,7 +151,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     const product = products.find(item => item.slug === slug);
     const saved = wishlist.includes(slug);
     setWishlist(current => saved ? current.filter(item => item !== slug) : [...current, slug]);
-    setActionNotice({ message: `${product?.name ?? "Item"} ${saved ? "removed from" : "saved to"} your wishlist`, id: ++noticeSequence.current });
+    setActionNotice({ message: `${product?.name ?? "Item"} ${saved ? "removed from" : "saved to"} your wishlist`, href: saved ? undefined : "/wishlist", id: ++noticeSequence.current });
   };
 
   const validBag = bag.filter(item => products.some(product => product.slug === item.slug &&
@@ -182,7 +182,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   return (
     <StoreContext.Provider value={{ products, categories, catalogPreview, catalogLoading, catalogError, bag, bagOpen, setBagOpen, setBagDiscount, addToBag, addSetToBag, changeBagQuantity, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
       {children}
-      {actionNotice && <div key={actionNotice.id} className="store-action-toast" role="status" aria-live="polite"><span aria-hidden="true">✦</span>{actionNotice.message}</div>}
+      {actionNotice && <div key={actionNotice.id} className="store-action-toast" role="status" aria-live="polite"><span aria-hidden="true">✦</span>{actionNotice.message}{actionNotice.href && <a href={actionNotice.href}>View Saved Items ↗</a>}</div>}
       {bagOpen && <div className="drawer-backdrop" onClick={() => setBagOpen(false)} />}
       <aside className={`bag-drawer ${bagOpen ? "is-open" : ""}`} aria-label="Shopping bag" aria-hidden={!bagOpen}>
         <div className="drawer-head"><div><span className="eyebrow">YOUR EDIT</span><h2>YOUR BAG ({bag.reduce((sum, item) => sum + item.quantity, 0)})</h2></div><button className="icon-button" onClick={() => setBagOpen(false)} aria-label="Close bag">×</button></div>
