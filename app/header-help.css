@@ -17,7 +17,7 @@
 .header-help-group nav a span{font-size:13px}
 .header-help-preferences{border-top:1px solid #0B102050;margin-top:15px;padding-top:16px}
 .header-help-setting{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:12px 0 0;font:700 10px var(--font-ignyte-mono),monospace;letter-spacing:.06em}
-.header-help-setting-currency{display:block}.header-help-setting-currency>span{display:block;margin-bottom:6px}.header-help-setting-currency .currency-selector-inline{width:100%}.header-help-setting-currency .currency-trigger{width:100%;justify-content:flex-end}
+.header-help-setting-currency .currency-selector-inline{width:auto;max-width:100%}.header-help-setting-currency .currency-trigger{width:auto;justify-content:flex-end}
 .header-help-setting>span{flex:none}.header-help-preferences p{margin:7px 0 14px;font:400 10px/1.45 var(--font-ignyte-sans),sans-serif;color:#4d5260;letter-spacing:0}
 .header-help-appearance>div{display:flex;gap:3px;flex-wrap:wrap;justify-content:end}.header-help-appearance button{min-height:30px;padding:5px 7px;border:1px solid #77808b;background:transparent;color:inherit;cursor:pointer;font:600 10px var(--font-ignyte-sans),sans-serif;letter-spacing:0}
 .header-help-appearance button[aria-pressed=true]{background:#0B1020;border-color:#0B1020;color:#fff4ed}
@@ -40,6 +40,8 @@ html[data-appearance="ignyte"] .header-help-appearance button[aria-pressed=true]
 html[data-appearance="ignyte"] .mobile-menu .header-help-appearance button[aria-pressed=true]{color:#fff4ed}
 html[data-appearance="ignyte"] .mobile-menu .header-help-preferences p{color:#0B1020}
 .announcement-utility-only{display:flex!important;justify-content:flex-end!important}
+.announcement-utility>button span{display:inline-flex;align-items:center;justify-content:center;width:12px;height:12px;font-size:13px;line-height:1;transform-origin:center;vertical-align:middle}
+.announcement-utility>button span.is-open{transform:rotate(180deg)}
 .mobile-menu{overflow-y:auto;overscroll-behavior:contain}
 .mobile-menu>.mobile-account-link,.mobile-menu>a,.mobile-menu-head{flex-shrink:0}
 .mobile-help-panel{flex-shrink:0;border-bottom:1px solid var(--line,#ddd);padding:4px 0 20px}.mobile-help-panel .header-help-content{padding:10px 0}.mobile-help-panel p{margin:7px 0 14px}

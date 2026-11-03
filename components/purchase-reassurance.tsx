@@ -1,19 +1,21 @@
-import Link from "next/link";
-import { FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping-policy";
+"use client";
+
+import { useState } from "react";
+import { FREE_RETURNS_LABEL, FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping-policy";
+import ShippingReturnsDrawer from "./shipping-returns-drawer";
+import { ReturnsIcon, ShippingIcon } from "./purchase-icons";
 import "@/app/purchase-reassurance.css";
 
-export function ShippingIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M2 5h12v11H2zM14 9h4l4 4v3h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>; }
-export function ReturnsIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M4 8h12a5 5 0 0 1 0 10H9"/><path d="m8 4-4 4 4 4"/></svg>; }
+export { ReturnsIcon, ShippingIcon } from "./purchase-icons";
 
 export default function PurchaseReassurance({ inBag = false, returnsOnly = false }: { inBag?: boolean; returnsOnly?: boolean }) {
-  return <div className={`purchase-reassurance${inBag ? " in-bag" : ""}${returnsOnly ? " returns-only" : ""}`} aria-label="Shipping and returns information">
-    {!returnsOnly && <Link href="/returns#shipping" aria-label={`Free shipping on eligible Australian orders of AU$${FREE_SHIPPING_THRESHOLD_CENTS / 100} or more after discounts. View shipping policy.`}>
-      <ShippingIcon />
-      <span>FREE SHIPPING ON AU${FREE_SHIPPING_THRESHOLD_CENTS / 100}+ ORDERS</span>
-    </Link>}
-    <Link href="/returns#free-returns">
-      <ReturnsIcon />
-      <span>FREE, EASY RETURNS</span>
-    </Link>
-  </div>;
+  const [section, setSection] = useState<"shipping" | "returns" | null>(null);
+  return <><div className={`purchase-reassurance${inBag ? " in-bag" : ""}${returnsOnly ? " returns-only" : ""}`} aria-label="Shipping and returns information">
+    {!returnsOnly && <button type="button" onClick={() => setSection("shipping")} aria-label={`Free shipping on eligible Australian orders of AU$${FREE_SHIPPING_THRESHOLD_CENTS / 100} or more after discounts. View shipping information.`}>
+      <ShippingIcon /><span>FREE SHIPPING ON AU${FREE_SHIPPING_THRESHOLD_CENTS / 100}+ ORDERS</span>
+    </button>}
+    <button type="button" onClick={() => setSection("returns")}>
+      <ReturnsIcon /><span>{FREE_RETURNS_LABEL}</span>
+    </button>
+  </div><ShippingReturnsDrawer section={section} onClose={() => setSection(null)} /></>;
 }

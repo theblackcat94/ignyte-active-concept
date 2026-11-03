@@ -12,7 +12,7 @@
 }
 html[data-appearance="ignyte"] .ignyte-fire-egg{
   display:block;
-  animation:ignyte-fire-lifetime 8s linear forwards;
+  animation:ignyte-fire-lifetime 6s linear forwards;
 }
 .ignyte-fire-egg::before{
   content:"";
@@ -44,7 +44,7 @@ html[data-appearance="ignyte"] .ignyte-fire-egg{
 }
 html[data-appearance="ignyte"] .ignyte-fire-egg::before{
   animation:ignyte-fire-rise 1.75s linear;
-  animation-iteration-count:4.5714285714;
+  animation-iteration-count:3.4285714286;
   animation-fill-mode:forwards;
 }
 @keyframes ignyte-fire-rise{
