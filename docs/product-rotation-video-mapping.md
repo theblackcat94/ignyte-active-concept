@@ -21,3 +21,5 @@ Source: [IGNYTE Organised Rotation Clips](https://www.dropbox.com/scl/fo/jbqaut8
 | Vyper Sports Bra · Black | `vyper-sports-bra-black.mp4` | `IGNYTE_Look_20_Rotation_02.mp4` |
 
 Jacob approved Aurora as the customer-facing name for these purple colourways on 2 November. The historic `Jacaranda`, `Lavender` and `Lilac` media filenames and JAC SKU identifiers remain unchanged. Seamless Shorts Aurora has no verified clip in this package. The contact sheets show the matching garments and colours. Clips in the package's `02 SKU confirmation required` and `03 Review product identity` folders were not assigned.
+
+3 November: Vyper Sports Bra in Mauve now uses Jacob's exact `ign-momsbr-brn-vyper-sports-bra-mauve-product-web-9x16-cut-02-v02.mp4` as `vyper-sports-bra-mauve-v02.mp4`. Its SHA-256 also matches the Sculpt Shorts Mauve v02 clip because the footage shows the matching two-piece outfit. Frames at 1 and 10 seconds visually confirm the Vyper bra's distinctive crossed back straps and the Mauve colour. The new 3:4 gallery poster comes from a front-facing frame in this clip. The Black Vyper variant is unchanged.

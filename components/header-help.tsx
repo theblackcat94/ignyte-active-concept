@@ -16,12 +16,22 @@ function currentAppearance(): SiteAppearance {
   return value === "dark" || value === "ignyte" ? value : "light";
 }
 
-export function HelpContents({ onNavigate }: { onNavigate?: () => void }) {
+export function HelpLinks({ onNavigate, mobile = false }: { onNavigate?: () => void; mobile?: boolean }) {
+  const links = mobile ? [
+    ...helpLinks.slice(0, 3),
+    { label: "Shipping & Delivery", href: "/returns/#shipping" },
+    { label: "Free 30 Day Returns", href: "/returns/#free-returns" },
+  ] : helpLinks;
+  return <div className="header-help-group"><strong className="desktop-help-label">HELP &amp; SUPPORT</strong><nav aria-label="Help and support">{links.map(item => <Link key={item.href} href={item.href} onClick={onNavigate}>{item.label}<span className="desktop-help-arrow" aria-hidden="true">↗</span></Link>)}</nav></div>;
+}
+
+export function PreferenceControls() {
   const appearance = useSyncExternalStore(appearanceSubscribe, currentAppearance, () => "light");
-  return <div className="header-help-content">
-    <div className="header-help-group"><strong>HELP &amp; SUPPORT</strong><nav aria-label="Help and support">{helpLinks.map(item => <Link key={item.href} href={item.href} onClick={onNavigate}>{item.label}<span aria-hidden="true">↗</span></Link>)}</nav></div>
-    <div className="header-help-group header-help-preferences"><strong>PREFERENCES</strong><div className="header-help-setting header-help-setting-currency"><span>CURRENCY</span><CurrencySelector inline /></div><p>Display estimates only. Checkout is charged in AUD.</p><div className="header-help-setting header-help-appearance"><span>APPEARANCE</span><div role="group" aria-label="Appearance mode">{(["light", "dark", "ignyte"] as const).map(mode => <button type="button" key={mode} aria-pressed={appearance === mode} onClick={() => applySiteAppearance(mode)}>{mode === "ignyte" ? "IGNYTE" : mode === "dark" ? "Dark" : "Light"}</button>)}</div></div></div>
-  </div>;
+  return <div className="header-help-group header-help-preferences"><strong className="desktop-help-label">PREFERENCES</strong><div className="header-help-setting header-help-setting-currency"><span>CURRENCY</span><CurrencySelector inline /></div><p>Display estimates only. Checkout is charged in AUD.</p><div className="header-help-setting header-help-appearance"><span>APPEARANCE</span><div role="group" aria-label="Appearance mode">{(["light", "dark", "ignyte"] as const).map(mode => <button type="button" key={mode} aria-pressed={appearance === mode} onClick={() => applySiteAppearance(mode)}>{mode === "ignyte" ? "IGNYTE" : mode === "dark" ? "Dark" : "Light"}</button>)}</div></div></div>;
+}
+
+export function HelpContents({ onNavigate }: { onNavigate?: () => void }) {
+  return <div className="header-help-content"><HelpLinks onNavigate={onNavigate} /><PreferenceControls /></div>;
 }
 
 export default function HeaderHelp() {

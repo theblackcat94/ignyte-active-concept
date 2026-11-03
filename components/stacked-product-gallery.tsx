@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState, type CSSProperties } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import Image from "next/image";
 import type { Product } from "@/lib/catalog";
 import ProductPhotoLightbox from "./product-photo-lightbox";
@@ -14,7 +14,6 @@ const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Produc
   const [activeIndex, setActiveIndex] = useState(0);
   const [mobile, setMobile] = useState(false);
   const [playing, setPlaying] = useState(false);
-  const [photoRatios, setPhotoRatios] = useState<Record<string, number>>({});
   const gridRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const userPaused = useRef(false);
@@ -30,7 +29,6 @@ const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Produc
     ...product.gallery,
   ].filter((_, index) => product.slug === "seamless-short-aurora" || index !== 4);
   const mediaCount = photos.length + (product.pdp.video_url ? 1 : 0);
-  const activeRatio = activeIndex < photos.length ? (photoRatios[photos[activeIndex].image] ?? 3 / 4) : 9 / 16;
   useEffect(() => {
     setActiveIndex(0);
     setPlaying(false);
@@ -111,9 +109,9 @@ const StackedProductGallery = forwardRef<ProductGalleryHandle, { product: Produc
   }
 
   return <section className="pdp-stack-media" data-product-slug={product.slug} aria-label={`${product.name} media gallery`}>
-    <div className="pdp-gallery-mark-frame"><div className="pdp-stack-grid" ref={gridRef} onScroll={updateActiveIndex} style={{ "--pdp-mobile-ratio": activeRatio } as CSSProperties}>
+    <div className="pdp-gallery-mark-frame"><div className="pdp-stack-grid" ref={gridRef} onScroll={updateActiveIndex}>
       {photos.map((photo, index) => <figure className="pdp-stack-tile" key={`${photo.image}-${index}`}>
-        <PdpPinchPhoto src={photo.image} alt={photo.alt} index={index} total={photos.length} active={activeIndex === index} onOpen={() => setOpenIndex(index)} onRatio={ratio => setPhotoRatios(current => current[photo.image] === ratio ? current : { ...current, [photo.image]: ratio })} />
+        <PdpPinchPhoto src={photo.image} alt={photo.alt} index={index} total={photos.length} active={activeIndex === index} onOpen={() => setOpenIndex(index)} />
       </figure>)}
       {product.pdp.video_url && <figure className="pdp-stack-tile pdp-stack-video">
         <video ref={videoRef} src={product.pdp.video_url} poster={product.pdp.video_poster} muted playsInline preload="none" aria-label={`${product.name} product film`} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} />

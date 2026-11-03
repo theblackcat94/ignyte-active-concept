@@ -8,16 +8,24 @@ import HeartIcon from "./heart-icon";
 import AnnouncementBar from "./announcement-bar";
 import HeaderLogo from "./header-logo";
 import AccountDiscoverDrawer from "./account-discover-drawer";
-import { HelpContents } from "./header-help";
+import WishlistDrawer from "./wishlist-drawer";
+import { HelpLinks, PreferenceControls } from "./header-help";
 import "@/app/header-saved-items.css";
+import "@/app/mobile-navigation.css";
 
 export default function Header() {
   const { products, categories, bag, bagOpen, setBagOpen, searchOpen, setSearchOpen } = useStore();
   const nav = categories.map(category => [category.label.toUpperCase(), category.id === "all" ? "/shop" : `/shop/${category.id}`]);
+  const primaryIds = ["all", "sports-bras", "leggings", "shorts", "tops"];
+  const primaryNav = primaryIds.map(id => categories.find(category => category.id === id)).filter((category): category is (typeof categories)[number] => Boolean(category));
+  const remainingNav = categories.filter(category => !primaryIds.includes(category.id));
   const [menuOpen, setMenuOpen] = useState(false);
-  const [mobileHelpOpen, setMobileHelpOpen] = useState(false);
+  const [mobileSupportOpen, setMobileSupportOpen] = useState(false);
+  const [mobilePreferencesOpen, setMobilePreferencesOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [wishlistOpen, setWishlistOpen] = useState(false);
   const closeAccount = useCallback(() => setAccountOpen(false), []);
+  const closeWishlist = useCallback(() => setWishlistOpen(false), []);
   const [headerHidden, setHeaderHidden] = useState(false);
   const [headerScrolled, setHeaderScrolled] = useState(false);
   const [query, setQuery] = useState("");
@@ -63,17 +71,22 @@ export default function Header() {
   return <>
     <AnnouncementBar />
     <header className={`site-header${headerHidden ? " site-header-hidden" : ""}${headerScrolled ? " site-header-scrolled" : ""}`}>
-      <div className="header-mobile-left"><button className="header-icon mobile-menu-toggle" aria-label="Open menu" onClick={() => setMenuOpen(true)}><span className="hamburger"><i /><i /></span></button><button className="header-icon mobile-search-trigger" aria-label="Search" onClick={() => setSearchOpen(true)}><Icon name="search" /></button></div>
+      <div className="header-mobile-left"><button className="header-icon mobile-menu-toggle" aria-label="Open menu" onClick={() => { setMobileSupportOpen(false); setMobilePreferencesOpen(false); setMenuOpen(true); }}><span className="hamburger"><i /><i /></span></button><button className="header-icon mobile-search-trigger" aria-label="Search" onClick={() => setSearchOpen(true)}><Icon name="search" /></button></div>
       <Link className="brand brand-image" href="/" aria-label="Ignyte home"><HeaderLogo /></Link>
       <nav className="desktop-nav" aria-label="Main navigation">{nav.map(([label, href]) => <Link className={pathname === href ? "active" : ""} href={href} key={href}>{label}</Link>)}</nav>
       <div className="header-actions">
-        <button className="header-icon header-account-trigger" aria-label="Open account and discovery" aria-expanded={accountOpen} onClick={() => { setBagOpen(false); setAccountOpen(true); }}><Icon name="account" /></button>
+        <button className="header-icon header-account-trigger" aria-label="Open account and discovery" aria-expanded={accountOpen} onClick={() => { setBagOpen(false); setWishlistOpen(false); setAccountOpen(true); }}><Icon name="account" /></button>
         <button className="header-icon search-trigger" aria-label="Search" onClick={() => setSearchOpen(true)}><Icon name="search" /></button>
-        <button className="header-icon bag-trigger" aria-label={`Bag with ${bag.length} items`} onClick={() => setBagOpen(true)}><Icon name="bag" /><sup>{bag.reduce((sum, item) => sum + item.quantity, 0)}</sup></button>
+        <button className="header-icon bag-trigger" aria-label={`Bag with ${bag.length} items`} onClick={() => { setWishlistOpen(false); setBagOpen(true); }}><span className="bag-icon-wrap"><Icon name="bag" /><sup>{bag.reduce((sum, item) => sum + item.quantity, 0)}</sup></span></button>
       </div>
     </header>
-    {menuOpen && <><div className="drawer-backdrop" onClick={() => setMenuOpen(false)} /><div className="mobile-menu"><div className="mobile-menu-head"><HeaderLogo /><button onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button></div>{nav.map(([label, href]) => <Link href={href} key={href} onClick={() => setMenuOpen(false)}>{label}<span>↗</span></Link>)}<Link href="/about/" onClick={() => setMenuOpen(false)}>OUR STORY<span>↗</span></Link><button className="mobile-account-link" onClick={() => { setMenuOpen(false); setAccountOpen(true); }}>YOUR IGNYTE<span>↗</span></button><Link href="/wishlist" onClick={() => setMenuOpen(false)}>SAVED ITEMS ♡<span>↗</span></Link><button type="button" className="mobile-account-link mobile-help-toggle" aria-expanded={mobileHelpOpen} aria-controls="mobile-help-panel" onClick={() => setMobileHelpOpen(value => !value)}>HELP &amp; SUPPORT<span aria-hidden="true">{mobileHelpOpen ? "−" : "+"}</span></button>{mobileHelpOpen && <div id="mobile-help-panel" className="mobile-help-panel"><HelpContents onNavigate={() => setMenuOpen(false)} /></div>}<p>BUILT FOR THE BURN™</p></div></>}
+    {menuOpen && <><div className="drawer-backdrop" onClick={() => setMenuOpen(false)} /><nav className="mobile-menu" aria-label="Mobile navigation"><div className="mobile-menu-head"><HeaderLogo /><button type="button" onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button></div>
+      <div className="mobile-nav-group mobile-nav-primary" aria-label="Shop">{primaryNav.map(category => <Link href={category.id === "all" ? "/shop" : `/shop/${category.id}`} key={category.id} onClick={() => setMenuOpen(false)}>{category.label.toUpperCase()}</Link>)}</div>
+      <div className="mobile-nav-group mobile-nav-secondary"><h2>EXPLORE &amp; ACCOUNT_</h2><Link href="/about/" onClick={() => setMenuOpen(false)}>Our Story</Link><Link href="/#best-sellers-title" onClick={() => setMenuOpen(false)}>The IGNYTE Edit</Link>{remainingNav.map(category => <Link href={`/shop/${category.id}`} key={category.id} onClick={() => setMenuOpen(false)}>{category.label}</Link>)}<button type="button" onClick={() => { setMenuOpen(false); setBagOpen(false); setWishlistOpen(true); }}>Saved Items</button><button type="button" onClick={() => { setMenuOpen(false); setWishlistOpen(false); setAccountOpen(true); }}>My Account</button></div>
+      <div className="mobile-nav-group mobile-nav-utilities"><h2>HELP &amp; SETTINGS_</h2><button type="button" className="mobile-nav-expand" aria-expanded={mobileSupportOpen} aria-controls="mobile-support-panel" onClick={() => setMobileSupportOpen(value => !value)}>Support, sizing &amp; returns<span aria-hidden="true">{mobileSupportOpen ? "−" : "+"}</span></button>{mobileSupportOpen && <div id="mobile-support-panel" className="mobile-nav-expand-panel"><HelpLinks mobile onNavigate={() => setMenuOpen(false)} /></div>}<button type="button" className="mobile-nav-expand" aria-expanded={mobilePreferencesOpen} aria-controls="mobile-preferences-panel" onClick={() => setMobilePreferencesOpen(value => !value)}>Currency &amp; appearance<span aria-hidden="true">{mobilePreferencesOpen ? "−" : "+"}</span></button>{mobilePreferencesOpen && <div id="mobile-preferences-panel" className="mobile-nav-expand-panel"><PreferenceControls /></div>}</div>
+    </nav></>}
     <AccountDiscoverDrawer open={accountOpen} onClose={closeAccount} />
+    <WishlistDrawer open={wishlistOpen} onClose={closeWishlist} />
     {searchOpen && <div className="search-overlay" role="dialog" aria-label="Search products"><div className="search-inner"><div className="search-line"><Icon name="search" /><input autoFocus value={query} onChange={e => setQuery(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && query.trim()) { router.push(`/shop?q=${encodeURIComponent(query)}`); setSearchOpen(false); } }} placeholder="Search the collection" aria-label="Search the collection" /><button onClick={() => { setSearchOpen(false); setQuery(""); }} aria-label="Close search">×</button></div><div className="search-results">{query.trim() ? results.length ? results.map(p => <Link href={`/product/${p.slug}`} key={p.slug} onClick={() => setSearchOpen(false)}><img src={p.image} alt="" /><span>{p.name}<small>{p.color} · ${p.price}</small></span><b>↗</b></Link>) : <p>No matching pieces found.</p> : <p>TRY “HALTER”, “LEGGINGS” OR “ESPRESSO”</p>}</div></div></div>}
   </>;
 }

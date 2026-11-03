@@ -7,7 +7,7 @@ type Point = { x: number; y: number };
 const distance = (a: Touch, b: Touch) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
 const midpoint = (a: Touch, b: Touch): Point => ({ x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 });
 
-export default function PdpPinchPhoto({ src, alt, index, total, active, onOpen, onRatio }: { src: string; alt: string; index: number; total: number; active: boolean; onOpen: () => void; onRatio: (ratio: number) => void }) {
+export default function PdpPinchPhoto({ src, alt, index, total, active, onOpen }: { src: string; alt: string; index: number; total: number; active: boolean; onOpen: () => void }) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const suppressClick = useRef(false);
@@ -84,7 +84,7 @@ export default function PdpPinchPhoto({ src, alt, index, total, active, onOpen, 
   }, [src, active]);
 
   return <button ref={buttonRef} type="button" className="pdp-stack-photo" onClick={() => { if (suppressClick.current) { suppressClick.current = false; return; } onOpen(); }} aria-label={`Enlarge photo ${index + 1} of ${total}: ${alt}`}>
-    <Image ref={imageRef} src={src} alt={alt} fill sizes="(max-width: 900px) 100vw, (max-width: 1400px) 36vw, 31vw" loading={index === 0 ? "eager" : "lazy"} fetchPriority={index === 0 ? "high" : "auto"} draggable={false} onLoad={event => { const image = event.currentTarget; if (image.naturalWidth && image.naturalHeight) onRatio(image.naturalWidth / image.naturalHeight); }} />
+    <Image ref={imageRef} src={src} alt={alt} fill sizes="(max-width: 900px) 100vw, (max-width: 1400px) 36vw, 31vw" loading={index === 0 ? "eager" : "lazy"} fetchPriority={index === 0 ? "high" : "auto"} draggable={false} />
     <span className="pdp-stack-zoom-cue" aria-hidden="true"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></svg></span>
   </button>;
 }

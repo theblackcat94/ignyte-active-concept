@@ -44,7 +44,8 @@ export function pdpFor(name: string, content?: Partial<PdpContent> | null, slug?
   const merged = { ...(plannerPdp[name] ?? emptyPdp), featured_best_seller: Boolean(slug && homeBestSellerSlugs.includes(slug)), ...content };
   const suppliedFilm = productFilmFor(slug);
   const oldBrandFilms = ["", brandFilmUrl, "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4"];
-  const useSuppliedFilm = oldBrandFilms.includes(merged.video_url || "");
+  const useSuppliedFilm = oldBrandFilms.includes(merged.video_url || "") ||
+    (slug === "vyper-sports-bra-mauve" && (merged.video_url || "").startsWith("/images/product-videos/vyper-sports-bra-mauve.mp4"));
   return {
     ...merged,
     model_details: (merged.model_details || (slug ? modelDetailsBySlug[slug] : "") || "").replace(/\s*\((?:Blonde|Brunette)\)/gi, ""),
