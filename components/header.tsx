@@ -18,7 +18,6 @@ export default function Header() {
   const nav = categories.map(category => [category.label.toUpperCase(), category.id === "all" ? "/shop" : `/shop/${category.id}`]);
   const primaryIds = ["all", "sports-bras", "leggings", "shorts", "tops"];
   const primaryNav = primaryIds.map(id => categories.find(category => category.id === id)).filter((category): category is (typeof categories)[number] => Boolean(category));
-  const remainingNav = categories.filter(category => !primaryIds.includes(category.id));
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileSupportOpen, setMobileSupportOpen] = useState(false);
   const [mobilePreferencesOpen, setMobilePreferencesOpen] = useState(false);
@@ -82,8 +81,9 @@ export default function Header() {
     </header>
     {menuOpen && <><div className="drawer-backdrop" onClick={() => setMenuOpen(false)} /><nav className="mobile-menu" aria-label="Mobile navigation"><div className="mobile-menu-head"><HeaderLogo /><button type="button" onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button></div>
       <div className="mobile-nav-group mobile-nav-primary" aria-label="Shop">{primaryNav.map(category => <Link href={category.id === "all" ? "/shop" : `/shop/${category.id}`} key={category.id} onClick={() => setMenuOpen(false)}>{category.label.toUpperCase()}</Link>)}</div>
-      <div className="mobile-nav-group mobile-nav-secondary"><h2>EXPLORE &amp; ACCOUNT_</h2><Link href="/about/" onClick={() => setMenuOpen(false)}>Our Story</Link><Link href="/collections/the-ignyte-edit/" onClick={() => setMenuOpen(false)}>The IGNYTE Edit</Link>{remainingNav.map(category => <Link href={`/shop/${category.id}`} key={category.id} onClick={() => setMenuOpen(false)}>{category.label}</Link>)}<button type="button" onClick={() => { setMenuOpen(false); setBagOpen(false); setWishlistOpen(true); }}>Saved Items <HeartIcon /></button><button type="button" onClick={() => { setMenuOpen(false); setWishlistOpen(false); setAccountOpen(true); }}>My Account</button></div>
+      <div className="mobile-nav-group mobile-nav-secondary"><h2>EXPLORE &amp; ACCOUNT_</h2><Link href="/about/" onClick={() => setMenuOpen(false)}>Our Story</Link><button type="button" onClick={() => { setMenuOpen(false); setBagOpen(false); setWishlistOpen(true); }}>Saved Items <HeartIcon /></button><button type="button" onClick={() => { setMenuOpen(false); setWishlistOpen(false); setAccountOpen(true); }}>My Account</button></div>
       <div className="mobile-nav-group mobile-nav-utilities"><h2>HELP &amp; SETTINGS_</h2><button type="button" className="mobile-nav-expand" aria-expanded={mobileSupportOpen} aria-controls="mobile-support-panel" onClick={() => setMobileSupportOpen(value => !value)}>Support, sizing &amp; returns<span aria-hidden="true">{mobileSupportOpen ? "−" : "+"}</span></button>{mobileSupportOpen && <div id="mobile-support-panel" className="mobile-nav-expand-panel"><HelpLinks mobile onNavigate={() => setMenuOpen(false)} /></div>}<button type="button" className="mobile-nav-expand" aria-expanded={mobilePreferencesOpen} aria-controls="mobile-preferences-panel" onClick={() => setMobilePreferencesOpen(value => !value)}>Currency &amp; appearance<span aria-hidden="true">{mobilePreferencesOpen ? "−" : "+"}</span></button>{mobilePreferencesOpen && <div id="mobile-preferences-panel" className="mobile-nav-expand-panel"><PreferenceControls /></div>}</div>
+      <p className="mobile-nav-signoff">BUILT FOR THE BURN™</p>
     </nav></>}
     <AccountDiscoverDrawer open={accountOpen} onClose={closeAccount} />
     <WishlistDrawer open={wishlistOpen} onClose={closeWishlist} />
