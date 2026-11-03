@@ -64,7 +64,10 @@ export async function PATCH(request: Request) {
   if (staff?.role !== "admin") return NextResponse.json({ error: "Admin access required" }, { status: 403 });
   const parsed = z.object({ collection_id: z.string().uuid(), max_products: z.number().int().min(1).max(24).default(12) }).safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Select a collection." }, { status: 400 });
-  const { error } = await adminDb().from("collection_placements").upsert({ placement: "home-ignyte-edit", ...parsed.data, updated_at: new Date().toISOString() });
+  const db = adminDb();
+  const { data: collection } = await db.from("collections").select("status").eq("id", parsed.data.collection_id).maybeSingle();
+  if (collection?.status !== "published") return NextResponse.json({ error: "Publish the collection before placing it on the homepage." }, { status: 400 });
+  const { error } = await db.from("collection_placements").upsert({ placement: "home-ignyte-edit", ...parsed.data, updated_at: new Date().toISOString() });
   return error ? NextResponse.json({ error: error.message }, { status: 400 }) : NextResponse.json({ ok: true });
 }
 

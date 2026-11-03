@@ -16,7 +16,11 @@ const seo: Record<string, { title: string; description: string }> = {
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
   const { category } = await params;
-  return seo[category] ?? { title: "Shop Ignyte Active", robots: { index: false } };
+  if (seo[category]) return seo[category];
+  const db = publicDb();
+  const { data } = db ? await db.from("categories").select("name").eq("slug", category).maybeSingle() : { data: null };
+  return data ? { title: `Shop ${data.name} | IGNYTE Active`, description: `Explore ${data.name} at IGNYTE Active.`, alternates: { canonical: `/shop/${category}/` } }
+    : { title: "Shop Ignyte Active", robots: { index: false } };
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {

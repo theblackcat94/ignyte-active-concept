@@ -42,7 +42,9 @@ export async function publicPlacement(placement: string): Promise<CuratedCollect
   if (!db) return null;
   const { data, error } = await db.from("collection_placements").select("collection_id,max_products").eq("placement", placement).maybeSingle();
   if (error || !data) return null;
-  const collections = await publicCollections();
-  const collection = collections.find(item => item.id === data.collection_id);
-  return collection ? { ...collection, max_products: data.max_products, product_slugs: collection.product_slugs.slice(0, data.max_products) } : null;
+  const { data: collection, error: collectionError } = await db.from("collections").select("*").eq("id", data.collection_id).maybeSingle();
+  if (collectionError || !collection) return null;
+  const { data: items, error: itemError } = await db.from("collection_products").select("sort_order,products(slug)").eq("collection_id", collection.id).order("sort_order").limit(data.max_products);
+  if (itemError) throw itemError;
+  return { ...collection, max_products: data.max_products, product_slugs: (items ?? []).map(item => (item.products as unknown as { slug: string } | null)?.slug).filter((slug): slug is string => Boolean(slug)) } as CuratedCollection;
 }
