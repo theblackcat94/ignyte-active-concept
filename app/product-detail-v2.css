@@ -51,7 +51,8 @@
 .product-page .detail-accordions .pdp-fit-fabric>p strong{font-size:var(--pdp-heading);font-weight:600;letter-spacing:-.015em}
 .product-page.pdp-stacked .detail-info h1{margin-top:15px}
 .product-page.pdp-stacked .pdp-title-row{display:grid;grid-template-columns:minmax(0,1fr) 44px;align-items:start;gap:8px;min-width:0}
-.product-page.pdp-stacked .pdp-title-row h1{min-width:0;margin-right:0;overflow-wrap:anywhere}
+.product-page.pdp-stacked .pdp-title-row h1{min-width:0;margin-right:0;font-size:clamp(35px,3.7vw,60px);overflow-wrap:normal}
+@media(max-width:900px){.product-page.pdp-stacked .pdp-title-row h1{font-size:clamp(38px,10vw,50px)}}
 .pdp-title-wishlist{display:grid;place-items:center;width:44px;height:44px;margin-top:12px;padding:0;border:0;background:transparent;color:var(--ink,#0B1020);cursor:pointer}
 .pdp-title-wishlist svg{display:block;width:22px;height:22px;transition:transform .18s ease,color .18s ease}
 .pdp-title-wishlist:hover svg{transform:scale(1.08)}
