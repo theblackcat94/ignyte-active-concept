@@ -2,6 +2,8 @@ import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { adminDb } from "@/lib/commerce";
+import { welcomeEmail } from "@/lib/email-templates";
+import { sendSesMail, sesMailConfigured } from "@/lib/ses-mailer";
 
 export const runtime = "nodejs";
 
@@ -26,17 +28,33 @@ export async function POST(request: Request) {
     const db = adminDb();
     const { data: current, error: readError } = await db.from("marketing_subscribers").select("status").eq("email", parsed.data.email).maybeSingle();
     if (readError) throw readError;
-    if (current?.status === "confirmed") return NextResponse.json({ ok: true });
+    if (current?.status === "confirmed") return NextResponse.json({ ok: true, alreadySubscribed: true });
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+    if (!siteUrl || !sesMailConfigured()) {
+      return NextResponse.json({ error: "Email signup is temporarily unavailable. Please try again later." }, { status: 503 });
+    }
+    const token = randomBytes(32).toString("hex");
     const record = {
       email: parsed.data.email,
-      status: "confirmed",
+      status: "pending",
       consent_at: new Date().toISOString(),
       source: parsed.data.source ?? "footer",
-      unsubscribe_token: randomBytes(32).toString("hex"),
+      unsubscribe_token: token,
     };
     const { error } = await db.from("marketing_subscribers").upsert(record, { onConflict: "email" });
     if (error) throw error;
-    return NextResponse.json({ ok: true });
+    try {
+      const unsubscribeUrl = `${siteUrl.replace(/\/$/, "")}/unsubscribe/?token=${token}`;
+      await sendSesMail({ to: parsed.data.email, message: welcomeEmail(siteUrl, unsubscribeUrl) });
+    } catch (mailError) {
+      console.error("Newsletter welcome delivery failed", mailError instanceof Error ? mailError.message : "Unknown mail error");
+      return NextResponse.json({ error: "Your details were saved, but we could not send the welcome email. Please try again shortly." }, { status: 503 });
+    }
+    const { data: confirmed, error: confirmationError } = await db.from("marketing_subscribers")
+      .update({ status: "confirmed" }).eq("email", parsed.data.email).eq("unsubscribe_token", token)
+      .select("status").maybeSingle();
+    if (confirmationError || !confirmed) throw new Error("Newsletter confirmation could not be recorded");
+    return NextResponse.json({ ok: true, emailSent: true });
   } catch {
     return NextResponse.json({ error: "Could not save your signup. Please try again." }, { status: 503 });
   }

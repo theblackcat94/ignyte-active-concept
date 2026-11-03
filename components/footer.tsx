@@ -50,7 +50,7 @@ export default function Footer() {
       const response = await fetch("/api/newsletter", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, consent, website: "" }) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Signup failed. Please try again.");
-      setSignupMessage("Thanks for signing up. You're on the list.");
+      setSignupMessage(result.alreadySubscribed ? "You're already on the list." : "You're on the list. Check your inbox for a welcome email.");
       setEmail("");
       setConsent(false);
     } catch (error) {
