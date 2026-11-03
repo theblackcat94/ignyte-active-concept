@@ -38,6 +38,8 @@ export default function HeaderHelp() {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clearCloseTimer = () => { if (closeTimer.current) { clearTimeout(closeTimer.current); closeTimer.current = null; } };
   useEffect(() => {
     if (!open) return;
     const outside = (event: PointerEvent) => { if (!root.current?.contains(event.target as Node)) setOpen(false); };
@@ -46,5 +48,7 @@ export default function HeaderHelp() {
     document.addEventListener("keydown", escape);
     return () => { document.removeEventListener("pointerdown", outside); document.removeEventListener("keydown", escape); };
   }, [open]);
-  return <div className="announcement-utility" ref={root}><Link href="/about/">OUR STORY</Link><span aria-hidden="true">|</span><button ref={trigger} type="button" aria-expanded={open} aria-controls="header-help-panel" onClick={() => setOpen(value => !value)}>HELP <span aria-hidden="true" className={open ? "is-open" : ""}>⌄</span></button>{open && <div id="header-help-panel" className="header-help-panel"><HelpContents onNavigate={() => setOpen(false)} /></div>}</div>;
+  useEffect(() => () => { if (closeTimer.current) clearTimeout(closeTimer.current); }, []);
+  const desktopHover = (event: React.PointerEvent) => event.pointerType === "mouse" && window.matchMedia("(min-width: 1101px) and (hover: hover) and (pointer: fine)").matches;
+  return <div className="announcement-utility" ref={root} onPointerEnter={event => { if (desktopHover(event)) clearCloseTimer(); }} onPointerLeave={event => { if (desktopHover(event)) { clearCloseTimer(); closeTimer.current = setTimeout(() => setOpen(false), 150); } }}><Link href="/about/">OUR STORY</Link><span aria-hidden="true">|</span><button ref={trigger} type="button" aria-expanded={open} aria-controls="header-help-panel" onPointerEnter={event => { if (desktopHover(event)) { clearCloseTimer(); setOpen(true); } }} onClick={() => { clearCloseTimer(); setOpen(value => !value); }}>HELP <span aria-hidden="true" className={open ? "is-open" : ""}>⌄</span></button>{open && <div id="header-help-panel" className="header-help-panel"><HelpContents onNavigate={() => setOpen(false)} /></div>}</div>;
 }
