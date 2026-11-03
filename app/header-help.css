@@ -1,0 +1,46 @@
+.announcement{position:relative;z-index:65;overflow:visible;font-family:var(--font-ignyte-mono),monospace}
+.announcement:not(.announcement-ticker){display:grid;grid-template-columns:minmax(0,1fr) auto minmax(220px,1fr);gap:12px}
+.announcement:not(.announcement-ticker)>span:first-child{justify-self:start;align-self:center}
+.announcement:not(.announcement-ticker)>.announcement-center,.announcement:not(.announcement-ticker)>.announcement-benefits{grid-column:2;align-self:center}
+.announcement-utility{grid-column:3;justify-self:end;display:flex;align-items:center;gap:11px;height:100%;white-space:nowrap;font:600 9px/1 var(--font-ignyte-mono),monospace;letter-spacing:.09em}
+.announcement-utility>a,.announcement-utility>button{color:inherit;text-decoration:none}
+.announcement-utility>a:hover,.announcement-utility>a:focus-visible,.announcement-utility>button:hover,.announcement-utility>button:focus-visible{text-decoration:underline;text-underline-offset:3px}
+.announcement-utility>button{display:flex;align-items:center;gap:5px;border:0;padding:5px 0;background:transparent;cursor:pointer;font:inherit;letter-spacing:inherit}
+.announcement-utility>button span{font-size:14px;line-height:.5;transition:transform .16s}.announcement-utility>button span.is-open{transform:rotate(180deg)}
+.announcement-utility>span{opacity:.55}
+.header-help-panel{position:absolute;top:calc(100% + 1px);right:0;z-index:130;width:min(340px,calc(100vw - 24px));max-height:calc(100dvh - 44px);overflow-y:auto;background:#fff4ed;color:#0B1020;border:1px solid #c9c3bb;box-shadow:0 18px 38px #0004;white-space:normal;letter-spacing:normal;text-align:left}
+.header-help-content{padding:18px 19px;font-family:var(--font-ignyte-sans),sans-serif}
+.header-help-group>strong{display:block;margin:0 0 8px;font:700 10px/1.3 var(--font-ignyte-mono),monospace;letter-spacing:.08em}
+.header-help-group nav{display:grid}
+.header-help-group nav a{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:34px;padding:6px 0;border-bottom:1px solid #0B102024;color:inherit;font-size:12px;font-weight:500;letter-spacing:0;text-decoration:none}
+.header-help-group nav a:hover,.header-help-group nav a:focus-visible{color:#b72d1e;text-decoration:underline;text-underline-offset:3px}
+.header-help-group nav a span{font-size:13px}
+.header-help-preferences{border-top:1px solid #0B102050;margin-top:15px;padding-top:16px}
+.header-help-setting{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:12px 0 0;font:700 10px var(--font-ignyte-mono),monospace;letter-spacing:.06em}
+.header-help-setting-currency{display:block}.header-help-setting-currency>span{display:block;margin-bottom:6px}.header-help-setting-currency .currency-selector-inline{width:100%}.header-help-setting-currency .currency-trigger{width:100%;justify-content:flex-end}
+.header-help-setting>span{flex:none}.header-help-preferences p{margin:7px 0 14px;font:400 10px/1.45 var(--font-ignyte-sans),sans-serif;color:#4d5260;letter-spacing:0}
+.header-help-appearance>div{display:flex;gap:3px;flex-wrap:wrap;justify-content:end}.header-help-appearance button{min-height:30px;padding:5px 7px;border:1px solid #77808b;background:transparent;color:inherit;cursor:pointer;font:600 10px var(--font-ignyte-sans),sans-serif;letter-spacing:0}
+.header-help-appearance button[aria-pressed=true]{background:#0B1020;border-color:#0B1020;color:#fff4ed}
+.header-help-content button:focus-visible,.header-help-content a:focus-visible,.announcement-utility>button:focus-visible,.announcement-utility>a:focus-visible{outline:2px solid #FF4533;outline-offset:2px}
+.currency-selector-inline .currency-trigger{min-height:30px;padding:4px 7px;background:transparent;color:inherit;border-color:#77808b;font-size:10px}
+.currency-selector-inline .currency-trigger img{width:18px;height:13px}
+.currency-selector-inline .currency-menu{position:static;width:100%;max-height:190px;overflow-y:auto;margin-top:6px;padding:5px;border:1px solid #b8b1aa;box-shadow:none;color:#0B1020;font:400 11px var(--font-ignyte-sans),sans-serif;letter-spacing:0}
+.currency-selector-inline .currency-menu p{margin:5px 7px;font-size:11px;color:inherit}.currency-selector-inline .currency-menu small{margin:0 7px 6px;font-size:10px}.currency-selector-inline .currency-menu button{font-size:11px}
+.announcement.announcement-ticker{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0;padding:0 18px 0 0;overflow:visible}
+.announcement-ticker-area{min-width:0;height:100%;overflow:hidden}.announcement-ticker .announcement-utility{grid-column:2;margin-left:16px}
+html[data-appearance="dark"] .header-help-panel{background:#151c2e;color:#f5f0e8;border-color:#626b7a}
+html[data-appearance="dark"] .header-help-group nav a{border-color:#f5f0e82b}
+html[data-appearance="dark"] .header-help-preferences{border-color:#f5f0e866}
+html[data-appearance="dark"] .header-help-preferences p{color:#c6ccd7}
+html[data-appearance="dark"] .header-help-group nav a:hover,html[data-appearance="dark"] .header-help-group nav a:focus-visible{color:#ff9b87}
+html[data-appearance="dark"] .header-help-appearance button[aria-pressed=true]{background:#f5f0e8;border-color:#f5f0e8;color:#0B1020}
+html[data-appearance="dark"] .currency-selector-inline .currency-menu{background:#1d2639;color:#f5f0e8;border-color:#8790a0}
+html[data-appearance="ignyte"] .header-help-panel{background:#fff4ed;color:#0B1020;border-color:#0B1020}
+html[data-appearance="ignyte"] .header-help-appearance button[aria-pressed=true]{background:#0B1020;color:#fff4ed}
+html[data-appearance="ignyte"] .mobile-menu .header-help-appearance button[aria-pressed=true]{color:#fff4ed}
+html[data-appearance="ignyte"] .mobile-menu .header-help-preferences p{color:#0B1020}
+.announcement-utility-only{display:flex!important;justify-content:flex-end!important}
+.mobile-menu{overflow-y:auto;overscroll-behavior:contain}
+.mobile-menu>.mobile-account-link,.mobile-menu>a,.mobile-menu-head{flex-shrink:0}
+.mobile-help-panel{flex-shrink:0;border-bottom:1px solid var(--line,#ddd);padding:4px 0 20px}.mobile-help-panel .header-help-content{padding:10px 0}.mobile-help-panel p{margin:7px 0 14px}
+@media(max-width:1100px){.announcement:not(.announcement-ticker){display:flex;justify-content:center}.announcement .announcement-utility{display:none}.announcement.announcement-utility-only{display:none!important}.announcement.announcement-ticker{display:block;padding:0;overflow:hidden}.announcement-ticker-area{width:100%}}

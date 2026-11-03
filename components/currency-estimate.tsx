@@ -19,7 +19,7 @@ function subscribe(callback: () => void) { window.addEventListener("ignyte-curre
 function selectedCurrency() { const saved = localStorage.getItem("ignyte_display_currency"); return choices.some(choice => choice.code === saved) ? saved! : "AUD"; }
 function useCurrency() { return useSyncExternalStore(subscribe, selectedCurrency, () => "AUD"); }
 
-export function CurrencySelector() {
+export function CurrencySelector({ inline = false }: { inline?: boolean }) {
   const currency = useCurrency();
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
@@ -32,7 +32,7 @@ export function CurrencySelector() {
     document.addEventListener("keydown", escape);
     return () => { document.removeEventListener("pointerdown", outside); document.removeEventListener("keydown", escape); };
   }, [open]);
-  return <div className="currency-selector" ref={root}>
+  return <div className={`currency-selector${inline ? " currency-selector-inline" : ""}`} ref={root}>
     <button type="button" className="currency-trigger" aria-label={`Currency display: ${selected.label}. Prices and checkout are in Australian dollars.`} aria-expanded={open} aria-haspopup="menu" onClick={() => setOpen(value => !value)}><img src={asset(`/icons/flags/${selected.icon}.svg`)} alt="" /><span>{selected.code}</span><span aria-hidden="true">⌄</span></button>
     {open && <div className="currency-menu" role="menu" aria-label="Choose display currency"><p>Currency display</p><small>Checkout is in AUD. Other prices are estimates.</small>{choices.map(choice => <button type="button" role="menuitemradio" aria-checked={choice.code === currency} key={choice.code} onClick={() => { localStorage.setItem("ignyte_display_currency", choice.code); window.dispatchEvent(new Event("ignyte-currency-change")); setOpen(false); }}><img className="currency-flag" src={asset(`/icons/flags/${choice.icon}.svg`)} alt="" /><span>{choice.label}</span><strong>{choice.code}</strong></button>)}</div>}
   </div>;

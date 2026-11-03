@@ -8,12 +8,14 @@ import HeartIcon from "./heart-icon";
 import AnnouncementBar from "./announcement-bar";
 import HeaderLogo from "./header-logo";
 import AccountDiscoverDrawer from "./account-discover-drawer";
+import { HelpContents } from "./header-help";
 import "@/app/header-saved-items.css";
 
 export default function Header() {
   const { products, categories, bag, bagOpen, setBagOpen, searchOpen, setSearchOpen } = useStore();
   const nav = categories.map(category => [category.label.toUpperCase(), category.id === "all" ? "/shop" : `/shop/${category.id}`]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileHelpOpen, setMobileHelpOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const closeAccount = useCallback(() => setAccountOpen(false), []);
   const [headerHidden, setHeaderHidden] = useState(false);
@@ -22,6 +24,12 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const results = query.trim() ? products.filter(p => `${p.name} ${p.color} ${p.category}`.toLowerCase().includes(query.toLowerCase())).slice(0, 5) : [];
+  useEffect(() => {
+    if (!menuOpen) return;
+    const escape = (event: KeyboardEvent) => { if (event.key === "Escape") setMenuOpen(false); };
+    document.addEventListener("keydown", escape);
+    return () => document.removeEventListener("keydown", escape);
+  }, [menuOpen]);
 
   useEffect(() => {
     let lastY = Math.max(0, window.scrollY);
@@ -64,7 +72,7 @@ export default function Header() {
         <button className="header-icon bag-trigger" aria-label={`Bag with ${bag.length} items`} onClick={() => setBagOpen(true)}><Icon name="bag" /><sup>{bag.reduce((sum, item) => sum + item.quantity, 0)}</sup></button>
       </div>
     </header>
-    {menuOpen && <><div className="drawer-backdrop" onClick={() => setMenuOpen(false)} /><div className="mobile-menu"><div className="mobile-menu-head"><HeaderLogo /><button onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button></div>{nav.map(([label, href]) => <Link href={href} key={href} onClick={() => setMenuOpen(false)}>{label}<span>↗</span></Link>)}<button className="mobile-account-link" onClick={() => { setMenuOpen(false); setAccountOpen(true); }}>YOUR IGNYTE<span>↗</span></button><Link href="/wishlist" onClick={() => setMenuOpen(false)}>SAVED ITEMS ♡<span>↗</span></Link><p>BUILT FOR THE BURN™</p></div></>}
+    {menuOpen && <><div className="drawer-backdrop" onClick={() => setMenuOpen(false)} /><div className="mobile-menu"><div className="mobile-menu-head"><HeaderLogo /><button onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button></div>{nav.map(([label, href]) => <Link href={href} key={href} onClick={() => setMenuOpen(false)}>{label}<span>↗</span></Link>)}<Link href="/about/" onClick={() => setMenuOpen(false)}>OUR STORY<span>↗</span></Link><button className="mobile-account-link" onClick={() => { setMenuOpen(false); setAccountOpen(true); }}>YOUR IGNYTE<span>↗</span></button><Link href="/wishlist" onClick={() => setMenuOpen(false)}>SAVED ITEMS ♡<span>↗</span></Link><button type="button" className="mobile-account-link mobile-help-toggle" aria-expanded={mobileHelpOpen} aria-controls="mobile-help-panel" onClick={() => setMobileHelpOpen(value => !value)}>HELP &amp; SUPPORT<span aria-hidden="true">{mobileHelpOpen ? "−" : "+"}</span></button>{mobileHelpOpen && <div id="mobile-help-panel" className="mobile-help-panel"><HelpContents onNavigate={() => setMenuOpen(false)} /></div>}<p>BUILT FOR THE BURN™</p></div></>}
     <AccountDiscoverDrawer open={accountOpen} onClose={closeAccount} />
     {searchOpen && <div className="search-overlay" role="dialog" aria-label="Search products"><div className="search-inner"><div className="search-line"><Icon name="search" /><input autoFocus value={query} onChange={e => setQuery(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && query.trim()) { router.push(`/shop?q=${encodeURIComponent(query)}`); setSearchOpen(false); } }} placeholder="Search the collection" aria-label="Search the collection" /><button onClick={() => { setSearchOpen(false); setQuery(""); }} aria-label="Close search">×</button></div><div className="search-results">{query.trim() ? results.length ? results.map(p => <Link href={`/product/${p.slug}`} key={p.slug} onClick={() => setSearchOpen(false)}><img src={p.image} alt="" /><span>{p.name}<small>{p.color} · ${p.price}</small></span><b>↗</b></Link>) : <p>No matching pieces found.</p> : <p>TRY “HALTER”, “LEGGINGS” OR “ESPRESSO”</p>}</div></div></div>}
   </>;
