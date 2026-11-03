@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { categories as conceptCategories, legacyProductSlugs, money, products as conceptProducts, type Product } from "@/lib/catalog";
 import { activeCategories, activeProducts, commerceConfigured } from "@/lib/commerce";
 import { track } from "@/lib/analytics-client";
@@ -15,7 +15,7 @@ import PurchaseReassurance from "./purchase-reassurance";
 type BagItem = { slug: string; size: string; quantity: number };
 type Store = {
   products: Product[];
-  categories: { id: string; label: string; cover: string }[];
+  categories: { id: string; label: string; cover: string; coverAlt?: string; focalX?: number; focalY?: number }[];
   catalogPreview: boolean;
   catalogLoading: boolean;
   catalogError: boolean;
@@ -38,6 +38,7 @@ const StoreContext = createContext<Store | null>(null);
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [products, setProducts] = useState<Product[]>(conceptProducts);
   const [categories, setCategories] = useState(conceptCategories);
   const [catalogPreview, setCatalogPreview] = useState(true);
@@ -66,16 +67,25 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!commerceConfigured) return;
-    void activeProducts().then(active => {
-      if (active.length) { setProducts(active); setCatalogPreview(false); }
-    }).catch(() => { setCatalogError(true); setCheckoutMessage("Products could not be loaded. Please refresh."); }).finally(() => setCatalogLoading(false));
-    void activeCategories().then(active => {
-      if (active.length) setCategories([
-        conceptCategories[0],
-        ...active.map(category => ({ id: category.slug, label: category.name, cover: category.cover_path })),
-      ]);
-    }).catch(() => {});
-  }, []);
+    let cancelled = false;
+    const refresh = () => {
+      void Promise.all([activeProducts(), activeCategories()]).then(([active, availableCategories]) => {
+        if (cancelled) return;
+        setProducts(active);
+        setCategories([conceptCategories[0], ...availableCategories.map(category => ({ id: category.slug, label: category.name, cover: category.cover_path, coverAlt: category.cover_alt, focalX: category.focal_x, focalY: category.focal_y }))]);
+        setCatalogPreview(false);
+        setCatalogError(false);
+      }).catch(() => { if (!cancelled) { setCatalogError(true); setCheckoutMessage("The catalog could not be loaded. Please refresh."); } })
+        .finally(() => { if (!cancelled) setCatalogLoading(false); });
+    };
+    refresh();
+    const onVisible = () => { if (!document.hidden) refresh(); };
+    window.addEventListener("ignyte:catalog-changed", refresh);
+    const onStorage = (event: StorageEvent) => { if (event.key === "ignyte:catalog-version") refresh(); };
+    window.addEventListener("storage", onStorage);
+    document.addEventListener("visibilitychange", onVisible);
+    return () => { cancelled = true; window.removeEventListener("ignyte:catalog-changed", refresh); window.removeEventListener("storage", onStorage); document.removeEventListener("visibilitychange", onVisible); };
+  }, [pathname]);
 
   useEffect(() => {
     let cancelled = false;

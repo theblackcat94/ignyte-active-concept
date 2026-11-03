@@ -2,6 +2,8 @@
 .collections-page h1{font-size:clamp(50px,8vw,100px);line-height:.95;margin:20px 0}
 .collections-page h1 span{color:#FF4533}
 .collections-page>p{font-size:18px;line-height:1.5}
+.curated-collection-cover{position:relative;display:block;width:100%;height:clamp(180px,31vw,420px);margin:24px 0 40px;overflow:hidden}
+.curated-collection-controls{display:flex;justify-content:space-between;gap:16px;margin:30px 0}.curated-collection-controls label{display:flex;align-items:center;gap:9px;font:700 11px var(--font-ignyte-mono),monospace}.curated-collection-controls select{padding:9px;border:1px solid currentColor;background:transparent;color:inherit}.curated-collection-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 10px}@media(max-width:800px){.curated-collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.curated-collection-controls{flex-wrap:wrap}}
 .collections-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:45px 0}
 .collections-tile{position:relative;display:block;aspect-ratio:2.6;overflow:hidden;background:#e7e4df;color:#0B1020}
 .collections-tile img{width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .4s}

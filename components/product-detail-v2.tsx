@@ -43,6 +43,13 @@ function fitScalePosition(advice: string): number | null {
 export default function ProductDetail({ product: initialProduct }: { product: Product }) {
   const { products, addToBag, bagOpen, wishlist, toggleWishlist, catalogLoading, catalogError } = useStore();
   const product = !catalogLoading && !catalogError ? products.find(item => item.slug === initialProduct.slug) ?? initialProduct : initialProduct;
+  useEffect(() => {
+    try {
+      const key = "ignyte-recently-viewed";
+      const old = JSON.parse(sessionStorage.getItem(key) || "[]") as string[];
+      sessionStorage.setItem(key, JSON.stringify([initialProduct.slug, ...old.filter(slug => slug !== initialProduct.slug)].slice(0, 10)));
+    } catch { /* Browsing remains available without session storage. */ }
+  }, [initialProduct.slug]);
   const [selection, setSelection] = useState({ slug: product.slug, size: "" });
   const [openInfo, setOpenInfo] = useState<string[]>([]);
   const [guideOpen, setGuideOpen] = useState(false);

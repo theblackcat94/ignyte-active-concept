@@ -1,6 +1,10 @@
 import ShopView from "@/components/shop-view";
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import { permanentRedirect, redirect } from "next/navigation";
+import { adminDb, publicDb } from "@/lib/commerce";
+
+export const dynamic = "force-dynamic";
 
 const seo: Record<string, { title: string; description: string }> = {
   leggings: { title: "Women’s Performance Leggings | Ignyte Active", description: "Shop women’s performance leggings for training, movement and everyday wear. Explore seamless, high-waisted styles in Espresso and Aurora at Ignyte Active." },
@@ -17,5 +21,14 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params;
+  const db = publicDb();
+  if (db) {
+    const { data } = await db.from("categories").select("slug").eq("slug", category).eq("active", true).maybeSingle();
+    if (!data) {
+      const { data: old } = await adminDb().from("category_redirects").select("destination").eq("old_slug", category).maybeSingle();
+      if (old?.destination) permanentRedirect(old.destination);
+      redirect("/shop/");
+    }
+  }
   return <Suspense fallback={null}><ShopView category={category} /></Suspense>;
 }

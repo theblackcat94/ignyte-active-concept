@@ -2,17 +2,20 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useStore } from "./store-provider";
 import HeartIcon from "./heart-icon";
 import AnnouncementBar from "./announcement-bar";
 import HeaderLogo from "./header-logo";
+import AccountDiscoverDrawer from "./account-discover-drawer";
 import "@/app/header-saved-items.css";
 
 export default function Header() {
   const { products, categories, bag, bagOpen, setBagOpen, searchOpen, setSearchOpen } = useStore();
   const nav = categories.map(category => [category.label.toUpperCase(), category.id === "all" ? "/shop" : `/shop/${category.id}`]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const closeAccount = useCallback(() => setAccountOpen(false), []);
   const [headerHidden, setHeaderHidden] = useState(false);
   const [headerScrolled, setHeaderScrolled] = useState(false);
   const [query, setQuery] = useState("");
@@ -41,7 +44,6 @@ export default function Header() {
     const onScroll = () => { if (!frame) frame = window.requestAnimationFrame(update); };
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
-    setHeaderHidden(false);
     update();
     return () => {
       window.removeEventListener("scroll", onScroll);
@@ -57,12 +59,13 @@ export default function Header() {
       <Link className="brand brand-image" href="/" aria-label="Ignyte home"><HeaderLogo /></Link>
       <nav className="desktop-nav" aria-label="Main navigation">{nav.map(([label, href]) => <Link className={pathname === href ? "active" : ""} href={href} key={href}>{label}</Link>)}</nav>
       <div className="header-actions">
-        <details className="header-account"><summary className="header-icon" aria-label="Account menu"><Icon name="account" /></summary><div className="header-account-menu"><Link href="/account">MY ACCOUNT</Link><Link href="/wishlist">SAVED ITEMS ♡</Link></div></details>
+        <button className="header-icon header-account-trigger" aria-label="Open account and discovery" aria-expanded={accountOpen} onClick={() => { setBagOpen(false); setAccountOpen(true); }}><Icon name="account" /></button>
         <button className="header-icon search-trigger" aria-label="Search" onClick={() => setSearchOpen(true)}><Icon name="search" /></button>
         <button className="header-icon bag-trigger" aria-label={`Bag with ${bag.length} items`} onClick={() => setBagOpen(true)}><Icon name="bag" /><sup>{bag.reduce((sum, item) => sum + item.quantity, 0)}</sup></button>
       </div>
     </header>
-    {menuOpen && <><div className="drawer-backdrop" onClick={() => setMenuOpen(false)} /><div className="mobile-menu"><div className="mobile-menu-head"><HeaderLogo /><button onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button></div>{nav.map(([label, href]) => <Link href={href} key={href} onClick={() => setMenuOpen(false)}>{label}<span>↗</span></Link>)}<Link href="/account" onClick={() => setMenuOpen(false)}>MY ACCOUNT<span>↗</span></Link><Link href="/wishlist" onClick={() => setMenuOpen(false)}>SAVED ITEMS ♡<span>↗</span></Link><p>BUILT FOR THE BURN™</p></div></>}
+    {menuOpen && <><div className="drawer-backdrop" onClick={() => setMenuOpen(false)} /><div className="mobile-menu"><div className="mobile-menu-head"><HeaderLogo /><button onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button></div>{nav.map(([label, href]) => <Link href={href} key={href} onClick={() => setMenuOpen(false)}>{label}<span>↗</span></Link>)}<button className="mobile-account-link" onClick={() => { setMenuOpen(false); setAccountOpen(true); }}>YOUR IGNYTE<span>↗</span></button><Link href="/wishlist" onClick={() => setMenuOpen(false)}>SAVED ITEMS ♡<span>↗</span></Link><p>BUILT FOR THE BURN™</p></div></>}
+    <AccountDiscoverDrawer open={accountOpen} onClose={closeAccount} />
     {searchOpen && <div className="search-overlay" role="dialog" aria-label="Search products"><div className="search-inner"><div className="search-line"><Icon name="search" /><input autoFocus value={query} onChange={e => setQuery(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && query.trim()) { router.push(`/shop?q=${encodeURIComponent(query)}`); setSearchOpen(false); } }} placeholder="Search the collection" aria-label="Search the collection" /><button onClick={() => { setSearchOpen(false); setQuery(""); }} aria-label="Close search">×</button></div><div className="search-results">{query.trim() ? results.length ? results.map(p => <Link href={`/product/${p.slug}`} key={p.slug} onClick={() => setSearchOpen(false)}><img src={p.image} alt="" /><span>{p.name}<small>{p.color} · ${p.price}</small></span><b>↗</b></Link>) : <p>No matching pieces found.</p> : <p>TRY “HALTER”, “LEGGINGS” OR “ESPRESSO”</p>}</div></div></div>}
   </>;
 }

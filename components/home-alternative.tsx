@@ -10,6 +10,8 @@ import PdpSocialStrip from "@/components/pdp-social-strip";
 import RegistrationMarks from "@/components/registration-marks";
 import BrandFilmModalProvider, { useBrandFilmModal } from "@/components/brand-film-modal";
 import { homeBestSellerSlugs } from "@/data/pdp-planner";
+import { useEffect, useState } from "react";
+import { publicPlacement, type CuratedCollection } from "@/lib/collections";
 import { useStore } from "@/components/store-provider";
 import { asset } from "@/lib/asset";
 import { inStock } from "@/lib/product-merchandising";
@@ -31,12 +33,22 @@ function HomeFilmActions() {
 
 export default function HomeAlternative({ preview = false }: { preview?: boolean }) {
   const { products, categories, catalogLoading, catalogError } = useStore();
+  const [editCollection, setEditCollection] = useState<CuratedCollection | null>(null);
+  useEffect(() => {
+    let live = true;
+    const refresh = () => { void publicPlacement("home-ignyte-edit").then(value => { if (live) setEditCollection(value); }).catch(() => {}); };
+    refresh(); window.addEventListener("ignyte:collections-changed", refresh);
+    return () => { live = false; window.removeEventListener("ignyte:collections-changed", refresh); };
+  }, []);
   const collections = ["sports-bras", "leggings", "shorts", "tops"].map(id => categories.find(category => category.id === id)).filter((category): category is (typeof categories)[number] => Boolean(category));
   const apparel = products.filter(product => product.category !== "accessories" && !product.slug.includes("socks"));
-  const bestSellers = apparel.filter(product => product.pdp.featured_best_seller).sort((a, b) => {
+  const fallbackBestSellers = apparel.filter(product => product.pdp.featured_best_seller).sort((a, b) => {
     const rank = (slug: string) => { const index = homeBestSellerSlugs.indexOf(slug); return index < 0 ? 999 : index; };
     return rank(a.slug) - rank(b.slug);
   });
+  const bestSellers = editCollection
+    ? (editCollection.mode === "automatic" ? apparel.filter(product => product.category === editCollection.rules.category && inStock(product)).slice(0, editCollection.max_products ?? 12) : editCollection.product_slugs.map(slug => apparel.find(product => product.slug === slug)).filter((product): product is (typeof apparel)[number] => Boolean(product && inStock(product))))
+    : fallbackBestSellers;
   const bestSellerSlugs = new Set(bestSellers.map(product => product.slug));
   const shopCategories = ["sports-bras", "leggings", "shorts", "tops"];
   const shopCandidates = shopCategories.map(category => {
@@ -52,7 +64,7 @@ export default function HomeAlternative({ preview = false }: { preview?: boolean
   return <BrandFilmModalProvider><div className="home-page home-alternative" id="top">
     {preview && <div className="home-alternative-banner">NEW HOMEPAGE PREVIEW <Link href="/home-original">VIEW ORIGINAL HOMEPAGE ↗</Link></div>}
     <HomeHeroSlider watchFilm />
-    <section className="home-collections home-container" id="collections" aria-labelledby="home-categories-title"><div className="home-section-head"><h2 id="home-categories-title" className="mono-section-heading">SHOP CATEGORIES_</h2><Link href="/shop">SHOP ALL ↗</Link></div><div className="home-collection-mosaic">{collections.map((collection) => <Link href={`/shop/${collection.id}`} className={`home-collection home-collection-${collection.id}`} key={collection.id} aria-label={`Shop ${collection.label}`}><Image src={featuredCover[collection.id] ? homeImage(featuredCover[collection.id]) : collection.cover} alt="" fill sizes={collection.id === "sports-bras" ? "(max-width: 600px) 100vw, 48vw" : "(max-width: 600px) 33vw, 25vw"} /><span className="home-collection-label"><span>{collection.label}</span><span aria-hidden="true">↗</span></span></Link>)}</div></section>
+    <section className="home-collections home-container" id="collections" aria-labelledby="home-categories-title"><div className="home-section-head"><h2 id="home-categories-title" className="mono-section-heading">SHOP CATEGORIES_</h2><Link href="/shop">SHOP ALL ↗</Link></div><div className="home-collection-mosaic">{collections.map((collection) => { const customCover = collection.cover && !collection.cover.startsWith("/images/collection-covers/"); return <Link href={`/shop/${collection.id}`} className={`home-collection home-collection-${collection.id}`} key={collection.id} aria-label={`Shop ${collection.label}`}><Image src={customCover ? collection.cover : homeImage(featuredCover[collection.id])} alt={collection.coverAlt || ""} fill sizes={collection.id === "sports-bras" ? "(max-width: 600px) 100vw, 48vw" : "(max-width: 600px) 33vw, 25vw"} style={customCover ? { objectPosition: `${collection.focalX ?? 50}% ${collection.focalY ?? 50}%` } : undefined} /><span className="home-collection-label"><span>{collection.label}</span><span aria-hidden="true">↗</span></span></Link>; })}</div></section>
     {bestSellers.length > 0 && <section className="home-products home-container home-edit" aria-labelledby="best-sellers-title"><div className="home-section-head"><h2 id="best-sellers-title" className="mono-section-heading">THE IGNYTE EDIT_</h2><Link href="/shop">SHOP ALL ↗</Link></div><p className="home-edit-subcopy">Our favourites, ready for your next move.</p><HomeProductCarousel products={bestSellers} label="The Ignyte Edit" /></section>}
     <section className="home-story home-container" id="story"><div className="ignyte-fire-content"><div><span className="home-kicker">IGNYTE® ACTIVEWEAR_</span><h2><span className="home-story-keep">High-performance</span> gear for women who bring the fire.</h2></div><div><p>We’re here for those who bring the fire to their training and expect their gear to match it. Discover what makes Ignyte different.</p><Link href="/about" className="home-underlined">EXPLORE IGNYTE ↗</Link></div></div></section>
     <section className="home-values home-container" aria-label="Why Ignyte"><div><FeatureArrow /><h3>No distractions</h3><p>Designed to stay put, feel secure, and let you focus on the work.</p></div><div><FeatureArrow /><h3>Moves with you</h3><p>Flexible support that responds to every rep, hold, stretch, and session.</p></div><div><FeatureArrow /><h3>Tested in real training</h3><p>Built for sweat, pressure, and repeat wear.</p></div></section>

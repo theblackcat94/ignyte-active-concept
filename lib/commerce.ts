@@ -32,7 +32,7 @@ export type StoreVariant = {
   active: boolean;
 };
 
-export type StoreCategory = { slug: string; name: string; cover_path: string; sort_order: number; active: boolean };
+export type StoreCategory = { slug: string; name: string; cover_path: string; cover_alt?: string; focal_x?: number; focal_y?: number; sort_order: number; active: boolean; archived_at?: string | null; product_count?: number };
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -96,7 +96,7 @@ export function toDisplayProduct(product: StoreProduct): Product {
 export async function activeCategories(): Promise<StoreCategory[]> {
   const db = publicDb();
   if (!db) return [];
-  const { data, error } = await db.from("categories").select("slug,name,cover_path,sort_order,active")
+  const { data, error } = await db.from("categories").select("slug,name,cover_path,cover_alt,focal_x,focal_y,sort_order,active,archived_at")
     .eq("active", true).order("sort_order").order("name");
   if (error) throw error;
   return data as StoreCategory[];
