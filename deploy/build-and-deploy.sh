@@ -65,6 +65,9 @@ if [[ -f "$build_env_file" ]]; then
       META_INSTAGRAM_APP_ID|META_INSTAGRAM_APP_SECRET|INSTAGRAM_OAUTH_REDIRECT_URI)
         # Server-only Meta OAuth settings are copied to the target env file, never exported to the build.
         ;;
+      GUEST_ORDER_LIMIT_DISABLED)
+        # Server-only staging convenience. Production must keep the guest request limit enabled.
+        ;;
       *) echo "Unexpected build setting name: $name" >&2; exit 1 ;;
     esac
   done < "$build_env_file"
