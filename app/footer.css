@@ -20,6 +20,26 @@
 .pdf-footer-consent span{flex:1}
 .pdf-footer-consent a{color:#fff;text-decoration:underline}
 .pdf-footer-signup-form small{display:block;color:#b9bdc7;font-size:11px;margin-top:12px}
+.pdf-footer-signup-form form[aria-busy="true"]{cursor:progress}
+.pdf-footer-signup-form form[aria-busy="true"] .pdf-footer-email-row{opacity:.7}
+.pdf-footer-signup-form form.has-error .pdf-footer-email-row{border-color:#FF4533;box-shadow:0 0 0 1px #FF4533}
+.pdf-footer-submit-loading{display:inline-block;font:700 11px/1 var(--font-ignyte-mono),monospace;letter-spacing:.08em;white-space:nowrap}
+.pdf-footer-signup-error{margin:12px 0 0!important;padding:12px 16px;border:1px solid #FF4533;border-left-width:4px;border-radius:4px;background:rgba(255,69,51,.13);color:inherit!important;font-size:13px!important;line-height:1.45}
+.pdf-footer-signup-success{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:180px;padding:30px 26px;overflow:hidden;text-align:center;border:1px solid #FF4533;border-radius:10px;background:rgba(255,69,51,.12)}
+.pdf-footer-signup-success h3{position:relative;z-index:1;margin:0 0 12px;font:700 clamp(28px,2.4vw,40px)/1.05 var(--font-ignyte-sans),Arial,sans-serif;letter-spacing:-.04em!important;text-wrap:balance}
+.pdf-footer-signup-success p{position:relative;z-index:1;max-width:34ch;color:inherit!important;font-size:15px;line-height:1.5}
+.pdf-footer-signup-success.is-new h3{animation:newsletter-ignite-heading 650ms ease-out both}
+.pdf-footer-signup-sparks{position:absolute;inset:0;pointer-events:none}
+.pdf-footer-signup-sparks span{position:absolute;left:50%;top:54%;width:6px;height:6px;border-radius:50%;background:#FF4533;box-shadow:0 0 10px 3px rgba(255,69,51,.58);opacity:0;animation:newsletter-ember 1.9s ease-out both}
+.pdf-footer-signup-sparks span:nth-child(1){--spark-x:-135px;--spark-y:-58px;animation-delay:40ms}
+.pdf-footer-signup-sparks span:nth-child(2){--spark-x:-90px;--spark-y:-100px;animation-delay:130ms}
+.pdf-footer-signup-sparks span:nth-child(3){--spark-x:-35px;--spark-y:-125px;animation-delay:70ms}
+.pdf-footer-signup-sparks span:nth-child(4){--spark-x:42px;--spark-y:-118px;animation-delay:170ms}
+.pdf-footer-signup-sparks span:nth-child(5){--spark-x:100px;--spark-y:-85px;animation-delay:90ms}
+.pdf-footer-signup-sparks span:nth-child(6){--spark-x:140px;--spark-y:-45px;animation-delay:200ms}
+@keyframes newsletter-ignite-heading{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+@keyframes newsletter-ember{0%{opacity:0;transform:translate(0,0) scale(.45)}20%{opacity:1}100%{opacity:0;transform:translate(var(--spark-x),var(--spark-y)) scale(1.3)}}
+@media(prefers-reduced-motion:reduce){.pdf-footer-signup-success.is-new h3,.pdf-footer-signup-sparks span{animation:none}.pdf-footer-signup-sparks{display:none}}
 .pdf-footer-perks{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-bottom:1px solid #ddd}
 .pdf-footer-perks>a,.pdf-footer-perks>div{min-height:130px;border-right:1px solid #ddd;display:flex;align-items:center;justify-content:center;gap:24px}
 .pdf-footer-perks>*:last-child{border-right:0}
