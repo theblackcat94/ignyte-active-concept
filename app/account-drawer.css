@@ -11,6 +11,7 @@
 .account-discover-auth .button{width:100%;min-height:46px;cursor:pointer}
 .account-discover-consent{display:flex!important;align-items:center;gap:9px;line-height:1.5!important;font-weight:400!important;letter-spacing:0!important;cursor:pointer}
 .account-discover-consent input{width:17px;height:17px;accent-color:#FF4533;flex:none}
+.account-discover-consent span{font:400 12px/1.4 var(--font-ignyte-sans),sans-serif}
 .account-discover-text,.account-discover-options button{border:0;background:transparent;color:inherit;padding:4px 0;cursor:pointer;font:700 10px var(--font-ignyte-mono),monospace;text-decoration:underline;text-underline-offset:3px}
 .account-discover-options,.account-discover-signedout-links{display:flex;justify-content:space-between;gap:8px;margin-top:14px}
 .account-discover-signedout-links a,.account-discover-edit-link{font:700 10px var(--font-ignyte-mono),monospace;text-decoration:underline;text-underline-offset:3px}
