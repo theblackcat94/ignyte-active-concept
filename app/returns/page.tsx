@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "../support/support.css";
 
-export const metadata: Metadata = { title: "Returns policy | Ignyte Active", description: "Returns information and Australian consumer rights for Ignyte Active." };
+export const metadata: Metadata = { title: "Returns policy | Ignyte Active", description: "Read the Ignyte Active Australian shipping, returns and consumer rights information, including delivery charges and how to request a return.", alternates: { canonical: "/returns/" } };
 
 export default function ReturnsPage() {
   return <main className="support-page section-wrap"><div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><span>RETURNS</span></div><span className="eyebrow">IGNYTE / HELP & SUPPORT</span><h1>RETURNS<span>.</span></h1>

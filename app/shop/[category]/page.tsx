@@ -12,7 +12,8 @@ const seo: Record<string, { title: string; description: string }> = {
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
   const { category } = await params;
-  return seo[category] ?? { title: "Shop Ignyte Active", robots: { index: false } };
+  if (!seo[category]) return { title: "Shop Ignyte Active", robots: { index: false } };
+  return { ...seo[category], alternates: { canonical: `/shop/${category}/` } };
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {

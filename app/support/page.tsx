@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./support.css";
 
-export const metadata: Metadata = { title: "Support & FAQ | Ignyte Active" };
+export const metadata: Metadata = { title: "Support & FAQ | Ignyte Active", description: "Find answers about Ignyte Active sizing, product care, orders, payment, shipping and returns, or contact our support team.", alternates: { canonical: "/support/" } };
 
 type Faq = { question: string; answer: ReactNode };
 const groups: { title: string; questions: Faq[] }[] = [

@@ -4,7 +4,7 @@ import FeatureArrow from "@/components/feature-arrow";
 import RegistrationMarks from "@/components/registration-marks";
 import "./about.css";
 
-export const metadata: Metadata = { title: "About Ignyte Active | Built for the Burn", description: "Meet Ignyte Active, the activewear brand bringing performance and self-expression together. Discover our purpose and what it means to bring your own fire." };
+export const metadata: Metadata = { title: "About Ignyte Active | Built for the Burn", description: "Meet Ignyte Active, the activewear brand bringing performance and self-expression together. Discover our purpose and what it means to bring your own fire.", alternates: { canonical: "/about/" } };
 
 export default function AboutPage() {
   return <div className="about-page">
