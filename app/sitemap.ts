@@ -6,7 +6,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ignyte.theblackcat9
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  if (siteUrl.startsWith("https://dev.")) return [];
+  if (new URL(siteUrl).hostname !== "ignyteactive.com") return [];
 
   const pages = [
     "",
