@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Script from "next/script";
 import { asset } from "@/lib/asset";
+import { GOOGLE_ANALYTICS_ID } from "@/lib/google-analytics";
 import "./globals.css";
 import "./drawer-visibility.css";
 import "./ember.css";
@@ -96,8 +98,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
-      <head><script dangerouslySetInnerHTML={{ __html: "try{var a=localStorage.getItem('ignyte-appearance');document.documentElement.dataset.appearance=(a==='dark'||a==='ignyte')?a:'light'}catch(e){document.documentElement.dataset.appearance='light'}" }} />{devPreloader && <script dangerouslySetInnerHTML={{ __html: preloaderScript }} />}</head>
+      <head><script dangerouslySetInnerHTML={{ __html: "try{var a=localStorage.getItem('ignyte-appearance');document.documentElement.dataset.appearance=(a==='dark'||a==='ignyte')?a:'light'}catch(e){document.documentElement.dataset.appearance='light'}" }} />{devPreloader && <script dangerouslySetInnerHTML={{ __html: preloaderScript }} />}<script dangerouslySetInnerHTML={{ __html: `if(navigator.doNotTrack==='1')window['ga-disable-${GOOGLE_ANALYTICS_ID}']=true;window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments)};gtag('js',new Date());gtag('config','${GOOGLE_ANALYTICS_ID}',{send_page_view:false});` }} /></head>
       <body className={`${ignyteSans.variable} ${ignyteMono.variable}`}>
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`} strategy="afterInteractive" />
         <IgnyteFireField />
         <div className="ignyte-fire-egg" aria-hidden="true" />
         <div className="ignyte-mobile-ignition" aria-hidden="true">
