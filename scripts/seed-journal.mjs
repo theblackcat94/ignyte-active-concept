@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const apply = process.argv.includes("--apply");
 const refreshCopy = process.argv.includes("--refresh-copy");
+const syncEditorial = process.argv.includes("--sync-editorial");
 const envAt = process.argv.indexOf("--env-file");
 if (envAt !== -1) {
   const file = process.argv[envAt + 1];
@@ -25,6 +26,16 @@ if (articleError) throw articleError;
 for (const [index, item] of launch.entries()) {
   const current = existing.find(article => article.slug === item.slug);
   if (current) {
+    if (syncEditorial) {
+      if (JSON.stringify(current.body || []) !== JSON.stringify(item.body)) {
+        console.log(`${apply ? "Update" : "Would update"} private draft body ${item.slug} (${item.body.length} blocks)`);
+        if (apply) {
+          const { error } = await db.from("journal_articles").update({ body: item.body, updated_at: new Date().toISOString() }).eq("id", current.id).eq("status", "draft");
+          if (error) throw error;
+        }
+      } else console.log(`Keep existing ${item.slug}`);
+      continue;
+    }
     if (refreshCopy && item.slug !== "ignyte-active-launches") {
       let changed = false;
       const body = (current.body || []).map((block, blockIndex) => {

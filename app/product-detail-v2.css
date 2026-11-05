@@ -131,28 +131,32 @@ html[data-appearance="ignyte"] .product-page .detail-add:active:not(:disabled),h
 @media(max-width:700px){.pdp-customer-reviews{padding:32px 0}.pdp-customer-reviews h2{font-size:30px}}
 @media(max-width:380px){.product-page .pdp-fit-confidence{font-size:10px}}
 /* Fit & Fabric uses the same body and heading tokens as the other PDP accordions. */
-.product-page .detail-accordions .pdp-fit-fabric{display:grid;gap:22px;padding:4px 0 20px;color:var(--ink)}
-.product-page .detail-accordions .pdp-info-group{display:grid;gap:8px;min-width:0}
+.product-page .detail-accordions .pdp-fit-fabric{--pdp-indicator-active:#ff4533;--pdp-indicator-inactive:color-mix(in srgb,var(--ink) 18%,transparent);display:grid;gap:0;padding:4px 0 18px;color:var(--ink)}
+.product-page .detail-accordions .pdp-info-group{display:grid;gap:6px;min-width:0;padding:11px 0 15px}
+.product-page .detail-accordions .pdp-info-group + .pdp-info-group{border-top:1px solid var(--line)}
+.product-page .detail-accordions .pdp-info-group:last-child{padding-bottom:0}
 .product-page .detail-accordions .pdp-info-group h3{margin:0;font-family:var(--font-ignyte-sans),sans-serif;font-size:var(--pdp-heading);font-weight:600;line-height:1.3;color:var(--ink)}
 .product-page .detail-accordions .pdp-info-group p{margin:0;padding:0;font-family:var(--font-ignyte-sans),sans-serif;font-size:var(--pdp-body);font-weight:400;line-height:1.5;color:var(--ink)}
-.product-page .detail-accordions .pdp-info-group .pdp-info-value{font-weight:600;line-height:1.3}
+.product-page .detail-accordions .pdp-info-group .pdp-info-value{font-weight:500;line-height:1.3}
 .product-page .detail-accordions .pdp-info-key{color:color-mix(in srgb,var(--ink) 75%,transparent);font-weight:500}
-.pdp-three-point{display:grid;gap:6px;min-width:0;margin-top:2px}
+.pdp-three-point{display:grid;gap:4px;min-width:0;margin-top:1px}
 .pdp-three-point-bars,.pdp-three-point-labels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
-.pdp-three-point-bars span{height:8px;border:1px solid color-mix(in srgb,var(--ink) 35%,transparent);background:color-mix(in srgb,var(--ink) 15%,transparent)}
-.pdp-three-point-bars span.is-active{border-color:#ff4533;background:#ff4533}
-html[data-appearance="ignyte"] .pdp-three-point-bars span.is-active{border-color:#0b1020}
-.pdp-three-point-labels span{min-width:0;color:var(--ink);font-family:var(--font-ignyte-mono),monospace;font-size:10px;line-height:1.25;letter-spacing:.02em;text-align:center;white-space:nowrap}
+.pdp-three-point-bars span{height:8px;border:1px solid color-mix(in srgb,var(--ink) 24%,transparent);border-radius:1px;background:var(--pdp-indicator-inactive)}
+.pdp-three-point-bars span.is-active{border-color:var(--pdp-indicator-active);background:var(--pdp-indicator-active)}
+.pdp-three-point-labels span{min-width:0;color:color-mix(in srgb,var(--ink) 80%,transparent);font-family:var(--font-ignyte-mono),monospace;font-size:10px;line-height:1.25;letter-spacing:.02em;text-align:center;white-space:nowrap}
+html[data-appearance="ignyte"] .product-page .detail-accordions .pdp-fit-fabric{--pdp-indicator-active:#1c1c20;--pdp-indicator-inactive:color-mix(in srgb,#1c1c20 22%,transparent)}
 .pdp-fabric-list{display:grid;gap:6px;margin:0}
 .pdp-fabric-list div{display:grid;grid-template-columns:minmax(56px,80px) minmax(0,1fr);column-gap:10px;align-items:start}
 .pdp-fabric-list dt,.pdp-fabric-list dd{margin:0;font-family:var(--font-ignyte-sans),sans-serif;font-size:var(--pdp-body);line-height:1.5}
 .pdp-fabric-list dt{color:color-mix(in srgb,var(--ink) 75%,transparent);font-weight:500}
 .pdp-fabric-list dd{color:var(--ink);font-weight:400}
 .product-page .detail-accordions .pdp-care-note strong{font-size:var(--pdp-body);font-weight:600}
-.product-page .detail-accordions .pdp-certification{gap:7px}
+.product-page .detail-accordions .pdp-certification{gap:5px}
+.product-page .detail-accordions .pdp-certification h3{font-size:14px}
+.product-page .detail-accordions .pdp-certification p{font-size:13px;line-height:1.45}
 .pdp-certification-name{display:table;margin-bottom:7px;padding:4px 7px;border:1px solid currentColor;color:var(--ink);font-family:var(--font-ignyte-mono),monospace;font-size:10px;font-weight:600;line-height:1.3;letter-spacing:.04em}
 .pdp-certification a{justify-self:start;color:var(--ink);font-size:11px;font-weight:600;text-decoration:underline;text-underline-offset:2px}
-@media(max-width:380px){.pdp-three-point-labels span{font-size:9px;letter-spacing:0}.product-page .detail-accordions .pdp-fit-fabric{gap:19px}}
+@media(max-width:380px){.pdp-three-point-labels span{font-size:9px;letter-spacing:0}}
 @media(prefers-reduced-motion:reduce){.pdp-fit-tooltip{transition:none}}
 .pdp-breadcrumb-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;min-width:0}.pdp-breadcrumb-row .pdp-detail-breadcrumb{min-width:0;flex:1}.pdp-edit-shortcut{flex:none;display:inline-flex;align-items:center;min-height:44px;color:var(--ink);font-size:10px;font-weight:700;letter-spacing:.1em;text-decoration:underline;text-underline-offset:3px}.pdp-edit-shortcut:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
 .product-page.pdp-stacked .pdp-description{position:relative;max-width:410px;padding:26px 0 14px}.product-page.pdp-stacked .pdp-description .detail-description{margin:0;padding:0;max-height:4.8em;overflow:hidden;transition:max-height .28s ease}.pdp-description button{display:inline-block;min-height:30px;padding:3px 0;border:0;background:none;color:var(--ink);font:inherit;font-size:11px;font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.pdp-description button:focus-visible{outline:2px solid var(--orange);outline-offset:2px}

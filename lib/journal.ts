@@ -4,6 +4,7 @@ import { adminDb } from "@/lib/commerce";
 export const journalBlockSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("paragraph"), text: z.string().max(4000) }),
   z.object({ type: z.literal("heading"), text: z.string().max(240) }),
+  z.object({ type: z.literal("subheading"), text: z.string().max(240) }),
   z.object({ type: z.literal("quote"), text: z.string().max(1000) }),
   z.object({ type: z.literal("list"), text: z.string().max(4000), ordered: z.boolean().default(false) }),
   z.object({ type: z.literal("image"), url: z.string().max(1000), alt: z.string().max(240) }),
@@ -27,6 +28,8 @@ export const journalArticleSchema = z.object({
 });
 export type JournalArticleInput = z.infer<typeof journalArticleSchema>;
 export type JournalArticle = JournalArticleInput & { id: string; created_at: string; updated_at: string; journal_categories?: { name: string; slug: string } | null };
+export type JournalCard = Pick<JournalArticle, "id" | "slug" | "title" | "excerpt" | "featured" | "cover_url" | "cover_alt" | "thumbnail_url" | "status" | "publish_at" | "journal_categories">;
+export const journalCardColumns = "id,slug,title,excerpt,featured,cover_url,cover_alt,thumbnail_url,status,publish_at,journal_categories(name,slug)";
 export type JournalCategory = { id: string; slug: string; name: string; description: string; sort_order: number };
 
 export const safeJournalUrl = (value: string) => !value || value.startsWith("/") && !value.startsWith("//") || /^https:\/\//i.test(value);

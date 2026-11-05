@@ -137,18 +137,18 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     if (label === "DESIGNED FOR") return <div className="pdp-activity-list">{pdp.activities.map(activity => <span key={activity}>{activity}</span>)}</div>;
     if (label === "FIT & FABRIC") return <div className="pdp-fit-fabric">
       {confirmedSupport && <section className="pdp-info-group"><h3>Support level</h3><p className="pdp-info-value">{confirmedSupport} support</p><ThreePointIndicator labels={SUPPORT_LEVELS.map(level => level.toUpperCase())} active={index => index <= SUPPORT_LEVELS.indexOf(confirmedSupport)} ariaLabel={`${confirmedSupport} support. ${supportGuidance[confirmedSupport]}`} /></section>}
-      {showFitDetails && <section className="pdp-info-group"><h3>Fit &amp; sizing</h3>
+      {showFitDetails && <section className="pdp-info-group"><h3>Fit &amp; sizing advice</h3>
         {fitPosition !== null && <><p className="pdp-info-value">{fitLabels[fitPosition]}</p><ThreePointIndicator labels={fitScale} active={index => index === fitPosition} ariaLabel={`IGNYTE sizing guidance: ${fitLabels[fitPosition]}`} /></>}
         {isSock && <p>{sockSizing.productText}</p>}
         {fitAdvice && fitPosition === null && <p>{fitAdvice}</p>}
         {product.fitAttribute && (!fitAdvice || product.fitAttribute.trim().toLowerCase() !== fitAdvice.toLowerCase()) && <p><span className="pdp-info-key">Fit:</span> {product.fitAttribute}</p>}
         {product.coverageAttribute && <p><span className="pdp-info-key">Coverage:</span> {product.coverageAttribute}</p>}
       </section>}
-      {showFabricDetails && <section className="pdp-info-group"><h3>Fabric &amp; features</h3>
+      {showFabricDetails && <section className="pdp-info-group"><h3>Fabric</h3>
         {fabricParts.length > 0 && <dl className="pdp-fabric-list">{fabricParts.map((part, index) => <div key={`${part.label}-${index}`}><dt>{part.label}</dt><dd>{part.composition}</dd></div>)}</dl>}
         {showCareAdvice && <p className="pdp-care-note"><strong>Care:</strong> {pdp.care_approved && pdp.care_instructions?.trim() ? pdp.care_instructions.trim() : "Machine wash cold at 30°C on a gentle cycle with similar colours. Air dry in the shade. Always follow the garment care label."}</p>}
       </section>}
-      {pdp.oeko_certified && <section className="pdp-info-group pdp-certification"><h3>Certification</h3><p><span className="pdp-certification-name">OEKO-TEX® STANDARD 100</span>Made with OEKO-TEX® STANDARD 100 certified fabrics, tested for harmful substances so you can feel confident in what’s against your skin.</p>{pdp.oeko_certificate_url?.trim() && <a href={pdp.oeko_certificate_url.trim()} target="_blank" rel="noopener noreferrer">View certificate{pdp.oeko_certificate.trim() ? ` ${pdp.oeko_certificate.trim()}` : ""} ↗</a>}</section>}
+      {pdp.oeko_certified && <section className="pdp-info-group pdp-certification"><h3>OEKO-TEX certification</h3><p><span className="pdp-certification-name">OEKO-TEX® STANDARD 100</span>Made with OEKO-TEX® STANDARD 100 certified fabrics, tested for harmful substances so you can feel confident in what’s against your skin.</p>{pdp.oeko_certificate_url?.trim() && <a href={pdp.oeko_certificate_url.trim()} target="_blank" rel="noopener noreferrer">View certificate{pdp.oeko_certificate.trim() ? ` ${pdp.oeko_certificate.trim()}` : ""} ↗</a>}</section>}
       {!confirmedSupport && !showFitDetails && !showFabricDetails && !pdp.oeko_certified && <p>Fit and fabric details are being confirmed for this product.</p>}
     </div>;
     if (label === "MODEL DETAILS") {
