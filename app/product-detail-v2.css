@@ -148,6 +148,7 @@ html[data-appearance="ignyte"] .pdp-three-point-bars span.is-active{border-color
 .pdp-fabric-list dt,.pdp-fabric-list dd{margin:0;font-family:var(--font-ignyte-sans),sans-serif;font-size:var(--pdp-body);line-height:1.5}
 .pdp-fabric-list dt{color:color-mix(in srgb,var(--ink) 75%,transparent);font-weight:500}
 .pdp-fabric-list dd{color:var(--ink);font-weight:400}
+.product-page .detail-accordions .pdp-care-note strong{font-size:var(--pdp-body);font-weight:600}
 .product-page .detail-accordions .pdp-certification{gap:7px}
 .pdp-certification-name{display:table;margin-bottom:7px;padding:4px 7px;border:1px solid currentColor;color:var(--ink);font-family:var(--font-ignyte-mono),monospace;font-size:10px;font-weight:600;line-height:1.3;letter-spacing:.04em}
 .pdp-certification a{justify-self:start;color:var(--ink);font-size:11px;font-weight:600;text-decoration:underline;text-underline-offset:2px}

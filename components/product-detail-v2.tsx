@@ -144,10 +144,10 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
         {product.fitAttribute && (!fitAdvice || product.fitAttribute.trim().toLowerCase() !== fitAdvice.toLowerCase()) && <p><span className="pdp-info-key">Fit:</span> {product.fitAttribute}</p>}
         {product.coverageAttribute && <p><span className="pdp-info-key">Coverage:</span> {product.coverageAttribute}</p>}
       </section>}
-      {showFabricDetails && <section className="pdp-info-group"><h3>Fabric &amp; features</h3><dl className="pdp-fabric-list">
-        {fabricParts.map((part, index) => <div key={`${part.label}-${index}`}><dt>{part.label}</dt><dd>{part.composition}</dd></div>)}
-        {showCareAdvice && <div className="pdp-care-summary"><dt>Care</dt><dd>{pdp.care_approved && pdp.care_instructions?.trim() ? pdp.care_instructions.trim() : "Machine wash cold at 30°C on a gentle cycle with similar colours. Air dry in the shade. Always follow the garment care label."}</dd></div>}
-      </dl></section>}
+      {showFabricDetails && <section className="pdp-info-group"><h3>Fabric &amp; features</h3>
+        {fabricParts.length > 0 && <dl className="pdp-fabric-list">{fabricParts.map((part, index) => <div key={`${part.label}-${index}`}><dt>{part.label}</dt><dd>{part.composition}</dd></div>)}</dl>}
+        {showCareAdvice && <p className="pdp-care-note"><strong>Care:</strong> {pdp.care_approved && pdp.care_instructions?.trim() ? pdp.care_instructions.trim() : "Machine wash cold at 30°C on a gentle cycle with similar colours. Air dry in the shade. Always follow the garment care label."}</p>}
+      </section>}
       {pdp.oeko_certified && <section className="pdp-info-group pdp-certification"><h3>Certification</h3><p><span className="pdp-certification-name">OEKO-TEX® STANDARD 100</span>Made with OEKO-TEX® STANDARD 100 certified fabrics, tested for harmful substances so you can feel confident in what’s against your skin.</p>{pdp.oeko_certificate_url?.trim() && <a href={pdp.oeko_certificate_url.trim()} target="_blank" rel="noopener noreferrer">View certificate{pdp.oeko_certificate.trim() ? ` ${pdp.oeko_certificate.trim()}` : ""} ↗</a>}</section>}
       {!confirmedSupport && !showFitDetails && !showFabricDetails && !pdp.oeko_certified && <p>Fit and fabric details are being confirmed for this product.</p>}
     </div>;
