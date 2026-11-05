@@ -28,7 +28,7 @@ export const defaultJoinFireSettings: JoinFireSettings = {
   publicEnabled: false, offerEnabled: false,
   eyebrow: "JOIN THE FIRE_", headline: "YOUR FIRE STARTS HERE.",
   introduction: "Join the IGNYTE crew and get 10% off your first order.",
-  supportingCopy: "Performance activewear built for women who move with purpose and bring the fire.",
+  supportingCopy: "Performance activewear built for women who move bring the fire.",
   heroImage: "/images/about/About-bring-the-fire-3.jpg",
   cta: "UNLOCK MY 10% OFF ↗", offerPercent: 10,
   offerTerms: "First eligible order only. One use per new customer. Cannot be combined with another discount. Standard shipping and returns terms apply.",
