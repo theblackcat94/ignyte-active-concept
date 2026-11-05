@@ -27,7 +27,7 @@ export const productInput = z.object({
     activities: z.array(z.string().trim().min(1).max(50)).max(12),
     fit: z.string().trim().max(500),
     fabric: z.string().trim().max(1500),
-    support_level: z.string().trim().max(500).optional(),
+    support_level: z.enum(["Light", "Medium", "High", "Not Applicable", ""]).optional(),
     care_instructions: z.string().trim().max(1500).optional(),
     model_details: z.string().trim().max(1500),
     show_model_details: z.boolean().default(true),

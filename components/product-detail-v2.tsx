@@ -28,6 +28,7 @@ import PurchaseReassurance, { ReturnsIcon, ShippingIcon } from "./purchase-reass
 import { FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping-policy";
 import ProductDescription from "./product-description";
 import PdpEditShortcut from "./pdp-edit-shortcut";
+import { SUPPORT_LEVELS, supportGuidance, supportLevel } from "@/lib/support-level";
 import "@/app/product-detail-v2.css";
 
 const fitScale = ["RUNS SMALLER", "TRUE TO SIZE", "RUNS LARGER"] as const;
@@ -68,6 +69,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const isSock = product.name.toLowerCase().includes("sock");
   const pdp = product.pdp;
   const fitAdvice = pdp.fit?.trim();
+  const confirmedSupport = supportLevel(pdp.support_level);
   const fitPosition = !isSock && fitAdvice ? fitScalePosition(fitAdvice) : null;
   const fitTipOpen = fitTipSlug === product.slug;
   useEffect(() => {
@@ -125,12 +127,12 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     if (label === "FEATURES") return <ul className="pdp-feature-list">{pdp.features.map(feature => <li key={feature}>{feature}</li>)}{isSock && <li>{sockSizing.productText}</li>}</ul>;
     if (label === "DESIGNED FOR") return <div className="pdp-activity-list">{pdp.activities.map(activity => <span key={activity}>{activity}</span>)}</div>;
     if (label === "FIT & FABRIC") return <div className="pdp-fit-fabric">
+      {confirmedSupport && <div className="pdp-support-level" role="group" aria-label={`${confirmedSupport} support. ${supportGuidance[confirmedSupport]}`}><span className="pdp-support-eyebrow">SUPPORT LEVEL_</span><strong>{confirmedSupport} Support</strong><div className="pdp-support-bars" aria-hidden="true">{SUPPORT_LEVELS.map((level, index) => <span key={level} className={index <= SUPPORT_LEVELS.indexOf(confirmedSupport) ? "is-active" : ""} />)}</div><div className="pdp-support-labels" aria-hidden="true">{SUPPORT_LEVELS.map(level => <span key={level}>{level.toUpperCase()}</span>)}</div></div>}
       {isSock ? <p><strong>Fit and sizing advice</strong><span>{sockSizing.productText}</span></p> : (fitAdvice || fitPosition !== null) && <div className="pdp-fit-advice"><strong>Fit and sizing advice</strong>{fitPosition !== null && <div className="pdp-fit-scale" role="img" aria-label={`IGNYTE sizing guidance: ${fitScale[fitPosition].toLowerCase()}`}>
         {fitScale.map((label, index) => <span key={label} className={index === fitPosition ? "is-current" : ""} aria-hidden="true">{label}</span>)}
       </div>}{fitAdvice && fitPosition === null && <p>{fitAdvice}</p>}</div>}
       {product.fitAttribute && (!fitAdvice || product.fitAttribute.trim().toLowerCase() !== fitAdvice.toLowerCase()) && <p><strong>Fit</strong><span>{product.fitAttribute}</span></p>}
       {product.coverageAttribute && <p><strong>Coverage</strong><span>{product.coverageAttribute}</span></p>}
-      {pdp.support_level?.trim() && <p><strong>Support</strong><span>{pdp.support_level.trim()}</span></p>}
       {fabricCompositions(pdp.fabric).map((part, index) => <p key={`${part.label}-${index}`}><strong>{part.label}</strong><span>{part.composition}</span></p>)}
       {(pdp.care_instructions?.trim() || pdp.care_approved) && <p><strong>Care</strong><span>{pdp.care_instructions?.trim() || "Machine wash cold at 30°C on a gentle cycle. Air dry in the shade. Always follow the garment care label."}</span></p>}
       {!isSock && !pdp.fit && !pdp.fabric && !pdp.support_level && !pdp.care_instructions && !product.fitAttribute && !product.coverageAttribute && !pdp.care_approved && !pdp.oeko_certified && <p>Fit and fabric details are being confirmed for this product.</p>}

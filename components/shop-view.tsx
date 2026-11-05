@@ -9,6 +9,7 @@ import ProductCard from "./product-card";
 import StyledSelect from "./styled-select";
 import RegistrationMarks from "./registration-marks";
 import { compareProductColours } from "@/lib/product-colors";
+import { SUPPORT_LEVELS, supportLevel } from "@/lib/support-level";
 import "@/app/shop-filters.css";
 
 const collectionIntroductions: Record<string, string> = {
@@ -37,11 +38,13 @@ export default function ShopView({ category }: { category: Category }) {
   const activities = searchParams.getAll("activity");
   const fits = searchParams.getAll("fit");
   const coverages = searchParams.getAll("coverage");
+  const supports = category === "sports-bras" ? searchParams.getAll("support") : [];
   const setColors = (values: string[]) => updateFilter("color", values);
   const setSizes = (values: string[]) => updateFilter("size", values);
   const setActivities = (values: string[]) => updateFilter("activity", values);
   const setFits = (values: string[]) => updateFilter("fit", values);
   const setCoverages = (values: string[]) => updateFilter("coverage", values);
+  const setSupports = (values: string[]) => updateFilter("support", values);
   const rawAvailability = searchParams.get("availability");
   const availability = rawAvailability === "in-stock" || rawAvailability === "sold-out" ? rawAvailability : "all";
   const setAvailability = (value: "all" | "in-stock" | "sold-out") => updateFilter("availability", value === "all" ? [] : [value]);
@@ -54,7 +57,8 @@ export default function ShopView({ category }: { category: Category }) {
   const availableActivities = [...new Set(categoryProducts.flatMap(product => product.pdp.activities.map(activity => activity.trim()).filter(Boolean)))].sort();
   const availableFits = [...new Set(categoryProducts.map(product => product.fitAttribute).filter((value): value is string => Boolean(value)))].sort();
   const availableCoverages = [...new Set(categoryProducts.map(product => product.coverageAttribute).filter((value): value is string => Boolean(value)))].sort();
-  const selectedCount = colors.length + sizes.length + activities.length + fits.length + coverages.length + Number(availability !== "all");
+  const availableSupports = category === "sports-bras" ? SUPPORT_LEVELS.filter(level => categoryProducts.some(product => supportLevel(product.pdp.support_level) === level)) : [];
+  const selectedCount = colors.length + sizes.length + activities.length + fits.length + coverages.length + supports.length + Number(availability !== "all");
   const found = categoryProducts.filter(product =>
     (!query || `${product.name} ${product.color} ${product.category}`.toLowerCase().includes(query)) &&
     (!colors.length || colors.includes(product.color)) &&
@@ -62,12 +66,13 @@ export default function ShopView({ category }: { category: Category }) {
     (!activities.length || activities.some(activity => product.pdp.activities.includes(activity))) &&
     (!fits.length || Boolean(product.fitAttribute && fits.includes(product.fitAttribute))) &&
     (!coverages.length || Boolean(product.coverageAttribute && coverages.includes(product.coverageAttribute))) &&
+    (!supports.length || supports.includes(supportLevel(product.pdp.support_level) ?? "")) &&
     (catalogLoading || availability === "all" || (product.variants?.some(variant => variant.stock > 0 && (!sizes.length || sizes.includes(variant.size))) ?? false) === (availability === "in-stock")));
   const visible = [...found].sort((a, b) => sort === "price-low" ? a.price - b.price : sort === "price-high" ? b.price - a.price : sort === "name" ? a.name.localeCompare(b.name) : 0);
   const toggle = (current: string[], value: string, setter: (next: string[]) => void) => setter(current.includes(value) ? current.filter(item => item !== value) : [...current, value]);
   const clearFilters = () => {
     const next = new URLSearchParams(searchParams.toString());
-    ["color", "size", "activity", "fit", "coverage", "availability"].forEach(key => next.delete(key));
+    ["color", "size", "activity", "fit", "coverage", "support", "availability"].forEach(key => next.delete(key));
     router.replace(`${pathname}${next.size ? `?${next}` : ""}`, { scroll: false });
   };
   const activeFilters = [
@@ -75,6 +80,7 @@ export default function ShopView({ category }: { category: Category }) {
     ...sizes.map(value => ({ label: value, remove: () => setSizes(sizes.filter(item => item !== value)) })),
     ...fits.map(value => ({ label: value, remove: () => setFits(fits.filter(item => item !== value)) })),
     ...coverages.map(value => ({ label: value, remove: () => setCoverages(coverages.filter(item => item !== value)) })),
+    ...supports.map(value => ({ label: `${value} Support`, remove: () => setSupports(supports.filter(item => item !== value)) })),
     ...activities.map(value => ({ label: value, remove: () => setActivities(activities.filter(item => item !== value)) })),
     ...(availability === "all" ? [] : [{ label: availability === "in-stock" ? "In stock" : "Sold out", remove: () => setAvailability("all" as const) }]),
   ];
@@ -91,6 +97,7 @@ export default function ShopView({ category }: { category: Category }) {
         {availableSizes.length > 0 && <fieldset><legend>SIZE</legend>{availableSizes.map(size => <label key={size} className={sizes.includes(size) ? "selected" : ""}><input type="checkbox" checked={sizes.includes(size)} onChange={() => toggle(sizes, size, setSizes)} />{size}</label>)}</fieldset>}
         {availableFits.length > 0 && <fieldset><legend>FIT</legend>{availableFits.map(fit => <label key={fit} className={fits.includes(fit) ? "selected" : ""}><input type="checkbox" checked={fits.includes(fit)} onChange={() => toggle(fits, fit, setFits)} />{fit}</label>)}</fieldset>}
         {availableCoverages.length > 0 && <fieldset><legend>COVERAGE</legend>{availableCoverages.map(coverage => <label key={coverage} className={coverages.includes(coverage) ? "selected" : ""}><input type="checkbox" checked={coverages.includes(coverage)} onChange={() => toggle(coverages, coverage, setCoverages)} />{coverage}</label>)}</fieldset>}
+        {availableSupports.length > 0 && <fieldset><legend>SUPPORT LEVEL</legend>{availableSupports.map(level => <label key={level} className={supports.includes(level) ? "selected" : ""}><input type="checkbox" checked={supports.includes(level)} onChange={() => toggle(supports, level, setSupports)} />{level} Support</label>)}</fieldset>}
         <fieldset><legend>AVAILABILITY</legend><label><input type="radio" name="availability" checked={availability === "all"} onChange={() => setAvailability("all")} />All</label><label><input type="radio" name="availability" checked={availability === "in-stock"} onChange={() => setAvailability("in-stock")} />In stock</label><label><input type="radio" name="availability" checked={availability === "sold-out"} onChange={() => setAvailability("sold-out")} />Sold out</label></fieldset>
         {availableActivities.length > 0 && <fieldset><legend>ACTIVITY</legend>{availableActivities.map(activity => <label key={activity} className={activities.includes(activity) ? "selected" : ""}><input type="checkbox" checked={activities.includes(activity)} onChange={() => toggle(activities, activity, setActivities)} />{activity}</label>)}</fieldset>}
       <button type="button" className="filter-show-results" onClick={() => setFilterOpen(false)}>SHOW {visible.length} {visible.length === 1 ? "RESULT" : "RESULTS"} ↗</button></div></>}

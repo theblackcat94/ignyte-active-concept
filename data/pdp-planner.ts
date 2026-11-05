@@ -2,6 +2,7 @@
 // The planner marks these entries "To confirm"; edit/approve them in the product manager.
 import { modelDetailsBySlug } from "./model-details";
 import { productFilmFor } from "./product-videos";
+import plannerSupportLevels from "./support-level-planner.json";
 export type PdpContent = {
   features: string[];
   activities: string[];
@@ -23,6 +24,9 @@ export type PdpContent = {
 
 const shared = { model_details: "", show_model_details: true, show_brand_story: true, care_approved: false, support_level: "", care_instructions: "", video_url: "", video_poster: "", oeko_certificate: "", oeko_certificate_url: "", oeko_certified: true, featured_best_seller: false };
 
+// Product planner Support level column, November 2026. IGN006 is a duplicate
+// Motion reference; N/A and To confirm entries intentionally have no rating.
+
 export const plannerPdp: Record<string, PdpContent> = {
   "Aura Halter Top": { ...shared, features: ["Flattering neckline", "Sculpted fit", "Body-hugging design", "Extended length", "Versatile styling"], activities: ["Yoga", "Pilates", "Everyday"], fit: "True to size", fabric: "90% polyamide, 10% elastane" },
   "All In Motion Shorts": { ...shared, features: ["Wide, supportive waistband for a comfortable fit", "Lightweight design for unrestricted movement", "Curved side hems for a flattering, athletic silhouette", "Functional zip pocket for small essentials", "Relaxed athletic fit for running, training and everyday wear", "Signature IGNYTE branding on the waistband"], activities: ["Running", "Boxing", "Gym", "HIIT training"], fit: "True to size", fabric: "Outer: 88% polyester, 12% elastane. Inner shorts: 75% polyester, 25% elastane." },
@@ -41,7 +45,8 @@ export const brandFilmUrl = "/images/home/Ignyte-Vertical-Compressed-Sound.mp4";
 export const brandFilmPoster = "/images/home/video-cover-pdp.jpg";
 
 export function pdpFor(name: string, content?: Partial<PdpContent> | null, slug?: string): PdpContent {
-  const merged = { ...(plannerPdp[name] ?? emptyPdp), featured_best_seller: Boolean(slug && homeBestSellerSlugs.includes(slug)), ...content };
+  const merged = { ...(plannerPdp[name] ?? emptyPdp), featured_best_seller: Boolean(slug && homeBestSellerSlugs.includes(slug)), ...content,
+    support_level: content?.support_level?.trim() || (plannerSupportLevels as Record<string, string>)[name] || "" };
   const suppliedFilm = productFilmFor(slug);
   const oldBrandFilms = ["", brandFilmUrl, "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4"];
   const useSuppliedFilm = oldBrandFilms.includes(merged.video_url || "") ||

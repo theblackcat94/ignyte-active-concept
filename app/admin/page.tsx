@@ -42,7 +42,8 @@ export default function AdminPage() {
   }, []);
 
   const edit = useCallback((product: StoreProduct) => {
-    setSelected({ ...product, pdp_content: pdpFor(product.name, product.pdp_content, product.slug), variants: product.product_variants.map(variant => ({ ...variant })) });
+    const pdp = pdpFor(product.name, product.pdp_content, product.slug);
+    setSelected({ ...product, pdp_content: { ...pdp, support_level: ["Light", "Medium", "High"].includes(pdp.support_level ?? "") ? pdp.support_level : "Not Applicable" }, variants: product.product_variants.map(variant => ({ ...variant })) });
     setMessage("");
   }, []);
 
@@ -131,7 +132,7 @@ export default function AdminPage() {
         <label className="wide">DESIGNED FOR — ONE ACTIVITY PER LINE<textarea rows={4} value={selected.pdp_content.activities.join("\n")} onChange={event => changePdp("activities", event.target.value.split("\n").map(item => item.trim()).filter(Boolean))} /></label>
         <label>FIT<input value={selected.pdp_content.fit} onChange={event => changePdp("fit", event.target.value)} /></label>
         <label>FABRIC<input value={selected.pdp_content.fabric} onChange={event => changePdp("fabric", event.target.value)} /></label>
-        <label>SUPPORT LEVEL — OPTIONAL<input value={selected.pdp_content.support_level ?? ""} onChange={event => changePdp("support_level", event.target.value)} /></label>
+        <label>SUPPORT LEVEL<select value={selected.pdp_content.support_level || "Not Applicable"} onChange={event => changePdp("support_level", event.target.value)}><option value="Not Applicable">Not Applicable</option><option value="Light">Light</option><option value="Medium">Medium</option><option value="High">High</option></select></label>
         <label>CARE INSTRUCTIONS — OPTIONAL<input value={selected.pdp_content.care_instructions ?? ""} onChange={event => changePdp("care_instructions", event.target.value)} /></label>
         <label className="wide">MODEL DETAILS — OPTIONAL<textarea rows={4} placeholder="Model name, measurements and size worn" value={selected.pdp_content.model_details} onChange={event => changePdp("model_details", event.target.value)} /></label>
         <label>SHOW MODEL DETAILS<input type="checkbox" checked={selected.pdp_content.show_model_details} onChange={event => changePdp("show_model_details", event.target.checked)} /></label>
