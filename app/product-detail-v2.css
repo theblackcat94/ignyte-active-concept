@@ -141,6 +141,7 @@ html[data-appearance="ignyte"] .product-page .detail-add:active:not(:disabled),h
 .pdp-three-point-bars,.pdp-three-point-labels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
 .pdp-three-point-bars span{height:8px;border:1px solid color-mix(in srgb,var(--ink) 35%,transparent);background:color-mix(in srgb,var(--ink) 15%,transparent)}
 .pdp-three-point-bars span.is-active{border-color:#ff4533;background:#ff4533}
+html[data-appearance="ignyte"] .pdp-three-point-bars span.is-active{border-color:#0b1020}
 .pdp-three-point-labels span{min-width:0;color:var(--ink);font-family:var(--font-ignyte-mono),monospace;font-size:10px;line-height:1.25;letter-spacing:.02em;text-align:center;white-space:nowrap}
 .pdp-fabric-list{display:grid;gap:6px;margin:0}
 .pdp-fabric-list div{display:grid;grid-template-columns:minmax(56px,80px) minmax(0,1fr);column-gap:10px;align-items:start}
