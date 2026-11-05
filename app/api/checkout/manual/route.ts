@@ -4,6 +4,7 @@ import { createHash, createHmac } from "node:crypto";
 import { adminDb, verifiedUser } from "@/lib/commerce";
 import { qualifiesForFreeShipping } from "@/lib/shipping-policy";
 import { queueOrderRequestEmails } from "@/lib/order-email-outbox";
+import { eligibleForJoinFireCode, isJoinFireCode } from "@/lib/join-fire-offer";
 
 export const runtime = "nodejs";
 
@@ -34,6 +35,11 @@ export async function POST(request: Request) {
   const { items, shipping, requestId } = parsed.data;
   const email = user?.email ?? parsed.data.email;
   if (!email) return NextResponse.json({ error: "Enter an email address for your order." }, { status: 400 });
+  if (parsed.data.couponCode && isJoinFireCode(parsed.data.couponCode)) {
+    try {
+      if (!await eligibleForJoinFireCode(parsed.data.couponCode, email)) return NextResponse.json({ error: "This welcome offer is not available for this email or order." }, { status: 400 });
+    } catch { return NextResponse.json({ error: "Could not verify welcome offer eligibility." }, { status: 503 }); }
+  }
   const db = adminDb();
   const details = { name: shipping.name, phone: shipping.phone, address: {
     line1: shipping.line1, line2: shipping.line2, city: shipping.city,

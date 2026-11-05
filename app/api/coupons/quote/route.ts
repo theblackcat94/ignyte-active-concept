@@ -1,13 +1,20 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { adminDb } from "@/lib/commerce";
+import { eligibleForJoinFireCode, isJoinFireCode } from "@/lib/join-fire-offer";
 
 export const runtime = "nodejs";
-const input = z.object({ code: z.string().trim().toUpperCase().regex(/^[A-Z0-9_-]{3,30}$/), subtotalCents: z.number().int().min(0).max(100000000) });
+const input = z.object({ code: z.string().trim().toUpperCase().regex(/^[A-Z0-9_-]{3,30}$/), subtotalCents: z.number().int().min(0).max(100000000), email: z.email().trim().toLowerCase().optional() });
 
 export async function POST(request: Request) {
   const parsed = input.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Enter a valid code" }, { status: 400 });
+  if (isJoinFireCode(parsed.data.code)) {
+    if (!parsed.data.email) return NextResponse.json({ error: "Enter your email address before applying this welcome offer." }, { status: 400 });
+    try {
+      if (!await eligibleForJoinFireCode(parsed.data.code, parsed.data.email)) return NextResponse.json({ error: "This welcome offer is not available for this email or order." }, { status: 400 });
+    } catch { return NextResponse.json({ error: "Could not verify welcome offer eligibility." }, { status: 503 }); }
+  }
   const { data, error } = await adminDb().from("coupons").select("code,discount_type,discount_value,min_subtotal_cents,usage_limit,starts_at,ends_at,active")
     .eq("code", parsed.data.code).maybeSingle();
   const now = Date.now();

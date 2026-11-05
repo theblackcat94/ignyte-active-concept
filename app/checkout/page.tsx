@@ -92,7 +92,7 @@ export default function CheckoutPage() {
   async function applyCoupon() {
     setCoupon(null); setCouponMessage("");
     const response = await fetch("/api/coupons/quote", { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code: couponCode, subtotalCents }) });
+      body: JSON.stringify({ code: couponCode, subtotalCents, email }) });
     const result = await response.json();
     if (!response.ok) { setCouponMessage(result.error || "Code unavailable"); return; }
     setCoupon({ code: result.code, discountCents: result.discountCents, subtotalCents });

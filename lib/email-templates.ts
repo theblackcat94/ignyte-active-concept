@@ -117,3 +117,14 @@ export function welcomeEmail(siteUrl: string, unsubscribeUrl: string, offerCode?
     text: `WELCOME TO IGNYTE_\n\nYou're in. Bring the fire.\n\nYou're officially part of IGNYTE.\n\nWe're here for women who show up, push their limits and do things their own way.\n\nSHOP IGNYTE: ${home}/shop/\n\nBuilt for your next move_\n\nWhether you're lifting heavier, chasing a new goal or simply showing up for yourself, we're making activewear that moves with you.\n\nPerformance, comfort and confidence should go hand in hand.\n\nYou'll be among the first to hear when we have something new to share.\n\nAnd we're just getting started.\n\nSee you out there.\nThe IGNYTE Team 🔥${offerText}\n\nMOVE WITH PURPOSE. TRAIN WITH FIRE.\nIGNYTE ACTIVE · BUILT FOR THE BURN™\n\nVisit the store: ${home}\nContact support: support@ignyteactive.com\nUnsubscribe: ${unsubscribeUrl}`,
   };
 }
+
+/** Dedicated campaign email; never used by the standard footer signup. */
+export function joinFireWelcomeEmail(siteUrl: string, unsubscribeUrl: string, code: string, percent: number, terms: string): EmailDesign {
+  const home = siteUrl.replace(/\/$/, "");
+  const content = `${paragraph("Welcome to the IGNYTE crew.")}${paragraph(`As a thank you for joining us, here's ${percent}% off your first eligible order.`)}<p style="margin:0 0 24px;padding:16px 20px;background:#f7f3ea;border-left:4px solid #ff4533;font-size:22px;font-weight:700;letter-spacing:2px">${escapeHtml(code)}</p><div style="margin:0 0 26px">${button("SHOP IGNYTE", `${home}/shop/`)}</div><p style="margin:0;color:#4c5260;font-size:12px;line-height:1.55">${escapeHtml(terms)}</p>`;
+  return {
+    subject: "You're in. Here's your IGNYTE welcome offer 🔥",
+    html: layout("JOIN THE FIRE_", "YOUR FIRE STARTS HERE.", content, siteUrl, "Welcome to the IGNYTE crew. Your offer is inside.", unsubscribeUrl),
+    text: `YOUR FIRE STARTS HERE.\n\nWelcome to the IGNYTE crew.\n\nAs a thank you for joining us, here's ${percent}% off your first eligible order.\n\nYour code: ${code}\n\nSHOP IGNYTE: ${home}/shop/\n\n${terms}\n\nUnsubscribe: ${unsubscribeUrl}`,
+  };
+}
