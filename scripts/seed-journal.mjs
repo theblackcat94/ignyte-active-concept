@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
 
 const apply = process.argv.includes("--apply");
+const refreshCopy = process.argv.includes("--refresh-copy");
 const envAt = process.argv.indexOf("--env-file");
 if (envAt !== -1) {
   const file = process.argv[envAt + 1];
@@ -19,10 +20,33 @@ const db = createClient(url, key, { auth: { persistSession: false, autoRefreshTo
 const launch = JSON.parse(readFileSync(new URL("../data/journal-launch.json", import.meta.url), "utf8"));
 const { data: categories, error: categoryError } = await db.from("journal_categories").select("id,slug");
 if (categoryError) throw categoryError;
-const { data: existing, error: articleError } = await db.from("journal_articles").select("slug");
+const { data: existing, error: articleError } = await db.from("journal_articles").select("id,slug,body,seo_description");
 if (articleError) throw articleError;
 for (const [index, item] of launch.entries()) {
-  if (existing.some(article => article.slug === item.slug)) { console.log(`Keep existing ${item.slug}`); continue; }
+  const current = existing.find(article => article.slug === item.slug);
+  if (current) {
+    if (refreshCopy && item.slug !== "ignyte-active-launches") {
+      let changed = false;
+      const body = (current.body || []).map((block, blockIndex) => {
+        const replacement = item.body[blockIndex];
+        if (block.type === "paragraph" && replacement?.type === "paragraph" && /\b(?:jade|confirm(?:ed|ing|ation|ations)?)\b/i.test(block.text || "")) {
+          changed = true;
+          return { ...block, text: replacement.text };
+        }
+        return block;
+      });
+      const seoDescription = /\bconfirm(?:ed|ing|ation|ations)?\b/i.test(current.seo_description || "") ? item.seo_description : current.seo_description;
+      if (seoDescription !== current.seo_description) changed = true;
+      if (changed) {
+        console.log(`${apply ? "Refresh" : "Would refresh"} editorial copy ${item.slug}`);
+        if (apply) {
+          const { error } = await db.from("journal_articles").update({ body, seo_description: seoDescription, updated_at: new Date().toISOString() }).eq("id", current.id);
+          if (error) throw error;
+        }
+      } else console.log(`Keep existing ${item.slug}`);
+    } else console.log(`Keep existing ${item.slug}`);
+    continue;
+  }
   const category = categories.find(value => value.slug === item.category);
   if (!category) throw new Error(`Missing category ${item.category}`);
   const { category: ignored, ...record } = item;

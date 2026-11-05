@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { showDraftCareGuide } from "@/data/storefront-flags";
 import { useEffect, useRef, useState } from "react";
 import { type Product, money } from "@/lib/catalog";
 import { commerceConfigured } from "@/lib/commerce";
@@ -73,13 +72,14 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     .filter((item, index, all) => all.findIndex(candidate => candidate.color.toLowerCase() === item.color.toLowerCase()) === index)
     .sort((a, b) => compareProductColours(a.color, b.color));
   const isSock = product.name.toLowerCase().includes("sock");
+  const showCareAdvice = product.category !== "accessories" && !isSock;
   const pdp = product.pdp;
   const fitAdvice = pdp.fit?.trim();
   const confirmedSupport = supportLevel(pdp.support_level);
   const fitPosition = !isSock && fitAdvice ? fitScalePosition(fitAdvice) : null;
   const fabricParts = fabricCompositions(pdp.fabric);
   const showFitDetails = isSock || Boolean(fitAdvice || product.fitAttribute || product.coverageAttribute);
-  const showFabricDetails = fabricParts.length > 0 || Boolean(pdp.care_instructions?.trim() || pdp.care_approved);
+  const showFabricDetails = fabricParts.length > 0 || showCareAdvice;
   const fitTipOpen = fitTipSlug === product.slug;
   useEffect(() => {
     if (!fitTipOpen) return;
@@ -129,8 +129,8 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     if (!canAdd) { sizeRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
     addToBag(product.slug, size);
   }
-  const sections = ["FEATURES", "DESIGNED FOR", "FIT & FABRIC", "MODEL DETAILS", "SIZE GUIDE", "CARE GUIDE", "DELIVERY & RETURNS"].filter(label =>
-    label === "FEATURES" ? pdp.features.length || isSock : label === "DESIGNED FOR" ? pdp.activities.length : label === "MODEL DETAILS" ? Boolean(pdp.show_model_details && pdp.model_details.trim()) : label === "CARE GUIDE" ? product.category !== "accessories" && (Boolean(pdp.care_approved) || showDraftCareGuide) : true);
+  const sections = ["FEATURES", "DESIGNED FOR", "FIT & FABRIC", "MODEL DETAILS", "SIZE GUIDE", "DELIVERY & RETURNS"].filter(label =>
+    label === "FEATURES" ? pdp.features.length || isSock : label === "DESIGNED FOR" ? pdp.activities.length : label === "MODEL DETAILS" ? Boolean(pdp.show_model_details && pdp.model_details.trim()) : true);
 
   function content(label: string) {
     if (label === "FEATURES") return <ul className="pdp-feature-list">{pdp.features.map(feature => <li key={feature}>{feature}</li>)}{isSock && <li>{sockSizing.productText}</li>}</ul>;
@@ -146,7 +146,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       </section>}
       {showFabricDetails && <section className="pdp-info-group"><h3>Fabric &amp; features</h3><dl className="pdp-fabric-list">
         {fabricParts.map((part, index) => <div key={`${part.label}-${index}`}><dt>{part.label}</dt><dd>{part.composition}</dd></div>)}
-        {(pdp.care_instructions?.trim() || pdp.care_approved) && <div><dt>Care</dt><dd>{pdp.care_instructions?.trim() || "Machine wash cold at 30°C on a gentle cycle. Air dry in the shade. Always follow the garment care label."}</dd></div>}
+        {showCareAdvice && <div className="pdp-care-summary"><dt>Care</dt><dd>{pdp.care_approved && pdp.care_instructions?.trim() ? pdp.care_instructions.trim() : "Machine wash cold at 30°C on a gentle cycle with similar colours. Air dry in the shade. Always follow the garment care label."}</dd></div>}
       </dl></section>}
       {pdp.oeko_certified && <section className="pdp-info-group pdp-certification"><h3>Certification</h3><p><span className="pdp-certification-name">OEKO-TEX® STANDARD 100</span>Made with OEKO-TEX® STANDARD 100 certified fabrics, tested for harmful substances so you can feel confident in what’s against your skin.</p>{pdp.oeko_certificate_url?.trim() && <a href={pdp.oeko_certificate_url.trim()} target="_blank" rel="noopener noreferrer">View certificate{pdp.oeko_certificate.trim() ? ` ${pdp.oeko_certificate.trim()}` : ""} ↗</a>}</section>}
       {!confirmedSupport && !showFitDetails && !showFabricDetails && !pdp.oeko_certified && <p>Fit and fabric details are being confirmed for this product.</p>}
@@ -156,7 +156,6 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       return <div className="pdp-model-block"><p className="pdp-model-details">{pdp.model_details}</p>{modelPortraits[name] && <Image className="pdp-model-portrait" src={asset(modelPortraits[name])} alt={`${name} wearing IGNYTE activewear`} width={164} height={164} sizes="82px" />}</div>;
     }
     if (label === "SIZE GUIDE") return <><SizeGuideContent productCategory={product.category} /><div className="pdp-size-guide-link"><Link className="text-link" href={isSock ? "/size-guide#socks" : "/size-guide"}>OPEN FULL SIZE GUIDE ↗</Link></div></>;
-    if (label === "CARE GUIDE") return <div className="pdp-care"><strong>Care for your kit</strong><p>Keep your IGNYTE activewear ready for your next move.</p><ul><li>Machine wash cold at 30°C on a gentle cycle.</li><li>Turn inside out and wash with similar colours.</li><li>Use a mild detergent. Avoid fabric softener and bleach.</li><li>Wash separately from towels and items with exposed zips or Velcro.</li><li>Air dry in the shade. Do not tumble dry.</li><li>Do not iron or dry clean.</li></ul><p>After a sweaty session, let your gear air out before placing it in the laundry basket. Always follow the care label on your garment.</p></div>;
     return <div className="pdp-delivery">
       <section><span className="pdp-delivery-icon"><ShippingIcon /></span><div><strong>DELIVERY</strong><p>Free shipping on eligible Australian orders of AU${FREE_SHIPPING_THRESHOLD_CENTS / 100} or more after discounts. AU$15 below the threshold.</p><Link href="/returns#shipping">Shipping policy ↗</Link></div></section>
       <section><span className="pdp-delivery-icon"><ReturnsIcon /></span><div><strong>RETURNS</strong><p>Free 30 day returns for eligible Australian orders. Contact us within 30 days of receiving your order so we can confirm eligibility and arrange prepaid return postage.</p><Link href="/returns#free-returns">Returns policy ↗</Link></div></section>
