@@ -32,7 +32,7 @@ function BodyBlock({ block }: { block: JournalBlock }) {
 }
 
 function JournalSignup() {
-  return <aside className="journal-signup"><div><span className="journal-eyebrow">JOIN THE FIRE_</span><h2>More from IGNYTE.</h2><p>Brand stories, new drops and what comes next.</p></div><NewsletterSignup /></aside>;
+  return <aside className="journal-signup"><div><span className="journal-eyebrow">JOIN THE FIRE_</span><h2>More from IGNYTE.</h2><p>Brand stories, new drops and what comes next.</p></div><NewsletterSignup idPrefix="journal" /></aside>;
 }
 
 const needsRawImage = (url: string) => url.startsWith("https://") && !url.startsWith(`${process.env.NEXT_PUBLIC_SUPABASE_URL || ""}/storage/v1/object/public/product-media/`);

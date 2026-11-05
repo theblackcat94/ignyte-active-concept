@@ -37,7 +37,7 @@ function FooterLink({ href, children, ariaLabel }: { href: string; children: Rea
   }}>{children}</Link>;
 }
 
-export function NewsletterSignup() {
+export function NewsletterSignup({ idPrefix = "footer" }: { idPrefix?: string } = {}) {
   const inFlight = useRef(false);
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
@@ -69,10 +69,10 @@ export function NewsletterSignup() {
   </div>;
   return <div className="pdf-footer-signup-form">
     <form onSubmit={subscribe} aria-busy={signupBusy} className={signupError ? "has-error" : undefined}>
-      <div className="pdf-footer-email-row"><input type="email" required placeholder="YOUR EMAIL..." aria-label="Email address" aria-invalid={Boolean(signupError)} aria-describedby={signupError ? "newsletter-error" : undefined} value={email} disabled={signupBusy} onChange={event => setEmail(event.target.value)} /><button type="submit" disabled={signupBusy} aria-label={signupBusy ? "Joining newsletter" : "Join newsletter"}>{signupBusy ? <span className="pdf-footer-submit-loading">JOINING…</span> : "»"}</button></div>
+      <div className="pdf-footer-email-row"><input type="email" required placeholder="YOUR EMAIL..." aria-label="Email address" aria-invalid={Boolean(signupError)} aria-describedby={signupError ? `${idPrefix}-newsletter-error` : undefined} value={email} disabled={signupBusy} onChange={event => setEmail(event.target.value)} /><button type="submit" disabled={signupBusy} aria-label={signupBusy ? "Joining newsletter" : "Join newsletter"}>{signupBusy ? <span className="pdf-footer-submit-loading">JOINING…</span> : "»"}</button></div>
       <label className="pdf-footer-consent"><input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)} disabled={signupBusy} required /><span>I agree to receive IGNYTE emails. I can unsubscribe at any time. See the <FooterLink href="/privacy">Privacy Policy</FooterLink>.</span></label>
     </form>
-    {signupError && <p className="pdf-footer-signup-error" id="newsletter-error" role="alert">{signupError}</p>}
+    {signupError && <p className="pdf-footer-signup-error" id={`${idPrefix}-newsletter-error`} role="alert">{signupError}</p>}
   </div>;
 }
 
