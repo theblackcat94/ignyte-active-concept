@@ -5,6 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 const apply = process.argv.includes("--apply");
 const refreshCopy = process.argv.includes("--refresh-copy");
 const syncEditorial = process.argv.includes("--sync-editorial");
+const canonical = value => JSON.stringify(value, (_, item) => item && typeof item === "object" && !Array.isArray(item) ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b))) : item);
 const envAt = process.argv.indexOf("--env-file");
 if (envAt !== -1) {
   const file = process.argv[envAt + 1];
@@ -21,13 +22,13 @@ const db = createClient(url, key, { auth: { persistSession: false, autoRefreshTo
 const launch = JSON.parse(readFileSync(new URL("../data/journal-launch.json", import.meta.url), "utf8"));
 const { data: categories, error: categoryError } = await db.from("journal_categories").select("id,slug");
 if (categoryError) throw categoryError;
-const { data: existing, error: articleError } = await db.from("journal_articles").select("id,slug,body,seo_description");
+const { data: existing, error: articleError } = await db.from("journal_articles").select("id,slug,status,body,seo_description");
 if (articleError) throw articleError;
 for (const [index, item] of launch.entries()) {
   const current = existing.find(article => article.slug === item.slug);
   if (current) {
     if (syncEditorial) {
-      if (JSON.stringify(current.body || []) !== JSON.stringify(item.body)) {
+      if (canonical(current.body || []) !== canonical(item.body)) {
         console.log(`${apply ? "Update" : "Would update"} private draft body ${item.slug} (${item.body.length} blocks)`);
         if (apply) {
           const { error } = await db.from("journal_articles").update({ body: item.body, updated_at: new Date().toISOString() }).eq("id", current.id).eq("status", "draft");
