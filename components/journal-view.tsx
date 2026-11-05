@@ -35,9 +35,11 @@ function JournalSignup() {
   return <aside className="journal-signup"><div><span className="journal-eyebrow">JOIN THE FIRE_</span><h2>More from IGNYTE.</h2><p>Brand stories, new drops and what comes next.</p></div><NewsletterSignup /></aside>;
 }
 
+const needsRawImage = (url: string) => url.startsWith("https://") && !url.startsWith(`${process.env.NEXT_PUBLIC_SUPABASE_URL || ""}/storage/v1/object/public/product-media/`);
+
 function Card({ article, large = false }: { article: JournalArticle; large?: boolean }) {
   return <article className={`journal-card${large ? " journal-featured" : ""}`}>
-    <Link href={`/journal/${article.slug}/`} className="journal-card-image">{article.thumbnail_url || article.cover_url ? <Image src={article.thumbnail_url || article.cover_url} alt={article.cover_alt} fill sizes={large ? "(max-width: 800px) 100vw, 65vw" : "(max-width: 800px) 100vw, 50vw"} priority={large} /> : <span className="journal-card-placeholder">IGNYTE</span>}</Link>
+    <Link href={`/journal/${article.slug}/`} className="journal-card-image">{article.thumbnail_url || article.cover_url ? <Image src={article.thumbnail_url || article.cover_url} alt={article.cover_alt} fill sizes={large ? "(max-width: 800px) 100vw, 65vw" : "(max-width: 800px) 100vw, 50vw"} priority={large} unoptimized={needsRawImage(article.thumbnail_url || article.cover_url)} /> : <span className="journal-card-placeholder">IGNYTE</span>}</Link>
     <div className="journal-card-copy"><span className="journal-eyebrow">{article.journal_categories?.name || "THE LATEST_"}</span><h2><Link href={`/journal/${article.slug}/`}>{article.title}</Link></h2><p>{article.excerpt}</p><Link href={`/journal/${article.slug}/`} className="journal-cta">READ STORY ↗</Link></div>
   </article>;
 }
@@ -71,7 +73,7 @@ export default function JournalView({ slug }: { slug?: string }) {
     const related = data.articles.filter(item => item.slug !== slug).slice(0, 2);
     return <div className="journal-page"><article className="journal-article">
       <header className="journal-article-head"><span className="journal-eyebrow">{article.journal_categories?.name || "THE LATEST_"}</span><h1>{article.title}</h1><p>{article.excerpt}</p><div className="journal-date">{article.publish_at ? new Date(article.publish_at).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" }) : "DRAFT PREVIEW"}{article.author ? ` · ${article.author}` : ""}</div>{article.press_publication && <p className="journal-press-source">Originally published by {article.press_url ? <a href={article.press_url} target="_blank" rel="noopener noreferrer">{article.press_publication} ↗</a> : article.press_publication}{article.press_date ? ` · ${new Date(`${article.press_date}T12:00:00`).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })}` : ""}</p>}</header>
-      {article.cover_url && <div className="journal-hero-image"><Image src={article.cover_url} alt={article.cover_alt} fill sizes="100vw" priority /></div>}
+      {article.cover_url && <div className="journal-hero-image"><Image src={article.cover_url} alt={article.cover_alt} fill sizes="100vw" priority unoptimized={needsRawImage(article.cover_url)} /></div>}
       <div className="journal-article-body">{article.body.map((block, index) => <BodyBlock key={index} block={block} />)}</div>
     </article><div className="journal-after"><Link href="/journal/" className="journal-cta">BACK TO JOURNAL ↗</Link></div>{related.length > 0 && <section className="journal-related"><span className="journal-eyebrow">READ NEXT_</span><div className="journal-grid">{related.map(item => <Card key={item.id} article={item} />)}</div></section>}<JournalSignup /></div>;
   }

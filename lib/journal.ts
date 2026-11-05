@@ -33,9 +33,11 @@ export const safeJournalUrl = (value: string) => !value || value.startsWith("/")
 export const articleIsVisible = (article: Pick<JournalArticle, "status" | "publish_at">) => article.status === "published" && (!article.publish_at || new Date(article.publish_at).getTime() <= Date.now());
 
 export async function journalVisibility(): Promise<"private" | "public"> {
-  const { data, error } = await adminDb().from("journal_settings").select("visibility").eq("id", true).single();
-  if (error) return "private";
-  return data?.visibility === "public" ? "public" : "private";
+  try {
+    const { data, error } = await adminDb().from("journal_settings").select("visibility").eq("id", true).single();
+    if (error) return "private";
+    return data?.visibility === "public" ? "public" : "private";
+  } catch { return "private"; }
 }
 
 export async function journalCategories(): Promise<JournalCategory[]> {
