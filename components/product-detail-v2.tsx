@@ -33,6 +33,12 @@ import "@/app/product-detail-v2.css";
 
 const fitScale = ["RUNS SMALLER", "TRUE TO SIZE", "RUNS LARGER"] as const;
 const fitLabels = ["Runs smaller", "True to size", "Runs larger"] as const;
+function ThreePointIndicator({ labels, active, ariaLabel }: { labels: readonly string[]; active: (index: number) => boolean; ariaLabel: string }) {
+  return <div className="pdp-three-point" role="img" aria-label={ariaLabel}>
+    <div className="pdp-three-point-bars" aria-hidden="true">{labels.map((label, index) => <span key={label} className={active(index) ? "is-active" : ""} />)}</div>
+    <div className="pdp-three-point-labels" aria-hidden="true">{labels.map(label => <span key={label}>{label}</span>)}</div>
+  </div>;
+}
 function fitScalePosition(advice: string): number | null {
   const normalized = advice.trim().toLowerCase().replace(/[.!]+$/, "");
   if (normalized === "runs smaller" || normalized === "runs small") return 0;
@@ -71,6 +77,9 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const fitAdvice = pdp.fit?.trim();
   const confirmedSupport = supportLevel(pdp.support_level);
   const fitPosition = !isSock && fitAdvice ? fitScalePosition(fitAdvice) : null;
+  const fabricParts = fabricCompositions(pdp.fabric);
+  const showFitDetails = isSock || Boolean(fitAdvice || product.fitAttribute || product.coverageAttribute);
+  const showFabricDetails = fabricParts.length > 0 || Boolean(pdp.care_instructions?.trim() || pdp.care_approved);
   const fitTipOpen = fitTipSlug === product.slug;
   useEffect(() => {
     if (!fitTipOpen) return;
@@ -127,16 +136,20 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     if (label === "FEATURES") return <ul className="pdp-feature-list">{pdp.features.map(feature => <li key={feature}>{feature}</li>)}{isSock && <li>{sockSizing.productText}</li>}</ul>;
     if (label === "DESIGNED FOR") return <div className="pdp-activity-list">{pdp.activities.map(activity => <span key={activity}>{activity}</span>)}</div>;
     if (label === "FIT & FABRIC") return <div className="pdp-fit-fabric">
-      {confirmedSupport && <div className="pdp-support-level" role="group" aria-label={`${confirmedSupport} support. ${supportGuidance[confirmedSupport]}`}><span className="pdp-support-eyebrow">SUPPORT LEVEL_</span><strong>{confirmedSupport} Support</strong><div className="pdp-support-bars" aria-hidden="true">{SUPPORT_LEVELS.map((level, index) => <span key={level} className={index <= SUPPORT_LEVELS.indexOf(confirmedSupport) ? "is-active" : ""} />)}</div><div className="pdp-support-labels" aria-hidden="true">{SUPPORT_LEVELS.map(level => <span key={level}>{level.toUpperCase()}</span>)}</div></div>}
-      {isSock ? <p><strong>Fit and sizing advice</strong><span>{sockSizing.productText}</span></p> : (fitAdvice || fitPosition !== null) && <div className="pdp-fit-advice"><strong>Fit and sizing advice</strong>{fitPosition !== null && <div className="pdp-fit-scale" role="img" aria-label={`IGNYTE sizing guidance: ${fitScale[fitPosition].toLowerCase()}`}>
-        {fitScale.map((label, index) => <span key={label} className={index === fitPosition ? "is-current" : ""} aria-hidden="true">{label}</span>)}
-      </div>}{fitAdvice && fitPosition === null && <p>{fitAdvice}</p>}</div>}
-      {product.fitAttribute && (!fitAdvice || product.fitAttribute.trim().toLowerCase() !== fitAdvice.toLowerCase()) && <p><strong>Fit</strong><span>{product.fitAttribute}</span></p>}
-      {product.coverageAttribute && <p><strong>Coverage</strong><span>{product.coverageAttribute}</span></p>}
-      {fabricCompositions(pdp.fabric).map((part, index) => <p key={`${part.label}-${index}`}><strong>{part.label}</strong><span>{part.composition}</span></p>)}
-      {(pdp.care_instructions?.trim() || pdp.care_approved) && <p><strong>Care</strong><span>{pdp.care_instructions?.trim() || "Machine wash cold at 30°C on a gentle cycle. Air dry in the shade. Always follow the garment care label."}</span></p>}
-      {!isSock && !pdp.fit && !pdp.fabric && !pdp.support_level && !pdp.care_instructions && !product.fitAttribute && !product.coverageAttribute && !pdp.care_approved && !pdp.oeko_certified && <p>Fit and fabric details are being confirmed for this product.</p>}
-      {pdp.oeko_certified && <div className="pdp-oeko"><strong>OEKO-TEX® STANDARD 100</strong><p>Made with OEKO-TEX® STANDARD 100 certified fabrics, tested for harmful substances so you can feel confident in what’s against your skin.</p>{pdp.oeko_certificate_url?.trim() && <a href={pdp.oeko_certificate_url.trim()} target="_blank" rel="noopener noreferrer">View certificate{pdp.oeko_certificate.trim() ? ` ${pdp.oeko_certificate.trim()}` : ""} ↗</a>}</div>}
+      {confirmedSupport && <section className="pdp-info-group"><h3>Support level</h3><p className="pdp-info-value">{confirmedSupport} support</p><ThreePointIndicator labels={SUPPORT_LEVELS.map(level => level.toUpperCase())} active={index => index <= SUPPORT_LEVELS.indexOf(confirmedSupport)} ariaLabel={`${confirmedSupport} support. ${supportGuidance[confirmedSupport]}`} /></section>}
+      {showFitDetails && <section className="pdp-info-group"><h3>Fit &amp; sizing</h3>
+        {fitPosition !== null && <><p className="pdp-info-value">{fitLabels[fitPosition]}</p><ThreePointIndicator labels={fitScale} active={index => index === fitPosition} ariaLabel={`IGNYTE sizing guidance: ${fitLabels[fitPosition]}`} /></>}
+        {isSock && <p>{sockSizing.productText}</p>}
+        {fitAdvice && fitPosition === null && <p>{fitAdvice}</p>}
+        {product.fitAttribute && (!fitAdvice || product.fitAttribute.trim().toLowerCase() !== fitAdvice.toLowerCase()) && <p><span className="pdp-info-key">Fit</span> {product.fitAttribute}</p>}
+        {product.coverageAttribute && <p><span className="pdp-info-key">Coverage</span> {product.coverageAttribute}</p>}
+      </section>}
+      {showFabricDetails && <section className="pdp-info-group"><h3>Fabric &amp; features</h3><dl className="pdp-fabric-list">
+        {fabricParts.map((part, index) => <div key={`${part.label}-${index}`}><dt>{part.label}</dt><dd>{part.composition}</dd></div>)}
+        {(pdp.care_instructions?.trim() || pdp.care_approved) && <div><dt>Care</dt><dd>{pdp.care_instructions?.trim() || "Machine wash cold at 30°C on a gentle cycle. Air dry in the shade. Always follow the garment care label."}</dd></div>}
+      </dl></section>}
+      {pdp.oeko_certified && <section className="pdp-info-group pdp-certification"><h3>Certification</h3><p><span className="pdp-certification-name">OEKO-TEX® STANDARD 100</span>Made with OEKO-TEX® STANDARD 100 certified fabrics, tested for harmful substances so you can feel confident in what’s against your skin.</p>{pdp.oeko_certificate_url?.trim() && <a href={pdp.oeko_certificate_url.trim()} target="_blank" rel="noopener noreferrer">View certificate{pdp.oeko_certificate.trim() ? ` ${pdp.oeko_certificate.trim()}` : ""} ↗</a>}</section>}
+      {!confirmedSupport && !showFitDetails && !showFabricDetails && !pdp.oeko_certified && <p>Fit and fabric details are being confirmed for this product.</p>}
     </div>;
     if (label === "MODEL DETAILS") {
       const name = pdp.model_details.split("\n", 1)[0].trim();
