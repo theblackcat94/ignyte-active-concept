@@ -141,8 +141,8 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
         {fitPosition !== null && <><p className="pdp-info-value">{fitLabels[fitPosition]}</p><ThreePointIndicator labels={fitScale} active={index => index === fitPosition} ariaLabel={`IGNYTE sizing guidance: ${fitLabels[fitPosition]}`} /></>}
         {isSock && <p>{sockSizing.productText}</p>}
         {fitAdvice && fitPosition === null && <p>{fitAdvice}</p>}
-        {product.fitAttribute && (!fitAdvice || product.fitAttribute.trim().toLowerCase() !== fitAdvice.toLowerCase()) && <p><span className="pdp-info-key">Fit</span> {product.fitAttribute}</p>}
-        {product.coverageAttribute && <p><span className="pdp-info-key">Coverage</span> {product.coverageAttribute}</p>}
+        {product.fitAttribute && (!fitAdvice || product.fitAttribute.trim().toLowerCase() !== fitAdvice.toLowerCase()) && <p><span className="pdp-info-key">Fit:</span> {product.fitAttribute}</p>}
+        {product.coverageAttribute && <p><span className="pdp-info-key">Coverage:</span> {product.coverageAttribute}</p>}
       </section>}
       {showFabricDetails && <section className="pdp-info-group"><h3>Fabric &amp; features</h3><dl className="pdp-fabric-list">
         {fabricParts.map((part, index) => <div key={`${part.label}-${index}`}><dt>{part.label}</dt><dd>{part.composition}</dd></div>)}
