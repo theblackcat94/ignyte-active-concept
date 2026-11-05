@@ -37,6 +37,14 @@ export default function JoinFireAdminPage() {
     {settings && <div className="ops-panel">
       <h2>Private campaign draft</h2>
       <p>The page and offer are off by default. Activation is additionally locked at server level until Marcus approves the offer and eligibility terms.</p>
+      <div className="ops-panel">
+        <h3>Review the flow</h3>
+        <p><strong>1.</strong> Open the staff preview to review the landing page and disabled signup form.</p>
+        <p><strong>2.</strong> Open the confirmation preview to see the state shown after a successful subscription. This is a visual simulation; it does not save an email or issue a code.</p>
+        <p><strong>3.</strong> Open the welcome email preview to review its subject, layout, code placement, offer terms and unsubscribe link. It does not send an email.</p>
+        <p>When approved later: a new subscriber submits consent → receives one unique code by email → checkout checks that code against the subscriber email and prior paid orders. Standard footer signups use their existing email and receive no campaign code.</p>
+        <div className="ops-toolbar"><Link href="/join-the-fire/" target="_blank">LANDING PAGE ↗</Link><Link href="/join-the-fire/?preview=success" target="_blank">SUCCESS STATE ↗</Link><Link href="/admin/join-fire/email-preview/">WELCOME EMAIL ↗</Link></div>
+      </div>
       <div className="admin-fields">
         <label className="admin-check">PUBLIC PAGE<input type="checkbox" checked={settings.publicEnabled} onChange={event => change("publicEnabled", event.target.checked)} /></label>
         <label className="admin-check">ISSUE WELCOME CODES<input type="checkbox" checked={settings.offerEnabled} onChange={event => change("offerEnabled", event.target.checked)} /></label>
@@ -55,7 +63,7 @@ export default function JoinFireAdminPage() {
         <label className="wide">META DESCRIPTION<input value={settings.seoDescription} onChange={event => change("seoDescription", event.target.value)} /></label>
         <label className="wide">SOCIAL IMAGE PATH<input value={settings.socialImage} onChange={event => change("socialImage", event.target.value)} /></label>
       </div>
-      <div className="ops-toolbar"><button type="button" disabled={busy} onClick={() => void save()}>{busy ? "SAVING…" : "SAVE CAMPAIGN"}</button><Link href="/join-the-fire/" target="_blank">OPEN PRIVATE PREVIEW ↗</Link></div>
+      <div className="ops-toolbar"><button type="button" disabled={busy} onClick={() => void save()}>{busy ? "SAVING…" : "SAVE CAMPAIGN"}</button></div>
     </div>}
   </AdminPageShell>;
 }

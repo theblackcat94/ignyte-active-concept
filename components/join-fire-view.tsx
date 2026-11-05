@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { browserDb, commerceConfigured } from "@/lib/commerce";
 import HeaderLogo from "@/components/header-logo";
+import RegistrationMarks from "@/components/registration-marks";
 import type { JoinFireSettings } from "@/lib/join-fire-settings";
 import "@/app/join-the-fire/join-fire.css";
 
@@ -34,7 +35,11 @@ export default function JoinFireView() {
       const token = commerceConfigured ? (await browserDb().auth.getSession()).data.session?.access_token : null;
       const response = await fetch("/api/join-fire", { headers: token ? { Authorization: `Bearer ${token}` } : {}, cache: "no-store" });
       if (cancelled) return;
-      if (response.ok) setSettings(await response.json());
+      if (response.ok) {
+        const loaded = await response.json() as Campaign;
+        setSettings(loaded);
+        if (loaded.preview && params.get("preview") === "success") setSuccess("new");
+      }
       else setError(response.status === 403 ? "This campaign is in private review. Sign in with a team account to see the preview." : "The campaign preview is unavailable.");
     }
     void load();
@@ -70,7 +75,7 @@ export default function JoinFireView() {
           {!settings.offerEnabled && <p className="join-fire-disabled">Offer preview only. Signups and discount codes are turned off.</p>}
           {error && <p id="join-fire-error" className="join-fire-error" role="alert">{error}</p>}
         </form>}
-      </div><div className="join-fire-hero-image"><Image src={settings.heroImage} alt="IGNYTE athlete training in performance activewear" fill priority sizes="(max-width: 800px) 100vw, 50vw" /></div></section>
+      </div><div className="join-fire-hero-image"><Image src={settings.heroImage} alt="IGNYTE athlete training in performance activewear" fill priority sizes="(max-width: 800px) 100vw, 50vw" /><RegistrationMarks /></div></section>
       <section className="join-fire-brand"><div><span className="join-fire-eyebrow">BUILT FOR THE BURN_</span><h2>Made to move.<br/>Made to stand out.</h2><p>From strength sessions to high-intensity training, IGNYTE creates performance activewear that combines support, comfort and confidence.</p></div><div className="join-fire-product-images"><Image src="/images/jacob-2026-10/ign-motsbr-blk/ign-motsbr-blk-motion-sports-bra-black-main-01.jpg" alt="Motion Sports Bra in Black" width={450} height={600} sizes="(max-width: 800px) 42vw, 18vw"/><Image src="/images/jacob-2026-10/ign-motshts-blk/ign-motshts-blk-all-in-motion-shorts-black-main-01.jpg" alt="All In Motion Shorts in Black" width={450} height={600} sizes="(max-width: 800px) 42vw, 18vw"/></div></section>
     </>}
     <footer className="join-fire-footer"><span>IGNYTE ACTIVE · BUILT FOR THE BURN™</span><nav aria-label="Campaign support"><Link href="/privacy/">Privacy</Link><Link href="/terms/">Terms</Link><Link href="/contact/">Contact</Link></nav></footer>
