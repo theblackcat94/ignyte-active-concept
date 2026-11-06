@@ -11,7 +11,7 @@ export type EmailOrder = {
   viewUrl?: string;
 };
 
-const escapeHtml = (value: string) => value.replace(/[&<>"']/g, character => ({
+export const escapeHtml = (value: string) => value.replace(/[&<>"']/g, character => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
 })[character] ?? character);
 
@@ -29,7 +29,7 @@ function button(label: string, href: string): string {
   return `<a href="${verifiedUrl(href)}" style="display:inline-block;background:#ff4533;color:#ffffff;text-decoration:none;padding:16px 24px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;font-weight:700;letter-spacing:1.8px">${escapeHtml(label)} &nbsp;↗</a>`;
 }
 
-function layout(eyebrow: string, title: string, content: string, siteUrl: string, preheader = "Built for the burn. Made to move with you.", unsubscribeUrl?: string): string {
+export function layout(eyebrow: string, title: string, content: string, siteUrl: string, preheader = "Built for the burn. Made to move with you.", unsubscribeUrl?: string): string {
   const home = verifiedUrl(siteUrl);
   const logo = verifiedUrl(`${siteUrl.replace(/\/$/, "")}/images/ignyte-email-logo.png`);
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escapeHtml(title)}</title></head><body style="margin:0;padding:0;background:#f7f3ea;color:#0b1020;font-family:'Söhne',Arial,Helvetica,sans-serif"><div style="display:none!important;visibility:hidden;opacity:0;height:0;width:0;overflow:hidden;mso-hide:all">${escapeHtml(preheader)}</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f7f3ea"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff"><tr><td align="center" style="background:#0b1020;padding:12px 20px;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:10px;line-height:16px;font-weight:700;letter-spacing:2px">BUILT FOR THE BURN™</td></tr><tr><td align="center" style="padding:30px 24px 26px;background:#f7f3ea;border-bottom:4px solid #ff4533"><a href="${home}" style="text-decoration:none;color:#0b1020"><img src="${logo}" alt="IGNYTE Active" width="240" height="44" style="display:block;width:240px;max-width:100%;height:auto;border:0;color:#0b1020;font-size:24px;font-weight:700;letter-spacing:3px"></a></td></tr><tr><td style="padding:38px 32px 36px"><p style="margin:0 0 14px;color:#ff4533;font-family:'Söhne Mono',Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;font-weight:700;letter-spacing:2px">${escapeHtml(eyebrow)}</p><h1 style="margin:0 0 20px;color:#0b1020;font-family:'Söhne',Arial,Helvetica,sans-serif;font-size:34px;line-height:1.12;font-weight:700;letter-spacing:-1px">${escapeHtml(title)}</h1>${content}</td></tr><tr><td style="background:#0b1020;padding:28px 32px;color:#f8f7f4;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.7"><p style="margin:0 0 10px;color:#ff4533;font-size:11px;font-weight:700;letter-spacing:2px">MOVE WITH PURPOSE. TRAIN WITH FIRE.</p><p style="margin:0;color:#f8f7f4">IGNYTE ACTIVE · BUILT FOR THE BURN™<br><a href="${home}" style="color:#f8f7f4;text-decoration:underline">Visit the store</a> &nbsp;·&nbsp; <a href="mailto:support@ignyteactive.com" style="color:#f8f7f4;text-decoration:underline">Contact support</a>${unsubscribeUrl ? ` &nbsp;·&nbsp; <a href="${verifiedUrl(unsubscribeUrl)}" style="color:#f8f7f4;text-decoration:underline">Unsubscribe</a>` : ""}</p></td></tr></table></td></tr></table></body></html>`;
@@ -57,7 +57,8 @@ export function paymentConfirmedEmail(order: EmailOrder, siteUrl: string): Email
   if (order.totalCents === null || order.shippingCents === null) throw new Error("A paid order must have a confirmed total");
   const lines = orderLines(order);
   const intro = "Your payment is confirmed. We will email you again when your order is on its way.";
-  return { subject: `Your IGNYTE payment is confirmed · ${order.id}`, html: layout("PAYMENT CONFIRMED", "You're all set.", paragraph(intro) + lines.html + (order.viewUrl ? button("VIEW ORDER", order.viewUrl) : ""), siteUrl), text: `${intro}\n\n${lines.text}${order.viewUrl ? `\nView order: ${order.viewUrl}` : ""}\n\nQuestions? support@ignyteactive.com` };
+  const returnsUrl = `${siteUrl.replace(/\/$/, "")}/returns/submit/?order=${encodeURIComponent(order.id)}`;
+  return { subject: `Your IGNYTE payment is confirmed · ${order.id}`, html: layout("PAYMENT CONFIRMED", "You're all set.", paragraph(intro) + lines.html + (order.viewUrl ? button("VIEW ORDER", order.viewUrl) : "") + `<p style="margin:24px 0 0;line-height:1.6">Need to return an item? <a href="${verifiedUrl(returnsUrl)}">Submit a return request</a>. Eligible full-price change-of-mind items must arrive within 30 days; sale merchandise is final sale. Your Australian Consumer Law rights remain unaffected.</p>`, siteUrl), text: `${intro}\n\n${lines.text}${order.viewUrl ? `\nView order: ${order.viewUrl}` : ""}\n\nReturns: ${returnsUrl}\nEligible full-price change-of-mind items must arrive within 30 days. Sale merchandise is final sale; Australian Consumer Law rights remain unaffected.\n\nQuestions? support@ignyteactive.com` };
 }
 
 export function adminOrderEmail(order: EmailOrder, status: "awaiting payment" | "paid", customerEmail: string, siteUrl: string): EmailDesign {
