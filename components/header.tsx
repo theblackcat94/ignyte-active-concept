@@ -73,7 +73,7 @@ export default function Header() {
     <header className={`site-header${headerHidden ? " site-header-hidden" : ""}${headerScrolled ? " site-header-scrolled" : ""}`}>
       <div className="header-mobile-left"><button className="header-icon mobile-menu-toggle" aria-label="Open menu" onClick={() => { setMobileSupportOpen(false); setMobilePreferencesOpen(false); setMenuOpen(true); }}><span className="hamburger"><i /><i /></span></button><button className="header-icon mobile-search-trigger" aria-label="Search" onClick={() => setSearchOpen(true)}><Icon name="search" /></button></div>
       <Link className="brand brand-image" href="/" aria-label="Ignyte home"><HeaderLogo /></Link>
-      <nav className="desktop-nav" aria-label="Main navigation">{nav.map(([label, href]) => <Link className={pathname === href ? "active" : ""} href={href} key={href}>{label}</Link>)}<JournalPublicLink /></nav>
+      <nav className="desktop-nav" aria-label="Main navigation">{nav.map(([label, href]) => <Link className={pathname === href ? "active" : ""} href={href} key={href}>{label}</Link>)}</nav>
       <div className="header-actions">
         <button className="header-icon header-account-trigger" aria-label="Open account and discovery" aria-expanded={accountOpen} onClick={() => { setBagOpen(false); setWishlistOpen(false); setAccountOpen(true); }}><Icon name="account" /></button>
         <button className="header-icon search-trigger" aria-label="Search" onClick={() => setSearchOpen(true)}><Icon name="search" /></button>
