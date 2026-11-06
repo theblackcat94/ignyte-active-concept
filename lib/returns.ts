@@ -3,7 +3,8 @@ import { adminDb, verifiedUser } from "@/lib/commerce";
 import { createHash } from "node:crypto";
 import type { NextRequest } from "next/server";
 
-export const returnReasons = ["Ordered the wrong size", "Fit wasn't right", "Changed my mind", "Product wasn't what I expected", "Received an incorrect item", "Item arrived damaged", "Product is faulty", "Other"] as const;
+export const returnReasons = ["Ordered the wrong size", "Fit wasn't right", "Changed my mind", "Product wasn't what I expected", "Received an incorrect item", "Item arrived damaged", "Product is faulty", "Product was incorrectly described", "Other"] as const;
+export function isStatutoryReason(reason: string) { return ["Received an incorrect item", "Item arrived damaged", "Product is faulty", "Product was incorrectly described"].includes(reason); }
 export const returnStatuses = ["new_request", "under_review", "awaiting_customer_return", "in_transit", "received_by_3pl", "inspection", "quarantined", "approved", "declined", "refunded", "closed"] as const;
 export const returnStatusLabels: Record<(typeof returnStatuses)[number], string> = {
   new_request: "New Request", under_review: "Under Review", awaiting_customer_return: "Awaiting Customer Return",

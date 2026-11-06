@@ -93,6 +93,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const defaultSize = sizes.length === 1 && sizes[0].stock > 0 ? sizes[0].size : "";
   const size = selection.slug === product.slug && sizes.some(variant => variant.size === selection.size && variant.stock > 0) ? selection.size : defaultSize;
   const selectedVariant = sizes.find(variant => variant.size === size);
+  const saleOriginalPrice = selectedVariant ? selectedVariant.originalPrice : product.originalPrice;
   const canAdd = Boolean(!catalogLoading && !catalogError && size && selectedVariant && selectedVariant.stock > 0);
   const addLabel = catalogLoading ? "CHECKING STOCK" : catalogError ? "STOCK UNAVAILABLE" : !sizes.some(variant => variant.stock > 0) ? "SOLD OUT" : !size ? "SELECT A SIZE" : canAdd ? "ADD TO BAG" : product.variants ? "SOLD OUT" : "PREVIEW ONLY";
   const stickyAddLabel = catalogLoading ? "CHECKING STOCK" : catalogError ? "STOCK UNAVAILABLE" : !sizes.some(variant => variant.stock > 0) ? "SOLD OUT" : "ADD TO BAG ↗";
@@ -164,8 +165,8 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
 
   return <div className={`product-page pdp-stacked section-wrap${(showMobilePurchase || showDesktopPurchase) && !bagOpen && !guideOpen ? " has-sticky-purchase" : ""}`}>
     <div className="detail-grid"><div><StackedProductGallery product={product} /></div><div className="detail-info" tabIndex={0} aria-label="Product details and purchase options"><div className="pdp-breadcrumb-row"><div className="breadcrumb pdp-detail-breadcrumb"><Link href="/">IGNYTE</Link><span>/</span><Link href={`/shop/${product.category}`}>{product.category.toUpperCase().replace("-", " ")}</Link><span>/</span><span>{product.name.toUpperCase()}</span></div><PdpEditShortcut slug={product.slug} /></div><div className="pdp-title-row"><h1>{product.name.toUpperCase()}<em>.</em></h1><button type="button" className="pdp-title-wishlist" aria-label={wishlist.includes(product.slug) ? "Remove from wishlist" : "Save to wishlist"} aria-pressed={wishlist.includes(product.slug)} onClick={() => toggleWishlist(product.slug)}><HeartIcon filled={wishlist.includes(product.slug)} /></button></div>
-      <div className="detail-price">{(selectedVariant?.originalPrice ?? product.originalPrice) && <del>{money((selectedVariant?.originalPrice ?? product.originalPrice)!)}</del>}<span>{money(selectedVariant?.price ?? product.price)}<CurrencyEstimate aud={selectedVariant?.price ?? product.price} /></span></div>
-      {(selectedVariant?.originalPrice ?? product.originalPrice) && <p className="pdp-sale-returns-note">SALE ITEM · FINAL SALE FOR CHANGE-OF-MIND RETURNS. <Link href="/returns/#returns">RETURNS POLICY ↗</Link></p>}
+      <div className="detail-price">{saleOriginalPrice && <del>{money(saleOriginalPrice)}</del>}<span>{money(selectedVariant?.price ?? product.price)}<CurrencyEstimate aud={selectedVariant?.price ?? product.price} /></span></div>
+      {saleOriginalPrice && <p className="pdp-sale-returns-note">SALE ITEM · FINAL SALE FOR CHANGE-OF-MIND RETURNS. <Link href="/returns/#returns">RETURNS POLICY ↗</Link></p>}
       <ProductDescription key={product.slug} description={product.description} />{commerceConfigured && !product.variants && <p className="catalog-preview-note">Preview item. Available to order after sizes and stock are confirmed.</p>}
       <div className="detail-color">COLOUR: <strong>{product.color.toUpperCase()}</strong></div>
       <div className="pdp-colour-options" aria-label={`Available ${product.name} colours`}>

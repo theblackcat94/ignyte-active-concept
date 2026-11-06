@@ -201,7 +201,7 @@ export default function CheckoutPage() {
       </form><aside className="checkout-summary"><h2>YOUR ORDER</h2>
         {lines.map(item => <div className="checkout-item" key={`${item.slug}-${item.size}`}>
           {item.product && <img src={item.product.image} alt={item.product.name} />}
-          <div><strong>{item.product?.name ?? "Unavailable product"}</strong><span>{item.size} · Qty {item.quantity}</span>{(item.variant?.originalPrice ?? item.product?.originalPrice) && <span>SALE ITEM · FINAL SALE FOR CHANGE-OF-MIND RETURNS</span>}</div>
+          <div><strong>{item.product?.name ?? "Unavailable product"}</strong><span>{item.size} · Qty {item.quantity}</span>{item.variant?.originalPrice && <span>SALE ITEM · FINAL SALE FOR CHANGE-OF-MIND RETURNS</span>}</div>
           <strong>{money((item.variant?.price ?? item.product?.price ?? 0) * item.quantity)}</strong>
         </div>)}
         {!valid && <p className="checkout-error">An item is unavailable. Please update your bag before placing the order.</p>}

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminDb } from "@/lib/commerce";
-import { accessibleReturnOrder, returnInputSchema, type ReturnItem } from "@/lib/returns";
+import { accessibleReturnOrder, isStatutoryReason, returnInputSchema, type ReturnItem } from "@/lib/returns";
 import { returnAcknowledgementEmail, returnInternalEmail, type ReturnMailRecord } from "@/lib/return-emails";
 import { queueReturnEmail } from "@/lib/return-outbox";
 
@@ -32,7 +32,8 @@ export async function POST(request: NextRequest) {
   if (photos.length > 3 || photos.some(photo => photo.size > 5_242_880 || !(photo.type in imageTypes))) return NextResponse.json({ error: "Use up to three JPEG, PNG or WebP photos under 5 MB each." }, { status: 400 });
   const order = await accessibleReturnOrder(request, parsed.data.order_number);
   const verified = Boolean(order && order.customer_email.toLowerCase() === parsed.data.customer_email);
-  const statutory = parsed.data.items.some(item => ["Product is faulty", "Item arrived damaged", "Received an incorrect item"].includes(item.reason));
+  const statutory = parsed.data.items.some(item => isStatutoryReason(item.reason));
+  if (statutory && parsed.data.items.some(item => !isStatutoryReason(item.reason))) return NextResponse.json({ error: "Please send consumer-law concerns and change-of-mind items as separate requests so each can receive the appropriate remedy." }, { status: 400 });
   if (statutory !== (parsed.data.requested_resolution === "statutory_remedy")) return NextResponse.json({ error: "Choose a refund option for change-of-mind items. Faulty or incorrect items are assessed separately under consumer law." }, { status: 400 });
   let validatedItems: ReturnItem[] = parsed.data.items.map(item => ({ product_name: item.product_name, sku: item.sku, size: item.size, colour: item.colour, quantity: item.quantity, reason: item.reason }));
   if (verified && order) {
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
     for (const item of parsed.data.items) {
       const original = order.items.find(row => row.id === item.order_item_id);
       if (!original || seen.has(original.id) || item.quantity > original.quantity) return NextResponse.json({ error: "Choose purchased items and quantities from this order." }, { status: 400 });
-      if (!statutory && original.sale_at_purchase === true) return NextResponse.json({ error: `${original.product_name} was purchased on sale and is not eligible for a change-of-mind return. Faulty-item rights remain available.` }, { status: 400 });
+      if (original.sale_at_purchase === true && !isStatutoryReason(item.reason)) return NextResponse.json({ error: `${original.product_name} was purchased on sale and is not eligible for a change-of-mind return. Faulty-item rights remain available.` }, { status: 400 });
       seen.add(original.id);
       mapped.push({ order_item_id: original.id, product_name: original.product_name, sku: original.sku, size: original.size, colour: original.colour, quantity: item.quantity, reason: item.reason, original_unit_price_cents: original.unit_price_cents, list_price_at_purchase_cents: original.list_price_at_purchase_cents, sale_at_purchase: original.sale_at_purchase, paid_value_cents: Math.floor(original.paid_value_cents * item.quantity / original.quantity) });
     }
