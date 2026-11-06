@@ -33,12 +33,12 @@ export async function readHomeHeroSettings() {
   try {
     const settings = homeHeroSettingsSchema.parse(JSON.parse(await readFile(configPath, "utf8")));
     // Move the previously shipped film to the new edit without replacing later admin choices.
-    const oldFilms = new Set(["/images/home/Ignyte-Video-Website-Hero-Low-Res.mp4", "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4"]);
+    const oldFilms = new Set(["/images/home/Ignyte-Video-Website-Hero-Low-Res.mp4", "/images/home/Ignyte-Vertical-Trimmed-Compressed-Ultra.mp4", "/images/home/Ignyte-Hero-Trimmed-11sec.mp4"]);
     return { slides: settings.slides.map(slide => slide.id === "hero-film" ? {
       ...slide,
       desktopSrc: oldFilms.has(slide.desktopSrc) ? defaultHomeHeroSettings.slides[0].desktopSrc : slide.desktopSrc,
       mobileSrc: oldFilms.has(slide.mobileSrc) || slide.mobileSrc === "/images/home/Ignyte-Hero-Trimmed-11sec.mp4" ? defaultHomeHeroSettings.slides[0].mobileSrc : slide.mobileSrc,
-      poster: slide.poster === "/images/home/Home-Hero-Video-Fallback.jpg" ? defaultHomeHeroSettings.slides[0].poster : slide.poster,
+      poster: ["/images/home/Home-Hero-Video-Fallback.jpg", "/images/home/desktop-hero-first-frame.webp"].includes(slide.poster) ? defaultHomeHeroSettings.slides[0].poster : slide.poster,
     } : slide) };
   }
   catch (error) {
