@@ -24,6 +24,8 @@ function BodyBlock({ block }: { block: JournalBlock }) {
   if (block.type === "heading") return <h2>{block.text}</h2>;
   if (block.type === "subheading") return <h3>{block.text}</h3>;
   if (block.type === "quote") return <blockquote>{block.text}</blockquote>;
+  if (block.type === "callout") return <aside className="journal-tip"><span>{block.label}</span><p><Inline text={block.text} /></p></aside>;
+  if (block.type === "table") return <div className="journal-table-wrap"><table className={`journal-table journal-table-${block.columns.length}`}><thead><tr>{block.columns.map((column, index) => <th key={index} scope="col">{column}</th>)}</tr></thead><tbody>{block.rows.map((row, index) => <tr key={index}>{block.columns.map((column, cell) => <td key={cell} data-label={column}>{row[cell] || ""}</td>)}</tr>)}</tbody></table></div>;
   if (block.type === "image") return <figure><img src={block.url} alt={block.alt} loading="lazy" /></figure>;
   if (block.type === "video") return <video src={block.url} aria-label={block.alt} controls preload="none" playsInline />;
   if (block.type === "list") {

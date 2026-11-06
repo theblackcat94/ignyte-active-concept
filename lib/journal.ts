@@ -7,6 +7,8 @@ export const journalBlockSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("subheading"), text: z.string().max(240) }),
   z.object({ type: z.literal("quote"), text: z.string().max(1000) }),
   z.object({ type: z.literal("list"), text: z.string().max(4000), ordered: z.boolean().default(false) }),
+  z.object({ type: z.literal("table"), columns: z.array(z.string().max(100)).min(2).max(3), rows: z.array(z.array(z.string().max(240)).min(2).max(3)).min(1).max(25) }),
+  z.object({ type: z.literal("callout"), label: z.string().max(100), text: z.string().max(1000) }),
   z.object({ type: z.literal("image"), url: z.string().max(1000), alt: z.string().max(240) }),
   z.object({ type: z.literal("video"), url: z.string().max(1000), alt: z.string().max(240) }),
 ]);
@@ -20,7 +22,7 @@ export const journalArticleSchema = z.object({
   status: z.enum(["draft", "published"]), publish_at: z.string().datetime().nullable(),
   featured: z.boolean(), sort_order: z.number().int(), author: z.string().max(160),
   cover_url: z.string().max(1000), cover_alt: z.string().max(240), thumbnail_url: z.string().max(1000),
-  body: z.array(journalBlockSchema).max(100),
+  body: z.array(journalBlockSchema).max(100).refine(blocks => blocks.every(block => block.type !== "table" || block.rows.every(row => row.length === block.columns.length)), "Table rows must match their headings"),
   seo_title: z.string().max(160), seo_description: z.string().max(320),
   canonical_url: z.string().max(1000), og_image: z.string().max(1000),
   social_title: z.string().max(160), social_description: z.string().max(320),
