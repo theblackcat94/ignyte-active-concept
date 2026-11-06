@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FREE_RETURNS_LABEL, FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping-policy";
+import { RETURNS_LABEL, FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping-policy";
 import ShippingReturnsDrawer from "./shipping-returns-drawer";
 import { ReturnsIcon, ShippingIcon } from "./purchase-icons";
 import "@/app/purchase-reassurance.css";
@@ -15,7 +15,7 @@ export default function PurchaseReassurance({ inBag = false, returnsOnly = false
       <ShippingIcon /><span>FREE SHIPPING ON AU${FREE_SHIPPING_THRESHOLD_CENTS / 100}+ ORDERS</span>
     </button>}
     <button type="button" onClick={() => setSection("returns")}>
-      <ReturnsIcon /><span>{FREE_RETURNS_LABEL}</span>
+      <ReturnsIcon /><span>{RETURNS_LABEL}</span>
     </button>
   </div><ShippingReturnsDrawer section={section} onClose={() => setSection(null)} /></>;
 }

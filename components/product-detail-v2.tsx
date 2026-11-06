@@ -158,7 +158,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     if (label === "SIZE GUIDE") return <><SizeGuideContent productCategory={product.category} /><div className="pdp-size-guide-link"><Link className="text-link" href={isSock ? "/size-guide#socks" : "/size-guide"}>OPEN FULL SIZE GUIDE ↗</Link></div></>;
     return <div className="pdp-delivery">
       <section><span className="pdp-delivery-icon"><ShippingIcon /></span><div><strong>DELIVERY</strong><p>Free shipping on eligible Australian orders of AU${FREE_SHIPPING_THRESHOLD_CENTS / 100} or more after discounts. AU$15 below the threshold.</p><Link href="/returns#shipping">Shipping policy ↗</Link></div></section>
-      <section><span className="pdp-delivery-icon"><ReturnsIcon /></span><div><strong>RETURNS</strong><p>Free 30 day returns for eligible Australian orders. Contact us within 30 days of receiving your order so we can confirm eligibility and arrange prepaid return postage.</p><Link href="/returns#free-returns">Returns policy ↗</Link></div></section>
+      <section><span className="pdp-delivery-icon"><ReturnsIcon /></span><div><strong>RETURNS</strong><p>Eligible change-of-mind items must arrive at our warehouse within 30 days of purchase. Customers pay return postage; original shipping charges are non-refundable. Conditions apply.</p><Link href="/returns#returns">Returns policy ↗</Link></div></section>
     </div>;
   }
 

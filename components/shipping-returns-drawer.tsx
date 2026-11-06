@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { FREE_RETURNS_LABEL, FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping-policy";
+import { RETURNS_LABEL, FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping-policy";
 import { ReturnsIcon, ShippingIcon } from "./purchase-icons";
 import "@/app/shipping-returns-drawer.css";
 
@@ -38,7 +38,7 @@ export default function ShippingReturnsDrawer({ section, onClose }: { section: "
       <div className="drawer-head"><div><span className="eyebrow">IGNYTE / HELP</span><h2>SHIPPING &amp; RETURNS_</h2></div><button ref={closeButton} type="button" className="icon-button" aria-label="Close shipping and returns" onClick={onClose}>×</button></div>
       <div ref={content} className="shipping-returns-content">
         <section><h3>SHIPPING &amp; DELIVERY</h3><div className="shipping-returns-callout"><ShippingIcon /><strong>FREE SHIPPING ON AU${FREE_SHIPPING_THRESHOLD_CENTS / 100}+ ORDERS</strong></div><p>Australian orders of AU${FREE_SHIPPING_THRESHOLD_CENTS / 100} or more after discounts receive free shipping. Standard shipping below the threshold is AU$15. Your delivery charge is confirmed at checkout.</p><p>Dispatch, tracking and delivery timing are confirmed with your order.</p><Link href="/returns/#shipping" onClick={onClose}>FULL SHIPPING POLICY ↗</Link></section>
-        <section ref={returns}><h3>RETURNS</h3><div className="shipping-returns-callout"><ReturnsIcon /><strong>{FREE_RETURNS_LABEL}</strong></div><p>Contact us within 30 days of receiving your order to request a return. Include your order number so we can check eligibility and arrange prepaid Australian return postage before you send anything back.</p><p>Eligible refunds are processed to the original payment method after inspection. Contact our team for current garment condition requirements and exclusions.</p><Link href="/returns/#free-returns" onClick={onClose}>FULL RETURNS POLICY ↗</Link></section>
+        <section ref={returns}><div className="shipping-returns-callout"><ReturnsIcon /><strong>{RETURNS_LABEL}_</strong></div><p>Changed your mind? We accept eligible items for a refund when they arrive at our warehouse within 30 days of purchase.</p><p>Items must be unworn, unused, unwashed, with original tags attached and suitable for resale.</p><p>Return postage is paid by the customer. Original shipping charges are non-refundable for change-of-mind returns.</p><p>All returned items are inspected before refunds are approved.</p><a href="mailto:support@ignyteactive.com">START A RETURN ↗</a><Link href="/returns/#returns" onClick={onClose}>VIEW FULL RETURNS POLICY ↗</Link></section>
       </div>
     </aside></>, document.body);
 }
