@@ -1,0 +1,515 @@
+{
+  "slug": "built-for-the-burn-weekly-workout",
+  "title": "Built for the Burn: Your 7-Day Training Plan",
+  "excerpt": "Strength. Sweat. Recovery. Repeat. Four structured workouts, one optional movement day and two days to recover.",
+  "category_slug": "training-movement",
+  "status": "draft",
+  "publish_at": null,
+  "featured": false,
+  "sort_order": 20,
+  "author": "IGNYTE Active",
+  "cover_url": "/images/product/Ignyte-Training.jpg",
+  "cover_alt": "IGNYTE athlete training in the gym",
+  "thumbnail_url": "/images/product/Ignyte-Training.jpg",
+  "body": [
+    {
+      "type": "paragraph",
+      "text": "You don't have to train every day to make progress. You need a plan that challenges you, gives your body time to recover and fits into your life."
+    },
+    {
+      "type": "paragraph",
+      "text": "Whether you're building strength, improving your fitness or getting back into a consistent routine, this weekly training plan is designed to keep you moving with purpose."
+    },
+    {
+      "type": "paragraph",
+      "text": "Four structured workouts. One optional movement day. Two days to recover."
+    },
+    {
+      "type": "paragraph",
+      "text": "No complicated routines. No unnecessary exercises. Just a balanced week of training you can make your own."
+    },
+    {
+      "type": "paragraph",
+      "text": "Ready to bring the fire?"
+    },
+    {
+      "type": "heading",
+      "text": "YOUR WEEK AT A GLANCE_"
+    },
+    {
+      "type": "table",
+      "columns": [
+        "Day",
+        "Focus",
+        "Duration"
+      ],
+      "rows": [
+        [
+          "Monday",
+          "Lower Body Strength",
+          "40–45 min"
+        ],
+        [
+          "Tuesday",
+          "Upper Body & Core",
+          "35–45 min"
+        ],
+        [
+          "Wednesday",
+          "Active Recovery",
+          "20–30 min"
+        ],
+        [
+          "Thursday",
+          "HIIT & Conditioning",
+          "20–30 min"
+        ],
+        [
+          "Friday",
+          "Full Body Strength",
+          "40–45 min"
+        ],
+        [
+          "Saturday",
+          "Your Choice: Cardio or Combat",
+          "30–45 min"
+        ],
+        [
+          "Sunday",
+          "Rest & Reset",
+          "Rest"
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "These times are approximate. Adjust the exercises, weights and intensity to suit your experience and fitness level."
+    },
+    {
+      "type": "heading",
+      "text": "MONDAY_"
+    },
+    {
+      "type": "subheading",
+      "text": "Lower Body. Strong Foundations."
+    },
+    {
+      "type": "paragraph",
+      "text": "Start the week by building strength through your legs, glutes and core."
+    },
+    {
+      "type": "subheading",
+      "text": "THE WORKOUT"
+    },
+    {
+      "type": "table",
+      "columns": [
+        "Exercise",
+        "Sets × Reps"
+      ],
+      "rows": [
+        [
+          "Goblet Squats",
+          "3 sets × 10 reps"
+        ],
+        [
+          "Romanian Deadlifts",
+          "3 sets × 10 reps"
+        ],
+        [
+          "Reverse Lunges",
+          "2 sets × 10 reps each leg"
+        ],
+        [
+          "Glute Bridges",
+          "3 sets × 12 reps"
+        ],
+        [
+          "Plank Holds",
+          "3 sets × 30 seconds"
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Rest for 60–90 seconds between sets."
+    },
+    {
+      "type": "paragraph",
+      "text": "Choose weights that make the final few repetitions challenging while allowing you to maintain good technique."
+    },
+    {
+      "type": "callout",
+      "label": "THE FOCUS_",
+      "text": "Controlled movement, consistent effort and building strength from the ground up."
+    },
+    {
+      "type": "heading",
+      "text": "TUESDAY_"
+    },
+    {
+      "type": "subheading",
+      "text": "Upper Body. Find Your Strength."
+    },
+    {
+      "type": "paragraph",
+      "text": "Today is about building upper body strength while keeping your core engaged."
+    },
+    {
+      "type": "subheading",
+      "text": "THE WORKOUT"
+    },
+    {
+      "type": "table",
+      "columns": [
+        "Exercise",
+        "Sets × Reps"
+      ],
+      "rows": [
+        [
+          "Push-Ups",
+          "3 sets × 8–12 reps"
+        ],
+        [
+          "Dumbbell Rows",
+          "3 sets × 10 reps each arm"
+        ],
+        [
+          "Shoulder Press",
+          "3 sets × 10 reps"
+        ],
+        [
+          "Lat Pulldowns or Resistance Band Pulldowns",
+          "2 sets × 12 reps"
+        ],
+        [
+          "Dead Bugs",
+          "3 sets × 10 reps each side"
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Rest for 60–90 seconds between sets."
+    },
+    {
+      "type": "paragraph",
+      "text": "Modify push-ups using an elevated surface or your knees if needed."
+    },
+    {
+      "type": "callout",
+      "label": "THE FOCUS_",
+      "text": "Strength, stability and controlled movement."
+    },
+    {
+      "type": "heading",
+      "text": "WEDNESDAY_"
+    },
+    {
+      "type": "subheading",
+      "text": "Active Recovery. Keep Moving."
+    },
+    {
+      "type": "paragraph",
+      "text": "Recovery isn't time wasted. It's part of the process."
+    },
+    {
+      "type": "paragraph",
+      "text": "Today, swap intense training for gentle movement that helps you feel refreshed."
+    },
+    {
+      "type": "subheading",
+      "text": "CHOOSE YOUR MOVEMENT"
+    },
+    {
+      "type": "list",
+      "text": "A 20–30 minute walk\nGentle yoga or Pilates\nLight cycling\nA mobility and stretching session",
+      "ordered": false
+    },
+    {
+      "type": "paragraph",
+      "text": "Keep the intensity comfortable. You should be able to hold a conversation throughout."
+    },
+    {
+      "type": "callout",
+      "label": "THE FOCUS_",
+      "text": "Move without pushing. Give your body an opportunity to recover before the next session."
+    },
+    {
+      "type": "heading",
+      "text": "THURSDAY_"
+    },
+    {
+      "type": "subheading",
+      "text": "HIIT. Bring the Fire."
+    },
+    {
+      "type": "paragraph",
+      "text": "Time to turn up the intensity."
+    },
+    {
+      "type": "paragraph",
+      "text": "High Intensity Interval Training alternates challenging efforts with periods of recovery."
+    },
+    {
+      "type": "paragraph",
+      "text": "You don't need an hour. You need a focused session that matches your fitness level."
+    },
+    {
+      "type": "subheading",
+      "text": "THE WORKOUT"
+    },
+    {
+      "type": "paragraph",
+      "text": "Start with a five-minute warm-up."
+    },
+    {
+      "type": "paragraph",
+      "text": "Choose a stationary bike, rowing machine, brisk incline walk or running intervals."
+    },
+    {
+      "type": "paragraph",
+      "text": "Complete five rounds of:"
+    },
+    {
+      "type": "list",
+      "text": "60 seconds: Challenging effort\n2 minutes: Easy recovery pace",
+      "ordered": false
+    },
+    {
+      "type": "paragraph",
+      "text": "Finish with a five-minute cool-down."
+    },
+    {
+      "type": "paragraph",
+      "text": "Aim for approximately 7–8 out of 10 effort during the hard intervals. Challenging, but controlled. If you're new to interval training, start with three rounds at a moderate intensity."
+    },
+    {
+      "type": "callout",
+      "label": "THE FOCUS_",
+      "text": "Build cardiovascular fitness and practise recovering between efforts."
+    },
+    {
+      "type": "heading",
+      "text": "FRIDAY_"
+    },
+    {
+      "type": "subheading",
+      "text": "Full Body. Finish Strong."
+    },
+    {
+      "type": "paragraph",
+      "text": "Bring everything together with a full body workout that combines strength, balance and control."
+    },
+    {
+      "type": "subheading",
+      "text": "THE WORKOUT"
+    },
+    {
+      "type": "table",
+      "columns": [
+        "Exercise",
+        "Sets × Reps"
+      ],
+      "rows": [
+        [
+          "Dumbbell Deadlifts",
+          "3 sets × 8 reps"
+        ],
+        [
+          "Goblet Squats",
+          "2 sets × 10 reps"
+        ],
+        [
+          "Dumbbell Chest Press",
+          "3 sets × 10 reps"
+        ],
+        [
+          "Bent-Over Rows",
+          "3 sets × 10 reps"
+        ],
+        [
+          "Farmer's Carries",
+          "3 sets × 30 seconds"
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Rest for 60–90 seconds between sets."
+    },
+    {
+      "type": "paragraph",
+      "text": "Focus on movement quality rather than rushing through the workout."
+    },
+    {
+      "type": "callout",
+      "label": "THE FOCUS_",
+      "text": "Total body strength and finishing the training week with intention."
+    },
+    {
+      "type": "heading",
+      "text": "SATURDAY_"
+    },
+    {
+      "type": "subheading",
+      "text": "Your Move. Your Rules."
+    },
+    {
+      "type": "paragraph",
+      "text": "Today is optional."
+    },
+    {
+      "type": "paragraph",
+      "text": "Choose something you enjoy, whether that means pushing your fitness a little further or simply moving for the fun of it."
+    },
+    {
+      "type": "subheading",
+      "text": "OPTION A: COMBAT & CONDITIONING"
+    },
+    {
+      "type": "paragraph",
+      "text": "Try six rounds of:"
+    },
+    {
+      "type": "list",
+      "text": "2 minutes of shadowboxing or bag work\n1 minute of easy recovery",
+      "ordered": false
+    },
+    {
+      "type": "paragraph",
+      "text": "Keep your combinations controlled, especially if you're new to boxing."
+    },
+    {
+      "type": "subheading",
+      "text": "OPTION B: STEADY CARDIO"
+    },
+    {
+      "type": "paragraph",
+      "text": "Spend 30–45 minutes walking, cycling, swimming or jogging at a comfortable pace."
+    },
+    {
+      "type": "subheading",
+      "text": "OPTION C: TAKE AN EXTRA REST DAY"
+    },
+    {
+      "type": "paragraph",
+      "text": "If you're feeling fatigued or need more recovery, take it."
+    },
+    {
+      "type": "callout",
+      "label": "THE FOCUS_",
+      "text": "Consistency without forcing intensity."
+    },
+    {
+      "type": "heading",
+      "text": "SUNDAY_"
+    },
+    {
+      "type": "subheading",
+      "text": "Rest. Reset. Come Back Stronger."
+    },
+    {
+      "type": "paragraph",
+      "text": "No structured training required."
+    },
+    {
+      "type": "paragraph",
+      "text": "Take the day to recharge, get adequate sleep and prepare for the week ahead."
+    },
+    {
+      "type": "paragraph",
+      "text": "Progress isn't just about how hard you train. It's also about giving yourself enough time to adapt."
+    },
+    {
+      "type": "callout",
+      "label": "THE FOCUS_",
+      "text": "Recover well and get ready to move again."
+    },
+    {
+      "type": "heading",
+      "text": "MAKE THE PLAN YOUR OWN_"
+    },
+    {
+      "type": "paragraph",
+      "text": "There isn't one perfect way to train. The best routine is the one you can follow consistently."
+    },
+    {
+      "type": "subheading",
+      "text": "If you're just getting started"
+    },
+    {
+      "type": "paragraph",
+      "text": "Start with two sets per strength exercise, use lighter weights and reduce the number of HIIT intervals. You can also spread the four structured sessions across more than seven days."
+    },
+    {
+      "type": "subheading",
+      "text": "If you're more experienced"
+    },
+    {
+      "type": "paragraph",
+      "text": "Increase your weights gradually, add a set where appropriate or increase interval difficulty as your fitness improves. Progress doesn't have to mean making every workout harder."
+    },
+    {
+      "type": "subheading",
+      "text": "If life gets busy"
+    },
+    {
+      "type": "paragraph",
+      "text": "Prioritise the sessions you can realistically fit in. Three consistent workouts are more useful than an ambitious seven-day routine you can't maintain."
+    },
+    {
+      "type": "subheading",
+      "text": "Before every workout"
+    },
+    {
+      "type": "paragraph",
+      "text": "Allow approximately five minutes to warm up with gentle cardio and movements relevant to the session. Finish with a few minutes of easier movement."
+    },
+    {
+      "type": "paragraph",
+      "text": "If you're injured, returning after a long break or managing a medical condition, get appropriate individual advice before beginning."
+    },
+    {
+      "type": "heading",
+      "text": "BUILT FOR THE BURN_"
+    },
+    {
+      "type": "paragraph",
+      "text": "Find Your Fit. Bring Your Fire."
+    },
+    {
+      "type": "paragraph",
+      "text": "How you move is personal. What you wear should support that."
+    },
+    {
+      "type": "paragraph",
+      "text": "Whether you're lifting, stretching, running or powering through your next HIIT session, choose gear that feels comfortable, stays in place and suits the demands of your workout."
+    },
+    {
+      "type": "paragraph",
+      "text": "Explore the IGNYTE collection and find what works for the way you train."
+    },
+    {
+      "type": "paragraph",
+      "text": "[SHOP IGNYTE ↗](/shop/)  ·  [FIND YOUR FIT ↗](/size-guide/)"
+    },
+    {
+      "type": "paragraph",
+      "text": "MOVE WITH PURPOSE. TRAIN WITH FIRE."
+    },
+    {
+      "type": "paragraph",
+      "text": "IGNYTE ACTIVE · BUILT FOR THE BURN™"
+    }
+  ],
+  "seo_title": "7-Day Training Plan for Women | IGNYTE Active",
+  "seo_description": "A seven-day training plan combining strength, HIIT, conditioning and recovery. Find a routine that works for you with IGNYTE Active.",
+  "canonical_url": "https://dev.ignyteactive.com/journal/built-for-the-burn-weekly-workout/",
+  "og_image": "/images/product/Ignyte-Training.jpg",
+  "social_title": "Built for the Burn: Your 7-Day Training Plan | IGNYTE Active",
+  "social_description": "Four structured workouts. One optional movement day. Two days to recover. Find your rhythm with IGNYTE.",
+  "press_publication": "",
+  "press_date": null,
+  "press_url": ""
+}

@@ -31,7 +31,9 @@ export async function GET(request: Request) {
     const [cardsResult, categories] = await Promise.all([db.from("journal_articles").select(journalCardColumns).order("sort_order").order("created_at", { ascending: false }), journalCategories()]);
     if (cardsResult.error) throw cardsResult.error;
     const articles = asCards(cardsResult.data).filter(item => staff || articleIsVisible(item));
-    return NextResponse.json({ articles, categories, visibility }, { headers: { "Cache-Control": "no-store" } });
+    const visibleCategories = staff ? categories : categories.filter(category =>
+      articles.some(article => article.journal_categories?.slug === category.slug));
+    return NextResponse.json({ articles, categories: visibleCategories, visibility }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     return NextResponse.json({ error: "Journal is unavailable" }, { status: 503 });
   }
