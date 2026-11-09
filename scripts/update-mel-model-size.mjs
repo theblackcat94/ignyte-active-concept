@@ -21,13 +21,13 @@ if (products.length !== slugs.length) throw new Error("Some mapped Mel products 
 
 const changes = products.map(product => {
   const current = product.pdp_content?.model_details || "";
-  if (current && (!/^Mel(?:\s|$)/.test(current) || !current.includes("Wears: Small in tops and bottoms"))) {
+  if (current && (!/^Mel(?:\s|$)/.test(current) || !/Wears: (?:Small|Medium) in tops and bottoms/.test(current))) {
     throw new Error(`Unexpected model details on ${product.slug}`);
   }
   const next = current ? current.replace("Wears: Small in tops and bottoms", "Wears: Medium in tops and bottoms") : canonical;
   return { ...product, next };
-});
-console.log(JSON.stringify({ count: changes.length, slugs: changes.map(change => change.slug), mode: process.argv.includes("--apply") ? "apply" : "dry-run" }));
+}).filter(product => product.pdp_content?.model_details !== product.next);
+console.log(JSON.stringify({ matched: products.length, changes: changes.length, slugs: changes.map(change => change.slug), mode: process.argv.includes("--apply") ? "apply" : "dry-run" }));
 if (!process.argv.includes("--apply")) process.exit(0);
 
 for (const change of changes) {

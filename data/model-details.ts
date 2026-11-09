@@ -20,6 +20,7 @@ export const modelDetailsBySlug: Record<string, string> = {
   "seamless-legging-espresso": mel,
   "seamless-legging-aurora": mel,
   "seamless-short-espresso": mel,
+  "seamless-short-aurora": mel,
   "vyper-sports-bra-black": mel,
   "vyper-sports-bra-mauve": mel,
   "seamless-sports-bra-espresso": mel,
