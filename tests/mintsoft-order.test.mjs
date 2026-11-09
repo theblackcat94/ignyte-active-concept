@@ -44,6 +44,8 @@ test("registers authenticated dispatch and delivery callbacks for the website or
   assert.equal(payload.ConnectAction.ExtraCode1, "https://ignyteactive.com/api/mintsoft/shipping/dispatched");
   assert.equal(payload.ConnectAction.ExtraCode3, "https://ignyteactive.com/api/mintsoft/shipping/delivered");
   assert.equal(payload.ConnectAction.ExtraCode4, `Bearer ${secret}`);
+  assert.equal(mintsoftConnectAction(order.id, "https://ignyte.theblackcat94.com", secret).ExtraCode1,
+    "https://ignyte.theblackcat94.com/api/mintsoft/shipping/dispatched");
   assert.throws(() => mintsoftConnectAction(order.id, "http://ignyteactive.com", secret));
   assert.throws(() => mintsoftConnectAction(order.id, "https://other.example", secret));
   assert.throws(() => mintsoftConnectAction(order.id, "https://ignyteactive.com", "short"));
