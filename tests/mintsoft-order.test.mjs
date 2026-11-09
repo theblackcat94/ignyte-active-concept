@@ -30,6 +30,7 @@ test("manual test export accepts only paid, reserved sandbox orders", () => {
     shipping_details: { ...order.shipping_details, test_order: true } };
   assert.equal(eligibleMintsoftOrder(sandbox), false);
   assert.equal(eligibleMintsoftOrder(sandbox, true), true);
+  assert.deepEqual([sandbox].filter(eligibleMintsoftOrder), []);
   assert.equal(eligibleMintsoftOrder({ ...sandbox, stock_reserved: false }, true), false);
   assert.equal(eligibleMintsoftOrder({ ...sandbox, shipping_details: order.shipping_details }, true), false);
   assert.equal(eligibleMintsoftOrder({ ...sandbox, eway_environment: "production" }, true), false);
