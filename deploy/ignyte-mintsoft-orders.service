@@ -1,0 +1,12 @@
+[Unit]
+Description=Submit paid Ignyte website orders to Mintsoft
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/internetremovals/.local/share/ignyte-stock-runtime
+EnvironmentFile=/home/internetremovals/.config/ignyte/build.env
+EnvironmentFile=/home/internetremovals/.config/ignyte/mintsoft.env
+ExecStart=/home/internetremovals/.local/opt/node-v22.23.4-linux-x64/bin/node /home/internetremovals/.local/share/ignyte-stock-runtime/scripts/send-mintsoft-orders.mjs --apply
+TimeoutStartSec=90

@@ -1,11 +1,16 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { adminDb } from "@/lib/commerce";
-import { adminOrderEmail, orderRequestEmail, paymentConfirmedEmail, type EmailDesign, type EmailOrder } from "@/lib/email-templates";
+import { adminOrderEmail, orderDeliveredEmail, orderDispatchedEmail, orderRequestEmail, paymentConfirmedEmail, type EmailDesign, type EmailOrder } from "@/lib/email-templates";
 import { sendSesMail, sesMailConfigured } from "@/lib/ses-mailer";
 
 type OrderRow = {
   id: string;
+  user_id: string | null;
   status: string;
+  shipping_status: "not_dispatched" | "dispatched" | "delivered";
+  carrier_name: string | null;
+  tracking_number: string | null;
+  tracking_url: string | null;
   customer_email: string | null;
   subtotal_cents: number;
   discount_cents: number;
@@ -23,13 +28,13 @@ function orderEmailData(row: OrderRow, siteUrl: string): EmailOrder {
     discountCents: row.discount_cents ?? 0,
     shippingCents: row.shipping_cents,
     totalCents: row.total_cents,
-    viewUrl: `${siteUrl}/account/orders/${row.id}/`,
+    viewUrl: `${siteUrl}/${row.user_id ? "account" : "guest"}/orders/${row.id}/`,
   };
 }
 
 async function loadOrder(db: SupabaseClient, orderId: string): Promise<OrderRow> {
   const { data, error } = await db.from("orders").select(
-    "id,status,customer_email,subtotal_cents,discount_cents,shipping_cents,total_cents,order_items(product_name,size,quantity,unit_price_cents)"
+    "id,user_id,status,shipping_status,carrier_name,tracking_number,tracking_url,customer_email,subtotal_cents,discount_cents,shipping_cents,total_cents,order_items(product_name,size,quantity,unit_price_cents)"
   ).eq("id", orderId).single();
   if (error || !data) throw new Error("Order email data could not be loaded");
   return data as unknown as OrderRow;
@@ -94,6 +99,22 @@ export async function queuePaymentConfirmedEmails(orderId: string) {
     enqueue(db, orderId, "payment-confirmed", row.customer_email, paymentConfirmedEmail(order, siteUrl)),
     enqueue(db, orderId, "payment-confirmed-alert", alertAddress, adminOrderEmail(order, "paid", row.customer_email, siteUrl)),
   ]);
+  await dispatchOrderOutbox(db, orderId);
+}
+
+export async function queueMintsoftShippingEmail(orderId: string, event: "dispatched" | "delivered") {
+  const db = adminDb();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!siteUrl) throw new Error("Site URL is not configured");
+  const row = await loadOrder(db, orderId);
+  if (!row.customer_email || row.status !== "paid") return;
+  if (event === "dispatched" && row.shipping_status !== "dispatched") return;
+  if (event === "delivered" && row.shipping_status !== "delivered") return;
+  const viewUrl = orderEmailData(row, siteUrl).viewUrl!;
+  const message = event === "dispatched"
+    ? orderDispatchedEmail(row.id, row.carrier_name, row.tracking_number, row.tracking_url, viewUrl, siteUrl)
+    : orderDeliveredEmail(row.id, viewUrl, siteUrl);
+  await enqueue(db, orderId, `mintsoft-${event}`, row.customer_email, message);
   await dispatchOrderOutbox(db, orderId);
 }
 

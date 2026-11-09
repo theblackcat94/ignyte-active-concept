@@ -1,0 +1,10 @@
+[Unit]
+Description=Synchronize Ignyte stock from Mintsoft every five minutes
+
+[Timer]
+OnCalendar=*-*-* *:00/5:00
+Persistent=true
+Unit=ignyte-mintsoft-stock.service
+
+[Install]
+WantedBy=timers.target
