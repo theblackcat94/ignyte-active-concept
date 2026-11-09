@@ -11,12 +11,13 @@ fields. Confirmed paid orders queue one dispatch or delivery email per event via
 the existing SES outbox; retries do not queue duplicate emails. `delivered_at`
 is available as the future review-request trigger. No review email is sent yet.
 
-Apply `supabase/migrations/202611030001_mintsoft_tracking.sql` before deploying
-the site changes. Configure a new server-only `MINTSOFT_WEBHOOK_SECRET` of at
+The tracking migration `supabase/migrations/202611030001_mintsoft_tracking.sql`
+must be present in Supabase. Configure a server-only `MINTSOFT_WEBHOOK_SECRET` of at
 least 32 random characters and make Mintsoft send `Authorization: Bearer
 <secret>` through ConnectAction `ExtraCode4`. Do not use the Mintsoft API key as
 the callback secret or put it in a URL. Use the deployed HTTPS site URL in
-`ExtraCode1` (dispatched) and `ExtraCode3` (delivered). Set `SourceOrderId` to
+`ExtraCode1` (dispatched) and `ExtraCode3` (delivered), with a trailing slash
+to avoid a Next.js redirect. Set `SourceOrderId` to
 the website order UUID. Mintsoft supports setting these in the original order
 creation call or through `/api/Order/{id}/ConnectActions`.
 
@@ -33,13 +34,15 @@ the build machine on 4 November 2026; its first run found no genuine paid
 orders waiting for export. A live order has not yet tested the create permission,
 3PL allocation, or courier selection.
 
-The shipping callback endpoints are not yet deployed or registered as
-ConnectActions on new orders. Do not activate
-customer shipment emails until a tracked test order proves the reference,
-payload, callback authentication, and courier tracking end to end. The one
-visible Mintsoft order at the last portal check was a manual pickup, not a
-tracked website order. Delivered callbacks additionally require Mintsoft's
-Tracking Events module and a supported courier.
+On 9 November 2026 the callback endpoints were deployed to the current live
+storefront, `https://ignyte.theblackcat94.com`, at commit `b54341065ab45f20e466c16c5b0cb129bd2f125c`.
+An unsigned request returned 401 and a signed invalid-JSON request returned 400.
+The scheduled order exporter was updated to include ConnectAction on future
+paid orders; its first run found zero orders awaiting export. A tracked
+website order has not yet proved the callback payload, customer email,
+courier tracking, or delivery event end to end. Delivered callbacks also
+require Mintsoft's Tracking Events module and a supported courier. The review
+request awaits Jacob's URL.
 
 ## Mintsoft stock reconciliation
 
@@ -104,10 +107,9 @@ automatically prints and despatches orders; do not enable it on live client 51.
 Before calling the integration end-to-end verified, check the website reservation
 handoff, courier mapping, shipping callbacks, and failure recovery. Coordinate one marked
 live order with Fulfilpackers before production traffic relies on the feed.
-Confirm courier mapping and Tracking Events support, deploy the shipping
-callback routes with a separate callback secret, register ConnectActions, and
-verify dispatch and delivery callbacks, email deduplication, and the review
-trigger. The minute order-export timer currently logs failures to the user
+Confirm courier mapping and Tracking Events support, then verify dispatch and
+delivery callbacks, email deduplication, and the review trigger. The minute
+order-export timer currently logs failures to the user
 systemd journal; add an operational failure alert before treating the flow as
 unattended.
 
@@ -154,13 +156,12 @@ details when an order moves to `DESPATCHED` and that no courier service is
 selected because shipping service names (such as Standard/Express) have not
 been mapped. The current website checkout offers one standard Australian
 delivery service, with a free-shipping price variant; it does not offer Express.
-On 9 November, unsigned POST probes to both
+Before the 9 November live deployment, unsigned POST probes to both
 `https://ignyteactive.com/api/mintsoft/shipping/dispatched` and the matching
 `https://dev.ignyteactive.com` path returned 404. The test order was submitted
-without a ConnectAction. Therefore Daniel's despatch step cannot yet update
-the website or trigger a shipment email. Deploy the authenticated callback
-route, configure its separate secret, add ConnectAction URLs and the website
-order UUID during order creation, confirm client-user `ClientEditOrder`
-permission, agree the Standard service mapping, and perform a tracked despatch
-test. Delivered callbacks still depend on the courier and Mintsoft Tracking
-Events module.
+without a ConnectAction. It therefore cannot exercise the newly deployed
+callback. Confirm client-user `ClientEditOrder` permission, agree the Standard
+service mapping, and perform a tracked despatch test. Delivered callbacks still
+depend on the courier and Mintsoft Tracking Events module. The staging build
+passed but could not be installed because SSH to its Lightsail host timed out;
+the staging website remains on its previous release.
