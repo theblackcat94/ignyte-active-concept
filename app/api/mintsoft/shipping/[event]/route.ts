@@ -14,6 +14,33 @@ function authorised(request: Request, secret: string): boolean {
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
+async function applyIsolatedTestEvent(parsed: NonNullable<ReturnType<typeof parseMintsoftShippingEvent>>,
+  event: "dispatched" | "delivered"): Promise<boolean> {
+  const db = adminDb();
+  const { data: order, error } = await db.from("orders")
+    .select("status,shipping_status,shipping_details,stripe_session_id")
+    .eq("id", parsed.orderId).maybeSingle();
+  const details = order?.shipping_details as { test_order?: boolean } | null;
+  if (error || !order || order.status !== "paid" || details?.test_order !== true ||
+      !order.stripe_session_id?.startsWith("cs_test_")) {
+    throw new Error("No eligible isolated Stripe test order");
+  }
+  if (order.shipping_status === "delivered" || order.shipping_status === event) return false;
+  const values = {
+    shipping_status: event,
+    ...(parsed.carrier ? { carrier_name: parsed.carrier } : {}),
+    ...(parsed.trackingNumber ? { tracking_number: parsed.trackingNumber } : {}),
+    ...(parsed.trackingUrl ? { tracking_url: parsed.trackingUrl } : {}),
+    ...(event === "dispatched" ? { dispatched_at: new Date().toISOString() }
+      : { delivered_at: new Date().toISOString() }),
+  };
+  const { data: saved, error: saveError } = await db.from("orders").update(values)
+    .eq("id", parsed.orderId).eq("status", "paid")
+    .eq("shipping_status", order.shipping_status).select("id").maybeSingle();
+  if (saveError || !saved) throw new Error("Isolated test event needs a retry");
+  return true;
+}
+
 export async function POST(request: Request, { params }: { params: Promise<{ event: string }> }) {
   const { event } = await params;
   if (event !== "dispatched" && event !== "delivered") {
@@ -31,15 +58,23 @@ export async function POST(request: Request, { params }: { params: Promise<{ eve
   catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
   const parsed = parseMintsoftShippingEvent(payload);
   if (!parsed) return NextResponse.json({ error: "Order reference missing or invalid" }, { status: 422 });
-  const { data: changed, error } = await adminDb().rpc("apply_mintsoft_shipping_event", {
-    p_order_id: parsed.orderId,
-    p_event: event,
-    p_carrier: parsed.carrier,
-    p_tracking_number: parsed.trackingNumber,
-    p_tracking_url: parsed.trackingUrl,
-  });
-  if (error) {
-    console.error("Mintsoft shipping event rejected", error.code);
+  let changed: boolean;
+  try {
+    if (process.env.NEXT_PUBLIC_SITE_URL === "https://dev.ignyteactive.com") {
+      changed = await applyIsolatedTestEvent(parsed, event);
+    } else {
+      const result = await adminDb().rpc("apply_mintsoft_shipping_event", {
+        p_order_id: parsed.orderId,
+        p_event: event,
+        p_carrier: parsed.carrier,
+        p_tracking_number: parsed.trackingNumber,
+        p_tracking_url: parsed.trackingUrl,
+      });
+      if (result.error) throw result.error;
+      changed = result.data;
+    }
+  } catch (error) {
+    console.error("Mintsoft shipping event rejected", error instanceof Error ? error.message : "Unknown error");
     return NextResponse.json({ error: "Shipping event could not be applied" }, { status: 409 });
   }
   // Queue on retries too: an earlier request may have saved the state but failed

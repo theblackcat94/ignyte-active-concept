@@ -25,6 +25,21 @@ test("exports only genuine paid, reserved orders with stable references", () => 
   ]) assert.equal(eligibleMintsoftOrder({ ...order, ...changed }), false);
 });
 
+test("manual test export accepts only paid, reserved sandbox orders", () => {
+  const sandbox = { ...order, eway_environment: null, stripe_session_id: "cs_test_example",
+    shipping_details: { ...order.shipping_details, test_order: true } };
+  assert.equal(eligibleMintsoftOrder(sandbox), false);
+  assert.equal(eligibleMintsoftOrder(sandbox, true), true);
+  assert.equal(eligibleMintsoftOrder({ ...sandbox, stock_reserved: false }, true), false);
+  assert.equal(eligibleMintsoftOrder({ ...sandbox, shipping_details: order.shipping_details }, true), false);
+  assert.equal(eligibleMintsoftOrder({ ...sandbox, eway_environment: "production" }, true), false);
+  const payload = mintsoftOrderPayload(sandbox,
+    [{ sku: "2shirtbundle", quantity: 1, unit_price_cents: 100 }], 30, 5,
+    mintsoftConnectAction(order.id, "https://dev.ignyteactive.com", "a".repeat(64)), "AUTO", true);
+  assert.equal(payload.ClientId, 30);
+  assert.equal(payload.ConnectAction.ExtraCode1, "https://dev.ignyteactive.com/api/mintsoft/shipping/dispatched/");
+});
+
 test("rejects incomplete fulfilment details and accepts Mintsoft lookup IDs", () => {
   assert.throws(() => mintsoftOrderPayload({ ...order, shipping_details: {
     ...order.shipping_details, address: { ...order.shipping_details.address, postal_code: "" },
