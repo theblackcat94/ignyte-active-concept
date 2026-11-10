@@ -1,6 +1,13 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
-import { assertActiveSkusCovered, parseMintsoftStockLevels } from "../lib/mintsoft-stock.mjs";
+import { assertActiveSkusCovered, assertOrderItemsAvailable, parseMintsoftStockLevels } from "../lib/mintsoft-stock.mjs";
+
+test("test orders require an exact SKU with enough test-client stock", () => {
+  const levels = new Map([["2SHIRTBUNDLE", 2]]);
+  assert.doesNotThrow(() => assertOrderItemsAvailable([{ sku: "2shirtbundle", quantity: 1 }], levels));
+  assert.throws(() => assertOrderItemsAvailable([{ sku: "IGN-LVR-SHTS-JAC-L", quantity: 1 }], levels));
+  assert.throws(() => assertOrderItemsAvailable([{ sku: "2shirtbundle", quantity: 3 }], levels));
+});
 
 const row = (SKU, Level, WarehouseId = 5, ClientId = 51) => ({ SKU, Level, WarehouseId, ClientId });
 

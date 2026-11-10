@@ -3,7 +3,7 @@
 import nextEnv from "@next/env";
 import { createClient } from "@supabase/supabase-js";
 import { eligibleMintsoftOrder, mintsoftConnectAction, mintsoftOrderId, mintsoftOrderPayload } from "../lib/mintsoft-order.mjs";
-import { parseMintsoftStockLevels } from "../lib/mintsoft-stock.mjs";
+import { assertOrderItemsAvailable, parseMintsoftStockLevels } from "../lib/mintsoft-stock.mjs";
 
 nextEnv.loadEnvConfig(process.cwd());
 const args = process.argv.slice(2);
@@ -51,11 +51,7 @@ async function mintsoft(path, options = {}) {
 const stock = await mintsoft(`/api/Product/StockLevels?WarehouseId=${warehouseId}&ClientId=${clientId}`);
 if (!stock.ok) throw new Error(`Test-client stock lookup failed: HTTP ${stock.status}`);
 const levels = parseMintsoftStockLevels(stock.body, warehouseId, clientId);
-for (const item of items) {
-  if (!item.sku || levels.get(item.sku.toUpperCase()) < item.quantity) {
-    throw new Error(`Test client 30 has insufficient stock for ${item.sku ?? "unknown SKU"}`);
-  }
-}
+assertOrderItemsAvailable(items, levels);
 
 const action = mintsoftConnectAction(orderId, siteUrl, callbackSecret);
 const payload = mintsoftOrderPayload(order, items, clientId, warehouseId, action,
@@ -77,7 +73,11 @@ if (!mintsoftId) {
     const retryLookup = await mintsoft(`/api/Order/GetOrderId?OrderNumber=${encodeURIComponent(orderId)}`);
     mintsoftId = retryLookup.ok ? mintsoftOrderId(retryLookup.body) : null;
   }
-  if (!mintsoftId) throw new Error(`Mintsoft did not acknowledge the isolated test order: HTTP ${created.status}`);
+  if (!mintsoftId) {
+    const reason = [responseOrder?.Message, responseOrder?.ErrorMessage, responseOrder?.Error]
+      .find((value) => typeof value === "string" && value.trim());
+    throw new Error(`Mintsoft did not acknowledge the isolated test order: HTTP ${created.status}; ${reason ? reason.slice(0, 200) : "response fields " + Object.keys(responseOrder ?? {}).join(",")}`);
+  }
 }
 console.info(`Mintsoft test client ${clientId} acknowledged ${orderId} as order ${mintsoftId}`);
 console.info("This manual test does not update the live Mintsoft order ID field or the production export timer.");

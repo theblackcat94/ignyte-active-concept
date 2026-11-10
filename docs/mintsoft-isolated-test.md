@@ -8,15 +8,21 @@ Daniel confirmed client 30 does not physically fulfil test orders.
 
 ## Restore staging deployment access
 
-The staging website at `https://dev.ignyteactive.com` responds on HTTPS, but
-SSH to its Lightsail instance (`54.253.19.1`) timed out on 9 November 2026.
-In AWS Lightsail, open the `ignyte-staging` instance, check that it is running,
-then inspect **Networking → IPv4 firewall**. Allow TCP port 22 from the build
-machine's current public IP only. It was `117.20.68.14` at the last check;
-verify it again from the build machine with `curl https://checkip.amazonaws.com`
-before editing the rule. Confirm the instance still accepts the configured
-`ignyte_lightsail_deploy` key for user `ubuntu`. Close any temporary broader
-SSH rule after deployment. From the build machine, verify:
+On 10 November 2026, staging was deployed at commit
+`8772f3c465b38edfe86c90816324f8db04510d92`. SSH had timed out because
+the Lightsail firewall allowed `117.20.68.72/32`, while the build machine was
+using `117.20.68.14/32`. The second address was added to the existing TCP 22
+rule, preserving the first and Lightsail browser SSH. The instance was healthy.
+Its 58 GB disk was then found full of 162 release directories; with explicit
+authorization, 158 obsolete releases were removed while keeping the running
+release and three rollback copies. The deployment completed and the public
+callback returned 401 unsigned and 400 for signed invalid JSON.
+
+If SSH fails again, open the `ignyte-staging` instance in AWS Lightsail and
+inspect **Networking → IPv4 firewall**. Verify the build machine's current
+public IP with `curl https://checkip.amazonaws.com` before editing TCP port 22.
+Confirm the configured `ignyte_lightsail_deploy` key for user `ubuntu`. From
+the build machine, verify:
 
 ```bash
 ssh -i ~/.ssh/ignyte_lightsail_deploy -o BatchMode=yes -o ConnectTimeout=8 ubuntu@54.253.19.1 'echo connected'
@@ -37,9 +43,12 @@ An unsigned POST to `/api/mintsoft/shipping/dispatched/` should return 401.
 ## Prepare the isolated Mintsoft client
 
 Ask Daniel to copy at least one **active website SKU** and sufficient quantity
-into test client 30. The existing `2shirtbundle` test SKU proves Mintsoft API
-creation but does not match an active website SKU, so it cannot test the
-checkout-to-Mintsoft path. Ask him to map the website's **Standard Australian
+into test client 30. On 10 November, none of its 14 test SKUs matched the 48
+active website SKUs. An attempted isolated test order for website SKU
+`IGN-LVR-SHTS-JAC-L` returned Mintsoft's `Cannot find Product with SKU` and
+created no order. The dry-run guard now rejects that SKU before any API write.
+The existing `2shirtbundle` test SKU proves Mintsoft API creation but does not
+match an active website SKU. Ask Daniel to map the website's **Standard Australian
 delivery** service to a test courier and confirm test-client `ClientEditOrder`
 permission and Tracking Events support. Do not enable automatic physical
 despatch.
