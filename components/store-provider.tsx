@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type CSSProperties } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { categories as conceptCategories, legacyProductSlugs, money, products as conceptProducts, type Product } from "@/lib/catalog";
@@ -13,6 +13,7 @@ import "@/app/bag-recommendations.css";
 import "@/app/shopping-microinteractions.css";
 import FreeShippingProgress from "./free-shipping-progress";
 import PurchaseReassurance from "./purchase-reassurance";
+import AddToBagFireball, { type FireballPosition } from "./add-to-bag-fireball";
 
 type BagItem = { slug: string; size: string; quantity: number };
 type AddedItem = { slug: string; size: string; id: number; second?: { slug: string; size: string } };
@@ -67,25 +68,50 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const setAddLocked = useRef(false);
   const addLocks = useRef(new Set<string>());
   const [bagImpactId, setBagImpactId] = useState(0);
-  const [ignition, setIgnition] = useState<{ x: number; y: number; dx: number; dy: number; distance: number; angle: number; targetX: number; targetY: number; id: number } | null>(null);
+  const [ignition, setIgnition] = useState<FireballPosition | null>(null);
+  const ignitionTimers = useRef<number[]>([]);
+  const recentPointerButton = useRef<DOMRect | null>(null);
+  const recentPointerTimer = useRef<number | null>(null);
+  useEffect(() => () => ignitionTimers.current.forEach(window.clearTimeout), []);
+  useEffect(() => {
+    const rememberButton = (event: PointerEvent) => {
+      const button = event.target instanceof Element ? event.target.closest("button") : null;
+      if (button) {
+        recentPointerButton.current = button.getBoundingClientRect();
+        if (recentPointerTimer.current !== null) window.clearTimeout(recentPointerTimer.current);
+        recentPointerTimer.current = window.setTimeout(() => { recentPointerButton.current = null; }, 1200);
+      }
+    };
+    const clearOnKeyboard = () => { recentPointerButton.current = null; };
+    document.addEventListener("pointerdown", rememberButton, true);
+    document.addEventListener("keydown", clearOnKeyboard, true);
+    return () => { document.removeEventListener("pointerdown", rememberButton, true); document.removeEventListener("keydown", clearOnKeyboard, true); if (recentPointerTimer.current !== null) window.clearTimeout(recentPointerTimer.current); };
+  }, []);
   const launchIgnition = () => {
+    ignitionTimers.current.forEach(window.clearTimeout);
+    ignitionTimers.current = [];
     const id = ++noticeSequence.current;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) { setBagImpactId(id); return; }
+    if (reducedMotion) { setIgnition(null); setBagImpactId(id); return; }
     const active = document.activeElement;
-    if (!(active instanceof HTMLButtonElement)) return;
-    const origin = active.getBoundingClientRect();
+    const origin = recentPointerButton.current ?? (active instanceof HTMLButtonElement ? active.getBoundingClientRect() : null);
+    if (!origin) { setIgnition(null); return; }
     const header = document.querySelector(".bag-trigger")?.getBoundingClientRect();
     const headerVisible = !bagOpen && header && header.width > 0 && header.top >= 0 && header.bottom <= window.innerHeight && !document.querySelector(".site-header-hidden");
-    const x = origin.left + origin.width / 2;
-    const y = origin.top + origin.height / 2;
-    const targetX = headerVisible ? header.left + header.width / 2 : window.innerWidth - Math.min(470, window.innerWidth) / 2;
-    const targetY = headerVisible ? header.top + header.height / 2 : 140;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const x = Math.max(28, Math.min(width - 28, origin.left + origin.width / 2));
+    const y = Math.max(28, Math.min(height - 28, origin.top + origin.height / 2));
+    const targetX = headerVisible ? header.left + header.width / 2 : width <= 800 ? width / 2 : width - Math.min(470, width) / 2;
+    const targetY = headerVisible ? header.top + header.height / 2 : Math.max(105, Math.min(155, height * .18));
     const dx = targetX - x;
     const dy = targetY - y;
-    setIgnition({ x, y, dx, dy, distance: Math.hypot(dx, dy), angle: Math.atan2(dy, dx) * 180 / Math.PI, targetX, targetY, id });
-    window.setTimeout(() => setBagImpactId(id), 620);
-    window.setTimeout(() => setIgnition(current => current?.id === id ? null : current), 1100);
+    const bend = Math.min(155, Math.max(65, Math.abs(dx) * .24));
+    const controlX = Math.max(24, Math.min(width - 24, (x + targetX) / 2 + (dx >= 0 ? -bend : bend)));
+    const controlY = Math.max(25, Math.min(height - 25, (y + targetY) / 2 - Math.min(130, Math.abs(dy) * .18)));
+    setIgnition({ x, y, controlX, controlY, targetX, targetY, width, height, id });
+    ignitionTimers.current.push(window.setTimeout(() => setBagImpactId(id), 820));
+    ignitionTimers.current.push(window.setTimeout(() => setIgnition(current => current?.id === id ? null : current), 1700));
   };
 
   useEffect(() => {
@@ -240,7 +266,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   return (
     <StoreContext.Provider value={{ products, categories, catalogPreview, catalogLoading, catalogError, bag, bagOpen, bagImpactId, setBagOpen, setBagDiscount, addToBag, addSetToBag, changeBagQuantity, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
       {children}
-      {ignition && <div key={ignition.id} className="ignyte-add-ignition" aria-hidden="true" style={{ "--ignition-x": `${ignition.x}px`, "--ignition-y": `${ignition.y}px`, "--ignition-target-x": `${ignition.targetX}px`, "--ignition-target-y": `${ignition.targetY}px`, "--ignition-distance": `${ignition.distance}px`, "--ignition-angle": `${ignition.angle}deg` } as CSSProperties}><span className="ignyte-add-flash" /><span className="ignyte-add-trail" /><span className="ignyte-add-mobile-edge"><i /><i /><i /><i /></span><span className="ignyte-add-impact" /></div>}
+      {ignition && <AddToBagFireball position={ignition} />}
       {actionNotice && <div key={actionNotice.id} className="store-action-toast" role="status" aria-live="polite"><span aria-hidden="true">✦</span>{actionNotice.message}{actionNotice.href && <a href={actionNotice.href}>View Saved Items ↗</a>}</div>}
       {bagOpen && <div className="drawer-backdrop" onClick={() => setBagOpen(false)} />}
       <aside className={`bag-drawer ${bagOpen ? "is-open" : ""}${lastAdded ? " has-ignition" : ""}`} aria-label="Shopping bag" aria-hidden={!bagOpen}>

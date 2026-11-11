@@ -1,19 +1,33 @@
-.ignyte-add-ignition{position:fixed;inset:0;z-index:130;pointer-events:none;overflow:hidden;isolation:isolate}
-.ignyte-add-flash{position:absolute;left:var(--ignition-x);top:var(--ignition-y);width:min(70vw,430px);height:min(70vw,430px);border-radius:50%;background:radial-gradient(circle,#fff7e4 0 6%,#ffab58 7% 18%,#ff4533e8 19% 32%,#ff453388 33% 46%,transparent 68%);filter:drop-shadow(0 0 22px #ff4533);transform:translate(-50%,-50%) scale(.12);animation:ignyte-ignition-flash .34s ease-out both}
-@keyframes ignyte-ignition-flash{0%{opacity:0;transform:translate(-50%,-50%) scale(.12)}30%{opacity:1}72%{opacity:.85}100%{opacity:0;transform:translate(-50%,-50%) scale(1.25)}}
-.ignyte-add-trail{position:absolute;left:var(--ignition-x);top:var(--ignition-y);width:var(--ignition-distance);height:10px;transform-origin:left center;background:linear-gradient(90deg,transparent 0%,#ff4533 27%,#ffb467 85%,#fff7e4 100%);clip-path:polygon(0 42%,100% 0,100% 100%,0 58%);filter:drop-shadow(0 0 9px #ff4533);animation:ignyte-ignition-trail .42s .27s ease-in both}
-@keyframes ignyte-ignition-trail{from{opacity:0;transform:rotate(var(--ignition-angle)) scaleX(0)}20%{opacity:1}80%{opacity:1}to{opacity:0;transform:rotate(var(--ignition-angle)) scaleX(1)}}
-.ignyte-add-impact{position:absolute;left:var(--ignition-target-x);top:var(--ignition-target-y);width:75px;height:75px;border-radius:50%;background:radial-gradient(circle,#fff4da 0 10%,#ff4533c9 25%,transparent 70%);transform:translate(-50%,-50%) scale(.2);animation:ignyte-ignition-impact .34s .62s ease-out both}
-.ignyte-add-mobile-edge{display:none}
-@keyframes ignyte-ignition-impact{0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}25%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.55)}}
-.bag-icon-wrap.bag-just-added{animation:bag-icon-pop .3s ease-out}
-.bag-icon-wrap.bag-just-added sup{animation:bag-count-pop .3s ease-out}
-@keyframes bag-icon-pop{45%{transform:scale(1.08)}to{transform:scale(1)}}
-@keyframes bag-count-pop{45%{filter:brightness(1.35);transform:scale(1.14)}to{filter:none;transform:scale(1)}}
-.bag-drawer.is-open::before{content:"";position:absolute;z-index:2;top:0;left:0;right:0;height:2px;background:#ff4533;transform-origin:left;animation:bag-trace .5s ease-out both;pointer-events:none}
-.bag-drawer.has-ignition::before{animation:none;transform:none;opacity:.65}
-@keyframes bag-trace{from{transform:scaleX(0);opacity:.6}to{transform:scaleX(1);opacity:1}}
-.bag-added-confirmation{position:relative;display:grid;grid-template-columns:54px minmax(0,1fr) 24px;gap:12px;align-items:center;min-height:132px;padding:12px 20px;border-bottom:1px solid var(--bag-line,#d5d1ca);background:var(--bag-option,#f5f3ee);color:var(--bag-ink,#0b1020);animation:ignyte-confirm-in .32s .68s ease-out both}
+.ignyte-add-ignition{position:fixed;inset:0;z-index:170;pointer-events:none;overflow:hidden;isolation:isolate;contain:layout style}
+.ignyte-fireball-source{position:absolute;left:var(--fireball-x);top:var(--fireball-y);width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,#fff9da 0 9%,#ff8a32 18%,#ff4533 37%,transparent 69%);transform:translate(-50%,-50%) scale(.15);animation:fireball-ignite .32s ease-out both}
+.ignyte-fireball-source::after{content:"";position:absolute;inset:8px;border:3px solid #ff7b37;border-radius:50%;animation:fireball-shockwave .45s .11s ease-out both}
+@keyframes fireball-ignite{0%{opacity:0;transform:translate(-50%,-50%) scale(.15)}35%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.8)}}
+@keyframes fireball-shockwave{from{opacity:.9;transform:scale(.2)}to{opacity:0;transform:scale(2.2)}}
+.ignyte-fireball-trail{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 10px #ff4533)}
+.ignyte-fireball-trail path{fill:none;stroke-width:19;stroke-linecap:round;stroke-dasharray:22 100;stroke-dashoffset:22;animation:fireball-trace .53s .27s ease-in both}
+@keyframes fireball-trace{0%{opacity:0;stroke-dashoffset:22;stroke-width:7}20%{opacity:.9}75%{opacity:1;stroke-width:25}100%{opacity:0;stroke-dashoffset:-100;stroke-width:4}}
+.ignyte-fireball-projectile,.ignyte-fireball-embers i{position:absolute;left:0;top:0;offset-path:var(--fireball-path);offset-rotate:0deg}
+.ignyte-fireball-projectile{width:86px;height:86px;margin:-43px 0 0 -43px;filter:drop-shadow(0 0 14px #ff4533) drop-shadow(0 0 25px #ff8e35);animation:fireball-flight .53s .27s cubic-bezier(.32,.06,.62,1) both}
+.ignyte-fireball-projectile svg{width:100%;height:100%}
+.ignyte-fireball-flames{transform-origin:55px 62px;animation:fireball-flame-flicker .18s ease-in-out infinite alternate}
+@keyframes fireball-flame-flicker{from{transform:scale(.92) rotate(-7deg)}to{transform:scale(1.08) rotate(7deg)}}
+@keyframes fireball-flight{0%{offset-distance:0;opacity:0;transform:scale(.45) rotate(-15deg)}16%{opacity:1}85%{opacity:1;transform:scale(1.12) rotate(8deg)}100%{offset-distance:100%;opacity:0;transform:scale(.65) rotate(18deg)}}
+.ignyte-fireball-embers i{width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:40% 60% 50% 35%;background:#ffd983;box-shadow:0 0 9px 3px #ff4533;animation:fireball-ember-flight .65s calc(.28s + var(--ember-delay)) ease-out both}
+.ignyte-fireball-embers i:nth-child(3n){background:#aa1e12}.ignyte-fireball-embers i:nth-child(4n){background:#fff6ce}
+@keyframes fireball-ember-flight{0%{offset-distance:0;opacity:0;transform:scale(var(--ember-scale))}20%{opacity:1}70%{opacity:.9}100%{offset-distance:85%;opacity:0;transform:translate(calc((var(--ember-index) - 6) * 8px),calc((var(--ember-index) - 6) * -6px)) scale(.25)}}
+.ignyte-fireball-impact{position:absolute;left:var(--fireball-target-x);top:var(--fireball-target-y);width:110px;height:110px;transform:translate(-50%,-50%);opacity:0;animation:fireball-impact-show .42s .79s ease-out both}
+.ignyte-fireball-impact i,.ignyte-fireball-impact b,.ignyte-fireball-impact em{position:absolute;inset:0;border-radius:50%;display:block}
+.ignyte-fireball-impact i{background:radial-gradient(circle,#fff 0 7%,#ffe4a2 12%,#ff4533 30%,#a32214 54%,transparent 71%)}
+.ignyte-fireball-impact b{border:4px solid #ff692d;box-shadow:0 0 18px #ff4533;animation:fireball-impact-ring .48s .83s ease-out both}
+.ignyte-fireball-impact em{background:conic-gradient(from 15deg,transparent 0 12%,#ffdb86 13% 15%,transparent 16% 30%,#ff4533 31% 34%,transparent 35% 52%,#fff1c7 53% 55%,transparent 56% 73%,#ff6d28 74% 77%,transparent 78%);animation:fireball-impact-ring .4s .82s ease-out both}
+@keyframes fireball-impact-show{0%{opacity:0;transform:translate(-50%,-50%) scale(.25)}28%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(2)}}
+@keyframes fireball-impact-ring{from{opacity:1;transform:scale(.2)}to{opacity:0;transform:scale(2.3)}}
+.ignyte-fireball-logo{position:absolute;left:var(--fireball-target-x);top:var(--fireball-target-y);width:42px;height:86px;overflow:visible;fill:#ff4533;filter:drop-shadow(0 0 10px #ff7a37);animation:fireball-logo-reveal .48s 1.08s ease-out both}
+@keyframes fireball-logo-reveal{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}38%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}100%{opacity:0;transform:translate(-50%,-60%) scale(1.2)}}
+.bag-icon-wrap.bag-just-added{animation:bag-icon-pop .4s ease-out}
+@keyframes bag-icon-pop{40%{transform:scale(1.28);filter:drop-shadow(0 0 11px #ff4533)}to{transform:scale(1);filter:none}}
+.bag-drawer.is-open::before{content:"";position:absolute;z-index:2;top:0;left:0;right:0;height:2px;background:#ff4533;opacity:.65;pointer-events:none}
+.bag-added-confirmation{position:relative;display:grid;grid-template-columns:54px minmax(0,1fr) 24px;gap:12px;align-items:center;min-height:132px;padding:12px 20px;border-bottom:1px solid var(--bag-line,#d5d1ca);background:var(--bag-option,#f5f3ee);color:var(--bag-ink,#0b1020);animation:ignyte-confirm-in .32s 1.14s ease-out both}
 @keyframes ignyte-confirm-in{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
 .bag-added-confirmation img{width:54px;height:68px;object-fit:cover}
 .bag-added-confirmation .bag-added-copy{display:grid;gap:3px;min-width:0}
@@ -40,22 +54,6 @@ html[data-appearance="dark"] .product-card .product-heart[aria-pressed="true"],h
 .product-page .size-grid button,.pdp-desktop-purchase-sizes button,.product-card .quick-add-sizes button,.look-sizes button{transition:border-color .18s ease,background-color .18s ease,color .18s ease}
 .product-page .size-grid button.selected,.pdp-desktop-purchase-sizes button[aria-pressed="true"],.product-card .quick-add-sizes button.selected,.look-sizes button[aria-pressed="true"]{outline:2px solid #ff4533;outline-offset:1px}
 html[data-appearance="ignyte"] .product-page .size-grid button.selected,html[data-appearance="ignyte"] .pdp-desktop-purchase-sizes button[aria-pressed="true"],html[data-appearance="ignyte"] .look-sizes button[aria-pressed="true"]{outline-color:#0b1020}
-@media(max-width:520px){.product-card .product-heart{top:5px;right:5px;width:44px;height:44px}.ignyte-add-flash{width:240px;height:240px}}
-@media(max-width:800px){
-  .ignyte-add-ignition{z-index:170;height:100vh;height:100dvh;inset:0 0 auto;overflow:visible}
-  .ignyte-add-trail{display:none}
-  .ignyte-add-flash{width:min(85vw,340px);height:min(85vw,340px)}
-  .ignyte-add-mobile-edge{display:block;position:absolute;inset:max(2px,env(safe-area-inset-top)) 2px max(2px,env(safe-area-inset-bottom));pointer-events:none}
-  .ignyte-add-mobile-edge i{position:absolute;display:block;border-radius:9px;background:linear-gradient(90deg,#ff4533,#fff3ce 68%,#ff4533);box-shadow:0 0 14px 6px #ff4533,0 0 32px 12px #ff4533a8;opacity:0}
-  .ignyte-add-mobile-edge i:nth-child(1){left:0;bottom:0;width:100%;height:6px;transform-origin:left;animation:ignyte-edge-horizontal .32s .16s ease-in both}
-  .ignyte-add-mobile-edge i:nth-child(2){right:0;bottom:0;width:6px;height:100%;transform-origin:bottom;animation:ignyte-edge-vertical .32s .35s ease-in both}
-  .ignyte-add-mobile-edge i:nth-child(3){right:0;top:0;width:100%;height:6px;transform-origin:right;animation:ignyte-edge-horizontal .32s .55s ease-in both}
-  .ignyte-add-mobile-edge i:nth-child(4){left:0;top:0;width:6px;height:45%;transform-origin:top;animation:ignyte-edge-vertical .28s .78s ease-in both}
-  .ignyte-add-impact{left:50%;top:max(155px,calc(env(safe-area-inset-top) + 110px));width:105px;height:105px}
-  .bag-drawer.has-ignition .bag-added-confirmation{animation:ignyte-confirm-in .32s .68s ease-out both,ignyte-confirm-glow .42s .68s ease-out both}
-}
-@keyframes ignyte-edge-horizontal{0%{opacity:0;transform:scaleX(0)}18%,75%{opacity:1}100%{opacity:0;transform:scaleX(1)}}
-@keyframes ignyte-edge-vertical{0%{opacity:0;transform:scaleY(0)}18%,75%{opacity:1}100%{opacity:0;transform:scaleY(1)}}
-@keyframes ignyte-confirm-glow{40%{box-shadow:inset 0 0 0 2px #ff4533,0 0 24px #ff453388}100%{box-shadow:none}}
-@media(prefers-reduced-motion:reduce){.ignyte-add-ignition{display:none}.bag-icon-wrap.bag-just-added,.bag-icon-wrap.bag-just-added sup,.bag-drawer.is-open::before,.bag-added-confirmation,.bag-recommendations,.product-image-link .product-image-primary,.product-heart.just-saved::after,.pdp-title-wishlist.just-saved::after{animation:none}.product-card .product-image-link img,.product-page .size-grid button,.pdp-desktop-purchase-sizes button,.product-card .quick-add-sizes button,.look-sizes button{transition:none}.product-card:hover .product-image-link img{transform:none}}
-@media(max-width:800px) and (prefers-reduced-motion:reduce){.bag-drawer.has-ignition .bag-added-confirmation{animation:none}}
+@media(max-width:520px){.product-card .product-heart{top:5px;right:5px;width:44px;height:44px}}
+@media(max-width:800px){.ignyte-add-ignition{height:100vh;height:100dvh;inset:0 0 auto}.ignyte-fireball-projectile{width:102px;height:102px;margin:-51px 0 0 -51px}.ignyte-fireball-trail path{stroke-width:23}.ignyte-fireball-impact{width:125px;height:125px}}
+@media(prefers-reduced-motion:reduce){.ignyte-add-ignition{display:none}.bag-icon-wrap.bag-just-added,.bag-drawer.is-open::before,.bag-added-confirmation,.bag-recommendations,.product-image-link .product-image-primary,.product-heart.just-saved::after,.pdp-title-wishlist.just-saved::after{animation:none}.product-card .product-image-link img,.product-page .size-grid button,.pdp-desktop-purchase-sizes button,.product-card .quick-add-sizes button,.look-sizes button{transition:none}.product-card:hover .product-image-link img{transform:none}}
