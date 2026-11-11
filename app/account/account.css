@@ -37,3 +37,5 @@ html[data-appearance="ignyte"] .account-page .account-sidebar nav a:hover{backgr
 html[data-appearance="ignyte"] .account-page .account-tabs button{background:transparent;color:#0B1020}
 html[data-appearance="ignyte"] .account-page .account-tabs button.active{background:#0B1020;color:#fff}
 html[data-appearance="ignyte"] .account-page .account-form input{background:#fff4ed;color:#0B1020;border-color:#0B1020}
+.account-recovery-pref{margin:22px 0;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);color:var(--ink)}
+.account-recovery-pref h2{margin:0 0 8px;font-size:18px;line-height:1.2}.account-recovery-pref p{margin:0 0 10px;color:var(--muted);font-size:13px;line-height:1.5}.account-recovery-pref label{display:flex;align-items:flex-start;gap:9px;font-size:13px;line-height:1.45;cursor:pointer}.account-recovery-pref input{width:17px;height:17px;flex:none;accent-color:#ff4533}

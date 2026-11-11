@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { categories as conceptCategories, legacyProductSlugs, money, products as conceptProducts, type Product } from "@/lib/catalog";
-import { activeCategories, activeProducts, commerceConfigured } from "@/lib/commerce";
+import { activeCategories, activeProducts, browserDb, commerceConfigured } from "@/lib/commerce";
 import { track } from "@/lib/analytics-client";
 import { bagRecommendations, matchingBagProducts } from "@/lib/product-merchandising";
 import { qualifiesForFreeShipping } from "@/lib/shipping-policy";
@@ -158,6 +158,28 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     return () => { cancelled = true; };
   }, []);
   useEffect(() => { if (storageReady) localStorage.setItem("ignyte-concept-bag", JSON.stringify(bag)); }, [bag, storageReady]);
+  useEffect(() => {
+    const restore = (event: Event) => {
+      const items = (event as CustomEvent<BagItem[]>).detail;
+      if (!Array.isArray(items)) return;
+      setBag(current => [...current, ...items.filter(item => !current.some(existing => existing.slug === item.slug && existing.size === item.size))]);
+      setBagOpenState(true);
+    };
+    window.addEventListener("ignyte:restore-bag", restore);
+    return () => window.removeEventListener("ignyte:restore-bag", restore);
+  }, []);
+  const recoveryBagReady = useRef(false);
+  useEffect(() => {
+    if (!storageReady || !commerceConfigured) return;
+    // The first empty render is not a customer action; do not suppress a cart from another device.
+    if (!recoveryBagReady.current) { recoveryBagReady.current = true; if (!bag.length) return; }
+    const timer = window.setTimeout(async () => {
+      const { data } = await browserDb().auth.getSession();
+      if (!data.session?.access_token) return;
+      await fetch("/api/recovery/activity", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${data.session.access_token}` }, body: JSON.stringify({ kind: "cart", items: bag }), keepalive: true }).catch(() => undefined);
+    }, 2500);
+    return () => window.clearTimeout(timer);
+  }, [bag, storageReady]);
   useEffect(() => { if (storageReady) localStorage.setItem("ignyte-concept-wishlist", JSON.stringify(wishlist)); }, [wishlist, storageReady]);
 
   const addToBag = (slug: string, size: string): boolean => {

@@ -129,3 +129,18 @@ export function joinFireWelcomeEmail(siteUrl: string, unsubscribeUrl: string, co
     text: `YOUR FIRE STARTS HERE.\n\nWelcome to the IGNYTE crew.\n\nAs a thank you for joining us, here's ${percent}% off your first eligible order.\n\nYour code: ${code}\n\nSHOP IGNYTE: ${home}/shop/\n\n${terms}\n\nUnsubscribe: ${unsubscribeUrl}`,
   };
 }
+
+export type RecoveryEmailProduct = { name: string; color: string; size: string; quantity: number; image: string; slug: string; priceCents: number };
+
+/** Cart recovery copy approved in Jacob's brief. Sending remains separately gated. */
+export function cartRecoveryEmail(stage: 1 | 2, products: RecoveryEmailProduct[], restoreUrl: string, siteUrl: string, unsubscribeUrl: string): EmailDesign {
+  const first = stage === 1;
+  const subject = first ? "Still got your eye on something? 👀" : "Ready when you are. 🔥";
+  const preview = first ? "Your IGNYTE picks are waiting when you're ready." : "Your next move might already be in your bag.";
+  const title = first ? "Still thinking it over?" : "Your next move is waiting.";
+  const intro = first ? ["Looks like you left something behind.", "Whether you're gearing up for your next strength session or finding your new training favourite, your IGNYTE picks are just a click away."] : ["Good things take a little thought. We get it.", "The pieces you picked are still worth another look.", "Built for movement, designed for confidence, and ready for whatever your next session brings."];
+  const rows = products.map(item => `<tr><td style="padding:12px 10px 12px 0;width:76px"><img src="${verifiedUrl(new URL(item.image, siteUrl).toString())}" alt="${escapeHtml(item.name)} in ${escapeHtml(item.color)}" width="72" style="display:block;width:72px;height:96px;object-fit:cover;border:0"></td><td style="padding:12px 0;font-size:14px;line-height:1.5"><strong>${escapeHtml(item.name)}</strong><br>Colour: ${escapeHtml(item.color)}<br>Size: ${escapeHtml(item.size)} · Qty ${item.quantity}<br>Price: ${aud(item.priceCents)}</td></tr>`).join("");
+  const support = first ? "Need a hand choosing your size? Check out our Size Guide or reach out to our team. We're happy to help." : "Still deciding? Finding the right fit matters. Explore our size guide or get in touch if you have questions.";
+  const content = intro.map(paragraph).join("") + `<p style="margin:22px 0 8px;font-size:11px;letter-spacing:1.8px;font-weight:700">${first ? "YOUR BAG_" : "TAKE ANOTHER LOOK_"}</p><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;border-top:1px solid #dedbd6">${rows}</table>` + button(first ? "BACK TO MY BAG" : "PICK UP WHERE YOU LEFT OFF", restoreUrl) + `<p style="margin:24px 0 0;font-size:14px;line-height:1.6">${escapeHtml(support)} <a href="${verifiedUrl(`${siteUrl.replace(/\/$/, "")}/size-guide/`)}" style="color:#0b1020">Size Guide ↗</a></p><p style="margin:20px 0 0;font-size:14px">The IGNYTE Team</p>`;
+  return { subject, html: layout(first ? "YOUR IGNYTE BAG_" : "A LITTLE REMINDER_", title, content, siteUrl, preview, unsubscribeUrl), text: `${title}\n\n${intro.join("\n\n")}\n\n${first ? "YOUR BAG_" : "TAKE ANOTHER LOOK_"}\n${products.map(item => `${item.name} · ${item.color} · ${item.size} × ${item.quantity} · ${aud(item.priceCents)}`).join("\n")}\n\n${first ? "Back to my bag" : "Pick up where you left off"}: ${restoreUrl}\n\n${support}\nSize guide: ${siteUrl.replace(/\/$/, "")}/size-guide/\n\nThe IGNYTE Team\nUnsubscribe: ${unsubscribeUrl}` };
+}

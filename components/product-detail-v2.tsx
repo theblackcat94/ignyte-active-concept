@@ -27,8 +27,10 @@ import PurchaseReassurance, { ReturnsIcon, ShippingIcon } from "./purchase-reass
 import { FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping-policy";
 import ProductDescription from "./product-description";
 import PdpEditShortcut from "./pdp-edit-shortcut";
+import BrowseRecoveryPrompt from "./browse-recovery-prompt";
 import { SUPPORT_LEVELS, supportGuidance, supportLevel } from "@/lib/support-level";
 import "@/app/product-detail-v2.css";
+import "@/app/browse-recovery.css";
 
 const fitScale = ["RUNS SMALLER", "TRUE TO SIZE", "RUNS LARGER"] as const;
 const fitLabels = ["Runs smaller", "True to size", "Runs larger"] as const;
@@ -47,7 +49,7 @@ function fitScalePosition(advice: string): number | null {
 }
 
 export default function ProductDetail({ product: initialProduct }: { product: Product }) {
-  const { products, addToBag, bagOpen, wishlist, toggleWishlist, catalogLoading, catalogError } = useStore();
+  const { products, addToBag, bag, bagOpen, wishlist, toggleWishlist, catalogLoading, catalogError } = useStore();
   const product = !catalogLoading && !catalogError ? products.find(item => item.slug === initialProduct.slug) ?? initialProduct : initialProduct;
   useEffect(() => {
     try {
@@ -169,6 +171,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   }
 
   return <div className={`product-page pdp-stacked section-wrap${(showMobilePurchase || showDesktopPurchase) && !bagOpen && !guideOpen ? " has-sticky-purchase" : ""}`}>
+    <BrowseRecoveryPrompt slug={product.slug} bagHasProduct={bag.some(item => item.slug === product.slug)} />
     <div className="detail-grid"><div><StackedProductGallery product={product} /></div><div className="detail-info" tabIndex={0} aria-label="Product details and purchase options"><div className="pdp-breadcrumb-row"><div className="breadcrumb pdp-detail-breadcrumb"><Link href="/">IGNYTE</Link><span>/</span><Link href={`/shop/${product.category}`}>{product.category.toUpperCase().replace("-", " ")}</Link><span>/</span><span>{product.name.toUpperCase()}</span></div><PdpEditShortcut slug={product.slug} /></div><div className="pdp-title-row"><h1>{product.name.toUpperCase()}<em>.</em></h1><button type="button" className={`pdp-title-wishlist${savePulse ? " just-saved" : ""}`} aria-label={wishlist.includes(product.slug) ? "Remove from wishlist" : "Save to wishlist"} aria-pressed={wishlist.includes(product.slug)} onClick={() => { if (!wishlist.includes(product.slug)) setSavePulse(true); toggleWishlist(product.slug); }}><HeartIcon filled={wishlist.includes(product.slug)} /></button></div>
       <div className="detail-price">{saleOriginalPrice && <del>{money(saleOriginalPrice)}</del>}<span>{money(selectedVariant?.price ?? product.price)}<CurrencyEstimate aud={selectedVariant?.price ?? product.price} /></span></div>
       {saleOriginalPrice && <p className="pdp-sale-returns-note">SALE ITEM · FINAL SALE FOR CHANGE-OF-MIND RETURNS. <Link href="/returns/#returns">RETURNS POLICY ↗</Link></p>}

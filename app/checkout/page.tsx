@@ -22,6 +22,7 @@ export default function CheckoutPage() {
   const [shipping, setShipping] = useState<Shipping>(emptyShipping);
   const [email, setEmail] = useState("");
   const [newsletterOptIn, setNewsletterOptIn] = useState(false);
+  const [recoveryOptIn, setRecoveryOptIn] = useState(false);
   const [newsletterWarning, setNewsletterWarning] = useState("");
   const [signedIn, setSignedIn] = useState(false);
   const [guestOrder, setGuestOrder] = useState(false);
@@ -127,6 +128,12 @@ export default function CheckoutPage() {
           if (!signup.ok) setNewsletterWarning("We could not add you to the newsletter. You can sign up in the footer.");
         } catch { setNewsletterWarning("We could not add you to the newsletter. You can sign up in the footer."); }
       }
+      if (recoveryOptIn && session?.access_token) {
+        try {
+          const preference = await fetch("/api/recovery/consent", { method: "POST", headers: { ...headers, Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ consent: true }) });
+          if (!preference.ok) setNewsletterWarning("Product reminders need an active IGNYTE email subscription. You can manage this in your account.");
+        } catch { setNewsletterWarning("Product reminder preference could not be saved. You can manage this in your account."); }
+      }
       if (payment?.provider === "stripe" && payment.available && result.amountDueCents !== null) {
         const paymentResponse = await fetch("/api/stripe/start", {
           method: "POST", headers,
@@ -183,6 +190,7 @@ export default function CheckoutPage() {
         <div className="checkout-fields">
           <label className="wide">EMAIL ADDRESS<input required type="email" autoComplete="email" maxLength={254} value={email} readOnly={signedIn} onChange={event => setEmail(event.target.value)} /></label>
           <label className="wide checkout-newsletter"><input type="checkbox" checked={newsletterOptIn} onChange={event => setNewsletterOptIn(event.target.checked)} /><span>Yes, email me IGNYTE news and product updates. Optional; unsubscribe any time.</span></label>
+          {signedIn && <label className="wide checkout-newsletter"><input type="checkbox" checked={recoveryOptIn} onChange={event => setRecoveryOptIn(event.target.checked)} /><span>Optional: email me personalised reminders about items left in my bag or products I explored. Requires an IGNYTE email subscription; I can turn reminders off in my account.</span></label>}
           <label className="wide">FULL NAME<input required autoComplete="name" maxLength={120} value={shipping.name} onChange={event => setShipping({ ...shipping, name: event.target.value })} /></label>
           <div className="checkout-address-head"><h3>DELIVERY ADDRESS</h3><p>Australia only. We’ll calculate shipping from your state and postcode.</p></div>
           <label>PHONE<input required type="tel" autoComplete="tel" minLength={8} maxLength={30} value={shipping.phone} onChange={event => setShipping({ ...shipping, phone: event.target.value })} /></label>

@@ -1,0 +1,4 @@
+.pdp-fit-help{position:fixed;right:18px;bottom:18px;z-index:55;display:flex;gap:22px;align-items:flex-start;width:min(330px,calc(100vw - 36px));padding:18px 20px;background:var(--paper);color:var(--ink);border:1px solid currentColor;box-shadow:0 12px 30px #0003}
+.pdp-fit-help span{font-family:var(--font-sohne-mono),monospace;font-size:10px;letter-spacing:.1em}.pdp-fit-help p{margin:7px 0 10px;font-size:15px;line-height:1.35}.pdp-fit-help a{color:inherit;font-size:11px;font-weight:700;text-underline-offset:3px}.pdp-fit-help>button{margin:-5px -5px 0 auto;border:0;background:transparent;color:inherit;font-size:22px;cursor:pointer}
+.pdp-fit-help a:focus-visible,.pdp-fit-help button:focus-visible{outline:2px solid #ff4533;outline-offset:3px}
+@media(max-width:600px){.pdp-fit-help{bottom:calc(18px + env(safe-area-inset-bottom));padding:15px}}
