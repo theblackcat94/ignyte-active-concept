@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Product } from "@/lib/catalog";
 import { money } from "@/lib/catalog";
 import { compareProductColours, productColourHex } from "@/lib/product-colors";
@@ -22,6 +22,8 @@ function LookCard({ look, products }: { look: Look; products: Product[] }) {
   const [topSize, setTopSize] = useState("");
   const [bottomSize, setBottomSize] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [added, setAdded] = useState(false);
+  useEffect(() => { if (!added) return; const timer = window.setTimeout(() => setAdded(false), 1400); return () => window.clearTimeout(timer); }, [added]);
   const top = products.find(item => item.slug === topSlug) ?? products.find(item => item.slug === look.top);
   const bottom = products.find(item => item.slug === bottomSlug) ?? products.find(item => item.slug === look.bottom);
   if (!top || !bottom) return null;
@@ -43,7 +45,7 @@ function LookCard({ look, products }: { look: Look; products: Product[] }) {
     if (!selectedBottomSize) { setFeedback(`Choose an available size for ${bottom.name}.`); return; }
     if (atBagLimit(top, selectedTopSize) || atBagLimit(bottom, selectedBottomSize)) { setFeedback("The selected size is already at its available quantity in your bag."); return; }
     if (!addSetToBag(top.slug, selectedTopSize, bottom.slug, selectedBottomSize)) setFeedback("The set could not be added. Please check your selections and try again.");
-    else setFeedback("");
+    else { setFeedback(""); setAdded(true); }
   };
   const selectTopColour = (slug: string) => {
     const next = products.find(item => item.slug === slug);
@@ -80,7 +82,7 @@ function LookCard({ look, products }: { look: Look; products: Product[] }) {
       {renderProduct(top, selectedTopSize, setTopSize, selectTopColour)}
       {renderProduct(bottom, selectedBottomSize, setBottomSize, selectBottomColour)}
       <div className="look-total"><span>SET TOTAL · ITEMS PRICED SEPARATELY</span><strong>{money(topPrice + bottomPrice)}</strong></div>
-      <button type="button" className="button button-orange look-add" disabled={catalogLoading || Boolean(catalogError)} onClick={addLook}>ADD SET TO BAG <span>↗</span></button>
+      <button type="button" className={`button button-orange look-add${added ? " is-added" : ""}`} disabled={catalogLoading || Boolean(catalogError)} onClick={addLook}>{added ? "ADDED ✓" : "ADD SET TO BAG"} <span>↗</span></button>
       <small role="status" aria-live="polite">{feedback || (catalogLoading ? "Checking stock…" : catalogError ? "Stock is temporarily unavailable." : "Choose an available size for each piece.")}</small>
     </div>
   </article>;
