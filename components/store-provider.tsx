@@ -175,7 +175,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     track("add_to_bag", `/product/${braSlug}/`);
     return true;
   };
-  const removeFromBag = (slug: string, size: string) => setBag(current => current.filter(item => !(item.slug === slug && item.size === size)));
+  const removeFromBag = (slug: string, size: string) => {
+    setBag(current => current.filter(item => !(item.slug === slug && item.size === size)));
+    setLastAdded(current => current?.slug === slug && current.size === size ? null : current);
+  };
   const changeBagQuantity = (slug: string, size: string, change: number) => {
     const product = products.find(item => item.slug === slug);
     const stock = product?.variants?.find(variant => variant.size === size)?.stock;
@@ -186,8 +189,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       if (change > 0 && stock !== undefined && quantity > stock) return [item];
       return [{ ...item, quantity }];
     }));
+    if (change < 0 && bag.find(item => item.slug === slug && item.size === size)?.quantity === 1) {
+      setLastAdded(current => current?.slug === slug && current.size === size ? null : current);
+    }
   };
-  const clearBag = useCallback(() => setBag([]), []);
+  const clearBag = useCallback(() => { setBag([]); setLastAdded(null); }, []);
   const toggleWishlist = (slug: string) => {
     const product = products.find(item => item.slug === slug);
     const saved = wishlist.includes(slug);
@@ -220,7 +226,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, [shippingCelebrationId]);
   const bagSlugs = bag.map(item => item.slug);
   const matchingProducts = matchingBagProducts(lastAdded?.slug, bagSlugs, products);
-  const recommendations = [...matchingProducts, ...bagRecommendations(bagSlugs, products).filter(product => !matchingProducts.some(match => match.slug === product.slug))].slice(0, 3);
+  const recommendations = matchingProducts.length ? matchingProducts : bagRecommendations(bagSlugs, products);
 
   return (
     <StoreContext.Provider value={{ products, categories, catalogPreview, catalogLoading, catalogError, bag, bagOpen, lastAddedId: lastAdded?.id ?? 0, setBagOpen, setBagDiscount, addToBag, addSetToBag, changeBagQuantity, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
