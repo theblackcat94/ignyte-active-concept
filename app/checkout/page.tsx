@@ -204,7 +204,7 @@ export default function CheckoutPage() {
           <div><strong>{item.product?.name ?? "Unavailable product"}</strong><span>{item.size} · Qty {item.quantity}</span>{item.variant?.originalPrice && <span>SALE ITEM · FINAL SALE FOR CHANGE-OF-MIND RETURNS</span>}</div>
           <strong>{money((item.variant?.price ?? item.product?.price ?? 0) * item.quantity)}</strong>
         </div>)}
-        {!valid && <p className="checkout-error">An item is unavailable. Please update your bag before placing the order.</p>}
+        {!valid && <p className="checkout-error" role="alert">An item is unavailable. Please update your bag before placing the order.</p>}
         <div className="checkout-total"><span>SUBTOTAL</span><strong>{money(subtotal)}</strong></div>
         <div className="checkout-coupon"><label htmlFor="coupon-code">DISCOUNT CODE</label><div><input id="coupon-code" value={couponCode} maxLength={30} onChange={event => { setCouponCode(event.target.value.toUpperCase()); setCoupon(null); setCouponMessage(""); }} placeholder="Enter code" /><button type="button" onClick={() => void applyCoupon()}>APPLY</button></div>{couponMessage && <small role="status">{couponMessage}</small>}</div>
         {appliedCoupon && <div className="checkout-total"><span>DISCOUNT ({appliedCoupon.code})</span><strong>−{money(appliedCoupon.discountCents / 100)}</strong></div>}
