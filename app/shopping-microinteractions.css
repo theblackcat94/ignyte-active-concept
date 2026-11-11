@@ -46,11 +46,11 @@ html[data-appearance="ignyte"] .product-page .size-grid button.selected,html[dat
   .ignyte-add-trail{display:none}
   .ignyte-add-flash{width:min(85vw,340px);height:min(85vw,340px)}
   .ignyte-add-mobile-edge{display:block;position:absolute;inset:max(2px,env(safe-area-inset-top)) 2px max(2px,env(safe-area-inset-bottom));pointer-events:none}
-  .ignyte-add-mobile-edge i{position:absolute;display:block;border-radius:9px;background:linear-gradient(90deg,#ff4533,#fff3ce 68%,#ff4533);box-shadow:0 0 8px 3px #ff4533,0 0 22px 7px #ff453399;opacity:0}
-  .ignyte-add-mobile-edge i:nth-child(1){left:0;bottom:0;width:100%;height:4px;transform-origin:left;animation:ignyte-edge-horizontal .21s .19s ease-in both}
-  .ignyte-add-mobile-edge i:nth-child(2){right:0;bottom:0;width:4px;height:100%;transform-origin:bottom;animation:ignyte-edge-vertical .21s .36s ease-in both}
-  .ignyte-add-mobile-edge i:nth-child(3){right:0;top:0;width:100%;height:4px;transform-origin:right;animation:ignyte-edge-horizontal .21s .53s ease-in both}
-  .ignyte-add-mobile-edge i:nth-child(4){left:0;top:0;width:4px;height:45%;transform-origin:top;animation:ignyte-edge-vertical .19s .7s ease-in both}
+  .ignyte-add-mobile-edge i{position:absolute;display:block;border-radius:9px;background:linear-gradient(90deg,#ff4533,#fff3ce 68%,#ff4533);box-shadow:0 0 14px 6px #ff4533,0 0 32px 12px #ff4533a8;opacity:0}
+  .ignyte-add-mobile-edge i:nth-child(1){left:0;bottom:0;width:100%;height:6px;transform-origin:left;animation:ignyte-edge-horizontal .32s .16s ease-in both}
+  .ignyte-add-mobile-edge i:nth-child(2){right:0;bottom:0;width:6px;height:100%;transform-origin:bottom;animation:ignyte-edge-vertical .32s .35s ease-in both}
+  .ignyte-add-mobile-edge i:nth-child(3){right:0;top:0;width:100%;height:6px;transform-origin:right;animation:ignyte-edge-horizontal .32s .55s ease-in both}
+  .ignyte-add-mobile-edge i:nth-child(4){left:0;top:0;width:6px;height:45%;transform-origin:top;animation:ignyte-edge-vertical .28s .78s ease-in both}
   .ignyte-add-impact{left:50%;top:max(155px,calc(env(safe-area-inset-top) + 110px));width:105px;height:105px}
   .bag-drawer.has-ignition .bag-added-confirmation{animation:ignyte-confirm-in .32s .68s ease-out both,ignyte-confirm-glow .42s .68s ease-out both}
 }
