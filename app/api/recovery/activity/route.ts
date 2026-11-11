@@ -25,6 +25,9 @@ export async function POST(request: Request) {
   try {
     const db = adminDb();
     const settings = await recoverySettings();
+    const { error: retentionError } = await db.from("customer_recovery_activity")
+      .delete().lt("created_at", new Date(Date.now() - 90 * 86400_000).toISOString());
+    if (retentionError) throw retentionError;
     const entry = parsed.data;
     if (!(entry.kind === "cart" ? settings.cart_enabled : settings.browse_enabled)) return NextResponse.json({ captured: false });
     const { data: recent, error: recentError } = await db.from("customer_recovery_activity")

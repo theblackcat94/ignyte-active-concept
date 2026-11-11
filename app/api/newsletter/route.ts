@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { adminDb } from "@/lib/commerce";
+import { adminDb, verifiedUser } from "@/lib/commerce";
 import { welcomeEmail } from "@/lib/email-templates";
 import { sendSesMail, sesMailConfigured } from "@/lib/ses-mailer";
 
@@ -11,7 +11,8 @@ const schema = z.object({
   email: z.email().trim().toLowerCase().max(254),
   consent: z.literal(true),
   website: z.string().max(0),
-  source: z.enum(["footer", "checkout"]).optional(),
+  source: z.enum(["footer", "checkout", "account"]).optional(),
+  consentWordingVersion: z.literal("recovery-v1-2026-11-12").optional(),
 });
 const attempts = new Map<string, number>();
 
@@ -26,9 +27,17 @@ export async function POST(request: Request) {
 
   try {
     const db = adminDb();
+    const user = parsed.data.consentWordingVersion ? await verifiedUser(request) : null;
+    const verifiedRecoveryConsent = Boolean(user?.email && user.email.toLowerCase() === parsed.data.email && parsed.data.consentWordingVersion);
     const { data: current, error: readError } = await db.from("marketing_subscribers").select("status").eq("email", parsed.data.email).maybeSingle();
     if (readError) throw readError;
-    if (current?.status === "confirmed") return NextResponse.json({ ok: true, alreadySubscribed: true });
+    if (current?.status === "confirmed") {
+      if (verifiedRecoveryConsent) {
+        const { error: consentError } = await db.from("marketing_subscribers").update({ consent_at: new Date().toISOString(), source: parsed.data.source ?? "footer", consent_wording_version: parsed.data.consentWordingVersion, recovery_consent_at: new Date().toISOString(), recovery_consent_source: parsed.data.source ?? "footer" }).eq("email", parsed.data.email);
+        if (consentError) throw consentError;
+      }
+      return NextResponse.json({ ok: true, alreadySubscribed: true });
+    }
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
     if (!siteUrl || !sesMailConfigured()) {
       return NextResponse.json({ error: "Email signup is temporarily unavailable. Please try again later." }, { status: 503 });
@@ -39,6 +48,9 @@ export async function POST(request: Request) {
       status: "pending",
       consent_at: new Date().toISOString(),
       source: parsed.data.source ?? "footer",
+      consent_wording_version: parsed.data.consentWordingVersion ?? null,
+      recovery_consent_at: verifiedRecoveryConsent ? new Date().toISOString() : null,
+      recovery_consent_source: verifiedRecoveryConsent ? parsed.data.source ?? "footer" : null,
       unsubscribe_token: token,
     };
     const { error } = await db.from("marketing_subscribers").upsert(record, { onConflict: "email" });

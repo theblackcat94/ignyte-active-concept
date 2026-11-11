@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Invalid unsubscribe link." }, { status: 400 });
   try {
-    const { error } = await adminDb().from("marketing_subscribers").update({ status: "unsubscribed" }).eq("unsubscribe_token", parsed.data.token);
+    const { error } = await adminDb().from("marketing_subscribers").update({ status: "unsubscribed", recovery_consent_at: null, recovery_consent_source: null }).eq("unsubscribe_token", parsed.data.token);
     if (error) throw error;
     return NextResponse.json({ ok: true });
   } catch {

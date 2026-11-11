@@ -9,8 +9,8 @@ export async function consentedRecoveryEmail(request: Request): Promise<string |
   const email = user?.email?.trim().toLowerCase();
   if (!email) return null;
   const { data, error } = await adminDb().from("marketing_subscribers")
-    .select("status,recovery_consent_at").eq("email", email).maybeSingle();
-  return !error && data?.status === "confirmed" && data.recovery_consent_at ? email : null;
+    .select("status,recovery_consent_at,consent_wording_version").eq("email", email).maybeSingle();
+  return !error && data?.status === "confirmed" && data.recovery_consent_at && data.consent_wording_version === "recovery-v1-2026-11-12" ? email : null;
 }
 
 export async function recoverySettings() {

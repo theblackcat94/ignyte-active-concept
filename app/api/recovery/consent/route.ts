@@ -7,9 +7,9 @@ export async function GET(request: Request) {
   if (!user?.email) return NextResponse.json({ error: "Sign in required" }, { status: 401 });
   try {
     const { data, error } = await adminDb().from("marketing_subscribers")
-      .select("status,recovery_consent_at").eq("email", user.email.toLowerCase()).maybeSingle();
+      .select("status,recovery_consent_at,consent_wording_version").eq("email", user.email.toLowerCase()).maybeSingle();
     if (error) throw error;
-    return NextResponse.json({ eligible: data?.status === "confirmed", optedIn: data?.status === "confirmed" && Boolean(data.recovery_consent_at) }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json({ eligible: data?.status === "confirmed", optedIn: data?.status === "confirmed" && Boolean(data.recovery_consent_at) && data.consent_wording_version === "recovery-v1-2026-11-12" }, { headers: { "Cache-Control": "no-store" } });
   } catch { return NextResponse.json({ error: "Preference unavailable" }, { status: 503 }); }
 }
 
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   try {
     const db = adminDb();
     const { data, error } = await db.from("marketing_subscribers")
-      .update({ recovery_consent_at: new Date().toISOString() })
+      .update({ recovery_consent_at: new Date().toISOString(), recovery_consent_source: "account", consent_wording_version: "recovery-v1-2026-11-12" })
       .eq("email", user.email.toLowerCase()).eq("status", "confirmed").select("email").maybeSingle();
     if (error) throw error;
     return data ? NextResponse.json({ optedIn: true }) : NextResponse.json({ error: "Join the IGNYTE email list before enabling product reminders." }, { status: 409 });
@@ -34,7 +34,7 @@ export async function DELETE(request: Request) {
   try {
     const db = adminDb();
     const email = user.email.toLowerCase();
-    const { error } = await db.from("marketing_subscribers").update({ recovery_consent_at: null }).eq("email", email);
+    const { error } = await db.from("marketing_subscribers").update({ recovery_consent_at: null, recovery_consent_source: null }).eq("email", email);
     if (error) throw error;
     await db.from("customer_recovery_activity").update({ suppressed_at: new Date().toISOString(), suppression_reason: "opted_out" }).eq("email", email).is("suppressed_at", null);
     return NextResponse.json({ optedIn: false });

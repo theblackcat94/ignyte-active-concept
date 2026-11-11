@@ -4,7 +4,7 @@
     "type": "h1"
   },
   {
-    "text": "Effective date: 31 July 2026",
+    "text": "Effective date: 12 November 2026",
     "type": "p"
   },
   {
@@ -176,6 +176,26 @@
     "type": "p"
   },
   {
+    "text": "Shopping Activity and Email Reminders",
+    "type": "h2"
+  },
+  {
+    "text": "Your shopping bag is stored in your browser. If you are signed in and have separately chosen to receive personalised shopping reminders, we may save the products, selected colours, sizes and quantities in your bag, and meaningful product interactions such as gallery, size, colour or fit-guide use and active time on a product page. Passive page viewing alone does not qualify for a browse reminder.",
+    "type": "p"
+  },
+  {
+    "text": "We associate this activity with your signed-in email address only when your IGNYTE email subscription is active and we have recorded consent that expressly covers shopping reminders. We do not link an unidentified guest's browsing to an email address for this purpose. We use the activity to offer on-site fit help and, when enabled, to send relevant bag or product reminders. A completed purchase, an unsubscribe, an empty bag or unavailable products can stop a reminder. These reminders do not change the price or availability shown at checkout.",
+    "type": "p"
+  },
+  {
+    "text": "Our website uses Supabase for customer and recovery records, AWS Simple Email Service to deliver email, and Google Analytics 4 for website measurement. Payment and delivery providers process only the information required for those services. We do not share shopping activity with third parties for their own independent marketing.",
+    "type": "p"
+  },
+  {
+    "text": "You can withdraw marketing consent using the unsubscribe link in our emails. Signed-in customers can also turn off personalised shopping reminders in their account. We retain recovery activity for approximately 90 days and remove older records through maintenance; consent and unsubscribe records are kept while needed to respect your preferences and document our compliance. Essential order and service emails are unaffected by marketing opt-out.",
+    "type": "p"
+  },
+  {
     "text": "How Long We Keep Your Information",
     "type": "h2"
   },
@@ -192,7 +212,7 @@
     "type": "li"
   },
   {
-    "text": "Marketing preferences and email records: until you unsubscribe or we no longer need them.",
+    "text": "Marketing preferences and consent records: while needed to honour subscriptions and unsubscribes and document the consent wording, time and source; recovery activity is generally removed after approximately 90 days.",
     "type": "li"
   },
   {

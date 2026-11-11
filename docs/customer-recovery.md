@@ -4,7 +4,7 @@ The recovery feature is **off by default**. The new tables and `recovery_consent
 
 ## Eligibility
 
-- A customer must be signed in, have a confirmed IGNYTE newsletter subscription, and separately opt into personalised bag and product reminders in their account or at checkout.
+- A customer must be signed in, have a confirmed IGNYTE newsletter subscription, and have consented to wording that explicitly includes bag and product reminders. Checkout and account registration use a single optional marketing checkbox; signed-in customers may also manage reminders in their account.
 - Older newsletter subscriptions do not acquire recovery consent automatically. Guest browsing is not linked to an email address. An authenticated and verified guest identity flow would be needed to add guests.
 - Cart activity is saved after a bag change. Browse activity needs at least 20 active seconds and an intentional gallery, size, colour, guide or fit interaction. The on-site size-guide prompt is once per session and can be dismissed.
 - A paid order, unsubscribe, empty bag or unavailable item suppresses cart delivery. Cart takes priority over browse. The browse email is not implemented for sending because its separately approved copy was not supplied.

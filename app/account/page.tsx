@@ -20,6 +20,7 @@ export default function AccountPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [pendingEmail, setPendingEmail] = useState("");
   const [resendBusy, setResendBusy] = useState(false);
   const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
@@ -81,7 +82,12 @@ export default function AccountPage() {
     setPassword("");
     setConfirmPassword("");
     if (!error && mode === "sign-up" && !data.session) setPendingEmail(normalizedEmail);
-    setMessage(error ? error.message : mode === "sign-up" ? data.session ? "Account created. Welcome to IGNYTE." : "Check your inbox for your confirmation link." : "Signed in.");
+    let marketingFailed = false;
+    if (!error && mode === "sign-up" && marketingOptIn) {
+      const signup = await fetch("/api/newsletter", { method: "POST", headers: { "Content-Type": "application/json", ...(data.session?.access_token ? { Authorization: `Bearer ${data.session.access_token}` } : {}) }, body: JSON.stringify({ email: normalizedEmail, consent: true, website: "", source: "account", consentWordingVersion: "recovery-v1-2026-11-12" }) }).catch(() => null);
+      if (!signup?.ok) marketingFailed = true;
+    }
+    setMessage(error ? error.message : mode === "sign-up" ? marketingFailed ? "Account created. IGNYTE email signup could not be saved; you can try again in the footer." : data.session ? "Account created. Welcome to IGNYTE." : "Check your inbox for your confirmation link." : "Signed in.");
     if (!error && mode === "sign-in" && new URLSearchParams(window.location.search).get("next") === "checkout") router.push("/checkout");
   }
 
@@ -112,6 +118,7 @@ export default function AccountPage() {
           <label>PASSWORD<input type={showPassword ? "text" : "password"} autoComplete={mode === "sign-in" ? "current-password" : "new-password"} minLength={8} required value={password} onChange={event => setPassword(event.target.value)} /></label>
           {mode === "sign-up" && <><p className="account-password-hint">Use at least 8 characters.</p><label>CONFIRM PASSWORD<input type={showPassword ? "text" : "password"} autoComplete="new-password" minLength={8} required value={confirmPassword} onChange={event => setConfirmPassword(event.target.value)} /></label></>}
           <label className="account-show-password"><input type="checkbox" checked={showPassword} onChange={event => setShowPassword(event.target.checked)} /> SHOW PASSWORD</label>
+          {mode === "sign-up" && <label className="account-marketing-consent"><input type="checkbox" checked={marketingOptIn} onChange={event => setMarketingOptIn(event.target.checked)} /><span><strong>Keep me in the loop.</strong> Email me IGNYTE news, offers and occasional reminders about products I&apos;ve viewed or left in my bag. I can unsubscribe anytime. See the <Link href="/privacy/">Privacy Policy</Link>.</span></label>}
           <button className="button button-orange" disabled={busy}>{busy ? "PLEASE WAIT…" : mode === "sign-in" ? "SIGN IN ↗" : "CREATE ACCOUNT ↗"}</button>
         </form>
         {mode === "sign-up" && <p className="account-legal">By creating an account, you agree to our <Link href="/terms">Terms of Service</Link> and acknowledge our <Link href="/privacy">Privacy Policy</Link>. Marketing emails are a separate choice.</p>}

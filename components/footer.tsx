@@ -8,6 +8,7 @@ import HeaderLogo from "./header-logo";
 import FooterPreferences from "./footer-preferences";
 import JournalPublicLink from "./journal-public-link";
 import { helpLinks } from "@/data/help-links";
+import { browserDb, commerceConfigured } from "@/lib/commerce";
 
 const footerLinks = [
   { title: "HELP & SUPPORT", items: helpLinks },
@@ -51,7 +52,8 @@ export function NewsletterSignup({ idPrefix = "footer" }: { idPrefix?: string } 
     setSignupBusy(true);
     setSignupError("");
     try {
-      const response = await fetch("/api/newsletter", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, consent, website: "" }) });
+      const token = commerceConfigured ? (await browserDb().auth.getSession()).data.session?.access_token : null;
+      const response = await fetch("/api/newsletter", { method: "POST", headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify({ email, consent, website: "", source: "footer", consentWordingVersion: "recovery-v1-2026-11-12" }) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Signup failed. Please try again.");
       setSignupSuccess(result.alreadySubscribed ? "existing" : "new");
@@ -70,7 +72,7 @@ export function NewsletterSignup({ idPrefix = "footer" }: { idPrefix?: string } 
   return <div className="pdf-footer-signup-form">
     <form onSubmit={subscribe} aria-busy={signupBusy} className={signupError ? "has-error" : undefined}>
       <div className="pdf-footer-email-row"><input type="email" required placeholder="YOUR EMAIL..." aria-label="Email address" aria-invalid={Boolean(signupError)} aria-describedby={signupError ? `${idPrefix}-newsletter-error` : undefined} value={email} disabled={signupBusy} onChange={event => setEmail(event.target.value)} /><button type="submit" disabled={signupBusy} aria-label={signupBusy ? "Joining newsletter" : "Join newsletter"}>{signupBusy ? <span className="pdf-footer-submit-loading">JOINING…</span> : "»"}</button></div>
-      <label className="pdf-footer-consent"><input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)} disabled={signupBusy} required /><span>I agree to receive IGNYTE emails. I can unsubscribe at any time. See the <FooterLink href="/privacy">Privacy Policy</FooterLink>.</span></label>
+      <label className="pdf-footer-consent"><input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)} disabled={signupBusy} required /><span>Keep me in the loop. Email me IGNYTE news, offers and occasional reminders about products I&apos;ve viewed or left in my bag. I can unsubscribe anytime. See the <FooterLink href="/privacy">Privacy Policy</FooterLink>.</span></label>
     </form>
     {signupError && <p className="pdf-footer-signup-error" id={`${idPrefix}-newsletter-error`} role="alert">{signupError}</p>}
   </div>;

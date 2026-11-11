@@ -1,5 +1,7 @@
 -- Customer recovery is private and disabled until the campaign is reviewed.
 alter table public.marketing_subscribers add column if not exists recovery_consent_at timestamptz;
+alter table public.marketing_subscribers add column if not exists consent_wording_version text;
+alter table public.marketing_subscribers add column if not exists recovery_consent_source text;
 create table if not exists public.customer_recovery_settings (
   id boolean primary key default true check (id),
   cart_enabled boolean not null default false,

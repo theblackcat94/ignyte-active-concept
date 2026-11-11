@@ -50,11 +50,11 @@ export async function processRecoveryQueue(): Promise<{ sent: number; suppressed
     if (!stage) { result.skipped++; continue; }
     try {
       const { data: subscriber, error: subscriberError } = await db.from("marketing_subscribers")
-        .select("status,unsubscribe_token").eq("email", activity.email).maybeSingle();
+        .select("status,unsubscribe_token,recovery_consent_at,consent_wording_version").eq("email", activity.email).maybeSingle();
       if (subscriberError) throw subscriberError;
       const items = await availableRecoveryItems(activity.items);
       const purchased = await purchasedSince(activity.email, activity.last_active_at);
-      const reason = subscriber?.status !== "confirmed" ? "no_active_consent" : purchased ? "purchased" : items.length !== activity.items.length || !items.length ? "unavailable_or_empty" : null;
+      const reason = subscriber?.status !== "confirmed" || !subscriber.recovery_consent_at || subscriber.consent_wording_version !== "recovery-v1-2026-11-12" ? "no_active_consent" : purchased ? "purchased" : items.length !== activity.items.length || !items.length ? "unavailable_or_empty" : null;
       if (reason) {
         const { error: suppressError } = await db.from("customer_recovery_activity").update({ suppressed_at: new Date().toISOString(), suppression_reason: reason }).eq("id", activity.id);
         if (suppressError) throw suppressError;
