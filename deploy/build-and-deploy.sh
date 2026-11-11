@@ -62,6 +62,9 @@ if [[ -f "$build_env_file" ]]; then
       SES_AWS_ACCESS_KEY_ID|SES_AWS_SECRET_ACCESS_KEY|SES_AWS_SESSION_TOKEN|SES_AWS_REGION|SES_FROM_EMAIL|ORDER_NOTIFICATION_EMAIL)
         # Server-only mail settings are copied to the target env file, never exported to the build.
         ;;
+      RECOVERY_CRON_SECRET|RECOVERY_EMAIL_DELIVERY_ENABLED)
+        # Recovery delivery is independently locked until approved.
+        ;;
       META_INSTAGRAM_APP_ID|META_INSTAGRAM_APP_SECRET|INSTAGRAM_OAUTH_REDIRECT_URI)
         # Server-only Meta OAuth settings are copied to the target env file, never exported to the build.
         ;;
