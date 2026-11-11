@@ -34,6 +34,21 @@ export type StoreVariant = {
 
 export type StoreCategory = { slug: string; name: string; cover_path: string; sort_order: number; active: boolean };
 
+const jacarandaAssetSlugs = new Set([
+  "seamless-short-aurora",
+  "seamless-short-jacaranda",
+  "all-in-motion-shorts-aurora",
+  "motion-sports-bra-aurora",
+]);
+
+function resolveProductImagePath(slug: string, path: string): string {
+  // The catalogue displays this colour as Aurora, but the supplied photo files
+  // for these three styles were delivered under their original Jacaranda names.
+  // Keep the display name independent from the media asset filenames.
+  if (!jacarandaAssetSlugs.has(slug) || !path.startsWith("/images/jacob-2026-10/")) return path;
+  return path.replace(/-aurora-hires-/gi, "-jacaranda-").replace(/-aurora-/gi, "-jacaranda-");
+}
+
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
@@ -87,7 +102,7 @@ export function toDisplayProduct(product: StoreProduct): Product {
     slug: product.slug, name: product.name, category: product.category,
     ...mappedProductAttributes(product.product_variants.map(variant => variant.sku)),
     color: displayColour(product.color, preserveJacaranda), description: displayColour(product.description, preserveJacaranda),
-    image: product.image_path, gallery: (product.gallery ?? []).map(item => ({ ...item, alt: displayColour(item.alt, preserveJacaranda) })), label: product.label ?? undefined,
+    image: resolveProductImagePath(product.slug, product.image_path), gallery: (product.gallery ?? []).map(item => ({ ...item, image: resolveProductImagePath(product.slug, item.image), alt: displayColour(item.alt, preserveJacaranda) })), label: product.label ?? undefined,
     pdp: pdpFor(product.name, product.pdp_content, product.slug),
     price: cheapest?.price ?? 0, originalPrice: cheapest?.originalPrice,
     variants,
