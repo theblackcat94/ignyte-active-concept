@@ -28,7 +28,7 @@ export default function ReturnsPage() {
       <p>All returns are inspected upon arrival. Items requiring further assessment will be referred to the IGNYTE team. Our change-of-mind conditions do not affect your rights under Australian Consumer Law.</p>
       <h2>How to Make a Return</h2>
       <ol className="policy-steps">
-        <li><h3>Submit a request</h3><p><Link href="/returns/submit/">Submit a return request</Link> with your order number and the items you&apos;d like to return. Our team will review it and provide return instructions.</p></li>
+        <li><h3>Submit a request</h3><p>Submit a return request with your order number and the items you&apos;d like to return. Our team will review it and provide return instructions.</p><Link className="button button-orange returns-start-cta" href="/returns/submit/">START A RETURN ↗</Link></li>
         <li><h3>Prepare your items</h3><p>Ensure your items are unworn, unused, unwashed and have their original tags attached. Pack your items securely to protect them during shipping.</p></li>
         <li><h3>Include your return reference</h3><p>Once approved to send, include your IGNYTE return reference, name and order number inside the parcel. This helps our warehouse identify your return. You can also include a copy of your order confirmation.</p></li>
         <li><h3>Send your return</h3><p>Follow the instructions provided by our support team. Customers are responsible for return postage on change-of-mind returns. Please ensure your parcel arrives at our warehouse within 30 days of purchase. Do not send items back without contacting us first.</p></li>

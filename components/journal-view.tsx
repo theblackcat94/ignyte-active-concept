@@ -32,6 +32,8 @@ function BodyBlock({ block }: { block: JournalBlock }) {
     const entries = block.text.split("\n").filter(Boolean).map((entry, i) => <li key={i}><Inline text={entry} /></li>);
     return block.ordered ? <ol>{entries}</ol> : <ul>{entries}</ul>;
   }
+  const ctas = [...block.text.matchAll(/\[([^\]]+)\]\((\/[^)]+)\)/g)];
+  if (ctas.length === 2 && block.text.replace(/\[([^\]]+)\]\((\/[^)]+)\)/g, "").trim() === "") return <nav className="journal-article-ctas" aria-label="Continue exploring">{ctas.map((cta, index) => <Link key={index} href={cta[2]}>{cta[1]}</Link>)}</nav>;
   return <p><Inline text={block.text} /></p>;
 }
 

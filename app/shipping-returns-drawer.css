@@ -5,6 +5,8 @@
 .shipping-returns-content h3{font:700 12px/1.3 var(--font-ignyte-mono),monospace;margin:0 0 14px}
 .shipping-returns-content p{font-size:14px;line-height:1.55;margin:12px 0;color:inherit}
 .shipping-returns-content a{display:inline-block;margin-top:6px;font:600 11px var(--font-ignyte-sans),sans-serif;text-decoration:underline;text-underline-offset:3px}
+.shipping-returns-content section>a+a{margin-top:16px}
+.shipping-returns-content section>a{display:table;min-height:28px;align-content:center}
 .shipping-returns-content a:focus-visible,.shipping-returns-drawer button:focus-visible{outline:2px solid #FF4533;outline-offset:3px}
 .shipping-returns-callout{display:flex;align-items:center;gap:10px;font-size:12px;line-height:1.35}
 .shipping-returns-callout svg{width:19px;height:19px;flex:none}

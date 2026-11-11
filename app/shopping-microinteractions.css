@@ -4,6 +4,7 @@
 .ignyte-add-trail{position:absolute;left:var(--ignition-x);top:var(--ignition-y);width:var(--ignition-distance);height:10px;transform-origin:left center;background:linear-gradient(90deg,transparent 0%,#ff4533 27%,#ffb467 85%,#fff7e4 100%);clip-path:polygon(0 42%,100% 0,100% 100%,0 58%);filter:drop-shadow(0 0 9px #ff4533);animation:ignyte-ignition-trail .42s .27s ease-in both}
 @keyframes ignyte-ignition-trail{from{opacity:0;transform:rotate(var(--ignition-angle)) scaleX(0)}20%{opacity:1}80%{opacity:1}to{opacity:0;transform:rotate(var(--ignition-angle)) scaleX(1)}}
 .ignyte-add-impact{position:absolute;left:var(--ignition-target-x);top:var(--ignition-target-y);width:75px;height:75px;border-radius:50%;background:radial-gradient(circle,#fff4da 0 10%,#ff4533c9 25%,transparent 70%);transform:translate(-50%,-50%) scale(.2);animation:ignyte-ignition-impact .34s .62s ease-out both}
+.ignyte-add-mobile-edge{display:none}
 @keyframes ignyte-ignition-impact{0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}25%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.55)}}
 .bag-icon-wrap.bag-just-added{animation:bag-icon-pop .3s ease-out}
 .bag-icon-wrap.bag-just-added sup{animation:bag-count-pop .3s ease-out}
@@ -40,4 +41,21 @@ html[data-appearance="dark"] .product-card .product-heart[aria-pressed="true"],h
 .product-page .size-grid button.selected,.pdp-desktop-purchase-sizes button[aria-pressed="true"],.product-card .quick-add-sizes button.selected,.look-sizes button[aria-pressed="true"]{outline:2px solid #ff4533;outline-offset:1px}
 html[data-appearance="ignyte"] .product-page .size-grid button.selected,html[data-appearance="ignyte"] .pdp-desktop-purchase-sizes button[aria-pressed="true"],html[data-appearance="ignyte"] .look-sizes button[aria-pressed="true"]{outline-color:#0b1020}
 @media(max-width:520px){.product-card .product-heart{top:5px;right:5px;width:44px;height:44px}.ignyte-add-flash{width:240px;height:240px}}
+@media(max-width:800px){
+  .ignyte-add-ignition{z-index:170;height:100vh;height:100dvh;inset:0 0 auto;overflow:visible}
+  .ignyte-add-trail{display:none}
+  .ignyte-add-flash{width:min(85vw,340px);height:min(85vw,340px)}
+  .ignyte-add-mobile-edge{display:block;position:absolute;inset:max(2px,env(safe-area-inset-top)) 2px max(2px,env(safe-area-inset-bottom));pointer-events:none}
+  .ignyte-add-mobile-edge i{position:absolute;display:block;border-radius:9px;background:linear-gradient(90deg,#ff4533,#fff3ce 68%,#ff4533);box-shadow:0 0 8px 3px #ff4533,0 0 22px 7px #ff453399;opacity:0}
+  .ignyte-add-mobile-edge i:nth-child(1){left:0;bottom:0;width:100%;height:4px;transform-origin:left;animation:ignyte-edge-horizontal .21s .19s ease-in both}
+  .ignyte-add-mobile-edge i:nth-child(2){right:0;bottom:0;width:4px;height:100%;transform-origin:bottom;animation:ignyte-edge-vertical .21s .36s ease-in both}
+  .ignyte-add-mobile-edge i:nth-child(3){right:0;top:0;width:100%;height:4px;transform-origin:right;animation:ignyte-edge-horizontal .21s .53s ease-in both}
+  .ignyte-add-mobile-edge i:nth-child(4){left:0;top:0;width:4px;height:45%;transform-origin:top;animation:ignyte-edge-vertical .19s .7s ease-in both}
+  .ignyte-add-impact{left:50%;top:max(155px,calc(env(safe-area-inset-top) + 110px));width:105px;height:105px}
+  .bag-drawer.has-ignition .bag-added-confirmation{animation:ignyte-confirm-in .32s .68s ease-out both,ignyte-confirm-glow .42s .68s ease-out both}
+}
+@keyframes ignyte-edge-horizontal{0%{opacity:0;transform:scaleX(0)}18%,75%{opacity:1}100%{opacity:0;transform:scaleX(1)}}
+@keyframes ignyte-edge-vertical{0%{opacity:0;transform:scaleY(0)}18%,75%{opacity:1}100%{opacity:0;transform:scaleY(1)}}
+@keyframes ignyte-confirm-glow{40%{box-shadow:inset 0 0 0 2px #ff4533,0 0 24px #ff453388}100%{box-shadow:none}}
 @media(prefers-reduced-motion:reduce){.ignyte-add-ignition{display:none}.bag-icon-wrap.bag-just-added,.bag-icon-wrap.bag-just-added sup,.bag-drawer.is-open::before,.bag-added-confirmation,.bag-recommendations,.product-image-link .product-image-primary,.product-heart.just-saved::after,.pdp-title-wishlist.just-saved::after{animation:none}.product-card .product-image-link img,.product-page .size-grid button,.pdp-desktop-purchase-sizes button,.product-card .quick-add-sizes button,.look-sizes button{transition:none}.product-card:hover .product-image-link img{transform:none}}
+@media(max-width:800px) and (prefers-reduced-motion:reduce){.bag-drawer.has-ignition .bag-added-confirmation{animation:none}}
