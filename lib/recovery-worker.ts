@@ -3,6 +3,7 @@ import { cartRecoveryEmail, type RecoveryEmailProduct } from "@/lib/email-templa
 import { availableRecoveryItems, newRecoveryToken, purchasedSince, recoveryHash, type RecoveryBagItem } from "@/lib/customer-recovery";
 import { sendSesMail, sesMailConfigured } from "@/lib/ses-mailer";
 import { displayColour } from "@/lib/display-colour";
+import { coversShoppingReminders } from "@/lib/marketing-consent";
 
 type Activity = { id: string; email: string; kind: "cart" | "browse"; items: RecoveryBagItem[]; product_slug: string | null; last_active_at: string; first_sent_at: string | null; second_sent_at: string | null; suppressed_at: string | null };
 const hours = (value: number) => value * 3600_000;
@@ -54,7 +55,7 @@ export async function processRecoveryQueue(): Promise<{ sent: number; suppressed
       if (subscriberError) throw subscriberError;
       const items = await availableRecoveryItems(activity.items);
       const purchased = await purchasedSince(activity.email, activity.last_active_at);
-      const reason = subscriber?.status !== "confirmed" || !subscriber.recovery_consent_at || subscriber.consent_wording_version !== "recovery-v1-2026-11-12" ? "no_active_consent" : purchased ? "purchased" : items.length !== activity.items.length || !items.length ? "unavailable_or_empty" : null;
+      const reason = subscriber?.status !== "confirmed" || !subscriber.recovery_consent_at || !coversShoppingReminders(subscriber.consent_wording_version) ? "no_active_consent" : purchased ? "purchased" : items.length !== activity.items.length || !items.length ? "unavailable_or_empty" : null;
       if (reason) {
         const { error: suppressError } = await db.from("customer_recovery_activity").update({ suppressed_at: new Date().toISOString(), suppression_reason: reason }).eq("id", activity.id);
         if (suppressError) throw suppressError;

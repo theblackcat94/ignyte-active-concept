@@ -11,7 +11,7 @@ export function sesMailConfigured(): boolean {
     process.env.SES_FROM_EMAIL && process.env.SES_AWS_REGION);
 }
 
-export async function sendSesMail({ to, message }: SesMail): Promise<void> {
+export async function sendSesMail({ to, message }: SesMail): Promise<string | null> {
   const accessKey = process.env.SES_AWS_ACCESS_KEY_ID;
   const secretKey = process.env.SES_AWS_SECRET_ACCESS_KEY;
   const region = process.env.SES_AWS_REGION;
@@ -65,4 +65,6 @@ export async function sendSesMail({ to, message }: SesMail): Promise<void> {
     // Keep AWS error bodies out of logs; they can contain message metadata.
     throw new Error(`SES rejected the message (${response.status})`);
   }
+  const receipt = await response.json().catch(() => null) as { MessageId?: string } | null;
+  return receipt?.MessageId ?? null;
 }

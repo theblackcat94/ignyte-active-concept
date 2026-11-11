@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { adminDb, verifiedUser } from "@/lib/commerce";
+import { coversShoppingReminders } from "@/lib/marketing-consent";
 
 export const runtime = "nodejs";
 export async function GET(request: Request) {
@@ -9,7 +10,7 @@ export async function GET(request: Request) {
     const { data, error } = await adminDb().from("marketing_subscribers")
       .select("status,recovery_consent_at,consent_wording_version").eq("email", user.email.toLowerCase()).maybeSingle();
     if (error) throw error;
-    return NextResponse.json({ eligible: data?.status === "confirmed", optedIn: data?.status === "confirmed" && Boolean(data.recovery_consent_at) && data.consent_wording_version === "recovery-v1-2026-11-12" }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json({ eligible: data?.status === "confirmed", optedIn: data?.status === "confirmed" && Boolean(data.recovery_consent_at) && coversShoppingReminders(data.consent_wording_version) }, { headers: { "Cache-Control": "no-store" } });
   } catch { return NextResponse.json({ error: "Preference unavailable" }, { status: 503 }); }
 }
 

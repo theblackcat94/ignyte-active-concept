@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { adminDb, verifiedUser } from "@/lib/commerce";
@@ -12,7 +12,8 @@ const schema = z.object({
   consent: z.literal(true),
   website: z.string().max(0),
   source: z.enum(["footer", "checkout", "account"]).optional(),
-  consentWordingVersion: z.literal("recovery-v1-2026-11-12").optional(),
+  checkoutOrderId: z.uuid().optional(),
+  consentWordingVersion: z.enum(["recovery-v1-2026-11-12", "checkout-journey-v1-2026-11-12"]).optional(),
 });
 const attempts = new Map<string, number>();
 
@@ -28,11 +29,24 @@ export async function POST(request: Request) {
   try {
     const db = adminDb();
     const user = parsed.data.consentWordingVersion ? await verifiedUser(request) : null;
-    const verifiedRecoveryConsent = Boolean(user?.email && user.email.toLowerCase() === parsed.data.email && parsed.data.consentWordingVersion);
+    let verifiedConsent = Boolean(user?.email && user.email.toLowerCase() === parsed.data.email && parsed.data.consentWordingVersion);
+    if (!verifiedConsent && parsed.data.source === "checkout" && parsed.data.checkoutOrderId) {
+      const cookieName = `ignyte_guest_order_${parsed.data.checkoutOrderId.replaceAll("-", "")}`;
+      const cookie = request.headers.get("cookie")?.split(";").map(part => part.trim()).find(part => part.startsWith(`${cookieName}=`))?.slice(cookieName.length + 1);
+      if (cookie && /^[a-f0-9]{64}$/.test(cookie)) {
+        const { data: order, error: orderError } = await db.from("orders")
+          .select("customer_email,guest_token_hash,guest_token_expires_at").eq("id", parsed.data.checkoutOrderId).maybeSingle();
+        if (orderError) throw orderError;
+        const actual = createHash("sha256").update(cookie).digest("hex");
+        if (order?.customer_email?.toLowerCase() === parsed.data.email && order.guest_token_hash &&
+            order.guest_token_expires_at && new Date(order.guest_token_expires_at).getTime() > Date.now() &&
+            timingSafeEqual(Buffer.from(order.guest_token_hash), Buffer.from(actual))) verifiedConsent = true;
+      }
+    }
     const { data: current, error: readError } = await db.from("marketing_subscribers").select("status").eq("email", parsed.data.email).maybeSingle();
     if (readError) throw readError;
     if (current?.status === "confirmed") {
-      if (verifiedRecoveryConsent) {
+      if (verifiedConsent) {
         const { error: consentError } = await db.from("marketing_subscribers").update({ consent_at: new Date().toISOString(), source: parsed.data.source ?? "footer", consent_wording_version: parsed.data.consentWordingVersion, recovery_consent_at: new Date().toISOString(), recovery_consent_source: parsed.data.source ?? "footer" }).eq("email", parsed.data.email);
         if (consentError) throw consentError;
       }
@@ -49,8 +63,8 @@ export async function POST(request: Request) {
       consent_at: new Date().toISOString(),
       source: parsed.data.source ?? "footer",
       consent_wording_version: parsed.data.consentWordingVersion ?? null,
-      recovery_consent_at: verifiedRecoveryConsent ? new Date().toISOString() : null,
-      recovery_consent_source: verifiedRecoveryConsent ? parsed.data.source ?? "footer" : null,
+      recovery_consent_at: verifiedConsent ? new Date().toISOString() : null,
+      recovery_consent_source: verifiedConsent ? parsed.data.source ?? "footer" : null,
       unsubscribe_token: token,
     };
     const { error } = await db.from("marketing_subscribers").upsert(record, { onConflict: "email" });

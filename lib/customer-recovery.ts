@@ -1,5 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import { adminDb, verifiedUser } from "@/lib/commerce";
+import { coversShoppingReminders } from "@/lib/marketing-consent";
 
 export const recoveryHash = (value: string) => createHash("sha256").update(value).digest("hex");
 export const newRecoveryToken = () => randomBytes(32).toString("hex");
@@ -10,7 +11,7 @@ export async function consentedRecoveryEmail(request: Request): Promise<string |
   if (!email) return null;
   const { data, error } = await adminDb().from("marketing_subscribers")
     .select("status,recovery_consent_at,consent_wording_version").eq("email", email).maybeSingle();
-  return !error && data?.status === "confirmed" && data.recovery_consent_at && data.consent_wording_version === "recovery-v1-2026-11-12" ? email : null;
+  return !error && data?.status === "confirmed" && data.recovery_consent_at && coversShoppingReminders(data.consent_wording_version) ? email : null;
 }
 
 export async function recoverySettings() {

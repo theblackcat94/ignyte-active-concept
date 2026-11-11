@@ -123,7 +123,7 @@ export default function CheckoutPage() {
       savedOrderId = result.orderId;
       if (newsletterOptIn) {
         try {
-          const signup = await fetch("/api/newsletter", { method: "POST", headers, body: JSON.stringify({ email, consent: true, website: "", source: "checkout", consentWordingVersion: "recovery-v1-2026-11-12" }) });
+          const signup = await fetch("/api/newsletter", { method: "POST", headers, body: JSON.stringify({ email, consent: true, website: "", source: "checkout", checkoutOrderId: result.orderId, consentWordingVersion: "checkout-journey-v1-2026-11-12" }) });
           if (!signup.ok) setNewsletterWarning("We could not add you to the newsletter. You can sign up in the footer.");
         } catch { setNewsletterWarning("We could not add you to the newsletter. You can sign up in the footer."); }
       }
@@ -182,7 +182,7 @@ export default function CheckoutPage() {
         <div className="checkout-contact-head"><h3>YOUR CONTACT</h3></div>
         <div className="checkout-fields">
           <label className="wide">EMAIL ADDRESS<input required type="email" autoComplete="email" maxLength={254} value={email} readOnly={signedIn} onChange={event => setEmail(event.target.value)} /></label>
-          <label className="wide checkout-newsletter"><input type="checkbox" checked={newsletterOptIn} onChange={event => setNewsletterOptIn(event.target.checked)} /><span><strong>Keep me in the loop.</strong> Email me IGNYTE news, offers and occasional reminders about products I&apos;ve viewed or left in my bag. I can unsubscribe anytime. See the <Link href="/privacy/">Privacy Policy</Link>.</span></label>
+          <label className="wide checkout-newsletter"><input type="checkbox" checked={newsletterOptIn} onChange={event => setNewsletterOptIn(event.target.checked)} /><span className="checkout-newsletter-copy"><strong>Join the fire. Get the good stuff. 🔥</strong><small>New drops, exclusive offers &amp; shopping reminders. Unsubscribe anytime. See our <Link href="/privacy/">Privacy Policy</Link>.</small></span></label>
           <label className="wide">FULL NAME<input required autoComplete="name" maxLength={120} value={shipping.name} onChange={event => setShipping({ ...shipping, name: event.target.value })} /></label>
           <div className="checkout-address-head"><h3>DELIVERY ADDRESS</h3><p>Australia only. We’ll calculate shipping from your state and postcode.</p></div>
           <label>PHONE<input required type="tel" autoComplete="tel" minLength={8} maxLength={30} value={shipping.phone} onChange={event => setShipping({ ...shipping, phone: event.target.value })} /></label>
