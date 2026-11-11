@@ -22,7 +22,7 @@
 .ignyte-fireball-impact em{background:conic-gradient(from 15deg,transparent 0 12%,#ffdb86 13% 15%,transparent 16% 30%,#ff4533 31% 34%,transparent 35% 52%,#fff1c7 53% 55%,transparent 56% 73%,#ff6d28 74% 77%,transparent 78%);animation:fireball-impact-ring .4s .82s ease-out both}
 @keyframes fireball-impact-show{0%{opacity:0;transform:translate(-50%,-50%) scale(.25)}28%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(2)}}
 @keyframes fireball-impact-ring{from{opacity:1;transform:scale(.2)}to{opacity:0;transform:scale(2.3)}}
-.ignyte-fireball-logo{position:absolute;left:var(--fireball-target-x);top:var(--fireball-target-y);width:42px;height:86px;overflow:visible;fill:#ff4533;filter:drop-shadow(0 0 10px #ff7a37);animation:fireball-logo-reveal .48s 1.08s ease-out both}
+.ignyte-fireball-logo{position:absolute;left:var(--fireball-target-x);top:var(--fireball-target-y);width:min(46px,calc(100vw - 48px));height:auto;aspect-ratio:46/82.2864;overflow:visible;fill:#ff4533;filter:drop-shadow(0 0 10px #ff7a37);animation:fireball-logo-reveal .48s 1.08s ease-out both}
 @keyframes fireball-logo-reveal{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}38%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}100%{opacity:0;transform:translate(-50%,-60%) scale(1.2)}}
 .bag-icon-wrap.bag-just-added{animation:bag-icon-pop .4s ease-out}
 @keyframes bag-icon-pop{40%{transform:scale(1.28);filter:drop-shadow(0 0 11px #ff4533)}to{transform:scale(1);filter:none}}

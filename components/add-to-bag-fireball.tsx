@@ -31,6 +31,6 @@ export default function AddToBagFireball({ position }: { position: FireballPosit
     </span>
     <span className="ignyte-fireball-embers">{Array.from({ length: 12 }, (_, index) => <i key={index} style={{ "--ember-index": index, "--ember-delay": `${(index % 4) * 32}ms`, "--ember-scale": `${.6 + (index % 5) * .18}` } as CSSProperties} />)}</span>
     <span className="ignyte-fireball-impact"><i /><b /><em /></span>
-    <svg className="ignyte-fireball-logo" viewBox="0 0 36 74.2864" aria-hidden="true"><path d={IGNYTE_FLAME_PATH} /></svg>
+    <svg className="ignyte-fireball-logo" viewBox="-5 -4 46 82.2864" aria-hidden="true"><path d={IGNYTE_FLAME_PATH} /></svg>
   </div>;
 }

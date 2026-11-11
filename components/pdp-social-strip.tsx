@@ -5,15 +5,46 @@ import { socialCoverImages, suppliedSocialCovers, type PdpSocialPost } from "@/d
 import { asset } from "@/lib/asset";
 import "@/app/pdp-social.css";
 
+type CarouselEntry = { post: PdpSocialPost; originalIndex: number };
+
+// Temporary curated-feed treatment. Set false when the live Instagram feed replaces it.
+const RANDOMIZE_CURATED_POSTS = true;
+
+function shuffled(entries: CarouselEntry[]) {
+  const result = [...entries];
+  for (let index = result.length - 1; index > 0; index--) {
+    const random = new Uint32Array(1);
+    crypto.getRandomValues(random);
+    const selected = random[0] % (index + 1);
+    [result[index], result[selected]] = [result[selected], result[index]];
+  }
+  return result;
+}
+
 export default function PdpSocialStrip({ productSlug, hideEyebrow = false }: { productSlug?: string; hideEyebrow?: boolean }) {
-  const [posts, setPosts] = useState<PdpSocialPost[]>([]);
+  const [posts, setPosts] = useState<CarouselEntry[]>([]);
+  const pageOrder = useRef<string[] | null>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let active = true;
     const refresh = () => { void fetch("/api/pdp-social", { cache: "no-store" })
       .then(async response => { if (!response.ok) throw Error("Could not load posts"); return response.json() as Promise<{ posts: PdpSocialPost[] }>; })
-      .then(data => { if (active) setPosts(data.posts.filter(post => !productSlug || !post.productSlugs.length || post.productSlugs.includes(productSlug)).slice(0, 10)); })
+      .then(data => {
+        if (!active) return;
+        const eligible = data.posts.filter(post => !productSlug || !post.productSlugs.length || post.productSlugs.includes(productSlug)).slice(0, 10)
+          .map((post, originalIndex) => ({ post, originalIndex }));
+        if (!pageOrder.current) {
+          const ordered = RANDOMIZE_CURATED_POSTS ? shuffled(eligible) : eligible;
+          pageOrder.current = ordered.map(entry => entry.post.id);
+          setPosts(ordered);
+        } else {
+          const positions = new Map(pageOrder.current.map((id, index) => [id, index]));
+          const ordered = eligible.sort((a, b) => (positions.get(a.post.id) ?? Infinity) - (positions.get(b.post.id) ?? Infinity));
+          pageOrder.current = ordered.map(entry => entry.post.id);
+          setPosts(ordered);
+        }
+      })
       .catch(() => { /* Keep the last successfully rendered feed. */ }); };
     refresh();
     const onVisible = () => { if (document.visibilityState === "visible") refresh(); };
@@ -27,8 +58,8 @@ export default function PdpSocialStrip({ productSlug, hideEyebrow = false }: { p
 
   return <section className="pdp-social" aria-label="Ignyte on Instagram">
     <div className="pdp-social-heading"><div>{!hideEyebrow && <span className="eyebrow">FOLLOW THE FIRE</span>}<h2>IGNYTE <em>IN MOTION.</em></h2></div><div className="pdp-social-controls"><a href="https://www.instagram.com/ignyteactive/" target="_blank" rel="noopener noreferrer">FOLLOW @IGNYTEACTIVE ↗</a>{posts.length > 1 && <><button type="button" aria-label="Previous Instagram posts" onClick={() => move(-1)}>←</button><button type="button" aria-label="Next Instagram posts" onClick={() => move(1)}>→</button></>}</div></div>
-    <div className="pdp-social-track" ref={trackRef}>{posts.map((post, index) => {
-      const cover = post.image || suppliedSocialCovers[post.href.match(/\/(?:p|reel)\/([^/]+)/)?.[1] || ""] || socialCoverImages[index % socialCoverImages.length];
+    <div className="pdp-social-track" ref={trackRef}>{posts.map(({ post, originalIndex }) => {
+      const cover = post.image || suppliedSocialCovers[post.href.match(/\/(?:p|reel)\/([^/]+)/)?.[1] || ""] || socialCoverImages[originalIndex % socialCoverImages.length];
       const imageSrc = cover.startsWith("/images/") ? asset(cover) : cover;
       const isReel = /\/reel\//.test(post.href);
       return <article className={`pdp-social-card ${post.href.includes("DdvnCY3ii41") ? "is-landscape" : ""}`} key={post.id}>

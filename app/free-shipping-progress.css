@@ -2,10 +2,11 @@
 .bag-shipping-progress{position:relative;isolation:isolate}
 .bag-shipping-progress>strong,.bag-shipping-track,.bag-shipping-progress>small{position:relative;z-index:1}
 .bag-shipping-progress.is-celebrating>strong{animation:bag-shipping-ember 1.7s ease-in-out 2 alternate}
-.bag-shipping-flames{position:absolute;inset:0 0 10px;display:flex;align-items:flex-end;justify-content:space-around;overflow:hidden;pointer-events:none;color:#FF4533;z-index:0;animation:bag-shipping-lifetime 4s ease-in-out forwards}
+.bag-shipping-flames{position:absolute;inset:0 0 10px;display:flex;align-items:flex-end;justify-content:space-around;overflow:visible;pointer-events:none;color:#FF4533;z-index:0;animation:bag-shipping-lifetime 4s ease-in-out forwards}
 .bag-shipping-flames svg{width:14px;height:27px;opacity:0;animation:shipping-flame 1.3s ease-out 3 forwards}
 .bag-shipping-flames svg:nth-child(2){animation-delay:90ms}.bag-shipping-flames svg:nth-child(3){animation-delay:180ms}.bag-shipping-flames svg:nth-child(4){animation-delay:270ms}.bag-shipping-flames svg:nth-child(5){animation-delay:360ms}
 @keyframes shipping-flame{0%{opacity:0;transform:translateY(8px) scale(.55)}20%{opacity:.65}100%{opacity:0;transform:translateY(-27px) scale(1)}}
 @keyframes bag-shipping-lifetime{0%,100%{opacity:0}12%,82%{opacity:1}}
 @keyframes bag-shipping-ember{0%{text-shadow:0 -2px 6px #ffab40,0 -6px 14px #ff6d00}100%{text-shadow:0 -3px 8px #ffc46b,0 -9px 20px #ff8f1f}}
 @media(prefers-reduced-motion:reduce){.bag-shipping-flames{display:none}.bag-shipping-progress.is-celebrating>strong{animation:none}}
+@media(max-width:600px){.bag-drawer .drawer-foot:has(.bag-shipping-flames){padding-top:36px}}

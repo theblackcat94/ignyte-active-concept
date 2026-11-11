@@ -96,14 +96,17 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     const active = document.activeElement;
     const origin = recentPointerButton.current ?? (active instanceof HTMLButtonElement ? active.getBoundingClientRect() : null);
     if (!origin) { setIgnition(null); return; }
-    const header = document.querySelector(".bag-trigger")?.getBoundingClientRect();
-    const headerVisible = !bagOpen && header && header.width > 0 && header.top >= 0 && header.bottom <= window.innerHeight && !document.querySelector(".site-header-hidden");
     const width = window.innerWidth;
     const height = window.innerHeight;
     const x = Math.max(28, Math.min(width - 28, origin.left + origin.width / 2));
     const y = Math.max(28, Math.min(height - 28, origin.top + origin.height / 2));
-    const targetX = headerVisible ? header.left + header.width / 2 : width <= 800 ? width / 2 : width - Math.min(470, width) / 2;
-    const targetY = headerVisible ? header.top + header.height / 2 : Math.max(105, Math.min(155, height * .18));
+    // The bag drawer opens immediately, covering the header bag icon. Land in its
+    // confirmation area rather than aiming at the header's close-button corner.
+    const drawer = document.querySelector<HTMLElement>(".bag-drawer");
+    const drawerWidth = drawer?.offsetWidth || Math.min(470, width);
+    const drawerHeadHeight = drawer?.querySelector<HTMLElement>(".drawer-head")?.offsetHeight || (width <= 600 ? 76 : 100);
+    const targetX = width - drawerWidth / 2;
+    const targetY = Math.min(height - 90, drawerHeadHeight + 75);
     const dx = targetX - x;
     const dy = targetY - y;
     const bend = Math.min(155, Math.max(65, Math.abs(dx) * .24));
