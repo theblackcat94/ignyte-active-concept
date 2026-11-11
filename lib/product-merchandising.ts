@@ -68,3 +68,15 @@ export function bagRecommendations(slugs: string[], catalog: Product[]): Product
     return product && inStock(product) ? [product] : [];
   }).slice(0, 3);
 }
+
+export function matchingBagProducts(slug: string | undefined, bagSlugs: string[], catalog: Product[]): Product[] {
+  const source = catalog.find(product => product.slug === slug);
+  if (!source || !["sports-bras", "leggings", "shorts"].includes(source.category)) return [];
+  const complementary = source.category === "sports-bras" ? ["leggings", "shorts"] : ["sports-bras"];
+  const inBag = new Set(bagSlugs);
+  return distinctAvailableProducts(catalog.filter(product =>
+    complementary.includes(product.category) &&
+    product.color.toLowerCase() === source.color.toLowerCase() &&
+    !inBag.has(product.slug)
+  )).slice(0, 2);
+}

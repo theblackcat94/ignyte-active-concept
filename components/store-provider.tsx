@@ -1,14 +1,16 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { categories as conceptCategories, legacyProductSlugs, money, products as conceptProducts, type Product } from "@/lib/catalog";
 import { activeCategories, activeProducts, commerceConfigured } from "@/lib/commerce";
 import { track } from "@/lib/analytics-client";
-import { bagRecommendations } from "@/lib/product-merchandising";
+import { bagRecommendations, matchingBagProducts } from "@/lib/product-merchandising";
 import { qualifiesForFreeShipping } from "@/lib/shipping-policy";
+import { compareProductColours, productColourHex } from "@/lib/product-colors";
 import "@/app/bag-recommendations.css";
+import "@/app/shopping-microinteractions.css";
 import FreeShippingProgress from "./free-shipping-progress";
 import PurchaseReassurance from "./purchase-reassurance";
 
@@ -21,9 +23,10 @@ type Store = {
   catalogError: boolean;
   bag: BagItem[];
   bagOpen: boolean;
+  lastAddedId: number;
   setBagDiscount: (discount: { subtotalCents: number; discountCents: number } | null) => void;
   setBagOpen: (open: boolean) => void;
-  addToBag: (slug: string, size: string) => void;
+  addToBag: (slug: string, size: string) => boolean;
   addSetToBag: (braSlug: string, braSize: string, bottomSlug: string, bottomSize: string) => boolean;
   changeBagQuantity: (slug: string, size: string, change: number) => void;
   removeFromBag: (slug: string, size: string) => void;
@@ -46,7 +49,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [catalogError, setCatalogError] = useState(false);
   const [bag, setBag] = useState<BagItem[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
-  const [bagOpen, setBagOpen] = useState(false);
+  const [bagOpen, setBagOpenState] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [checkoutMessage, setCheckoutMessage] = useState("");
   const [storageReady, setStorageReady] = useState(false);
@@ -55,9 +58,27 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const shippingCelebrationSequence = useRef(0);
   const previousShippingEligibility = useRef<boolean | null>(null);
   const [recommendationSizes, setRecommendationSizes] = useState<Record<string, string>>({});
+  const [recommendationColours, setRecommendationColours] = useState<Record<string, string>>({});
   const [actionNotice, setActionNotice] = useState<{ message: string; id: number; href?: string } | null>(null);
+  const [lastAdded, setLastAdded] = useState<{ slug: string; size: string; id: number; isSet?: boolean } | null>(null);
+  const setBagOpen = (open: boolean) => { if (!open) setLastAdded(null); setBagOpenState(open); };
   const noticeSequence = useRef(0);
   const setAddLocked = useRef(false);
+  const addLocks = useRef(new Set<string>());
+  const [sparkFlight, setSparkFlight] = useState<{ x: number; y: number; dx: number; dy: number; id: number } | null>(null);
+  const launchBagSpark = () => {
+    if (bagOpen || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const active = document.activeElement;
+    if (!(active instanceof HTMLButtonElement)) return;
+    const origin = active.getBoundingClientRect();
+    const target = document.querySelector(".bag-trigger")?.getBoundingClientRect();
+    if (!origin || !target || target.width === 0 || target.top < 0 || target.bottom > window.innerHeight || document.querySelector(".site-header-hidden")) return;
+    const x = origin.left + origin.width / 2;
+    const y = origin.top + origin.height / 2;
+    const id = ++noticeSequence.current;
+    setSparkFlight({ x, y, dx: target.left + target.width / 2 - x, dy: target.top + target.height / 2 - y, id });
+    window.setTimeout(() => setSparkFlight(current => current?.id === id ? null : current), 700);
+  };
 
   useEffect(() => {
     if (!actionNotice) return;
@@ -102,10 +123,18 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => { if (storageReady) localStorage.setItem("ignyte-concept-bag", JSON.stringify(bag)); }, [bag, storageReady]);
   useEffect(() => { if (storageReady) localStorage.setItem("ignyte-concept-wishlist", JSON.stringify(wishlist)); }, [wishlist, storageReady]);
 
-  const addToBag = (slug: string, size: string) => {
+  const addToBag = (slug: string, size: string): boolean => {
     const product = products.find(item => item.slug === slug);
     const availableStock = product?.variants?.find(variant => variant.size === size)?.stock;
-    if (product && commerceConfigured && (!availableStock || availableStock <= 0)) return;
+    if (!product || catalogLoading || catalogError || (commerceConfigured && (!availableStock || availableStock <= 0))) return false;
+    const key = `${slug}:${size}`;
+    if (addLocks.current.has(key)) return false;
+    if (availableStock !== undefined && (bag.find(item => item.slug === slug && item.size === size)?.quantity ?? 0) >= availableStock) {
+      setActionNotice({ message: "All available stock for this size is already in your bag.", id: ++noticeSequence.current });
+      return false;
+    }
+    addLocks.current.add(key);
+    window.setTimeout(() => addLocks.current.delete(key), 650);
     setBag(current => {
       const found = current.find(item => item.slug === slug && item.size === size);
       if (found && availableStock !== undefined && found.quantity >= availableStock) return current;
@@ -113,9 +142,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         ? current.map(item => item === found ? { ...item, quantity: item.quantity + 1 } : item)
         : [...current, { slug, size, quantity: 1 }];
     });
+    launchBagSpark();
     setBagOpen(true);
-    setActionNotice({ message: `${product?.name ?? "Item"} added to your bag`, id: ++noticeSequence.current });
+    setLastAdded({ slug, size, id: ++noticeSequence.current });
     track("add_to_bag", `/product/${slug}/`);
+    return true;
   };
   const addSetToBag = (braSlug: string, braSize: string, bottomSlug: string, bottomSize: string) => {
     if (setAddLocked.current || !braSize || !bottomSize || braSlug === bottomSlug) return false;
@@ -140,7 +171,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       return next;
     });
     setBagOpen(true);
-    setActionNotice({ message: "Set added to your bag", id: ++noticeSequence.current });
+    setLastAdded({ slug: braSlug, size: braSize, id: ++noticeSequence.current, isSet: true });
     track("add_to_bag", `/product/${braSlug}/`);
     return true;
   };
@@ -187,15 +218,19 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     const timer = window.setTimeout(() => setShippingCelebrationId(null), 4000);
     return () => window.clearTimeout(timer);
   }, [shippingCelebrationId]);
-  const recommendations = bagRecommendations(bag.map(item => item.slug), products);
+  const bagSlugs = bag.map(item => item.slug);
+  const matchingProducts = matchingBagProducts(lastAdded?.slug, bagSlugs, products);
+  const recommendations = [...matchingProducts, ...bagRecommendations(bagSlugs, products).filter(product => !matchingProducts.some(match => match.slug === product.slug))].slice(0, 3);
 
   return (
-    <StoreContext.Provider value={{ products, categories, catalogPreview, catalogLoading, catalogError, bag, bagOpen, setBagOpen, setBagDiscount, addToBag, addSetToBag, changeBagQuantity, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
+    <StoreContext.Provider value={{ products, categories, catalogPreview, catalogLoading, catalogError, bag, bagOpen, lastAddedId: lastAdded?.id ?? 0, setBagOpen, setBagDiscount, addToBag, addSetToBag, changeBagQuantity, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
       {children}
+      {sparkFlight && <span key={sparkFlight.id} className="bag-spark-flight" aria-hidden="true" style={{ left: sparkFlight.x, top: sparkFlight.y, "--spark-dx": `${sparkFlight.dx}px`, "--spark-dy": `${sparkFlight.dy}px` } as CSSProperties} />}
       {actionNotice && <div key={actionNotice.id} className="store-action-toast" role="status" aria-live="polite"><span aria-hidden="true">✦</span>{actionNotice.message}{actionNotice.href && <a href={actionNotice.href}>View Saved Items ↗</a>}</div>}
       {bagOpen && <div className="drawer-backdrop" onClick={() => setBagOpen(false)} />}
       <aside className={`bag-drawer ${bagOpen ? "is-open" : ""}`} aria-label="Shopping bag" aria-hidden={!bagOpen}>
         <div className="drawer-head"><div><span className="eyebrow">YOUR EDIT</span><h2>YOUR BAG ({bag.reduce((sum, item) => sum + item.quantity, 0)})</h2></div><button className="icon-button" onClick={() => setBagOpen(false)} aria-label="Close bag">×</button></div>
+        {bagOpen && lastAdded && (() => { const item = products.find(product => product.slug === lastAdded.slug); return item ? <div key={lastAdded.id} className="bag-added-confirmation" role="status"><img src={item.image} alt="" /><div><strong>{lastAdded.isSet ? "YOUR SET IS IN THE BAG. ✓" : "YOU'RE FIRED UP. ADDED TO BAG. ✓"}</strong><span>{lastAdded.isSet ? "Both selected pieces were added." : `${item.name} · ${item.color} · ${lastAdded.size}`}</span><button type="button" onClick={() => setBagOpen(false)}>KEEP SHOPPING ↗</button></div><button type="button" className="bag-added-dismiss" aria-label="Dismiss add confirmation" onClick={() => setLastAdded(null)}>×</button></div> : null; })()}
         {bag.length ? <div className="bag-list">{bag.map(item => {
           const product = products.find(p => p.slug === item.slug);
           if (!product) return <div className="bag-row" key={`${item.slug}-${item.size}`}><div><strong>Unavailable product</strong><button className="text-button" onClick={() => removeFromBag(item.slug, item.size)}>Remove</button></div></div>;
@@ -204,10 +239,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             <Link href={`/product/${product.slug}`} onClick={() => setBagOpen(false)} aria-label={`View ${product.name}`}><img src={product.image} alt="" /></Link>
             <div><Link className="bag-product-name" href={`/product/${product.slug}`} onClick={() => setBagOpen(false)}>{product.name}</Link><span>{product.color} / {item.size}</span><div className="bag-quantity" aria-label={`${product.name} quantity`}><button type="button" onClick={() => changeBagQuantity(item.slug, item.size, -1)} aria-label={`Decrease ${product.name} quantity`}>−</button><span aria-live="polite">{item.quantity}</span><button type="button" onClick={() => changeBagQuantity(item.slug, item.size, 1)} disabled={Boolean(product.variants?.some(variant => variant.size === item.size && item.quantity >= variant.stock))} aria-label={`Increase ${product.name} quantity`}>+</button></div><span>{money(price * item.quantity)}</span><button className="text-button" onClick={() => removeFromBag(item.slug, item.size)}>Remove</button></div>
           </div>;
-        })}{recommendations.length > 0 && <section className="bag-recommendations" aria-label="You may also like"><h3>YOU MAY ALSO LIKE</h3>{recommendations.map(product => {
+        })}{recommendations.length > 0 && <section className="bag-recommendations" aria-label={matchingProducts.length ? "Complete your set" : "You may also like"}><h3>{matchingProducts.length ? "COMPLETE YOUR SET" : "YOU MAY ALSO LIKE"}</h3>{recommendations.map(base => {
+          const colours = products.filter(item => item.name === base.name && item.category === base.category && !bagSlugs.includes(item.slug) && item.variants?.some(variant => variant.stock > 0)).sort((a,b) => compareProductColours(a.color,b.color));
+          const product = colours.find(item => item.slug === recommendationColours[base.slug]) ?? base;
           const variants = product.variants ?? [];
           const chosen = recommendationSizes[product.slug] ?? (variants.length === 1 && variants[0].stock > 0 ? variants[0].size : "");
-          return <div className="bag-recommendation" key={product.slug}><Link href={`/product/${product.slug}`} onClick={() => setBagOpen(false)}><img src={product.image} alt="" /></Link><div><Link href={`/product/${product.slug}`} onClick={() => setBagOpen(false)}><strong>{product.name}</strong></Link><span>{product.color} · {money(product.price)}</span><div className="bag-recommendation-sizes" aria-label={`Choose ${product.name} size`}>{variants.map(variant => <button type="button" key={variant.id} disabled={variant.stock <= 0} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} aria-pressed={chosen === variant.size} onClick={() => setRecommendationSizes(current => ({ ...current, [product.slug]: variant.size }))}>{variant.size}</button>)}</div><button type="button" className="bag-recommendation-add" disabled={!variants.some(variant => variant.size === chosen && variant.stock > 0)} onClick={() => { addToBag(product.slug, chosen); setRecommendationSizes(current => ({ ...current, [product.slug]: "" })); }}>ADD TO BAG ↗</button></div></div>;
+          return <div className="bag-recommendation" key={base.slug}><Link href={`/product/${product.slug}`} onClick={() => setBagOpen(false)}><img src={product.image} alt="" /></Link><div><Link href={`/product/${product.slug}`} onClick={() => setBagOpen(false)}><strong>{product.name}</strong></Link><span>{product.color} · {money(product.price)}</span>{colours.length > 1 && <div className="bag-recommendation-colours" aria-label={`${product.name} colours`}>{colours.map(option => <button key={option.slug} type="button" aria-label={option.color} aria-pressed={option.slug === product.slug} style={{ backgroundColor: productColourHex(option.color) ?? "#d6d1cb" }} onClick={() => setRecommendationColours(current => ({ ...current, [base.slug]: option.slug }))} />)}</div>}<div className="bag-recommendation-sizes" aria-label={`Choose ${product.name} size`}>{variants.map(variant => <button type="button" key={variant.id} disabled={variant.stock <= 0} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} aria-pressed={chosen === variant.size} onClick={() => setRecommendationSizes(current => ({ ...current, [product.slug]: variant.size }))}>{variant.size}</button>)}</div><button type="button" className="bag-recommendation-add" disabled={!variants.some(variant => variant.size === chosen && variant.stock > 0)} onClick={() => { if (addToBag(product.slug, chosen)) setRecommendationSizes(current => ({ ...current, [product.slug]: "" })); }}>ADD TO BAG ↗</button></div></div>;
         })}</section>}</div> : <div className="empty-bag"><svg className="empty-bag-mark" viewBox="0 0 80 80" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" aria-hidden="true"><path d="M40 5v70M5 40h70M15 15l50 50M65 15 15 65" /></svg><h3>Nothing in your bag yet.</h3><p>Find your next training favourite.</p><Link href="/shop" className="button button-dark" onClick={() => setBagOpen(false)}>SHOP THE COLLECTION <span>↗</span></Link></div>}
 <div className="drawer-foot">{validBag.length > 0 && <FreeShippingProgress amountCents={shippingBasisCents} celebrationId={shippingCelebrationId} />}<div><span>SUBTOTAL</span><strong>{money(subtotal)}</strong></div><PurchaseReassurance inBag />{checkoutMessage && <p role="status">{checkoutMessage}</p>}<button className="button button-orange" disabled={!validBag.length} onClick={() => { setBagOpen(false); router.push("/checkout"); }}>CHECKOUT ↗</button></div>
       </aside>

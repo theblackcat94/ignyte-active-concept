@@ -63,6 +63,8 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const fitTipRef = useRef<HTMLSpanElement>(null);
   const [showMobilePurchase, setShowMobilePurchase] = useState(false);
   const [showDesktopPurchase, setShowDesktopPurchase] = useState(false);
+  const [added, setAdded] = useState(false);
+  useEffect(() => { if (!added) return; const timer = window.setTimeout(() => setAdded(false), 1400); return () => window.clearTimeout(timer); }, [added]);
   const sizeRef = useRef<HTMLDivElement>(null);
   const addRef = useRef<HTMLButtonElement>(null);
   const related = distinctAvailableProducts(pairedProducts(product.slug, products, "related"), [product]);
@@ -95,8 +97,8 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const selectedVariant = sizes.find(variant => variant.size === size);
   const saleOriginalPrice = selectedVariant ? selectedVariant.originalPrice : product.originalPrice;
   const canAdd = Boolean(!catalogLoading && !catalogError && size && selectedVariant && selectedVariant.stock > 0);
-  const addLabel = catalogLoading ? "CHECKING STOCK" : catalogError ? "STOCK UNAVAILABLE" : !sizes.some(variant => variant.stock > 0) ? "SOLD OUT" : !size ? "SELECT A SIZE" : canAdd ? "ADD TO BAG" : product.variants ? "SOLD OUT" : "PREVIEW ONLY";
-  const stickyAddLabel = catalogLoading ? "CHECKING STOCK" : catalogError ? "STOCK UNAVAILABLE" : !sizes.some(variant => variant.stock > 0) ? "SOLD OUT" : "ADD TO BAG ↗";
+  const addLabel = added ? "ADDED ✓" : catalogLoading ? "CHECKING STOCK" : catalogError ? "STOCK UNAVAILABLE" : !sizes.some(variant => variant.stock > 0) ? "SOLD OUT" : !size ? "SELECT A SIZE" : canAdd ? "ADD TO BAG" : product.variants ? "SOLD OUT" : "PREVIEW ONLY";
+  const stickyAddLabel = added ? "ADDED ✓" : catalogLoading ? "CHECKING STOCK" : catalogError ? "STOCK UNAVAILABLE" : !sizes.some(variant => variant.stock > 0) ? "SOLD OUT" : "ADD TO BAG ↗";
   useEffect(() => {
     let cancelled = false;
     try {
@@ -128,8 +130,9 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   }, [product.slug]);
   function mobilePurchase() {
     if (!canAdd) { sizeRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
-    addToBag(product.slug, size);
+    if (addToBag(product.slug, size)) setAdded(true);
   }
+  function addSelected() { if (size && addToBag(product.slug, size)) setAdded(true); }
   const sections = ["FEATURES", "DESIGNED FOR", "FIT & FABRIC", "MODEL DETAILS", "SIZE GUIDE", "DELIVERY & RETURNS"].filter(label =>
     label === "FEATURES" ? pdp.features.length || isSock : label === "DESIGNED FOR" ? pdp.activities.length : label === "MODEL DETAILS" ? Boolean(pdp.show_model_details && pdp.model_details.trim()) : true);
 
@@ -178,7 +181,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       <div className="size-heading"><span>SELECT SIZE</span><button type="button" onClick={() => setGuideOpen(true)}>SIZE GUIDE ↗</button></div>
       <div className="size-grid" ref={sizeRef}>{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} disabled={variant.stock <= 0} onClick={() => setSelection({ slug: product.slug, size: variant.size })} key={variant.id}>{variant.size}</button>)}</div>
       {isSock ? <p className="pdp-sock-size-note">{sockSizing.productText}</p> : fitPosition !== null && <div className="pdp-fit-confidence"><span>Our fit advice</span><strong>{fitLabels[fitPosition]}</strong><span ref={fitTipRef} className={`pdp-fit-info ${fitTipOpen ? "is-open" : ""}`}><button type="button" aria-label="About our fit advice" aria-describedby="pdp-fit-tooltip" aria-expanded={fitTipOpen} onClick={() => setFitTipSlug(open => open === product.slug ? null : product.slug)}>ⓘ</button><span id="pdp-fit-tooltip" className="pdp-fit-tooltip" role="tooltip">IGNYTE&apos;s own product fit guidance, based on our assessment, not customer reviews.</span></span></div>}
-      <button type="button" ref={addRef} className="button button-orange detail-add" onClick={() => size && addToBag(product.slug, size)} disabled={!canAdd}>{addLabel}<span>↗</span></button>
+      <button type="button" ref={addRef} className={`button button-orange detail-add${added ? " is-added" : ""}`} onClick={addSelected} disabled={!canAdd}>{addLabel}<span>↗</span></button>
       <PurchaseReassurance />
       <BuildYourSet bra={product} braSize={size} />
       <div className="detail-accordions">{sections.map(label => <div key={label} id={label === "FIT & FABRIC" ? "pdp-fit-fabric" : undefined}><button type="button" aria-expanded={openInfo.includes(label)} onClick={() => setOpenInfo(current => current.includes(label) ? current.filter(item => item !== label) : [...current, label])}>{label}<span>{openInfo.includes(label) ? "−" : "+"}</span></button>{openInfo.includes(label) && content(label)}</div>)}</div>
@@ -191,7 +194,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     <ProductReviews productSlug={product.slug} />
     <PdpSocialStrip productSlug={product.slug} />
     {showMobilePurchase && !guideOpen && !bagOpen && <div className="pdp-mobile-purchase" role="region" aria-label="Sticky purchase controls"><div className="pdp-mobile-purchase-summary"><span>{product.name} · {product.color}</span><strong>{size || "Choose size"} · {money(selectedVariant?.price ?? product.price)}</strong></div><button type="button" onClick={mobilePurchase} disabled={catalogLoading || catalogError || !sizes.some(variant => variant.stock > 0)} aria-label={size ? `Add ${product.name} in ${product.color}, size ${size}, to bag` : `Choose a size before adding ${product.name} to bag`}>{stickyAddLabel}</button></div>}
-    {showDesktopPurchase && !guideOpen && !bagOpen && <div className="pdp-desktop-purchase" role="region" aria-label="Sticky desktop purchase controls"><div className="pdp-desktop-purchase-inner"><div className="pdp-desktop-purchase-summary"><strong>{product.name}</strong><span>{product.color} · {money(selectedVariant?.price ?? product.price)}</span></div><div className="pdp-desktop-purchase-sizes" role="group" aria-label={`Choose ${product.name} size in sticky bar`}>{sizes.map(variant => <button type="button" key={variant.id} disabled={variant.stock <= 0} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} onClick={() => setSelection({ slug: product.slug, size: variant.size })}>{variant.size}</button>)}</div><button type="button" className="pdp-desktop-purchase-add" disabled={!canAdd} onClick={() => addToBag(product.slug, size)}>{addLabel} ↗</button></div></div>}
+    {showDesktopPurchase && !guideOpen && !bagOpen && <div className="pdp-desktop-purchase" role="region" aria-label="Sticky desktop purchase controls"><div className="pdp-desktop-purchase-inner"><div className="pdp-desktop-purchase-summary"><strong>{product.name}</strong><span>{product.color} · {money(selectedVariant?.price ?? product.price)}</span></div><div className="pdp-desktop-purchase-sizes" role="group" aria-label={`Choose ${product.name} size in sticky bar`}>{sizes.map(variant => <button type="button" key={variant.id} disabled={variant.stock <= 0} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} onClick={() => setSelection({ slug: product.slug, size: variant.size })}>{variant.size}</button>)}</div><button type="button" className={`pdp-desktop-purchase-add${added ? " is-added" : ""}`} disabled={!canAdd} onClick={addSelected}>{addLabel} ↗</button></div></div>}
     {guideOpen && <div className="pdp-guide-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setGuideOpen(false); }}><div className="pdp-guide-dialog" role="dialog" aria-modal="true" aria-label="Size guide"><div className="pdp-guide-head"><h2>FIND YOUR FIT.</h2><button type="button" onClick={() => setGuideOpen(false)} aria-label="Close size guide">×</button></div><SizeGuideContent productCategory={product.category} /><Link href={isSock ? "/size-guide#socks" : "/size-guide"} className="text-link">OPEN FULL SIZE GUIDE ↗</Link></div></div>}
   </div>;
 }

@@ -15,7 +15,7 @@ import "@/app/header-saved-items.css";
 import "@/app/mobile-navigation.css";
 
 export default function Header() {
-  const { products, categories, bag, bagOpen, setBagOpen, searchOpen, setSearchOpen } = useStore();
+  const { products, categories, bag, bagOpen, lastAddedId, setBagOpen, searchOpen, setSearchOpen } = useStore();
   const nav = categories.map(category => [category.label.toUpperCase(), category.id === "all" ? "/shop" : `/shop/${category.id}`]);
   const primaryIds = ["all", "sports-bras", "leggings", "shorts", "tops"];
   const primaryNav = primaryIds.map(id => categories.find(category => category.id === id)).filter((category): category is (typeof categories)[number] => Boolean(category));
@@ -77,7 +77,7 @@ export default function Header() {
       <div className="header-actions">
         <button className="header-icon header-account-trigger" aria-label="Open account and discovery" aria-expanded={accountOpen} onClick={() => { setBagOpen(false); setWishlistOpen(false); setAccountOpen(true); }}><Icon name="account" /></button>
         <button className="header-icon search-trigger" aria-label="Search" onClick={() => setSearchOpen(true)}><Icon name="search" /></button>
-        <button className="header-icon bag-trigger" aria-label={`Bag with ${bag.length} items`} onClick={() => { setWishlistOpen(false); setBagOpen(true); }}><span className="bag-icon-wrap"><Icon name="bag" /><sup>{bag.reduce((sum, item) => sum + item.quantity, 0)}</sup></span></button>
+        <button className="header-icon bag-trigger" aria-label={`Bag with ${bag.reduce((sum, item) => sum + item.quantity, 0)} items`} onClick={() => { setWishlistOpen(false); setBagOpen(true); }}><span key={lastAddedId} className={`bag-icon-wrap${lastAddedId ? " bag-just-added" : ""}`}><Icon name="bag" /><sup>{bag.reduce((sum, item) => sum + item.quantity, 0)}</sup></span></button>
       </div>
     </header>
     {menuOpen && <><div className="drawer-backdrop" onClick={() => setMenuOpen(false)} /><nav className="mobile-menu" aria-label="Mobile navigation"><div className="mobile-menu-head"><HeaderLogo /><button type="button" onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button></div>
