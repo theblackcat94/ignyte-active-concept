@@ -7,6 +7,7 @@ import type { Product } from "@/lib/catalog";
 import { money } from "@/lib/catalog";
 import { compareProductColours, productColourHex } from "@/lib/product-colors";
 import { useStore } from "./store-provider";
+import HeartIcon from "./heart-icon";
 import "./shop-the-look.css";
 
 type Look = { title: string; description: string; eyebrow: string; top: string; bottom: string };
@@ -16,7 +17,7 @@ const looks: Look[] = [
 ];
 
 function LookCard({ look, products }: { look: Look; products: Product[] }) {
-  const { addSetToBag, bag, catalogLoading, catalogError } = useStore();
+  const { addSetToBag, bag, wishlist, toggleWishlist, catalogLoading, catalogError } = useStore();
   const [topSlug, setTopSlug] = useState(look.top);
   const [bottomSlug, setBottomSlug] = useState(look.bottom);
   const [topSize, setTopSize] = useState("");
@@ -72,7 +73,7 @@ function LookCard({ look, products }: { look: Look; products: Product[] }) {
   const renderProduct = (item: Product, selectedSize: string, onSize: (size: string) => void, onColour: (slug: string) => void) => {
     const colours = products.filter(option => option.name === item.name && option.category === item.category).sort((a, b) => compareProductColours(a.color, b.color));
     return <div className="look-product" key={item.slug}>
-      <div className="look-product-detail"><Image src={item.image} alt={`${item.name} in ${item.color}`} width={46} height={59} sizes="46px" /><div><div className="look-product-heading"><Link href={`/product/${item.slug}/`}>{item.name} · {item.color}</Link><strong>{money(item.variants?.find(v => v.size === selectedSize)?.price ?? item.price)}</strong></div>
+      <div className="look-product-detail"><Image src={item.image} alt={`${item.name} in ${item.color}`} width={46} height={59} sizes="46px" /><div><div className="look-product-heading"><Link href={`/product/${item.slug}/`}>{item.name} · {item.color}</Link><button type="button" className="look-product-heart" aria-label={wishlist.includes(item.slug) ? `Remove ${item.name} from wishlist` : `Save ${item.name} to wishlist`} aria-pressed={wishlist.includes(item.slug)} onClick={() => toggleWishlist(item.slug)}><HeartIcon filled={wishlist.includes(item.slug)} /></button><strong>{money(item.variants?.find(v => v.size === selectedSize)?.price ?? item.price)}</strong></div>
       <div className="look-options"><div className="look-colours" aria-label={`${item.name} colour`}>{colours.map(option => <button key={option.slug} type="button" className={option.slug === item.slug ? "selected" : ""} style={{ backgroundColor: productColourHex(option.color) ?? "#d3cdc9" }} aria-label={`${option.color}${option.slug === item.slug ? ", selected" : ""}`} aria-pressed={option.slug === item.slug} onClick={() => { setFeedback(""); onColour(option.slug); }} />)}</div><div className="look-sizes" aria-label={`${item.name} size`}>{item.variants?.map(variant => <button type="button" key={variant.id} disabled={variant.stock <= 0} aria-pressed={selectedSize === variant.size} onClick={() => { setFeedback(""); onSize(variant.size); }}>{variant.size}</button>)}</div></div></div>
     </div></div>;
   };

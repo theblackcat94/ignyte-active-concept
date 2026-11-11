@@ -21,6 +21,12 @@
 .look-options{margin-top:8px;gap:8px}
 .look-sizes{gap:4px}
 .look-sizes button{min-width:29px;min-height:29px;padding:3px 5px}
+.look-product-heading .look-product-heart{position:relative;display:grid;place-items:center;flex:none;width:36px;height:36px;margin-left:auto;border:0;background:transparent;color:inherit;cursor:pointer}
+.look-product-heading .look-product-heart svg{width:19px;height:19px}
+.look-product-heading .look-product-heart[aria-pressed="true"]{color:#ff4533}
+.look-product-heading .look-product-heart[aria-pressed="true"]::after{content:"";position:absolute;inset:5px;border:1px solid #ff4533;border-radius:50%;pointer-events:none;animation:wishlist-ring .32s ease-out both}
+.look-product-heading .look-product-heart:focus-visible{outline:2px solid #ff4533;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.look-product-heading .look-product-heart[aria-pressed="true"]::after{animation:none}}
 .look-colours button{width:19px;height:19px}
 .look-total{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:auto;padding-top:10px;border-top:1px solid #a9a49d}
 .look-total span{font-size:10px;letter-spacing:.08em}

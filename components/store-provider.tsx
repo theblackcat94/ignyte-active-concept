@@ -15,6 +15,7 @@ import FreeShippingProgress from "./free-shipping-progress";
 import PurchaseReassurance from "./purchase-reassurance";
 
 type BagItem = { slug: string; size: string; quantity: number };
+type AddedItem = { slug: string; size: string; id: number; second?: { slug: string; size: string } };
 type Store = {
   products: Product[];
   categories: { id: string; label: string; cover: string; coverAlt?: string; focalX?: number; focalY?: number }[];
@@ -23,7 +24,7 @@ type Store = {
   catalogError: boolean;
   bag: BagItem[];
   bagOpen: boolean;
-  lastAddedId: number;
+  bagImpactId: number;
   setBagDiscount: (discount: { subtotalCents: number; discountCents: number } | null) => void;
   setBagOpen: (open: boolean) => void;
   addToBag: (slug: string, size: string) => boolean;
@@ -60,24 +61,31 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [recommendationSizes, setRecommendationSizes] = useState<Record<string, string>>({});
   const [recommendationColours, setRecommendationColours] = useState<Record<string, string>>({});
   const [actionNotice, setActionNotice] = useState<{ message: string; id: number; href?: string } | null>(null);
-  const [lastAdded, setLastAdded] = useState<{ slug: string; size: string; id: number; isSet?: boolean } | null>(null);
+  const [lastAdded, setLastAdded] = useState<AddedItem | null>(null);
   const setBagOpen = (open: boolean) => { if (!open) setLastAdded(null); setBagOpenState(open); };
   const noticeSequence = useRef(0);
   const setAddLocked = useRef(false);
   const addLocks = useRef(new Set<string>());
-  const [sparkFlight, setSparkFlight] = useState<{ x: number; y: number; dx: number; dy: number; id: number } | null>(null);
-  const launchBagSpark = () => {
-    if (bagOpen || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const [bagImpactId, setBagImpactId] = useState(0);
+  const [ignition, setIgnition] = useState<{ x: number; y: number; dx: number; dy: number; distance: number; angle: number; targetX: number; targetY: number; id: number } | null>(null);
+  const launchIgnition = () => {
+    const id = ++noticeSequence.current;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) { setBagImpactId(id); return; }
     const active = document.activeElement;
     if (!(active instanceof HTMLButtonElement)) return;
     const origin = active.getBoundingClientRect();
-    const target = document.querySelector(".bag-trigger")?.getBoundingClientRect();
-    if (!origin || !target || target.width === 0 || target.top < 0 || target.bottom > window.innerHeight || document.querySelector(".site-header-hidden")) return;
+    const header = document.querySelector(".bag-trigger")?.getBoundingClientRect();
+    const headerVisible = !bagOpen && header && header.width > 0 && header.top >= 0 && header.bottom <= window.innerHeight && !document.querySelector(".site-header-hidden");
     const x = origin.left + origin.width / 2;
     const y = origin.top + origin.height / 2;
-    const id = ++noticeSequence.current;
-    setSparkFlight({ x, y, dx: target.left + target.width / 2 - x, dy: target.top + target.height / 2 - y, id });
-    window.setTimeout(() => setSparkFlight(current => current?.id === id ? null : current), 700);
+    const targetX = headerVisible ? header.left + header.width / 2 : window.innerWidth - Math.min(470, window.innerWidth) / 2;
+    const targetY = headerVisible ? header.top + header.height / 2 : 140;
+    const dx = targetX - x;
+    const dy = targetY - y;
+    setIgnition({ x, y, dx, dy, distance: Math.hypot(dx, dy), angle: Math.atan2(dy, dx) * 180 / Math.PI, targetX, targetY, id });
+    window.setTimeout(() => setBagImpactId(id), 620);
+    window.setTimeout(() => setIgnition(current => current?.id === id ? null : current), 1100);
   };
 
   useEffect(() => {
@@ -142,7 +150,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         ? current.map(item => item === found ? { ...item, quantity: item.quantity + 1 } : item)
         : [...current, { slug, size, quantity: 1 }];
     });
-    launchBagSpark();
+    launchIgnition();
     setBagOpen(true);
     setLastAdded({ slug, size, id: ++noticeSequence.current });
     track("add_to_bag", `/product/${slug}/`);
@@ -170,14 +178,15 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       }
       return next;
     });
+    launchIgnition();
     setBagOpen(true);
-    setLastAdded({ slug: braSlug, size: braSize, id: ++noticeSequence.current, isSet: true });
+    setLastAdded({ slug: braSlug, size: braSize, second: { slug: bottomSlug, size: bottomSize }, id: ++noticeSequence.current });
     track("add_to_bag", `/product/${braSlug}/`);
     return true;
   };
   const removeFromBag = (slug: string, size: string) => {
     setBag(current => current.filter(item => !(item.slug === slug && item.size === size)));
-    setLastAdded(current => current?.slug === slug && current.size === size ? null : current);
+    setLastAdded(current => current && ((current.slug === slug && current.size === size) || (current.second?.slug === slug && current.second.size === size)) ? null : current);
   };
   const changeBagQuantity = (slug: string, size: string, change: number) => {
     const product = products.find(item => item.slug === slug);
@@ -190,7 +199,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       return [{ ...item, quantity }];
     }));
     if (change < 0 && bag.find(item => item.slug === slug && item.size === size)?.quantity === 1) {
-      setLastAdded(current => current?.slug === slug && current.size === size ? null : current);
+      setLastAdded(current => current && ((current.slug === slug && current.size === size) || (current.second?.slug === slug && current.second.size === size)) ? null : current);
     }
   };
   const clearBag = useCallback(() => { setBag([]); setLastAdded(null); }, []);
@@ -229,14 +238,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const recommendations = matchingProducts.length ? matchingProducts : bagRecommendations(bagSlugs, products);
 
   return (
-    <StoreContext.Provider value={{ products, categories, catalogPreview, catalogLoading, catalogError, bag, bagOpen, lastAddedId: lastAdded?.id ?? 0, setBagOpen, setBagDiscount, addToBag, addSetToBag, changeBagQuantity, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
+    <StoreContext.Provider value={{ products, categories, catalogPreview, catalogLoading, catalogError, bag, bagOpen, bagImpactId, setBagOpen, setBagDiscount, addToBag, addSetToBag, changeBagQuantity, removeFromBag, clearBag, wishlist, toggleWishlist, searchOpen, setSearchOpen }}>
       {children}
-      {sparkFlight && <span key={sparkFlight.id} className="bag-spark-flight" aria-hidden="true" style={{ left: sparkFlight.x, top: sparkFlight.y, "--spark-dx": `${sparkFlight.dx}px`, "--spark-dy": `${sparkFlight.dy}px` } as CSSProperties} />}
+      {ignition && <div key={ignition.id} className="ignyte-add-ignition" aria-hidden="true" style={{ "--ignition-x": `${ignition.x}px`, "--ignition-y": `${ignition.y}px`, "--ignition-target-x": `${ignition.targetX}px`, "--ignition-target-y": `${ignition.targetY}px`, "--ignition-distance": `${ignition.distance}px`, "--ignition-angle": `${ignition.angle}deg` } as CSSProperties}><span className="ignyte-add-flash" /><span className="ignyte-add-trail" /><span className="ignyte-add-impact" /></div>}
       {actionNotice && <div key={actionNotice.id} className="store-action-toast" role="status" aria-live="polite"><span aria-hidden="true">✦</span>{actionNotice.message}{actionNotice.href && <a href={actionNotice.href}>View Saved Items ↗</a>}</div>}
       {bagOpen && <div className="drawer-backdrop" onClick={() => setBagOpen(false)} />}
-      <aside className={`bag-drawer ${bagOpen ? "is-open" : ""}`} aria-label="Shopping bag" aria-hidden={!bagOpen}>
+      <aside className={`bag-drawer ${bagOpen ? "is-open" : ""}${lastAdded ? " has-ignition" : ""}`} aria-label="Shopping bag" aria-hidden={!bagOpen}>
         <div className="drawer-head"><div><span className="eyebrow">YOUR EDIT</span><h2>YOUR BAG ({bag.reduce((sum, item) => sum + item.quantity, 0)})</h2></div><button className="icon-button" onClick={() => setBagOpen(false)} aria-label="Close bag">×</button></div>
-        {bagOpen && lastAdded && (() => { const item = products.find(product => product.slug === lastAdded.slug); return item ? <div key={lastAdded.id} className="bag-added-confirmation" role="status"><img src={item.image} alt="" /><div><strong>{lastAdded.isSet ? "YOUR SET IS IN THE BAG. ✓" : "YOU'RE FIRED UP. ADDED TO BAG. ✓"}</strong><span>{lastAdded.isSet ? "Both selected pieces were added." : `${item.name} · ${item.color} · ${lastAdded.size}`}</span><button type="button" onClick={() => setBagOpen(false)}>KEEP SHOPPING ↗</button></div><button type="button" className="bag-added-dismiss" aria-label="Dismiss add confirmation" onClick={() => setLastAdded(null)}>×</button></div> : null; })()}
+        {bagOpen && lastAdded && <BagAddedConfirmation added={lastAdded} products={products} bag={bag} onKeepShopping={() => setBagOpen(false)} onDismiss={() => setLastAdded(null)} />}
         {bag.length ? <div className="bag-list">{bag.map(item => {
           const product = products.find(p => p.slug === item.slug);
           if (!product) return <div className="bag-row" key={`${item.slug}-${item.size}`}><div><strong>Unavailable product</strong><button className="text-button" onClick={() => removeFromBag(item.slug, item.size)}>Remove</button></div></div>;
@@ -256,6 +265,22 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       </aside>
     </StoreContext.Provider>
   );
+}
+
+function BagAddedConfirmation({ added, products, bag, onKeepShopping, onDismiss }: { added: AddedItem; products: Product[]; bag: BagItem[]; onKeepShopping: () => void; onDismiss: () => void }) {
+  const addedItems = [added, ...(added.second ? [added.second] : [])].flatMap(entry => {
+    const product = products.find(item => item.slug === entry.slug);
+    const item = bag.find(item => item.slug === entry.slug && item.size === entry.size);
+    if (!product || !item) return [];
+    const price = product.variants?.find(variant => variant.size === entry.size)?.price ?? product.price;
+    return [{ product, size: entry.size, quantity: item.quantity, price }];
+  });
+  if (!addedItems.length) return null;
+  return <div key={added.id} className="bag-added-confirmation" role="status" aria-live="polite">
+    <img src={addedItems[0].product.image} alt="" />
+    <div className="bag-added-copy"><strong>IGNITED.</strong><p>Your gear is in the bag.</p>{addedItems.map(item => <span key={`${item.product.slug}:${item.size}`}>{item.product.name} · {item.product.color} · {item.size} · Qty {item.quantity} · {money(item.price * item.quantity)}</span>)}<button type="button" onClick={onKeepShopping}>KEEP SHOPPING ↗</button></div>
+    <button type="button" className="bag-added-dismiss" aria-label="Dismiss add confirmation" onClick={onDismiss}>×</button>
+  </div>;
 }
 
 export const useStore = () => {
