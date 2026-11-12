@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   const orderId = session.metadata?.order_id;
   if (!orderId) return NextResponse.json({ error: "Missing order reference" }, { status: 400 });
   const db = adminDb();
-  const { data: order, error } = await db.from("orders").select("id,subtotal_cents,discount_cents,shipping_cents,total_cents,status,stripe_session_id,shipping_details")
+  const { data: order, error } = await db.from("orders").select("id,subtotal_cents,discount_cents,shipping_cents,total_cents,status,stock_reserved,stripe_session_id,shipping_details")
     .eq("id", orderId).single();
   if (error || !order) {
     return NextResponse.json({ error: "Unknown checkout session" }, { status: 400 });
@@ -55,6 +55,18 @@ export async function POST(request: Request) {
       },
       ...(environment === "sandbox" ? { test_order: true } : {}),
     };
+    // Some older sandbox sessions completed after their test reservation was
+    // released. Re-reserve only a marked sandbox order after verifying Stripe's
+    // paid session, amounts and delivery address above. Live orders never take
+    // this recovery path.
+    if (environment === "sandbox" && order.status === "awaiting_payment" &&
+        !order.stock_reserved && (order.shipping_details as { test_order?: boolean } | null)?.test_order === true) {
+      const { error: reserveError } = await db.rpc("prepare_stripe_order", { p_order_id: orderId });
+      if (reserveError) {
+        console.error("Stripe sandbox reservation recovery failed", orderId, reserveError.code);
+        return NextResponse.json({ error: "Test order reservation failed" }, { status: 500 });
+      }
+    }
     const { error: completeError } = await db.rpc("complete_order", {
       p_order_id: orderId,
       p_session_id: session.id,
@@ -64,7 +76,10 @@ export async function POST(request: Request) {
       p_total_cents: session.amount_total,
       p_shipping_details: verifiedShipping,
     });
-    if (completeError) return NextResponse.json({ error: "Order update failed" }, { status: 500 });
+    if (completeError) {
+      console.error("Stripe order completion failed", orderId, completeError.code);
+      return NextResponse.json({ error: "Order update failed" }, { status: 500 });
+    }
     try { await queuePaymentConfirmedEmails(orderId); }
     catch (emailError) { console.error("Could not queue paid order emails", emailError instanceof Error ? emailError.message : "Unknown error"); }
   } else {

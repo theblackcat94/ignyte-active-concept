@@ -7,6 +7,8 @@ import { browserDb } from "@/lib/commerce";
 import { defaultPdpSocialSettings, socialCoverImages, suppliedSocialCovers, type PdpSocialPost, type PdpSocialSettings } from "@/data/pdp-social";
 import "./pdp-social-admin.css";
 
+type InstagramConnection = { configured: boolean; oauthReady: boolean; automatic: boolean; mediaCount: number; lastRefresh?: string };
+
 export default function PdpSocialAdminPage() {
   const token = useAdminToken();
   const [settings, setSettings] = useState<PdpSocialSettings>(defaultPdpSocialSettings);
@@ -16,14 +18,50 @@ export default function PdpSocialAdminPage() {
   const [message, setMessage] = useState("");
   const [slugInputs, setSlugInputs] = useState<Record<string, string>>({});
   const [accessDenied, setAccessDenied] = useState(false);
+  const [connection, setConnection] = useState<InstagramConnection | null>(null);
+  const [connecting, setConnecting] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (!token) return;
+    void fetch("/api/admin/instagram-connection", { headers: adminHeaders(token), cache: "no-store" })
+      .then(async response => { if (!response.ok) throw Error("Could not load Instagram connection status."); return response.json() as Promise<InstagramConnection>; })
+      .then(setConnection)
+      .catch(error => setMessage(error.message));
+    const result = new URLSearchParams(window.location.search).get("instagram");
+    if (result === "connected") setMessage("Instagram account connected. Fetch the latest posts to preview them before switching the live feed.");
+    else if (result === "error") setMessage("Instagram connection was not completed. Check the Meta app settings and try again.");
     void fetch("/api/admin/pdp-social", { headers: adminHeaders(token), cache: "no-store" })
       .then(async response => { if (response.status === 403) { setAccessDenied(true); throw Error("This website account does not have IGNYTE team access."); } if (!response.ok) throw Error("Could not load Instagram posts."); return response.json() as Promise<PdpSocialSettings>; })
       .then(data => { setSettings(data); setSlugInputs(Object.fromEntries(data.posts.map(post => [post.id, post.productSlugs.join(", ")]))); setLoaded(true); })
       .catch(error => setMessage(error.message));
   }, [token]);
+
+  async function connectInstagram() {
+    if (!token) return;
+    setConnecting(true); setMessage("");
+    try {
+      const response = await fetch("/api/admin/instagram-oauth/start", { method: "POST", headers: adminHeaders(token) });
+      const result = await response.json() as { authorizationUrl?: string; error?: string };
+      if (!response.ok || !result.authorizationUrl) throw Error(result.error ?? "Could not start Instagram connection.");
+      window.location.assign(result.authorizationUrl);
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Could not start Instagram connection."); setConnecting(false); }
+  }
+
+  async function refreshInstagram() {
+    if (!token) return;
+    setRefreshing(true); setMessage("");
+    try {
+      const response = await fetch("/api/admin/instagram-connection", { method: "POST", headers: adminHeaders(token) });
+      const result = await response.json() as InstagramConnection & { error?: string };
+      if (!response.ok) throw Error(result.error ?? "Could not fetch Instagram posts.");
+      setConnection(result);
+      const latest = await fetch("/api/admin/pdp-social", { headers: adminHeaders(token), cache: "no-store" });
+      if (latest.ok) { const data = await latest.json() as PdpSocialSettings; setSettings(data); }
+      setMessage(`Fetched ${result.mediaCount} Instagram posts. Review them below, then choose whether to enable the automatic feed.`);
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Could not fetch Instagram posts."); }
+    finally { setRefreshing(false); }
+  }
   function updatePost(id: string, patch: Partial<PdpSocialPost>) {
     setSettings(current => ({ ...current, posts: current.posts.map(post => post.id === id ? { ...post, ...patch } : post) }));
   }
@@ -74,11 +112,20 @@ export default function PdpSocialAdminPage() {
   return <AdminPageShell title="Instagram strip">
     <div className="ops-panel pdp-social-preview-link"><div><h2>Homepage feed preview</h2><p>Review the curated Instagram cards used on the homepage and product pages.</p></div><Link className="text-link" href="/instagram-live-preview" target="_blank">OPEN PREVIEW ↗</Link></div>
     {!token && <div className="ops-panel"><h2>Website team access</h2><p>This editor manages the curated feed and requires an IGNYTE website team account. Meta Business Suite access is not needed to publish Instagram posts here.</p><Link className="text-link" href="/account">SIGN IN WITH A TEAM ACCOUNT ↗</Link></div>}
-    {token && accessDenied && <p>Only an IGNYTE website team account can edit this feed. Meta Business Suite access alone does not unlock this page. Marcus can authorise the Instagram connection through Meta’s official screen once Zach has completed that flow; no password should be sent by email.</p>}
+    {token && accessDenied && <p>Only an IGNYTE website team account can manage this feed. Ask a site administrator to grant your website account team access.</p>}
     {message && <p role="status" className="admin-message">{message}</p>}
+    {token && !accessDenied && <div className="ops-panel pdp-social-connection">
+      <h2>Connect @ignyteactive</h2>
+      <p>Connect the Instagram professional account through Meta’s sign-in screen. The site stores the access token on the server; no password or token needs to be shared. After connecting, fetch the latest posts and choose whether to use the automatically refreshed feed or keep the curated cards below.</p>
+      {connection && <p><strong>Status:</strong> {connection.configured ? "Connected" : "Not connected"}{connection.lastRefresh ? ` · Last fetched ${new Date(connection.lastRefresh).toLocaleString()}` : ""}{connection.mediaCount ? ` · ${connection.mediaCount} posts cached` : ""}</p>}
+      {!connection?.oauthReady && <p><strong>Setup needed:</strong> Meta app credentials are not configured on the server yet. Configure the Instagram Login app and set <code>META_INSTAGRAM_APP_ID</code>, <code>META_INSTAGRAM_APP_SECRET</code>, and <code>INSTAGRAM_OAUTH_REDIRECT_URI</code>. For this site the redirect URI is <code>https://dev.ignyteactive.com/api/instagram/oauth/callback</code>.</p>}
+      <div className="ops-toolbar"><button type="button" onClick={() => void connectInstagram()} disabled={connecting || !connection?.oauthReady}>{connecting ? "OPENING META…" : connection?.configured ? "RECONNECT INSTAGRAM" : "CONNECT INSTAGRAM"}</button><button type="button" onClick={() => void refreshInstagram()} disabled={refreshing || !connection?.configured}>{refreshing ? "FETCHING POSTS…" : "FETCH LATEST POSTS"}</button></div>
+      {settings.cachedPosts?.length ? <div className="pdp-social-cached-preview">{settings.cachedPosts.slice(0, 6).map(post => <a key={post.id} href={post.href} target="_blank" rel="noopener noreferrer"><img src={post.image} alt={post.alt} /><span>{post.caption}</span></a>)}</div> : null}
+      {connection?.mediaCount ? <label className="pdp-social-admin-toggle"><input type="checkbox" checked={Boolean(settings.automatic)} onChange={event => setSettings(current => ({ ...current, automatic: event.target.checked }))} /> USE THE AUTOMATIC INSTAGRAM FEED</label> : null}
+    </div>}
     {token && !accessDenied && loaded && <div className="ops-panel pdp-social-admin">
       <h2>Curated Instagram posts</h2>
-      <p>Add public Instagram post or reel links and upload matching thumbnails or videos. No account connection is required. The first ten enabled posts appear on the homepage and product pages; customers can swipe the strip on mobile.</p>
+      <p>Curate post links and matching thumbnails or videos here. When the automatic feed is off, the first ten enabled cards appear on the homepage and product pages; customers can swipe the strip on mobile.</p>
       <label className="pdp-social-admin-toggle"><input type="checkbox" checked={settings.enabled} onChange={event => setSettings(current => ({ ...current, enabled: event.target.checked }))} /> SHOW ON HOMEPAGE AND PRODUCT PAGES</label>
       {settings.posts.map((post, index) => <section className="pdp-social-admin-post" key={post.id}>
         <div className="pdp-social-admin-head"><h3>POST {index + 1}</h3><div><button type="button" onClick={() => movePost(index, -1)} disabled={index === 0} aria-label={`Move post ${index + 1} up`}>↑</button><button type="button" onClick={() => movePost(index, 1)} disabled={index === settings.posts.length - 1} aria-label={`Move post ${index + 1} down`}>↓</button><button type="button" onClick={() => setSettings(current => ({ ...current, posts: current.posts.filter(item => item.id !== post.id) }))}>REMOVE</button></div></div>

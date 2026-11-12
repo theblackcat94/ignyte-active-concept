@@ -16,6 +16,6 @@ export async function POST(request: Request) {
   if (!await instagramConnected()) return NextResponse.json({ error: "Connect the Instagram professional account before testing the feed." }, { status: 503 });
   try {
     const settings = await refreshInstagramFeed(true);
-    return NextResponse.json({ configured: true, mediaCount: settings.cachedPosts?.length ?? 0, lastRefresh: settings.lastRefresh, automatic: Boolean(settings.automatic) }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json({ configured: true, oauthReady: instagramOAuthReady(), mediaCount: settings.cachedPosts?.length ?? 0, lastRefresh: settings.lastRefresh, automatic: Boolean(settings.automatic) }, { headers: { "Cache-Control": "no-store" } });
   } catch { return NextResponse.json({ error: "Meta media access could not be verified. Reconnect the professional account and check instagram_business_basic permission. The curated feed remains active." }, { status: 502 }); }
 }

@@ -57,6 +57,7 @@ export async function POST(request: Request) {
       p_items: mappedItems, p_customer_email: email, p_shipping_details: details,
       p_client_request_id: requestId,
       p_guest_token_hash: createHash("sha256").update(guestToken!).digest("hex"),
+      p_disable_guest_order_limit: process.env.GUEST_ORDER_LIMIT_DISABLED === "true",
     });
   if (error || !orderId) {
     console.error("Order request failed", error?.message ?? "No order ID returned");

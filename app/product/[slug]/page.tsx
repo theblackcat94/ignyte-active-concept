@@ -7,6 +7,7 @@ import ProductDetail from "@/components/product-detail-v2";
 import { productSeo } from "@/lib/product-seo";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ignyte.theblackcat94.com";
+const isIndexableHost = new URL(siteUrl).hostname === "ignyteactive.com";
 const findProduct = cache(async (slug: string) => {
   const active = commerceConfigured ? await activeProducts() : [];
   const catalog = active.length ? active : products;
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const image = new URL(product.image, siteUrl).toString();
   return {
     title, description, alternates: { canonical: url },
-    robots: { index: live, follow: live },
+    robots: { index: isIndexableHost && live, follow: isIndexableHost && live },
     openGraph: { type: "website", title, description, url, siteName: "Ignyte Active",
       images: [{ url: image, width: 1800, height: 2400, alt: `${product.name} in ${product.color}` }] },
     twitter: { card: "summary_large_image", title, description, images: [image] },

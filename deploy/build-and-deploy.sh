@@ -59,6 +59,9 @@ if [[ -f "$build_env_file" ]]; then
       PAYMENT_PROVIDER|STRIPE_SECRET_KEY|STRIPE_WEBHOOK_SECRET|GUEST_ORDER_LIMIT_DISABLED|MINTSOFT_WEBHOOK_SECRET)
         # Server-only commerce settings are copied to the target env file, never exported to the build.
         ;;
+      MINTSOFT_WEBHOOK_SECRET)
+        # Server-only callback authentication; never exported to browser code.
+        ;;
       SES_AWS_ACCESS_KEY_ID|SES_AWS_SECRET_ACCESS_KEY|SES_AWS_SESSION_TOKEN|SES_AWS_REGION|SES_FROM_EMAIL|ORDER_NOTIFICATION_EMAIL)
         # Server-only mail settings are copied to the target env file, never exported to the build.
         ;;
@@ -67,6 +70,9 @@ if [[ -f "$build_env_file" ]]; then
         ;;
       META_INSTAGRAM_APP_ID|META_INSTAGRAM_APP_SECRET|INSTAGRAM_OAUTH_REDIRECT_URI)
         # Server-only Meta OAuth settings are copied to the target env file, never exported to the build.
+        ;;
+      GUEST_ORDER_LIMIT_DISABLED)
+        # Server-only staging convenience. Production must keep the guest request limit enabled.
         ;;
       *) echo "Unexpected build setting name: $name" >&2; exit 1 ;;
     esac

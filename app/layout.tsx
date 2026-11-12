@@ -84,11 +84,11 @@ const ignyteMono = localFont({
   display: "swap",
 });
 
+const siteHost = new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://ignyte.theblackcat94.com").hostname;
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://ignyte.theblackcat94.com"),
-  robots: process.env.NEXT_PUBLIC_SITE_URL?.startsWith("https://dev.")
-    ? { index: false, follow: false }
-    : undefined,
+  robots: siteHost === "ignyteactive.com" ? undefined : { index: false, follow: false },
   title: "Ignyte Active | High-Performance Activewear for Women",
   applicationName: "Ignyte Active",
   icons: { icon: { url: asset("/favicon.png"), type: "image/png" } },

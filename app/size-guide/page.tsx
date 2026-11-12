@@ -4,7 +4,7 @@ import Image from "next/image";
 import SizeGuideContent from "@/components/size-guide-content";
 import { asset } from "@/lib/asset";
 
-export const metadata: Metadata = { title: "Size guide | Ignyte Active", description: "Body reference measurements and measuring instructions for Ignyte Active." };
+export const metadata: Metadata = { title: "Size guide | Ignyte Active", description: "Compare your measurements with the Ignyte Active size guide and learn how to measure for sports bras, tops, bottoms and socks.", alternates: { canonical: "/size-guide/" } };
 
 export default function SizeGuidePage() {
   return <main className="size-guide-page section-wrap">

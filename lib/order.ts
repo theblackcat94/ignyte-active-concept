@@ -20,6 +20,12 @@ export type OrderDetail = {
   total_cents: number | null;
   created_at: string;
   paid_at: string | null;
+  shipping_status: "not_dispatched" | "dispatched" | "delivered";
+  carrier_name: string | null;
+  tracking_number: string | null;
+  tracking_url: string | null;
+  dispatched_at: string | null;
+  delivered_at: string | null;
   shipping_details: {
     test_order?: boolean;
     name?: string;
@@ -36,4 +42,4 @@ export type OrderDetail = {
   order_items: OrderItem[];
 };
 
-export const orderSelect = "id,user_id,stock_reserved,status,customer_email,subtotal_cents,discount_cents,coupon_code,shipping_cents,total_cents,created_at,paid_at,shipping_details,order_items(variant_id,product_name,sku,size,quantity,unit_price_cents)";
+export const orderSelect = "id,user_id,stock_reserved,status,customer_email,subtotal_cents,discount_cents,coupon_code,shipping_cents,total_cents,created_at,paid_at,shipping_status,carrier_name,tracking_number,tracking_url,dispatched_at,delivered_at,shipping_details,order_items(variant_id,product_name,sku,size,quantity,unit_price_cents)";

@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start -H 127.0.0.1",
     "reconcile:orders": "node scripts/reconcile-orders.mjs",
+    "sync:mintsoft-stock": "node scripts/sync-mintsoft-stock.mjs",
+    "send:mintsoft-orders": "node scripts/send-mintsoft-orders.mjs",
     "backup:store": "node scripts/backup-store.mjs",
     "lint": "eslint ."
   },

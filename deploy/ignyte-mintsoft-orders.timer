@@ -1,0 +1,10 @@
+[Unit]
+Description=Submit paid Ignyte website orders to Mintsoft every minute
+
+[Timer]
+OnCalendar=*-*-* *:*:00
+Persistent=true
+Unit=ignyte-mintsoft-orders.service
+
+[Install]
+WantedBy=timers.target

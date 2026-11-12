@@ -71,9 +71,14 @@ export function adminOrderEmail(order: EmailOrder, status: "awaiting payment" | 
   };
 }
 
-export function orderDispatchedEmail(orderId: string, carrier: string, trackingNumber: string, siteUrl: string): EmailDesign {
-  const intro = `Order ${orderId} has been dispatched with ${carrier}. Your tracking number is ${trackingNumber}. Tracking may take a little time to appear with the carrier.`;
-  return { subject: `Your IGNYTE order is on its way · ${orderId}`, html: layout("ORDER DISPATCHED", "On its way.", paragraph(intro), siteUrl), text: `${intro}\n\nQuestions? support@ignyteactive.com` };
+export function orderDispatchedEmail(orderId: string, carrier: string | null, trackingNumber: string | null, trackingUrl: string | null, viewUrl: string, siteUrl: string): EmailDesign {
+  const intro = `Order ${orderId} has been dispatched${carrier ? ` with ${carrier}` : ""}.${trackingNumber ? ` Your tracking number is ${trackingNumber}.` : ""} Tracking may take a little time to appear with the carrier.`;
+  return { subject: `Your IGNYTE order is on its way · ${orderId}`, html: layout("ORDER DISPATCHED", "On its way.", paragraph(intro) + (trackingUrl ? button("TRACK PARCEL", trackingUrl) : button("VIEW ORDER", viewUrl)), siteUrl), text: `${intro}\n\n${trackingUrl ? `Track parcel: ${trackingUrl}` : `View order: ${viewUrl}`}\n\nQuestions? support@ignyteactive.com` };
+}
+
+export function orderDeliveredEmail(orderId: string, viewUrl: string, siteUrl: string): EmailDesign {
+  const intro = `Mintsoft has confirmed that order ${orderId} was delivered. We hope you enjoy your new gear.`;
+  return { subject: `Your IGNYTE order has arrived · ${orderId}`, html: layout("ORDER DELIVERED", "Delivered.", paragraph(intro) + button("VIEW ORDER", viewUrl), siteUrl), text: `${intro}\n\nView order: ${viewUrl}\n\nQuestions? support@ignyteactive.com` };
 }
 
 export function enquiryReceivedEmail(name: string, siteUrl: string): EmailDesign {

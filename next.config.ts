@@ -7,7 +7,10 @@ const nextConfig: NextConfig = {
   output: process.env.BUILD_STANDALONE === "true" ? "standalone" : undefined,
   trailingSlash: true,
   async headers() {
-    return [{ source: "/recover-bag/:path*", headers: [{ key: "Referrer-Policy", value: "no-referrer" }, { key: "Cache-Control", value: "no-store" }] }];
+    return [
+      { source: "/recover-bag/:path*", headers: [{ key: "Referrer-Policy", value: "no-referrer" }, { key: "Cache-Control", value: "no-store" }] },
+      { source: "/images/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }] },
+    ];
   },
   images: {
     remotePatterns: process.env.NEXT_PUBLIC_SUPABASE_URL
