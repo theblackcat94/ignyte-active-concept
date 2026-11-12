@@ -42,16 +42,45 @@ An unsigned POST to `/api/mintsoft/shipping/dispatched/` should return 401.
 
 ## Prepare the isolated Mintsoft client
 
-Ask Daniel to copy at least one **active website SKU** and sufficient quantity
-into test client 30. On 10 November, none of its 14 test SKUs matched the 48
-active website SKUs. An attempted isolated test order for website SKU
-`IGN-LVR-SHTS-JAC-L` returned Mintsoft's `Cannot find Product with SKU` and
-created no order. The dry-run guard now rejects that SKU before any API write.
-The existing `2shirtbundle` test SKU proves Mintsoft API creation but does not
-match an active website SKU. Ask Daniel to map the website's **Standard Australian
-delivery** service to a test courier and confirm test-client `ClientEditOrder`
-permission and Tracking Events support. Do not enable automatic physical
-despatch.
+The test API user created active website SKU `IGN-LVR-SHTS-JAC-L` as product
+`27521` in client 30 on 12 November. A stock movement attempt returned HTTP
+200 with `Success: false` and `Only Admin Users can perform stock movements!`.
+Daniel booked five test units into warehouse 5 on 13 November; the API
+confirmed `Level: 5`. The product uses a placeholder 1 kg weight and must not
+be treated as production product data. Do not alter live client 51 stock.
+The existing `2shirtbundle` test SKU does not match an active website SKU.
+The test client's **Standard Australian delivery** service still needs a
+proper courier mapping, and Tracking Events support still needs confirmation.
+Do not enable automatic physical despatch.
+
+## Test result on 13 November 2026
+
+- An existing paid, reserved Stripe sandbox order
+  `5c7052c0-5970-4ac9-bc30-c0faedf40083` passed the guarded dry run and
+  Mintsoft client 30 accepted it as order `150174`. Its exact SKU and one unit
+  were verified with order GET. Available test stock fell to four; total stock
+  remained five.
+- Mintsoft initially rejected `MarkDespatched` because no courier service was
+  selected. `CLIENT-PICKUP` service `2071` was assigned to this test order only;
+  `MarkDespatched` then succeeded with synthetic tracking number
+  `IGNYTE-TEST-150174`. No physical shipment was created.
+- Mintsoft's connect action remained `Complete: false`, and the staging access
+  log showed no Mintsoft-originated dispatch callback. Staging had meanwhile
+  been deployed from branch `codex/bag-size-guide-refresh` at `024fc393`,
+  whose build lacked the Mintsoft callback route. The staging branch and
+  commerce integration were merged, tested, and deployed at `da3b4166`.
+- After restoring the route, a signed replay of Mintsoft's dispatched order
+  JSON returned HTTP 200, updated the website order to `dispatched`, stored
+  the test carrier/tracking number, and sent the test dispatch email once.
+  A separately approved simulated delivered callback returned HTTP 200,
+  updated the order to `delivered`, and sent the test delivery email once.
+  These replays verify the website callback and mail path; they do **not**
+  prove Mintsoft automatically sent either callback or that a courier supplied
+  a real delivery event.
+- Before launch, have the 3PL confirm why the connect action did not run on
+  the manually dispatched test order, map Standard/Express services, and
+  demonstrate a supported courier delivery event with the Tracking Events
+  module. The live payment domain remains undecided.
 
 On the build machine, place only the test API key in an owner-only
 `/home/internetremovals/.config/ignyte/mintsoft-test.env`:
