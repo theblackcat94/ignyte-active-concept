@@ -16,7 +16,7 @@ export async function consentedRecoveryEmail(request: Request): Promise<string |
 
 export async function recoverySettings() {
   const { data, error } = await adminDb().from("customer_recovery_settings")
-    .select("cart_enabled,browse_enabled,onsite_enabled").eq("id", true).single();
+    .select("cart_enabled,browse_enabled,onsite_enabled,browse_subject,browse_preheader,browse_delay_hours").eq("id", true).single();
   if (error) throw error;
   return data;
 }

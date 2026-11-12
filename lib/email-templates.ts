@@ -144,3 +144,23 @@ export function cartRecoveryEmail(stage: 1 | 2, products: RecoveryEmailProduct[]
   const content = intro.map(paragraph).join("") + `<p style="margin:22px 0 8px;font-size:11px;letter-spacing:1.8px;font-weight:700">${first ? "YOUR BAG_" : "TAKE ANOTHER LOOK_"}</p><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;border-top:1px solid #dedbd6">${rows}</table>` + button(first ? "BACK TO MY BAG" : "PICK UP WHERE YOU LEFT OFF", restoreUrl) + `<p style="margin:24px 0 0;font-size:14px;line-height:1.6">${escapeHtml(support)} <a href="${verifiedUrl(`${siteUrl.replace(/\/$/, "")}/size-guide/`)}" style="color:#0b1020">Size Guide ↗</a></p><p style="margin:20px 0 0;font-size:14px">The IGNYTE Team</p>`;
   return { subject, html: layout(first ? "YOUR IGNYTE BAG_" : "A LITTLE REMINDER_", title, content, siteUrl, preview, unsubscribeUrl), text: `${title}\n\n${intro.join("\n\n")}\n\n${first ? "YOUR BAG_" : "TAKE ANOTHER LOOK_"}\n${products.map(item => `${item.name} · ${item.color} · ${item.size} × ${item.quantity} · ${aud(item.priceCents)}`).join("\n")}\n\n${first ? "Back to my bag" : "Pick up where you left off"}: ${restoreUrl}\n\n${support}\nSize guide: ${siteUrl.replace(/\/$/, "")}/size-guide/\n\nThe IGNYTE Team\nUnsubscribe: ${unsubscribeUrl}` };
 }
+
+/** Browse reminder. This is separate from the two approved cart messages. */
+export function browseRecoveryEmail(product: Pick<RecoveryEmailProduct, "name" | "color" | "image" | "slug" | "priceCents"> & { priceFrom?: boolean }, siteUrl: string, unsubscribeUrl: string, subject = "Still thinking it over? 👀", preheader = "Your next favourite might be worth another look."): EmailDesign {
+  const home = siteUrl.replace(/\/$/, "");
+  const productUrl = `${home}/product/${encodeURIComponent(product.slug)}/`;
+  const sizeUrl = `${home}/size-guide/`;
+  const imageUrl = verifiedUrl(new URL(product.image, home).toString());
+  const intro = ["Sometimes finding the right piece takes a little thought.", "Whether it's the fit, the colour or how it'll move with you, here's another look at something you might love."];
+  const fit = ["Not sure which size or support level is right for you?", "Explore our Size Guide and product details to find what works for the way you move."];
+  const label = (value: string) => `<h2 style="margin:28px 0 12px;color:#0b1020;font-family:'Söhne Mono',Arial,Helvetica,sans-serif;font-size:11px;line-height:1.4;letter-spacing:1.8px">${escapeHtml(value)}</h2>`;
+  const content = intro.map(paragraph).join("") + label("TAKE ANOTHER LOOK_") +
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;border-top:1px solid #dedbd6"><tr><td style="padding:16px 16px 16px 0;width:120px;vertical-align:top"><a href="${verifiedUrl(productUrl)}"><img src="${imageUrl}" alt="${escapeHtml(product.name)} in ${escapeHtml(product.color)}" width="120" style="display:block;width:120px;max-width:100%;height:auto;border:0"></a></td><td style="padding:16px 0;vertical-align:top;font-size:15px;line-height:1.6"><strong>${escapeHtml(product.name)}</strong>${product.color ? `<br>${escapeHtml(product.color)}` : ""}<br>${product.priceFrom ? "From " : ""}${aud(product.priceCents)}</td></tr></table>` +
+    `<div style="margin:0 0 26px">${button("TAKE ANOTHER LOOK", productUrl)}</div>` + label("FIND YOUR FIT_") + fit.map(paragraph).join("") + button("VIEW SIZE GUIDE", sizeUrl) +
+    `<p style="margin:28px 0 8px;font-size:12px;font-weight:700;letter-spacing:1.5px">BUILT FOR THE BURN™</p><p style="margin:0 0 18px;font-size:14px">Move with purpose. Train with fire.</p><p style="margin:0;font-size:14px">The IGNYTE Team</p>`;
+  return {
+    subject,
+    html: layout("MADE FOR YOUR NEXT MOVE_", "CAUGHT YOUR EYE?", content, home, preheader, unsubscribeUrl),
+    text: `MADE FOR YOUR NEXT MOVE_\nCAUGHT YOUR EYE?\n\n${intro.join("\n\n")}\n\nTAKE ANOTHER LOOK_\n${product.name}${product.color ? ` · ${product.color}` : ""} · ${product.priceFrom ? "From " : ""}${aud(product.priceCents)}\n${productUrl}\n\nFIND YOUR FIT_\n${fit.join("\n\n")}\nVIEW SIZE GUIDE: ${sizeUrl}\n\nBUILT FOR THE BURN™\nMove with purpose. Train with fire.\nThe IGNYTE Team\nUnsubscribe: ${unsubscribeUrl}`,
+  };
+}

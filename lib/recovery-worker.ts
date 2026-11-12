@@ -1,5 +1,6 @@
 import { adminDb } from "@/lib/commerce";
-import { cartRecoveryEmail, type RecoveryEmailProduct } from "@/lib/email-templates";
+import { browseRecoveryEmail, cartRecoveryEmail, type RecoveryEmailProduct } from "@/lib/email-templates";
+import { evaluateBrowse, type BrowseActivity } from "@/lib/browse-recovery";
 import { availableRecoveryItems, newRecoveryToken, purchasedSince, recoveryHash, type RecoveryBagItem } from "@/lib/customer-recovery";
 import { sendSesMail, sesMailConfigured } from "@/lib/ses-mailer";
 import { displayColour } from "@/lib/display-colour";
@@ -11,7 +12,7 @@ const hours = (value: number) => value * 3600_000;
 export async function recoveryQueueSummary() {
   const db = adminDb();
   const { data, error } = await db.from("customer_recovery_activity")
-    .select("id,email,kind,last_active_at,first_sent_at,second_sent_at,suppressed_at,suppression_reason")
+    .select("id,email,kind,product_slug,engagement,last_active_at,first_sent_at,second_sent_at,suppressed_at,suppression_reason")
     .order("last_active_at", { ascending: false }).limit(100);
   if (error) throw error;
   return data ?? [];
@@ -36,7 +37,7 @@ export async function processRecoveryQueue(): Promise<{ sent: number; suppressed
     .delete().lt("created_at", new Date(Date.now() - 90 * 86400_000).toISOString());
   if (retentionError) throw retentionError;
   const { data: settings, error: settingsError } = await db.from("customer_recovery_settings")
-    .select("cart_enabled,browse_enabled").eq("id", true).single();
+    .select("cart_enabled,browse_enabled,browse_subject,browse_preheader,browse_delay_hours").eq("id", true).single();
   if (settingsError) throw settingsError;
   const result = { sent: 0, suppressed: 0, skipped: 0, failed: 0 };
   const { data, error } = await db.from("customer_recovery_activity")
@@ -91,6 +92,41 @@ export async function processRecoveryQueue(): Promise<{ sent: number; suppressed
       console.error("Recovery send failed", sendError instanceof Error ? sendError.message : "Unknown error");
       await db.from("customer_recovery_delivery").update({ status: "failed", reason: "delivery_failed" }).eq("activity_id", activity.id).eq("stage", stage).eq("status", "claimed");
       result.failed++;
+    }
+  }
+  if (settings.browse_enabled) {
+    const { data: browses, error: browseError } = await db.from("customer_recovery_activity")
+      .select("id,email,kind,product_slug,engagement,last_active_at,first_sent_at,suppressed_at")
+      .eq("kind", "browse").is("suppressed_at", null).is("first_sent_at", null)
+      .lt("last_active_at", new Date(Date.now() - hours(settings.browse_delay_hours)).toISOString())
+      .order("last_active_at", { ascending: true }).limit(50);
+    if (browseError) throw browseError;
+    for (const activity of (browses ?? []) as BrowseActivity[]) {
+      try {
+        const evaluation = await evaluateBrowse(activity, settings.browse_delay_hours);
+        if (!evaluation.eligible) {
+          if (evaluation.reason === "not_due" || evaluation.reason === "already_sent") { result.skipped++; continue; }
+          const { error: suppressError } = await db.from("customer_recovery_activity")
+            .update({ suppressed_at: new Date().toISOString(), suppression_reason: evaluation.reason }).eq("id", activity.id).is("suppressed_at", null);
+          if (suppressError) throw suppressError;
+          result.suppressed++;
+          continue;
+        }
+        const { data: claimed, error: claimError } = await db.from("customer_recovery_delivery")
+          .insert({ activity_id: activity.id, stage: "browse_24h", status: "claimed" }).select("id").maybeSingle();
+        if (claimError || !claimed) { result.skipped++; continue; }
+        const unsubscribeUrl = `${siteUrl.replace(/\/$/, "")}/unsubscribe/?token=${evaluation.unsubscribeToken}`;
+        await sendSesMail({ to: activity.email, message: browseRecoveryEmail(evaluation.product, siteUrl, unsubscribeUrl, settings.browse_subject, settings.browse_preheader) });
+        const sentAt = new Date().toISOString();
+        await db.from("customer_recovery_delivery").update({ status: "sent", sent_at: sentAt }).eq("id", claimed.id);
+        await db.from("customer_recovery_activity").update({ first_sent_at: sentAt }).eq("id", activity.id);
+        result.sent++;
+      } catch (sendError) {
+        console.error("Browse recovery send failed", sendError instanceof Error ? sendError.message : "Unknown error");
+        await db.from("customer_recovery_delivery").update({ status: "failed", reason: "delivery_failed" })
+          .eq("activity_id", activity.id).eq("stage", "browse_24h").eq("status", "claimed");
+        result.failed++;
+      }
     }
   }
   return result;
