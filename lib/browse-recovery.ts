@@ -25,7 +25,7 @@ export async function evaluateBrowse(activity: BrowseActivity, delayHours: numbe
     db.from("marketing_subscribers").select("status,unsubscribe_token,recovery_consent_at,consent_wording_version").eq("email", activity.email).maybeSingle(),
     db.from("products").select("id,slug,name,color,image_path,status,product_variants(id,price_cents,sale_price_cents,stock_on_hand,active)").eq("slug", activity.product_slug).maybeSingle(),
     db.from("customer_recovery_activity").select("id,kind,items,last_active_at,suppressed_at").eq("email", activity.email).limit(100),
-    db.from("orders").select("id").eq("customer_email", activity.email).eq("status", "paid").gte("paid_at", activity.last_active_at).limit(100),
+    db.from("orders").select("id").eq("customer_email", activity.email).eq("status", "paid").limit(100),
   ]);
   for (const result of [subscriberResult, productResult, activityResult, orderResult]) if (result.error) throw result.error;
   // A bounded query must never turn an incomplete history into an eligible send.
