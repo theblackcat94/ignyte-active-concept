@@ -5,6 +5,7 @@ import { recoveryDeliverySummary, recoveryQueueSummary } from "@/lib/recovery-wo
 import { recoverySettings } from "@/lib/customer-recovery";
 import { evaluateBrowse, type BrowseActivity } from "@/lib/browse-recovery";
 import { displayColour } from "@/lib/display-colour";
+import { browseRule } from "@/lib/browse-rules";
 
 export const runtime = "nodejs";
 export async function GET(request: Request) {
@@ -36,9 +37,19 @@ export async function POST(request: Request) {
   const staff = await verifiedStaff(request);
   if (!staff || staff.role !== "admin") return NextResponse.json({ error: "Admin access required" }, { status: 403 });
   // Explicit preview only. Customer sends are called by the separate secret-protected scheduler.
-  const input = z.object({ action: z.literal("dry_run"), asOf: z.string().datetime().optional() }).safeParse(await request.json().catch(() => null));
+  const input = z.object({ action: z.enum(["dry_run", "fixture_test"]), asOf: z.string().datetime().optional() }).safeParse(await request.json().catch(() => null));
   if (!input.success) return NextResponse.json({ error: "Unsupported action" }, { status: 400 });
   try {
+    if (input.data.action === "fixture_test") {
+      const now = input.data.asOf ? new Date(input.data.asOf).getTime() : Date.now();
+      const base = { now, lastActiveAt: new Date(now - 24 * 3600_000).toISOString(), delayHours: 24,
+        meaningful: true, consent: true, available: true, inBag: false, purchased: false,
+        activeCart: false, sentWithinWeek: false, alreadySent: false };
+      return NextResponse.json({ simulated: true, customerEmailsSent: 0, cases: [
+        ["eligible", base], ["added_to_bag", { ...base, inBag: true }], ["purchased", { ...base, purchased: true }],
+        ["unsubscribed", { ...base, consent: false }], ["frequency_limit", { ...base, sentWithinWeek: true }],
+      ].map(([name, value]) => ({ name, decision: browseRule(value as typeof base) ?? "eligible" })) });
+    }
     const [settings, activity] = await Promise.all([recoverySettings(), recoveryQueueSummary()]);
     const now = input.data.asOf ? new Date(input.data.asOf).getTime() : Date.now();
     if (Math.abs(now - Date.now()) > 7 * 86400_000) return NextResponse.json({ error: "Test clock must be within seven days" }, { status: 400 });

@@ -23,6 +23,6 @@ The scheduler has two gates: a secret header and the environment delivery switch
 
 The restore link expires after seven days. It reveals only currently available bag items; current prices and stock are checked again during shopping and checkout. It does not silently replace items already in the customer's bag.
 
-The browse subject, preheader and delay are editable in admin after `202611120003_browse_recovery.sql` is applied. The browse template and eligibility path can be previewed with the delivery lock off. No customer email is sent by the admin page. A controlled signed-in test account and approved internal mailbox are still needed to verify the full capture-to-send path before activation.
+The browse subject, preheader and delay are editable in admin after `202611120003_browse_recovery.sql` is applied. The browse template and eligibility path can be previewed with the delivery lock off. The admin's synthetic eligibility simulation covers a qualifying 24-hour browse plus add-to-bag, purchase, unsubscribe and seven-day suppression without creating customer records. No customer email is sent by the admin page. A controlled signed-in test account and approved internal mailbox are still needed to verify the full capture-to-send path before activation.
 
 The admin report covers captures, suppression reasons, delivery status and bag restoration. Open rates are deliberately omitted because email image loading is unreliable; paid-order attribution needs a separate, reviewed measurement rule.
