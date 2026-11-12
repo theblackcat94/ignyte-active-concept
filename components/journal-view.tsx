@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { browserDb, commerceConfigured } from "@/lib/commerce";
-import { NewsletterSignup } from "@/components/footer";
 import RegistrationMarks from "@/components/registration-marks";
 import type { JournalArticle, JournalBlock, JournalCard, JournalCategory } from "@/lib/journal";
 import "@/app/journal/journal.css";
@@ -35,10 +34,6 @@ function BodyBlock({ block }: { block: JournalBlock }) {
   const ctas = [...block.text.matchAll(/\[([^\]]+)\]\((\/[^)]+)\)/g)];
   if (ctas.length === 2 && block.text.replace(/\[([^\]]+)\]\((\/[^)]+)\)/g, "").trim() === "") return <nav className="journal-article-ctas" aria-label="Continue exploring">{ctas.map((cta, index) => <Link key={index} href={cta[2]}>{cta[1]}</Link>)}</nav>;
   return <p><Inline text={block.text} /></p>;
-}
-
-function JournalSignup() {
-  return <aside className="journal-signup"><div><span className="journal-eyebrow">JOIN THE FIRE_</span><h2>More from IGNYTE.</h2><p>Brand stories, new drops and what comes next.</p></div><NewsletterSignup idPrefix="journal" /></aside>;
 }
 
 const needsRawImage = (url: string) => url.startsWith("https://") && !url.startsWith(`${process.env.NEXT_PUBLIC_SUPABASE_URL || ""}/storage/v1/object/public/product-media/`);
@@ -88,6 +83,5 @@ export default function JournalView({ slug }: { slug?: string }) {
   return <div className="journal-page"><header className="journal-index-head"><span className="journal-eyebrow">STORIES / NEWS / PRESS_</span><h1>THE IGNYTE JOURNAL_</h1><p>A closer look at the people, products and ideas behind IGNYTE.</p>{data.visibility === "private" && <small className="journal-private">STAFF PREVIEW · NOT PUBLIC</small>}</header>
     <nav className="journal-filters" aria-label="Journal categories"><button type="button" aria-pressed={filter === "all"} onClick={() => setFilter("all")}>ALL STORIES</button>{data.categories.map(category => <button key={category.id} type="button" aria-pressed={filter === category.slug} onClick={() => setFilter(category.slug)}>{category.name}</button>)}</nav>
     {featured ? <><Card article={featured} large /><div className="journal-grid">{visible.filter(item => item.id !== featured.id).map(item => <Card key={item.id} article={item} />)}</div></> : <p className="journal-empty">No stories in this category yet.</p>}
-    <JournalSignup />
   </div>;
 }
