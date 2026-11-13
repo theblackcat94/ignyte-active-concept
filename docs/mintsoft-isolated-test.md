@@ -109,10 +109,18 @@ is active before live order export is switched from `AUTO`.
   verified client 30, warehouse 5, courier service ID 2058, and one unit of
   the exact SKU. GET ConnectActions verified the staging dispatch and delivery
   URLs, the website order reference, and `Complete: false`.
-- Daniel must manually mark order 150460 `DESPATCHED` without shipping a
-  parcel. Check whether Mintsoft posts the dispatch callback, then obtain a
-  supported test delivery event. Standard-to-AusPost API mapping is not active
-  in this test client; confirm the live-client mapping before live export.
+- Daniel manually marked order 150460 `DESPATCHED` on 13 November. Mintsoft's
+  callback arrived at 15:51:38 Brisbane time with synthetic tracking number
+  `TRACKING123`; its ConnectAction became `Complete: true`. The website order
+  became `dispatched` and the SES outbox recorded one dispatch email to the
+  tester as sent at 15:51:39, with no reported error. Mintsoft's `P - Own
+  Package` test courier (ID 2029) returned an Aramex tracking URL for the
+  synthetic number; this is not proof of a valid customer tracking link or a
+  real courier event.
+- A supported courier delivery event remains untested. Standard-to-AusPost API
+  mapping was not active in test client 30; confirm the live-client mapping
+  before switching the live exporter from `AUTO`. The current website offers
+  Standard Australian delivery only; Express is not implemented at checkout.
 
 An earlier website order `81bd992c-c59b-4156-a061-9c1e98fc96ca` was
 created for a sandbox checkout but expired unpaid. It was not sent to
