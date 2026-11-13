@@ -95,10 +95,28 @@ for either confirmed service when the callback has no URL. Express is not yet
 offered at website checkout. The 3PL must confirm the Standard/Express mapping
 is active before live order export is switched from `AUTO`.
 
-A second website order `81bd992c-c59b-4156-a061-9c1e98fc96ca` was created
-for a fresh sandbox checkout but remains unpaid and must not be sent to
-Mintsoft. Its Stripe session was still open when checked. The user stopped
-browser automation before payment; resume only on a new explicit request.
+### Fresh paid website order, 13 November 2026
+
+- Stripe sandbox accepted A$85 for one `IGN-LVR-SHTS-JAC-L` order
+  `f3c138dd-1869-4fa3-9445-7f056217bac7` (A$70 item plus A$15 Standard
+  shipping). The guarded exporter confirmed it was paid, stock reserved and
+  eligible for isolated client 30. This checkout was opened outside the
+  browser session that held its guest-order cookie, so the success page could
+  not load the order even though Stripe payment and webhook processing worked.
+- The client-30 order API rejected `CourierService: Standard` with
+  `Unable to Find CourierService: Standard or a Mapping to API`. A retry with
+  the active `AusPost` service succeeded as Mintsoft order **150460**. GET
+  verified client 30, warehouse 5, courier service ID 2058, and one unit of
+  the exact SKU. GET ConnectActions verified the staging dispatch and delivery
+  URLs, the website order reference, and `Complete: false`.
+- Daniel must manually mark order 150460 `DESPATCHED` without shipping a
+  parcel. Check whether Mintsoft posts the dispatch callback, then obtain a
+  supported test delivery event. Standard-to-AusPost API mapping is not active
+  in this test client; confirm the live-client mapping before live export.
+
+An earlier website order `81bd992c-c59b-4156-a061-9c1e98fc96ca` was
+created for a sandbox checkout but expired unpaid. It was not sent to
+Mintsoft.
 
 On the build machine, place only the test API key in an owner-only
 `/home/internetremovals/.config/ignyte/mintsoft-test.env`:
@@ -107,7 +125,7 @@ On the build machine, place only the test API key in an owner-only
 MINTSOFT_TEST_API_KEY=<test-client-key>
 MINTSOFT_CLIENT_ID=30
 MINTSOFT_WAREHOUSE_ID=5
-MINTSOFT_COURIER_SERVICE=AUTO
+MINTSOFT_COURIER_SERVICE=AusPost
 ```
 
 Keep this file mode `0600`; do not copy the live Mintsoft key into it.
