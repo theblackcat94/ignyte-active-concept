@@ -166,7 +166,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     if (label === "SIZE GUIDE") return <><SizeGuideContent productCategory={product.category} /><div className="pdp-size-guide-link"><Link className="text-link" href={isSock ? "/size-guide#socks" : "/size-guide"}>OPEN FULL SIZE GUIDE ↗</Link></div></>;
     return <div className="pdp-delivery">
       <section><span className="pdp-delivery-icon"><ShippingIcon /></span><div><strong>DELIVERY</strong><p>Free shipping on eligible Australian orders of AU${FREE_SHIPPING_THRESHOLD_CENTS / 100} or more after discounts. AU$15 below the threshold.</p><Link href="/returns#shipping">Shipping policy ↗</Link></div></section>
-      <section><span className="pdp-delivery-icon"><ReturnsIcon /></span><div><strong>30 DAY RETURNS</strong><p>Eligible full-price items must arrive at our warehouse within 30 days. Sale merchandise is final sale for change-of-mind returns. Customers pay return postage; original shipping charges are non-refundable. Consumer law rights are unaffected.</p><Link href="/returns#returns">Returns policy ↗</Link></div></section>
+      <section><span className="pdp-delivery-icon"><ReturnsIcon /></span><div><strong>EASY 30 DAY RETURNS</strong><p>Eligible full-price items must arrive at our warehouse within 30 days. Sale merchandise is final sale for change-of-mind returns. Customers pay return postage; original shipping charges are non-refundable. Consumer law rights are unaffected.</p><Link href="/returns#returns">Returns policy ↗</Link></div></section>
     </div>;
   }
 

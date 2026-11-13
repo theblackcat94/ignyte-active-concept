@@ -21,7 +21,7 @@
 .bag-quantity button:hover:not(:disabled),.bag-quantity button:focus-visible{background:var(--ink);color:#fff}
 .bag-quantity button:disabled{opacity:.35;cursor:not-allowed}
 .bag-quantity span{min-width:33px;text-align:center;color:var(--ink);font-size:13px;font-weight:800}
-@media(max-width:600px){.bag-drawer .drawer-head{padding:16px 18px}.bag-drawer .drawer-head h2{font-size:24px}.bag-drawer .bag-list{min-height:0;padding:18px;overscroll-behavior:contain}.bag-drawer .drawer-foot{padding:12px 18px max(14px,env(safe-area-inset-bottom));max-height:40dvh;overflow-y:auto}.bag-drawer .drawer-foot p{display:none}.bag-drawer .bag-shipping-progress{margin-bottom:9px}.bag-drawer .bag-shipping-progress small{display:none}.bag-drawer .bag-shipping-track{height:7px;margin:6px 0 0}.bag-drawer .drawer-foot .button{margin-top:10px}.bag-recommendations{margin-top:24px;padding-top:22px}.bag-recommendations h3{margin-bottom:16px}}
+@media(max-width:600px){.bag-drawer .drawer-head{padding:16px 18px}.bag-drawer .drawer-head h2{font-size:24px}.bag-drawer .bag-list{min-height:0;padding:18px;overscroll-behavior:contain}.bag-drawer .drawer-foot{padding:12px 18px max(14px,env(safe-area-inset-bottom));max-height:40dvh;overflow-y:auto}.bag-drawer .drawer-foot p{display:none}.bag-drawer .bag-shipping-track{height:7px;margin:8px 0 0}.bag-drawer .drawer-foot .button{margin-top:10px}.bag-recommendations{margin-top:24px;padding-top:22px}.bag-recommendations h3{margin-bottom:16px}}
 
 /* Drawer colours are scoped to the drawer so every state shares one palette. */
 .bag-drawer{
@@ -56,7 +56,7 @@ html[data-appearance="ignyte"] .bag-drawer{
 .bag-drawer .drawer-foot .button,.bag-drawer .empty-bag .button{background:var(--bag-action);color:var(--bag-action-ink)}
 .bag-drawer .drawer-foot .button:hover:not(:disabled),.bag-drawer .empty-bag .button:hover{filter:brightness(.92)}
 .bag-drawer button:focus-visible,.bag-drawer a:focus-visible{outline:2px solid var(--bag-ink);outline-offset:2px}
-@media(max-width:600px){.bag-drawer .drawer-foot p,.bag-drawer .bag-shipping-progress small{display:block;font-size:10px;line-height:1.35}.bag-drawer .drawer-foot{max-height:48dvh}}
+@media(max-width:600px){.bag-drawer .drawer-foot p{display:block;font-size:10px;line-height:1.35}.bag-drawer .drawer-foot{max-height:48dvh}}
 html[data-appearance="dark"] .bag-drawer{--bag-action:#FF4533;--bag-action-ink:#0B1020}
 html[data-appearance="dark"] .bag-drawer .drawer-foot .button:hover:not(:disabled){background:#ff6958;filter:none}
 html[data-appearance="dark"] .bag-drawer .drawer-foot .button:active:not(:disabled){background:#e83727;color:#0B1020}

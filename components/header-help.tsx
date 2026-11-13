@@ -22,7 +22,7 @@ export function HelpLinks({ onNavigate, mobile = false }: { onNavigate?: () => v
   const links = mobile ? [
     ...helpLinks.slice(0, 3),
     { label: "Shipping & Delivery", href: "/returns/#shipping" },
-    { label: "30 Day Returns", href: "/returns/#returns" },
+    { label: "Easy 30 Day Returns", href: "/returns/#returns" },
   ] : helpLinks;
   return <div className="header-help-group"><strong className="desktop-help-label">HELP &amp; SUPPORT</strong><nav aria-label="Help and support">{links.map(item => <Link key={item.href} href={item.href} onClick={onNavigate}>{item.label}<span className="desktop-help-arrow" aria-hidden="true">↗</span></Link>)}</nav></div>;
 }
