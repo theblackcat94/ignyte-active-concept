@@ -82,6 +82,24 @@ Do not enable automatic physical despatch.
   demonstrate a supported courier delivery event with the Tracking Events
   module. The live payment domain remains undecided.
 
+On 13 November, Daniel advised that manual despatch is needed to test the
+Mintsoft-originated connect action. He identified Standard as `AusPost`
+(service ID `2058`) and Express as `3J55 - EXPRESS POST` (service ID `2057`),
+with mapping handled by the 3PL. The supplied 14-row courier CSV includes
+the Express service and its Australia Post URL template
+`https://auspost.com.au/mypost/track/#/details/{0}`, but no `AusPost` row.
+The Mintsoft API confirms service `2058` is active with no TrackingURL and
+service `2057` is active with that template. The website now formats templates
+with the tracking number and uses the same Australia Post URL as a fallback
+for either confirmed service when the callback has no URL. Express is not yet
+offered at website checkout. The 3PL must confirm the Standard/Express mapping
+is active before live order export is switched from `AUTO`.
+
+A second website order `81bd992c-c59b-4156-a061-9c1e98fc96ca` was created
+for a fresh sandbox checkout but remains unpaid and must not be sent to
+Mintsoft. Its Stripe session was still open when checked. The user stopped
+browser automation before payment; resume only on a new explicit request.
+
 On the build machine, place only the test API key in an owner-only
 `/home/internetremovals/.config/ignyte/mintsoft-test.env`:
 

@@ -22,7 +22,22 @@ test("reads the courier service name from Mintsoft's order response", () => {
   assert.equal(parseMintsoftShippingEvent({ OrderNumber: orderId, CourierServiceName: "Standard" })?.carrier, "Standard");
 });
 
+test("formats Mintsoft's Australia Post tracking template", () => {
+  assert.equal(parseMintsoftShippingEvent({ SourceOrderId: orderId, CourierServiceId: 2057,
+    TrackingNumber: "AP 123/45", TrackingURL: "https://auspost.com.au/mypost/track/#/details/{0}" })?.trackingUrl,
+  "https://auspost.com.au/mypost/track/#/details/AP%20123%2F45");
+});
+
+test("builds a tracking link for AusPost when Mintsoft supplies no URL", () => {
+  assert.equal(parseMintsoftShippingEvent({ SourceOrderId: orderId, CourierServiceId: 2058,
+    CourierServiceName: "AusPost", TrackingNumber: "AP12345" })?.trackingUrl,
+  "https://auspost.com.au/mypost/track/#/details/AP12345");
+  assert.equal(parseMintsoftShippingEvent({ SourceOrderId: orderId, CourierServiceId: 2071,
+    CourierServiceName: "CLIENT-PICKUP", TrackingNumber: "TEST" })?.trackingUrl, null);
+});
+
 test("rejects unlinked orders and unsafe tracking links", () => {
   assert.equal(parseMintsoftShippingEvent({ OrderNumber: "OTHER-ORDER" }), null);
   assert.equal(parseMintsoftShippingEvent({ SourceOrderId: orderId, TrackingURL: "javascript:alert(1)" })?.trackingUrl, null);
+  assert.equal(parseMintsoftShippingEvent({ SourceOrderId: orderId, TrackingURL: "https://auspost.com.au/track/{0}" })?.trackingUrl, null);
 });
