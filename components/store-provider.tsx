@@ -296,7 +296,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       {bagOpen && <div className="drawer-backdrop" onClick={() => setBagOpen(false)} />}
       <aside className={`bag-drawer ${bagOpen ? "is-open" : ""}${lastAdded ? " has-ignition" : ""}`} aria-label="Shopping bag" aria-hidden={!bagOpen}>
         <div className="drawer-head"><div><span className="eyebrow">YOUR EDIT</span><h2>YOUR BAG ({bag.reduce((sum, item) => sum + item.quantity, 0)})</h2></div><button className="icon-button" onClick={() => setBagOpen(false)} aria-label="Close bag">×</button></div>
-        <div className="bag-drawer-progress"><FreeShippingProgress amountCents={Math.max(0, shippingBasisCents)} celebrationId={shippingCelebrationId} /></div>
+        <div className="bag-drawer-progress"><FreeShippingProgress amountCents={Math.max(0, shippingBasisCents)} celebrationId={shippingCelebrationId} open={bagOpen} /></div>
         {bagOpen && lastAdded && <BagAddedConfirmation added={lastAdded} products={products} bag={bag} onKeepShopping={() => setBagOpen(false)} onDismiss={() => setLastAdded(null)} />}
         {bag.length ? <div className="bag-list">{bag.map(item => {
           const product = products.find(p => p.slug === item.slug);

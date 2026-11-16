@@ -35,6 +35,8 @@ export async function PATCH(request: Request) {
   if (!staff) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const parsed = updateSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Check status, notes and refund details." }, { status: 400 });
+  const { data: existing } = await adminDb().from("return_requests").select("requested_resolution").eq("id", parsed.data.id).maybeSingle();
+  if (existing?.requested_resolution === "size_exchange") return NextResponse.json({ error: "First Fit exchanges require the dedicated eligibility and fulfilment review." }, { status: 409 });
   if (parsed.data.status === "refunded" && staff.role !== "admin") return NextResponse.json({ error: "Only administrators may record refunds." }, { status: 403 });
   const { error } = await adminDb().rpc("update_return_request", { p_id: parsed.data.id, p_actor: staff.user.id, p_status: parsed.data.status ?? null, p_note: parsed.data.note ?? null, p_inspection: parsed.data.inspection_details ?? null, p_approved_value: parsed.data.approved_item_value_cents ?? null, p_refund_amount: parsed.data.refund_amount_cents ?? null, p_refund_reference: parsed.data.refund_transaction_reference ?? null });
   if (error) return NextResponse.json({ error: error.message || "Could not update return" }, { status: 409 });
@@ -67,6 +69,7 @@ export async function POST(request: Request) {
   if (!returnMailEnabled()) return NextResponse.json({ error: "Return emails are disabled on this environment. Review the preview without sending." }, { status: 409 });
   const db = adminDb();
   const [{ data: record }, { data: settings }] = await Promise.all([db.from("return_requests").select("id,reference,order_number,customer_name,customer_email,items,submitted_at,status,requested_resolution").eq("id", parsed.data.id).maybeSingle(), db.from("return_settings").select("return_address,shipping_instructions,instructions_email_intro,refund_processing_copy").eq("id", true).single()]);
+  if (record?.requested_resolution === "size_exchange") return NextResponse.json({ error: "First Fit exchange instructions use a separate approval workflow." }, { status: 409 });
   if (!record || !settings || !settings.return_address.trim()) return NextResponse.json({ error: "Set the approved return address before sending instructions." }, { status: 409 });
   if (!["under_review", "awaiting_customer_return"].includes(record.status)) return NextResponse.json({ error: "Review the request before sending instructions." }, { status: 409 });
   const key = `${record.id}:instructions`;

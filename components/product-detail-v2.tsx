@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { type Product, money } from "@/lib/catalog";
 import { commerceConfigured } from "@/lib/commerce";
 import { useStore } from "./store-provider";
@@ -29,6 +29,8 @@ import ProductDescription from "./product-description";
 import PdpEditShortcut from "./pdp-edit-shortcut";
 import BrowseRecoveryPrompt from "./browse-recovery-prompt";
 import { SUPPORT_LEVELS, supportGuidance, supportLevel } from "@/lib/support-level";
+import ProductQuestionDrawer from "./product-question-drawer";
+import { firstFitPublic } from "@/lib/first-fit-promise";
 import "@/app/product-detail-v2.css";
 import "@/app/browse-recovery.css";
 
@@ -61,6 +63,8 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
   const [selection, setSelection] = useState({ slug: product.slug, size: "" });
   const [openInfo, setOpenInfo] = useState<string[]>([]);
   const [guideOpen, setGuideOpen] = useState(false);
+  const [questionOpen, setQuestionOpen] = useState(false);
+  const closeQuestion = useCallback(() => setQuestionOpen(false), []);
   const [fitTipSlug, setFitTipSlug] = useState<string | null>(null);
   const fitTipRef = useRef<HTMLSpanElement>(null);
   const [showMobilePurchase, setShowMobilePurchase] = useState(false);
@@ -170,7 +174,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     </div>;
   }
 
-  return <div className={`product-page pdp-stacked section-wrap${(showMobilePurchase || showDesktopPurchase) && !bagOpen && !guideOpen ? " has-sticky-purchase" : ""}`}>
+  return <div className={`product-page pdp-stacked section-wrap${(showMobilePurchase || showDesktopPurchase) && !bagOpen && !guideOpen && !questionOpen ? " has-sticky-purchase" : ""}`}>
     <BrowseRecoveryPrompt slug={product.slug} bagHasProduct={bag.some(item => item.slug === product.slug)} />
     <div className="detail-grid"><div><StackedProductGallery product={product} /></div><div className="detail-info" tabIndex={0} aria-label="Product details and purchase options"><div className="pdp-breadcrumb-row"><div className="breadcrumb pdp-detail-breadcrumb"><Link href="/">IGNYTE</Link><span>/</span><Link href={`/shop/${product.category}`}>{product.category.toUpperCase().replace("-", " ")}</Link><span>/</span><span>{product.name.toUpperCase()}</span></div><PdpEditShortcut slug={product.slug} /></div><div className="pdp-title-row"><h1>{product.name.toUpperCase()}<em>.</em></h1><button type="button" className={`pdp-title-wishlist${savePulse ? " just-saved" : ""}`} aria-label={wishlist.includes(product.slug) ? "Remove from wishlist" : "Save to wishlist"} aria-pressed={wishlist.includes(product.slug)} onClick={() => { if (!wishlist.includes(product.slug)) setSavePulse(true); toggleWishlist(product.slug); }}><HeartIcon filled={wishlist.includes(product.slug)} /></button></div>
       <div className="detail-price">{saleOriginalPrice && <del>{money(saleOriginalPrice)}</del>}<span>{money(selectedVariant?.price ?? product.price)}<CurrencyEstimate aud={selectedVariant?.price ?? product.price} /></span></div>
@@ -186,10 +190,12 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       <div className="size-heading"><span>SELECT SIZE</span><button type="button" onClick={() => setGuideOpen(true)}>SIZE GUIDE ↗</button></div>
       <div className="size-grid" ref={sizeRef}>{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} disabled={variant.stock <= 0} onClick={() => setSelection({ slug: product.slug, size: variant.size })} key={variant.id}>{variant.size}</button>)}</div>
       {isSock ? <p className="pdp-sock-size-note">{sockSizing.productText}</p> : fitPosition !== null && <div className="pdp-fit-confidence"><span>Our fit advice</span><strong>{fitLabels[fitPosition]}</strong><span ref={fitTipRef} className={`pdp-fit-info ${fitTipOpen ? "is-open" : ""}`}><button type="button" aria-label="About our fit advice" aria-describedby="pdp-fit-tooltip" aria-expanded={fitTipOpen} onClick={() => setFitTipSlug(open => open === product.slug ? null : product.slug)}>ⓘ</button><span id="pdp-fit-tooltip" className="pdp-fit-tooltip" role="tooltip">IGNYTE&apos;s own product fit guidance, based on our assessment, not customer reviews.</span></span></div>}
+      {firstFitPublic && !saleOriginalPrice && !isSock && <div className="pdp-first-fit"><span>THE FIRST FIT PROMISE™_</span><strong>Your first fit. Our promise.</strong><p>First time shopping IGNYTE? Get one complimentary size exchange on your first eligible full-price order.</p><Link href="/first-fit-promise/">HOW IT WORKS ↗</Link></div>}
       <button type="button" ref={addRef} className={`button button-orange detail-add${added ? " is-added" : ""}`} onClick={addSelected} disabled={!canAdd}>{addLabel}<span>↗</span></button>
       <PurchaseReassurance />
       <BuildYourSet bra={product} braSize={size} />
       <div className="detail-accordions">{sections.map(label => <div key={label} id={label === "FIT & FABRIC" ? "pdp-fit-fabric" : undefined}><button type="button" aria-expanded={openInfo.includes(label)} onClick={() => setOpenInfo(current => current.includes(label) ? current.filter(item => item !== label) : [...current, label])}>{label}<span>{openInfo.includes(label) ? "−" : "+"}</span></button>{openInfo.includes(label) && content(label)}</div>)}</div>
+      <button type="button" className="pdp-question-trigger" onClick={() => setQuestionOpen(true)}>QUESTIONS ABOUT THIS PRODUCT? ↗</button>
     </div></div>
     {related.length > 0 && <div className="related-section pdp-recommendations"><div className="section-heading"><div><span className="eyebrow">COMPLETE YOUR EDIT</span><h2>PAIR IT <em>WITH.</em></h2></div><Link href="/shop" className="text-link">SHOP ALL ↗</Link></div><div className="products-grid">{related.map((p, i) => <ProductCard product={p} index={i} key={p.slug} showOptions />)}</div></div>}
     {upsells.length > 0 && <div className="related-section pdp-recommendations"><div className="section-heading"><div><span className="eyebrow">ANOTHER WAY TO MOVE</span><h2>CONSIDER <em>THIS.</em></h2></div></div><div className="products-grid">{upsells.map((p, i) => <ProductCard product={p} index={i} key={p.slug} showOptions />)}</div></div>}
@@ -198,8 +204,9 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
     {alsoLike.length > 0 && <section className="related-section pdp-also-like" aria-labelledby="pdp-also-like-heading"><div className="section-heading"><div><span className="eyebrow">MORE TO MOVE IN</span><h2 id="pdp-also-like-heading">YOU MAY ALSO <em>LIKE_</em></h2></div><Link href="/shop" className="text-link">SHOP ALL ↗</Link></div><HomeProductCarousel products={alsoLike} label={`You may also like for ${product.name}`} /></section>}
     <ProductReviews productSlug={product.slug} />
     <PdpSocialStrip productSlug={product.slug} />
-    {showMobilePurchase && !guideOpen && !bagOpen && <div className="pdp-mobile-purchase" role="region" aria-label="Sticky purchase controls"><div className="pdp-mobile-purchase-summary"><span>{product.name} · {product.color}</span><strong>{size || "Choose size"} · {money(selectedVariant?.price ?? product.price)}</strong></div><button type="button" onClick={mobilePurchase} disabled={catalogLoading || catalogError || !sizes.some(variant => variant.stock > 0)} aria-label={size ? `Add ${product.name} in ${product.color}, size ${size}, to bag` : `Choose a size before adding ${product.name} to bag`}>{stickyAddLabel}</button></div>}
+    {showMobilePurchase && !guideOpen && !bagOpen && !questionOpen && <div className="pdp-mobile-purchase" role="region" aria-label="Sticky purchase controls"><div className="pdp-mobile-purchase-summary"><span>{product.name} · {product.color}</span><strong>{size || "Choose size"} · {money(selectedVariant?.price ?? product.price)}</strong></div><button type="button" onClick={mobilePurchase} disabled={catalogLoading || catalogError || !sizes.some(variant => variant.stock > 0)} aria-label={size ? `Add ${product.name} in ${product.color}, size ${size}, to bag` : `Choose a size before adding ${product.name} to bag`}>{stickyAddLabel}</button></div>}
     {showDesktopPurchase && !guideOpen && !bagOpen && <div className="pdp-desktop-purchase" role="region" aria-label="Sticky desktop purchase controls"><div className="pdp-desktop-purchase-inner"><div className="pdp-desktop-purchase-summary"><strong>{product.name}</strong><span>{product.color} · {money(selectedVariant?.price ?? product.price)}</span></div><div className="pdp-desktop-purchase-sizes" role="group" aria-label={`Choose ${product.name} size in sticky bar`}>{sizes.map(variant => <button type="button" key={variant.id} disabled={variant.stock <= 0} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} onClick={() => setSelection({ slug: product.slug, size: variant.size })}>{variant.size}</button>)}</div><button type="button" className={`pdp-desktop-purchase-add${added ? " is-added" : ""}`} disabled={!canAdd} onClick={addSelected}>{addLabel} ↗</button></div></div>}
     {guideOpen && <div className="pdp-guide-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setGuideOpen(false); }}><div className="pdp-guide-dialog" role="dialog" aria-modal="true" aria-label="Size guide"><div className="pdp-guide-head"><h2>FIND YOUR FIT.</h2><button type="button" onClick={() => setGuideOpen(false)} aria-label="Close size guide">×</button></div><SizeGuideContent productCategory={product.category} /><Link href={isSock ? "/size-guide#socks" : "/size-guide"} className="text-link">OPEN FULL SIZE GUIDE ↗</Link></div></div>}
+    <ProductQuestionDrawer product={product} size={size} open={questionOpen} onClose={closeQuestion} onGuide={() => { closeQuestion(); setGuideOpen(true); }} onFit={() => { closeQuestion(); setOpenInfo(current => current.includes("FIT & FABRIC") ? current : [...current, "FIT & FABRIC"]); requestAnimationFrame(() => document.getElementById("pdp-fit-fabric")?.scrollIntoView({ behavior: "smooth", block: "center" })); }} onSizes={() => { closeQuestion(); sizeRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); sizeRef.current?.querySelector<HTMLButtonElement>("button:not([disabled])")?.focus(); }} />
   </div>;
 }

@@ -7,6 +7,7 @@ import { helpLinks } from "@/data/help-links";
 import { applySiteAppearance, type SiteAppearance } from "@/lib/site-appearance";
 import { OptionIcon } from "@/components/styled-select";
 import JournalPublicLink from "@/components/journal-public-link";
+import { firstFitPublic } from "@/lib/first-fit-promise";
 import "@/app/header-help.css";
 
 function appearanceSubscribe(callback: () => void) {
@@ -20,7 +21,7 @@ function currentAppearance(): SiteAppearance {
 
 export function HelpLinks({ onNavigate, mobile = false }: { onNavigate?: () => void; mobile?: boolean }) {
   const links = mobile ? [
-    ...helpLinks.slice(0, 3),
+    ...helpLinks.slice(0, firstFitPublic ? 4 : 3),
     { label: "Shipping & Delivery", href: "/returns/#shipping" },
     { label: "Easy 30 Day Returns", href: "/returns/#returns" },
   ] : helpLinks;
