@@ -55,7 +55,7 @@ assertOrderItemsAvailable(items, levels);
 
 const action = mintsoftConnectAction(orderId, siteUrl, callbackSecret);
 const payload = mintsoftOrderPayload(order, items, clientId, warehouseId, action,
-  process.env.MINTSOFT_COURIER_SERVICE || "AUTO", true);
+  process.env.MINTSOFT_COURIER_SERVICE || "Standard", true);
 console.info(`Isolated client ${clientId}, warehouse ${warehouseId}, order ${orderId}, ${items.length} item lines`);
 if (!apply) {
   console.info("Dry run only. Pass --apply to create the order in the isolated Mintsoft test client.");

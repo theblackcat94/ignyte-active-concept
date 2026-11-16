@@ -17,6 +17,7 @@ test("exports only genuine paid, reserved orders with stable references", () => 
   assert.equal(payload.OrderNumber, order.id);
   assert.equal(payload.ExternalOrderReference, order.id);
   assert.equal(payload.WarehouseId, 5);
+  assert.equal(payload.CourierService, "Standard");
   assert.equal(payload.OrderItems[0].UnitPrice, 64.5);
   for (const changed of [
     { status: "awaiting_payment" }, { stock_reserved: false },

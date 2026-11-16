@@ -122,6 +122,17 @@ is active before live order export is switched from `AUTO`.
   before switching the live exporter from `AUTO`. The current website offers
   Standard Australian delivery only; Express is not implemented at checkout.
 
+On 16 November, the integration branch was prepared to send the exact API
+term `Standard` for both paid and free standard delivery. The customer-facing
+Stripe labels are `Standard Australian delivery` and `Free Australian
+delivery`, but they are the same physical service. `Express` is reserved for a
+future checkout option and is not currently sent. Daniel must map `Standard`
+to AusPost (2058) for test client 30 and live client 51 before this exporter
+change is deployed. The deployed exporter still sends `AUTO` until then.
+Mintsoft's Aramex URL on the synthetic `P - Own Package` test order proves the
+despatch webhook carried a URL; it does not prove that Tracking Events or the
+delivered webhook works with a courier.
+
 An earlier website order `81bd992c-c59b-4156-a061-9c1e98fc96ca` was
 created for a sandbox checkout but expired unpaid. It was not sent to
 Mintsoft.
@@ -133,7 +144,7 @@ On the build machine, place only the test API key in an owner-only
 MINTSOFT_TEST_API_KEY=<test-client-key>
 MINTSOFT_CLIENT_ID=30
 MINTSOFT_WAREHOUSE_ID=5
-MINTSOFT_COURIER_SERVICE=AusPost
+MINTSOFT_COURIER_SERVICE=Standard
 ```
 
 Keep this file mode `0600`; do not copy the live Mintsoft key into it.

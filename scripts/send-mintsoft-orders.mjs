@@ -15,7 +15,9 @@ const clientId = Number(process.env.MINTSOFT_CLIENT_ID);
 const warehouseId = Number(process.env.MINTSOFT_WAREHOUSE_ID);
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 const callbackSecret = process.env.MINTSOFT_WEBHOOK_SECRET;
-const courierService = process.env.MINTSOFT_COURIER_SERVICE || "AUTO";
+// Paid and free standard shipping use the same physical service. Express is
+// not offered by the storefront yet; a future checkout tier needs its own term.
+const courierService = process.env.MINTSOFT_COURIER_SERVICE || "Standard";
 if (!url || !secret || !apiKey || !Number.isSafeInteger(clientId) || clientId < 1 ||
     !Number.isSafeInteger(warehouseId) || warehouseId < 1 || !siteUrl || !callbackSecret) {
   throw new Error("Supabase, Mintsoft and callback server settings are required");
