@@ -140,6 +140,44 @@ An earlier website order `81bd992c-c59b-4156-a061-9c1e98fc96ca` was
 created for a sandbox checkout but expired unpaid. It was not sent to
 Mintsoft.
 
+## Checkout and despatch retest on 16 November 2026
+
+- A Stripe sandbox checkout for one `IGN-LVR-SHTS-JAC-L` item paid A$85
+  (A$70 item plus A$15 Standard shipping). Stripe's genuine webhook returned
+  HTTP 200 and website order `5e0cdcd6-da32-44fc-8599-ef476179401d`
+  became paid. The guarded test exporter passed its dry run and Mintsoft
+  client 30 accepted it as order `152756`, with warehouse 5 and one exact-SKU
+  unit. This test cannot charge real money or trigger physical fulfilment.
+- The build host's isolated test configuration still said `AUTO`, overriding
+  the `Standard` script default. It was corrected to `Standard` after this
+  order had exported. The test order's courier was then set manually to
+  `AusPost` (2058); therefore this particular checkout does not prove
+  automatic courier assignment. The separate API order `152716` above does.
+- Mintsoft's `MarkDespatched` API succeeded for order `152756` with synthetic
+  tracking number `IGNYTE-TEST-152756`. Its first ConnectAction (148386)
+  reached staging at 01:44:56 UTC, but returned HTTP 404 because a concurrent
+  deployment temporarily removed the callback route. Mintsoft marked that
+  action complete despite the error. The merged callback release
+  `b9d31b68522a016db2efaab1c54e80895795d0a8` was restored; an unsigned
+  request returned the expected HTTP 401. Replacement ConnectAction 148387
+  returned HTTP 200 at 01:54:55 UTC. The website became `dispatched`, stored
+  the tracking number and generated its AusPost link. The dispatch email was
+  recorded as sent. Mintsoft's payload had `CourierServiceId: 2058` but a
+  null `CourierServiceName`; the parser now derives the known service name
+  from that ID for subsequent callbacks.
+- A separately simulated delivered POST returned HTTP 200. The website became
+  `delivered`, and the delivered email was recorded as sent. This proves the
+  website's delivered callback and email path; it does not prove a real
+  courier delivery event. The marked website test order was then cleaned up:
+  status `cancelled`, `stock_reserved: false` and reserved website stock
+  returned. The isolated Mintsoft test order remains as an audit record.
+- An earlier A$160 Stripe sandbox checkout was initially stuck awaiting
+  payment when the old staging release returned HTTP 500 to Stripe's webhook.
+  After restoring the current webhook code, the verified paid session was
+  replayed, then the order was cleaned up. It could not export because client
+  30 lacks those three SKUs. This is why the stocked, single-SKU retest above
+  was required.
+
 On the build machine, place only the test API key in an owner-only
 `/home/internetremovals/.config/ignyte/mintsoft-test.env`:
 
@@ -173,12 +211,15 @@ Keep this file mode `0600`; do not copy the live Mintsoft key into it.
 3. After checking the dry-run output, repeat the command with `--apply`.
    Record the returned Mintsoft test order ID. The script looks up the website
    UUID before creating an order, so a retry does not create a duplicate.
-4. Ask Daniel to change that test order to `DESPATCHED` without shipping a
-   parcel. Confirm the callback changes the website order to dispatched,
-   stores the tracking number and sends one customer email. Then have him
-   simulate or supply a supported courier delivery event, and verify the
-   delivered status and email. If the courier cannot generate a test delivery
-   event, delivery remains unverified.
+4. For a test order with an assigned courier service, use Mintsoft's
+   `MarkDespatched` API with a clearly synthetic tracking number, or ask
+   Daniel to mark it `DESPATCHED` without shipping a parcel. Confirm the
+   ConnectAction returns HTTP 2xx, changes the website order to dispatched,
+   stores the tracking number and sends one customer email. A completed
+   ConnectAction can still contain an HTTP error, so inspect its message and
+   the website state. Then obtain a supported courier delivery event and
+   verify the delivered status and email. A locally simulated delivered
+   callback checks only the website path; it cannot verify courier delivery.
 5. Use the admin **CLEAN UP TEST ORDER & RETURN STOCK** control only after
    recording the test results. This is for marked Stripe sandbox orders only.
 

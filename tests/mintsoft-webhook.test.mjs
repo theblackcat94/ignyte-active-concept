@@ -22,6 +22,13 @@ test("reads the courier service name from Mintsoft's order response", () => {
   assert.equal(parseMintsoftShippingEvent({ OrderNumber: orderId, CourierServiceName: "Standard" })?.carrier, "Standard");
 });
 
+test("uses the mapped courier service ID when Mintsoft omits its name", () => {
+  assert.equal(parseMintsoftShippingEvent({ SourceOrderId: orderId, CourierServiceId: 2058,
+    CourierServiceName: null, TrackingNumber: "IGNYTE-TEST-152756" })?.carrier, "AusPost");
+  assert.equal(parseMintsoftShippingEvent({ SourceOrderId: orderId, CourierServiceId: 2057,
+    CourierServiceName: null })?.carrier, "3J55 - EXPRESS POST");
+});
+
 test("formats Mintsoft's Australia Post tracking template", () => {
   assert.equal(parseMintsoftShippingEvent({ SourceOrderId: orderId, CourierServiceId: 2057,
     TrackingNumber: "AP 123/45", TrackingURL: "https://auspost.com.au/mypost/track/#/details/{0}" })?.trackingUrl,

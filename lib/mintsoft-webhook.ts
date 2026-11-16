@@ -27,7 +27,11 @@ export function parseMintsoftShippingEvent(value: unknown): ShippingEvent | null
   const order = record(wrapper.Order) ?? wrapper;
   const source = textField(order, ["SourceOrderId", "OrderNumber", "ExternalOrderReference"], 100);
   if (!source || !z.uuid().safeParse(source).success) return null;
-  const carrier = textField(order, ["CourierServiceName", "CourierService", "CourierName", "Courier"], 120);
+  // Mintsoft can omit CourierServiceName even when the mapped service ID is
+  // present in its despatch callback.
+  const carrier = textField(order, ["CourierServiceName", "CourierService", "CourierName", "Courier"], 120)
+    ?? (Number(order.CourierServiceId) === 2058 ? "AusPost"
+      : Number(order.CourierServiceId) === 2057 ? "3J55 - EXPRESS POST" : null);
   const trackingNumber = textField(order, ["TrackingNumber", "TrackingNo", "TrackingID"], 120);
   const rawUrl = textField(order, ["TrackingURL", "TrackingUrl", "TrackingLink"], 2048);
   let trackingUrl: string | null = null;
