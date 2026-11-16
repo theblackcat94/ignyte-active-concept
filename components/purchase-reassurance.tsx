@@ -10,15 +10,15 @@ import "@/app/purchase-reassurance.css";
 
 export { ReturnsIcon, ShippingIcon } from "./purchase-icons";
 
-export default function PurchaseReassurance({ inBag = false, returnsOnly = false }: { inBag?: boolean; returnsOnly?: boolean }) {
+export default function PurchaseReassurance({ inBag = false, returnsOnly = false, onNavigate }: { inBag?: boolean; returnsOnly?: boolean; onNavigate?: () => void }) {
   const [section, setSection] = useState<"shipping" | "returns" | null>(null);
   return <><div className={`purchase-reassurance${inBag ? " in-bag" : ""}${returnsOnly ? " returns-only" : ""}${firstFitReassuranceVisible && !returnsOnly ? " has-first-fit" : ""}`} aria-label="Shipping, returns and fit information">
-    {!returnsOnly && <button type="button" onClick={() => setSection("shipping")} aria-label={`Free shipping on eligible Australian orders of AU$${FREE_SHIPPING_THRESHOLD_CENTS / 100} or more after discounts. View shipping information.`}>
+    {!returnsOnly && <button type="button" onClick={() => { onNavigate?.(); setSection("shipping"); }} aria-label={`Free shipping on eligible Australian orders of AU$${FREE_SHIPPING_THRESHOLD_CENTS / 100} or more after discounts. View shipping information.`}>
       {!firstFitReassuranceVisible && <ShippingIcon />}<span>FREE SHIPPING ON AU${FREE_SHIPPING_THRESHOLD_CENTS / 100}+ ORDERS</span>
     </button>}
-    <button type="button" onClick={() => setSection("returns")}>
+    <button type="button" onClick={() => { onNavigate?.(); setSection("returns"); }}>
       {(!firstFitReassuranceVisible || returnsOnly) && <ReturnsIcon />}<span>{RETURNS_LABEL}</span>
     </button>
-    {firstFitReassuranceVisible && !returnsOnly && <Link href="/first-fit-promise/">THE FIRST FIT PROMISE™</Link>}
+    {firstFitReassuranceVisible && !returnsOnly && <Link href="/first-fit-promise/" onClick={onNavigate}>THE FIRST FIT PROMISE™</Link>}
   </div><ShippingReturnsDrawer section={section} onClose={() => setSection(null)} /></>;
 }
