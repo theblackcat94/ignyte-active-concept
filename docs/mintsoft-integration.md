@@ -110,10 +110,14 @@ automatically prints and despatches orders; do not enable it on live client 51.
 
 The isolated test now verifies Stripe sandbox payment, website reservation,
 the exact-SKU order handoff, automatic Standard-to-AusPost mapping, a genuine
-Mintsoft despatch callback, tracking, and dispatch-email deduplication. Before
-production traffic relies on the feed, coordinate one marked live order with
-Fulfilpackers, confirm Tracking Events support and a courier-originated
-delivered callback, then verify the review trigger after its URL is supplied.
+Mintsoft despatch callback, tracking, and dispatch-email deduplication. Dan
+advised on 17 November 2026 that this Mintsoft setup is not expected to return
+courier-delivered notifications. The AusPost link on the successful Standard
+test was built by the website from Mintsoft's tracking number; a synthetic
+tracking number does not prove a real parcel can be tracked. Keep delivered
+and delivery-timed customer emails disabled. Before public checkout opens,
+coordinate one controlled real order in client 51 with Fulfilpackers and
+verify the real despatch and tracking number.
 The minute
 order-export timer currently logs failures to the user
 systemd journal; add an operational failure alert before treating the flow as
