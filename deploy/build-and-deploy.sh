@@ -109,6 +109,7 @@ mkdir -p "$stage/app/.next"
 cp -a .next/standalone/. "$stage/app/"
 cp -a .next/static "$stage/app/.next/static"
 cp -a public "$stage/app/public"
+cp deploy/run-post-purchase.mjs "$stage/app/run-post-purchase.mjs"
 cp "$(readlink -f "$(command -v node)")" "$stage/app/node"
 printf '%s\n' "$expected_sha" > "$stage/app/revision"
 

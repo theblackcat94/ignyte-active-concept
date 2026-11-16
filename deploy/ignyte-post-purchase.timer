@@ -1,0 +1,10 @@
+[Unit]
+Description=Check IGNYTE post-purchase journey every 15 minutes
+
+[Timer]
+OnCalendar=*-*-* *:00/15:00
+Persistent=true
+Unit=ignyte-post-purchase.service
+
+[Install]
+WantedBy=timers.target
