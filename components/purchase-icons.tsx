@@ -1,2 +1,3 @@
 export function ShippingIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M2 5h12v11H2zM14 9h4l4 4v3h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>; }
 export function ReturnsIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M4 8h12a5 5 0 0 1 0 10H9"/><path d="m8 4-4 4 4 4"/></svg>; }
+export function FitGuaranteeIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 2 20 5v6c0 5-3.3 8.8-8 11-4.7-2.2-8-6-8-11V5l8-3Z"/><path d="m8.5 12 2.3 2.3 4.7-4.8"/></svg>; }

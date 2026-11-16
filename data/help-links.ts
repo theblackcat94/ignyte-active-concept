@@ -4,6 +4,6 @@ export const helpLinks = [
   { label: "Support & FAQ", href: "/support" },
   { label: "Contact", href: "/contact" },
   { label: "Size Guide", href: "/size-guide" },
-  ...(firstFitReassuranceVisible ? [{ label: "The First Fit Promise™", href: "/first-fit-promise/" }] : []),
+  ...(firstFitReassuranceVisible ? [{ label: "The IGNYTE Fit Guarantee™", href: "/ignyte-fit-guarantee/" }] : []),
   { label: "Returns Policy", href: "/returns" },
 ] as const;

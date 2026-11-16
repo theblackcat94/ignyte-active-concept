@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { adminDb } from "@/lib/commerce";
 import { accessibleReturnOrder } from "@/lib/returns";
-import { firstFitRequestsEnabled } from "@/lib/first-fit-promise";
+import { firstFitRequestsEnabled, fitGuaranteeError } from "@/lib/first-fit-promise";
 import { firstFitReceivedEmail } from "@/lib/first-fit-emails";
 import { queueReturnEmail } from "@/lib/return-outbox";
 
@@ -13,7 +13,7 @@ const input = z.object({
   email: z.email().trim().toLowerCase(), requested_size: z.string().trim().min(1).max(60),
   reason: z.string().trim().min(5).max(1000), comments: z.string().trim().max(3000).default(""),
 });
-function unavailable() { return NextResponse.json({ error: "The First Fit Promise is not accepting requests." }, { status: 409, headers: noStore }); }
+function unavailable() { return NextResponse.json({ error: "The IGNYTE Fit Guarantee is not accepting requests." }, { status: 409, headers: noStore }); }
 
 export async function GET(request: NextRequest) {
   if (!firstFitRequestsEnabled) return unavailable();
@@ -49,12 +49,12 @@ export async function POST(request: NextRequest) {
     p_reason: values.reason, p_comments: values.comments,
   });
   const created = Array.isArray(data) ? data[0] : null;
-  if (error || !created) return NextResponse.json({ error: error?.message || "We couldn't record your request. Please try again." }, { status: 409, headers: noStore });
+  if (error || !created) return NextResponse.json({ error: error?.message ? fitGuaranteeError(error.message) : "We couldn't record your request. Please try again." }, { status: 409, headers: noStore });
   const item = order.items.find(row => row.id === values.order_item_id)!;
   try {
     await queueReturnEmail(`${created.return_id}:first-fit:received`, created.return_id, values.email,
       firstFitReceivedEmail({ customer_name: order.customer_name, reference: created.return_reference,
         product_name: item.product_name, current_size: item.size, requested_size: values.requested_size }));
-  } catch (cause) { console.error("First Fit receipt queue failed", cause instanceof Error ? cause.message : "Unknown error"); }
+  } catch (cause) { console.error("IGNYTE Fit Guarantee receipt queue failed", cause instanceof Error ? cause.message : "Unknown error"); }
   return NextResponse.json({ reference: created.return_reference }, { status: 201, headers: noStore });
 }
