@@ -4,11 +4,12 @@ import Link from "next/link";
 import { browserDb, commerceConfigured } from "@/lib/commerce";
 import { isStatutoryReason, returnReasons, type ReturnItem, type ReturnOrder } from "@/lib/returns";
 import "@/app/returns/submit/submit.css";
+import FirstFitExchangePreview from "./first-fit-exchange-preview";
 
 type EditableItem = ReturnItem & { selected?: boolean };
 const blank = (): EditableItem => ({ product_name: "", sku: "", size: "", colour: "", quantity: 1, reason: "Changed my mind" });
 
-export default function ReturnRequestForm() {
+export default function ReturnRequestForm({ firstFitPreview = false }: { firstFitPreview?: boolean }) {
   const [name, setName] = useState(""); const [email, setEmail] = useState(""); const [orderNumber, setOrderNumber] = useState("");
   const [order, setOrder] = useState<ReturnOrder | null>(null); const [items, setItems] = useState<EditableItem[]>([blank()]);
   const [lookupBusy, setLookupBusy] = useState(false); const [lookupMessage, setLookupMessage] = useState("");
@@ -71,6 +72,7 @@ export default function ReturnRequestForm() {
 
   const chosenItems = order ? items.filter(item => item.selected) : items;
   const statutoryClaim = chosenItems.some(item => isStatutoryReason(item.reason));
+  if (firstFitPreview) return <FirstFitExchangePreview />;
   return <main className="return-submit-page section-wrap"><div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><Link href="/returns/">RETURNS</Link><span>/</span><span>SUBMIT</span></div>
     {reference ? <section className="return-success" role="status" aria-live="polite"><div className="return-success-sparks" aria-hidden="true"><i /><i /><i /><i /></div><span className="eyebrow">REQUEST RECEIVED_</span><h1>WE&apos;VE GOT IT!</h1><p>Thanks for submitting your return request.</p><p>Your return reference is:</p><strong>{reference}</strong><p>Our team will review your request and email you with the next steps.</p><p>Please don&apos;t send your items back until you&apos;ve received our return instructions.</p><Link className="button button-orange" href="/shop/">CONTINUE SHOPPING ↗</Link></section>
     : <><span className="eyebrow">RETURNS &amp; REFUNDS_</span><h1>SUBMIT A RETURN<span>_</span></h1><p className="return-lead">Need to return something? We&apos;ve got you.</p><p>Complete the form below and our team will review your request and email you with the next steps.</p><p>For change-of-mind returns, full-price items must arrive at our returns warehouse within 30 calendar days of purchase, unworn, unused, unwashed and with tags attached. Sale items are final sale for change-of-mind returns. Customers pay return postage. Faulty or incorrect items are assessed separately under Australian Consumer Law. <Link href="/returns/">Read the full Returns &amp; Refunds Policy.</Link></p>

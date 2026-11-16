@@ -17,7 +17,7 @@ export default function ReturnsPage() {
     <div className="policy-copy">
       <h2 id="shipping">Shipping</h2>
       <p>Australian orders under AU$100 after discounts have a flat AU$15 delivery charge. Orders of AU$100 or more after discounts receive free shipping. Your delivery charge is shown at checkout.</p>
-      <span id="free-returns" className="returns-legacy-anchor" aria-hidden="true" /><h2 id="returns">Our 30-Day Returns Policy</h2>
+      <span id="free-returns" className="returns-legacy-anchor" aria-hidden="true" /><h2 id="returns">Our Easy 30 Day Returns Policy</h2>
       <p>To qualify for a change-of-mind return, your items must:</p>
       <ul className="policy-list"><li>Arrive at our returns warehouse within 30 calendar days of purchase.</li><li>Be unworn, unused and unwashed.</li><li>Have all original tags attached.</li><li>Be accompanied by proof of purchase.</li><li>Be purchased at full price and not marked as a sale item.</li></ul>
       <p>You&apos;re welcome to carefully try on your items to check the fit, just as you would in a store. However, items must not have been worn for training, exercise or everyday use.</p>

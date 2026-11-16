@@ -6,7 +6,7 @@ import { blackFridayPreview, liveAnnouncement } from "@/data/announcement";
 import { RETURNS_LABEL } from "@/lib/shipping-policy";
 
 const outdatedReturnsClaim = /\bfree\s*(?:(?:,|&|and|easy|fast|30|day|days|[-–])\s*)*returns\b/i;
-const safeReturnsCopy = (value: string) => value.replace(new RegExp(outdatedReturnsClaim.source, "gi"), RETURNS_LABEL);
+const safeReturnsCopy = (value: string) => value.replace(new RegExp(outdatedReturnsClaim.source, "gi"), RETURNS_LABEL).replace(/\b(?:easy\s+)?30[ -]day returns\b/gi, RETURNS_LABEL);
 
 const announcementSchema = z.object({
   mode: z.enum(["static", "ticker"]),

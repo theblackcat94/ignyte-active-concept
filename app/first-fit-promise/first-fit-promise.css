@@ -1,0 +1,19 @@
+.first-fit-page{max-width:1300px;padding-top:48px;padding-bottom:100px;color:var(--ink)}
+.first-fit-page .eyebrow{font:700 11px/1.4 var(--font-ignyte-mono),monospace;letter-spacing:.11em}
+.first-fit-private-banner{padding:14px 18px;margin-bottom:25px;border:1px solid currentColor;font:700 11px/1.5 var(--font-ignyte-mono),monospace;letter-spacing:.04em}
+.first-fit-hero{padding:clamp(35px,6vw,90px) 0;border-bottom:1px solid var(--line)}
+.first-fit-hero h1{max-width:1150px;margin:18px 0 28px;font:700 clamp(48px,8vw,118px)/.94 var(--font-ignyte-sans),sans-serif;letter-spacing:-.045em}
+.first-fit-hero h1 em{color:#FF4533;font-style:normal}
+.first-fit-hero p{max-width:720px;font-size:clamp(17px,2vw,22px);line-height:1.4}.first-fit-hero .first-fit-lead{font-weight:600}
+.first-fit-hero .button{display:inline-flex;margin-top:22px;padding:16px 25px}
+.first-fit-section{padding:clamp(42px,6vw,80px) 0;border-bottom:1px solid var(--line)}
+.first-fit-section>h2{font:700 clamp(26px,4vw,50px)/1.05 var(--font-ignyte-sans),sans-serif;margin:16px 0}
+.first-fit-section>p{max-width:750px;font-size:16px;line-height:1.65}
+.first-fit-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:35px 60px;margin-top:32px}
+.first-fit-steps h2{font:700 15px/1.4 var(--font-ignyte-mono),monospace}.first-fit-steps p{font-size:16px;line-height:1.6;max-width:450px}
+.first-fit-section details{border-top:1px solid var(--line);max-width:850px;padding:18px 0}.first-fit-section details:first-of-type{margin-top:24px}.first-fit-section summary{cursor:pointer;font-weight:600}.first-fit-section details p{line-height:1.6}
+.first-fit-final div{display:flex;flex-wrap:wrap;gap:22px;margin-top:25px}.first-fit-final a{text-decoration:underline;text-underline-offset:4px;font-size:12px;font-weight:700}
+.first-fit-disabled-cta{display:inline-block;padding:15px 22px;margin-top:18px;background:#b4b5b8;color:#242a35;font-weight:700;font-size:12px}
+.first-fit-preview-cta{display:inline-block;padding:15px 22px;margin-top:18px;background:#FF4533;color:#0B1020;font-weight:700;font-size:12px;text-decoration:none!important}
+html[data-appearance="ignyte"] .first-fit-hero h1 em{color:#0B1020}
+@media(max-width:600px){.first-fit-page{padding-top:24px;padding-bottom:60px}.first-fit-steps{grid-template-columns:1fr;gap:14px}.first-fit-hero h1{overflow-wrap:anywhere}}
