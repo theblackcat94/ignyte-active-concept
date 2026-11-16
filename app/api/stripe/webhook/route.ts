@@ -33,6 +33,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unknown checkout session" }, { status: 400 });
   }
   if (order.stripe_session_id && order.stripe_session_id !== session.id) return NextResponse.json({ received: true });
+  const details = order.shipping_details as { test_order_cleaned_up?: boolean } | null;
+  if (environment === "sandbox" && order.status === "cancelled" && details?.test_order_cleaned_up === true &&
+      order.stripe_session_id === session.id) {
+    // Stripe can retry a paid test event after the operator has returned its
+    // reserved stock. Acknowledge this already handled sandbox order.
+    return NextResponse.json({ received: true });
+  }
   if (event.type === "checkout.session.completed") {
     const shippingDetails = session.collected_information?.shipping_details;
     const shippingCents = session.total_details?.amount_shipping;
