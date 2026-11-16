@@ -30,6 +30,8 @@ import PdpEditShortcut from "./pdp-edit-shortcut";
 import BrowseRecoveryPrompt from "./browse-recovery-prompt";
 import { SUPPORT_LEVELS, supportGuidance, supportLevel } from "@/lib/support-level";
 import ProductQuestionDrawer from "./product-question-drawer";
+import { firstFitReassuranceVisible } from "@/lib/first-fit-promise";
+import { IGNYTE_FLAME_PATH } from "./header-logo";
 import "@/app/product-detail-v2.css";
 import "@/app/browse-recovery.css";
 
@@ -155,6 +157,7 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
         {product.fitAttribute && (!fitAdvice || product.fitAttribute.trim().toLowerCase() !== fitAdvice.toLowerCase()) && <p><span className="pdp-info-key">Fit:</span> {product.fitAttribute}</p>}
         {product.coverageAttribute && <p><span className="pdp-info-key">Coverage:</span> {product.coverageAttribute}</p>}
       </section>}
+      {firstFitReassuranceVisible && !saleOriginalPrice && <aside className="pdp-first-fit-callout" aria-label="The First Fit Promise"><svg viewBox="0 0 42 70" aria-hidden="true"><path d={IGNYTE_FLAME_PATH} /></svg><div><span>THE FIRST FIT PROMISE™</span><strong>Your first fit. Our promise.</strong><p>First time shopping IGNYTE? Get one complimentary size exchange on your first eligible full-price order.</p><Link href="/first-fit-promise/">HOW IT WORKS ↗</Link></div></aside>}
       {showFabricDetails && <section className="pdp-info-group"><h3>Fabric</h3>
         {fabricParts.length > 0 && <dl className="pdp-fabric-list">{fabricParts.map((part, index) => <div key={`${part.label}-${index}`}><dt>{part.label}</dt><dd>{part.composition}</dd></div>)}</dl>}
         {showCareAdvice && <p className="pdp-care-note"><strong>Care:</strong> {pdp.care_approved && pdp.care_instructions?.trim() ? pdp.care_instructions.trim() : "Machine wash cold at 30°C on a gentle cycle with similar colours. Air dry in the shade. Always follow the garment care label."}</p>}

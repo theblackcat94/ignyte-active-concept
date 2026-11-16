@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import SizeGuideContent from "@/components/size-guide-content";
 import { asset } from "@/lib/asset";
-import { firstFitPublic } from "@/lib/first-fit-promise";
+import { firstFitReassuranceVisible } from "@/lib/first-fit-promise";
 
 export const metadata: Metadata = { title: "Size guide | Ignyte Active", description: "Compare your measurements with the Ignyte Active size guide and learn how to measure for sports bras, tops, bottoms and socks.", alternates: { canonical: "/size-guide/" } };
 
@@ -13,7 +13,7 @@ export default function SizeGuidePage() {
     <span className="eyebrow">IGNYTE / FIND YOUR FIT</span>
     <h1>SIZE GUIDE<span>.</span></h1>
     <p className="size-guide-intro">Choose a category for the measurements that matter to your fit.</p>
-    {firstFitPublic && <p className="size-guide-intro">Shopping with us for the first time? <Link href="/first-fit-promise/">Explore The First Fit Promise™ ↗</Link></p>}
+    {firstFitReassuranceVisible && <p className="size-guide-intro"><strong>FIRST TIME SHOPPING IGNYTE?_</strong> One complimentary size exchange on your first eligible full-price order. <Link href="/first-fit-promise/">Explore The First Fit Promise™ ↗</Link></p>}
     <div className="size-guide-layout">
       <SizeGuideContent showTabs />
       <aside className="size-guide-editorial" aria-label="Explore Ignyte products">
