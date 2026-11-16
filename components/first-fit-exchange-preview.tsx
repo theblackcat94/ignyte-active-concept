@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { browserDb, commerceConfigured } from "@/lib/commerce";
+import FirstFitExchangeForm from "./first-fit-exchange-form";
 import "@/app/first-fit-promise/first-fit-promise.css";
 
 export default function FirstFitExchangePreview() {
@@ -19,6 +20,7 @@ export default function FirstFitExchangePreview() {
   }, []);
   if (access === "loading") return <main className="return-submit-page section-wrap"><p>Loading preview…</p></main>;
   if (access === "private") return <main className="return-submit-page section-wrap"><span className="eyebrow">PRIVATE PREVIEW_</span><h1>THE FIRST FIT PROMISE™</h1><p>This exchange programme is not available yet.</p><Link href="/returns/submit/">STANDARD RETURN REQUEST ↗</Link></main>;
+  if (access === "public") return <FirstFitExchangeForm />;
   return <main className="return-submit-page section-wrap first-fit-request-preview"><div className="breadcrumb"><Link href="/">HOME</Link><span>/</span><Link href="/first-fit-promise/">THE FIRST FIT PROMISE</Link><span>/</span><span>REQUEST</span></div>
     <div className="first-fit-private-banner">PRIVATE DEVELOPMENT PREVIEW · Requests cannot be submitted until the terms and fulfilment process are approved.</div>
     <span className="eyebrow">THE FIRST FIT PROMISE™_</span><h1>LET&apos;S GET YOUR FIT RIGHT.</h1><p>Use your verified order to select an eligible full-price item and request another size in the same product and colour. The active form will check purchase history and available stock before submission.</p>
