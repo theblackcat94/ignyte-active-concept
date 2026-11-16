@@ -48,6 +48,16 @@ async function mintsoft(path, options = {}) {
   return { status: response.status, ok: response.ok, body };
 }
 
+// A successful earlier export may have consumed the last test unit. Check for
+// that order before requiring stock for a new export.
+const found = await mintsoft(`/api/Order/GetOrderId?OrderNumber=${encodeURIComponent(orderId)}`);
+let mintsoftId = found.ok ? mintsoftOrderId(found.body) : null;
+if (!found.ok && found.status !== 404) throw new Error(`Test order lookup failed: HTTP ${found.status}`);
+if (mintsoftId) {
+  console.info(`Mintsoft test client ${clientId} already has ${orderId} as order ${mintsoftId}`);
+  process.exit(0);
+}
+
 const stock = await mintsoft(`/api/Product/StockLevels?WarehouseId=${warehouseId}&ClientId=${clientId}`);
 if (!stock.ok) throw new Error(`Test-client stock lookup failed: HTTP ${stock.status}`);
 const levels = parseMintsoftStockLevels(stock.body, warehouseId, clientId);
@@ -62,22 +72,17 @@ if (!apply) {
   process.exit(0);
 }
 
-const found = await mintsoft(`/api/Order/GetOrderId?OrderNumber=${encodeURIComponent(orderId)}`);
-let mintsoftId = found.ok ? mintsoftOrderId(found.body) : null;
-if (!found.ok && found.status !== 404) throw new Error(`Test order lookup failed: HTTP ${found.status}`);
+const created = await mintsoft("/api/Order", { method: "PUT", body: JSON.stringify(payload) });
+const responseOrder = Array.isArray(created.body) ? created.body[0] : created.body;
+mintsoftId = created.ok && responseOrder?.Success !== false ? mintsoftOrderId(created.body) : null;
 if (!mintsoftId) {
-  const created = await mintsoft("/api/Order", { method: "PUT", body: JSON.stringify(payload) });
-  const responseOrder = Array.isArray(created.body) ? created.body[0] : created.body;
-  mintsoftId = created.ok && responseOrder?.Success !== false ? mintsoftOrderId(created.body) : null;
-  if (!mintsoftId) {
-    const retryLookup = await mintsoft(`/api/Order/GetOrderId?OrderNumber=${encodeURIComponent(orderId)}`);
-    mintsoftId = retryLookup.ok ? mintsoftOrderId(retryLookup.body) : null;
-  }
-  if (!mintsoftId) {
-    const reason = [responseOrder?.Message, responseOrder?.ErrorMessage, responseOrder?.Error]
-      .find((value) => typeof value === "string" && value.trim());
-    throw new Error(`Mintsoft did not acknowledge the isolated test order: HTTP ${created.status}; ${reason ? reason.slice(0, 200) : "response fields " + Object.keys(responseOrder ?? {}).join(",")}`);
-  }
+  const retryLookup = await mintsoft(`/api/Order/GetOrderId?OrderNumber=${encodeURIComponent(orderId)}`);
+  mintsoftId = retryLookup.ok ? mintsoftOrderId(retryLookup.body) : null;
+}
+if (!mintsoftId) {
+  const reason = [responseOrder?.Message, responseOrder?.ErrorMessage, responseOrder?.Error]
+    .find((value) => typeof value === "string" && value.trim());
+  throw new Error(`Mintsoft did not acknowledge the isolated test order: HTTP ${created.status}; ${reason ? reason.slice(0, 200) : "response fields " + Object.keys(responseOrder ?? {}).join(",")}`);
 }
 console.info(`Mintsoft test client ${clientId} acknowledged ${orderId} as order ${mintsoftId}`);
 console.info("This manual test does not update the live Mintsoft order ID field or the production export timer.");
