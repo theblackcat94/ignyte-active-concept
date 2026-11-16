@@ -2,7 +2,10 @@
 .first-fit-page .eyebrow{font:700 11px/1.4 var(--font-ignyte-mono),monospace;letter-spacing:.11em}
 .first-fit-private-banner{padding:14px 18px;margin-bottom:25px;border:1px solid currentColor;font:700 11px/1.5 var(--font-ignyte-mono),monospace;letter-spacing:.04em}
 .first-fit-hero{padding:clamp(32px,5vw,66px) 0;border-bottom:1px solid var(--line)}
-.first-fit-hero h1{max-width:1000px;margin:16px 0 19px;font:600 clamp(40px,5.4vw,76px)/1.05 var(--font-ignyte-sans),sans-serif;letter-spacing:-.035em}
+.first-fit-hero-heading{display:flex;align-items:center;gap:17px;margin:16px 0 19px}
+.first-fit-hero-mark{display:grid;place-items:center;flex:none;width:64px;height:64px;border-radius:50%;background:#1F2A44;color:#FF4533}
+.first-fit-hero-mark svg{display:block;width:44px;height:44px}
+.first-fit-hero h1{max-width:1000px;margin:0;font:600 clamp(40px,5.4vw,76px)/1.05 var(--font-ignyte-sans),sans-serif;letter-spacing:-.035em}
 .first-fit-hero h2{max-width:850px;margin:0 0 22px;font:600 clamp(23px,3vw,38px)/1.15 var(--font-ignyte-sans),sans-serif;letter-spacing:-.02em}
 .first-fit-hero h1 em{color:#FF4533;font-style:normal}
 .first-fit-hero p{max-width:690px;font-size:clamp(16px,1.6vw,19px);line-height:1.55}.first-fit-hero .first-fit-lead{font-weight:500}.first-fit-hero .first-fit-terms{font-size:13px;line-height:1.5}
@@ -18,4 +21,4 @@
 .first-fit-disabled-cta{display:inline-block;padding:15px 22px;margin-top:18px;background:#b4b5b8;color:#242a35;font-weight:700;font-size:12px}
 .first-fit-preview-cta{display:inline-block;padding:15px 22px;margin-top:18px;background:#FF4533;color:#0B1020;font-weight:700;font-size:12px;text-decoration:none!important}
 html[data-appearance="ignyte"] .first-fit-hero h1 em{color:#0B1020}
-@media(max-width:600px){.first-fit-page{padding-top:24px;padding-bottom:60px}.first-fit-hero{padding:32px 0 40px}.first-fit-steps{grid-template-columns:1fr;gap:10px}.first-fit-steps article h2{margin-bottom:5px}.first-fit-steps article p{margin-top:0}.first-fit-hero h1{overflow-wrap:normal}}
+@media(max-width:600px){.first-fit-page{padding-top:24px;padding-bottom:60px}.first-fit-hero{padding:32px 0 40px}.first-fit-hero-heading{gap:10px}.first-fit-hero-mark{width:48px;height:48px}.first-fit-hero-mark svg{width:35px;height:35px}.first-fit-hero h1{font-size:clamp(32px,9vw,40px);overflow-wrap:normal}.first-fit-steps{grid-template-columns:1fr;gap:10px}.first-fit-steps article h2{margin-bottom:5px}.first-fit-steps article p{margin-top:0}}
