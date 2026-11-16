@@ -40,6 +40,11 @@ html[data-appearance="ignyte"] main :is(section,article),
 html[data-appearance="ignyte"] footer section:not(.pdf-footer-signup) {
   background: transparent !important;
 }
+/* Keep this small reassurance surface stable against every gradient frame. */
+html[data-appearance="ignyte"] main .home-first-fit {
+  background: #1F2A44 !important;
+  color: #fff;
+}
 html[data-appearance="ignyte"] .pdf-footer-signup {
   background: #fff4ed !important;
   color: #0B1020;
