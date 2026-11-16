@@ -6,7 +6,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dev.ignyteactive.co
 
 export const metadata: Metadata = {
   title: "The IGNYTE Fit Guarantee™ | IGNYTE Active",
-  description: "First size exchange on us. One complimentary size exchange on your first eligible full-price IGNYTE order. Terms apply.",
+  description: "A better fit, at no extra cost. New to IGNYTE? Enjoy one complimentary size exchange on your first eligible full-price order. Terms apply.",
   alternates: { canonical: new URL("/ignyte-fit-guarantee/", siteUrl).toString() },
   robots: firstFitPublic ? undefined : { index: false, follow: false },
 };
