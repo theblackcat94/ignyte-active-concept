@@ -91,9 +91,8 @@ the Express service and its Australia Post URL template
 The Mintsoft API confirms service `2058` is active with no TrackingURL and
 service `2057` is active with that template. The website now formats templates
 with the tracking number and uses the same Australia Post URL as a fallback
-for either confirmed service when the callback has no URL. Express is not yet
-offered at website checkout. The 3PL must confirm the Standard/Express mapping
-is active before live order export is switched from `AUTO`.
+for either confirmed service when the callback has no URL. Express is not
+offered at website checkout.
 
 ### Fresh paid website order, 13 November 2026
 
@@ -117,18 +116,22 @@ is active before live order export is switched from `AUTO`.
   Package` test courier (ID 2029) returned an Aramex tracking URL for the
   synthetic number; this is not proof of a valid customer tracking link or a
   real courier event.
-- A supported courier delivery event remains untested. Standard-to-AusPost API
-  mapping was not active in test client 30; confirm the live-client mapping
-  before switching the live exporter from `AUTO`. The current website offers
-  Standard Australian delivery only; Express is not implemented at checkout.
+- A supported courier delivery event remains untested. The current website
+  offers Standard Australian delivery only; Express is not implemented at
+  checkout.
 
-On 16 November, the integration branch was prepared to send the exact API
-term `Standard` for both paid and free standard delivery. The customer-facing
-Stripe labels are `Standard Australian delivery` and `Free Australian
-delivery`, but they are the same physical service. `Express` is reserved for a
-future checkout option and is not currently sent. Daniel must map `Standard`
-to AusPost (2058) for test client 30 and live client 51 before this exporter
-change is deployed. The deployed exporter still sends `AUTO` until then.
+On 16 November, both client logins were used to create `API` / `Standard` to
+`AusPost` (service 2058) courier mappings: test client 30 mapping 67 and live
+client 51 mapping 68. A separate API-only test order
+`IGNYTE-STANDARD-MAP-20261116-1` was accepted in client 30 as order 152716;
+GET confirmed courier service 2058, warehouse 5 and one exact-SKU unit. This
+order has no website payment or callback and must not be treated as an end to
+end checkout test. The live scheduled exporter runtime on the build host was
+updated from `AUTO` to `Standard`, with rollback copies retained. Its timer is
+active; dry run and service invocation found zero paid live orders waiting.
+The customer-facing Stripe labels remain `Standard Australian delivery` and
+`Free Australian delivery`, both using the same `Standard` API term. Express
+is not offered and has no mapping.
 Mintsoft's Aramex URL on the synthetic `P - Own Package` test order proves the
 despatch webhook carried a URL; it does not prove that Tracking Events or the
 delivered webhook works with a courier.
