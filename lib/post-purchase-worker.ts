@@ -153,13 +153,15 @@ export async function processPostPurchase(): Promise<{ enrolled: number; sent: n
     try {
       const { products, purchasedIds } = await orderProducts(job.order_id, job.customer_email);
       if (!products.length) { await setStatus(job.id, "suppressed", "products_unavailable"); result.suppressed++; continue; }
-      // Guest review verification is not yet implemented. Keep this step off until it is.
-      if (job.step === "review_request") { await setStatus(job.id, "suppressed", "guest_review_verification_pending"); result.suppressed++; continue; }
+      const emailProducts = job.step === "review_request"
+        ? [...new Map(products.filter(item => !item.reviewed).map(item => [item.slug, item])).values()]
+        : products;
+      if (!emailProducts.length) { await setStatus(job.id, "suppressed", "products_already_reviewed"); result.suppressed++; continue; }
       const recommendation = job.step === "complete_set" ? await recommendationFor(products, purchasedIds) : null;
       if (job.step === "complete_set" && !recommendation) { await setStatus(job.id, "suppressed", "no_relevant_available_match"); result.suppressed++; continue; }
       const { data: subscriber, error: subscriberError } = await db.from("marketing_subscribers").select("unsubscribe_token").eq("email", job.customer_email).single();
       if (subscriberError) throw subscriberError;
-      const email = postPurchaseEmail(step, products, siteUrl, `${siteUrl.replace(/\/$/, "")}/unsubscribe/?token=${encodeURIComponent(subscriber.unsubscribe_token)}`, recommendation ?? undefined);
+      const email = postPurchaseEmail(step, emailProducts, siteUrl, `${siteUrl.replace(/\/$/, "")}/unsubscribe/?token=${encodeURIComponent(subscriber.unsubscribe_token)}`, recommendation ?? undefined);
       const messageId = await sendSesMail({ to: job.customer_email, message: email });
       const { error: sentError } = await db.from("post_purchase_jobs").update({ status: "sent", sent_at: new Date().toISOString(), provider_message_id: messageId, updated_at: new Date().toISOString() }).eq("id", job.id).eq("status", "sending");
       if (sentError) throw sentError;

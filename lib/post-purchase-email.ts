@@ -1,7 +1,7 @@
 import { escapeHtml, layout, type EmailDesign } from "@/lib/email-templates";
 
 export type JourneyStep = "fit_care" | "review_request" | "complete_set";
-export type JourneyProduct = { name: string; colour: string; size: string; image: string; slug: string; care?: string };
+export type JourneyProduct = { name: string; colour: string; size: string; image: string; slug: string; care?: string; reviewed?: boolean };
 export type JourneyRecommendation = { name: string; colour: string; image: string; slug: string; priceCents: number };
 export type JourneyConfig = { step: JourneyStep; subject: string; preheader: string; body_copy: string };
 
@@ -29,7 +29,7 @@ export function postPurchaseEmail(config: JourneyConfig, products: JourneyProduc
   const intro = config.body_copy.replaceAll("\\n", "\n").split(/\n\s*\n/).filter(Boolean).map(paragraph).join("");
   const sizeGuide = tracked(site, "/size-guide/", config.step);
   const contact = tracked(site, "/contact/", config.step);
-  const visible = products.slice(0, config.step === "review_request" ? 2 : 3);
+  const visible = config.step === "review_request" ? products : products.slice(0, 3);
   let eyebrow = "MADE FOR YOUR NEXT MOVE_";
   let title = "HOW'S THE FIT?";
   let content = intro + heading("YOUR NEW IGNYTE GEAR_") + visible.map(item => product(item, site)).join("");
