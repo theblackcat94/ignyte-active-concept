@@ -5,10 +5,10 @@ existing `ignyteactive.com` resolves to the current store, not the new release.
 The combined website/Mintsoft commit `a740c7a` is healthy on both
 `dev.ignyteactive.com` and the separate `ignyte.theblackcat94.com` production
 preview. The latter still uses its preview URL; it has no selected Stripe
-provider, live Stripe API key, or live webhook signing secret. Its disk is 96%
-full, with 92 release directories counted before this deploy; review obsolete
-ones before public cutover. The
-test client 30 order,
+provider, live Stripe API key, or live webhook signing secret. On 17 November,
+89 obsolete production releases were removed after approval. The active release
+and three rollback copies remain; disk use fell from 96% to 47%, and the site
+remained healthy. The test client 30 order,
 Standard-to-AusPost mapping, Mintsoft despatch callback, tracking number and
 dispatch email have passed isolated tests. Client 51 has not received a paid
 website order. No courier delivered signal is available for the post-purchase
@@ -21,8 +21,7 @@ journey, which remains disabled.
    TypeScript, 14 Mintsoft tests, endpoint smoke checks and deployment health
    checks passed. A read-only client-51 check matched all 48 active website
    SKUs with zero raw-level differences and found zero orders awaiting export.
-2. Before the canonical-domain build, free production disk space while
-   preserving the current release and rollback copies. Set
+2. Production disk cleanup is complete. Set
    `NEXT_PUBLIC_SITE_URL=https://ignyteactive.com` only for the final
    production build. Verify the server, database migrations, stock and
    order-export timers again after deployment.
