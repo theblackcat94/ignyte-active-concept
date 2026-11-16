@@ -13,4 +13,4 @@
 .bag-drawer .purchase-reassurance.has-first-fit a{color:var(--bag-ink)}
 .checkout-summary .purchase-reassurance.returns-only{margin:12px 0 0;padding:10px 0 0;border-top:1px solid var(--line)}
 @media(max-width:700px){.purchase-reassurance{gap:1px}}
-@media(max-width:600px){.purchase-reassurance.has-first-fit :is(button,a){font-size:8.5px;padding-inline:4px;min-height:42px}}
+@media(max-width:600px){.purchase-reassurance.has-first-fit :is(button,a){font-size:10px;padding-inline:4px;min-height:44px}}
