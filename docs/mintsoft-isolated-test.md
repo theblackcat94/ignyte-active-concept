@@ -208,7 +208,10 @@ Mintsoft.
   client-51 snapshot restored **51 website / 51 Mintsoft**. Migration
   `202611160001_sandbox_stock_cleanup.sql` was applied to the matching Ignyte
   Supabase project. A readback confirmed the function is snapshot aware,
-  executable by `service_role` and not executable by `anon`.
+  executable by `service_role` and not executable by `anon`. A rollback-only
+  database check ran the new cleanup function against the already marked test
+  order and asserted it kept stock at the Mintsoft level; after rollback the
+  order remained cancelled and website/Mintsoft stock remained 51/51.
 - This proves the website-to-Mintsoft Standard order, genuine despatch
   callback, tracking and dispatch email. A real courier-originated delivered
   event remains unverified; the prior delivered test was a simulation.
