@@ -16,7 +16,7 @@ const settingsSchema = z.object({
 export async function GET(request: Request) {
   if (!await verifiedStaff(request)) return NextResponse.json({ error: "Forbidden" }, { status: 403, headers: noStore });
   const { data, error } = await adminDb().from("return_settings").select("first_fit_enabled,first_fit_request_window_days,first_fit_max_items,first_fit_return_postage,first_fit_replacement_postage").eq("id", true).single();
-  return error ? NextResponse.json({ error: "First Fit settings are unavailable." }, { status: 503, headers: noStore }) : NextResponse.json({ settings: data, public_enabled: firstFitPublic }, { headers: noStore });
+  return error ? NextResponse.json({ error: "IGNYTE Fit Guarantee settings are unavailable." }, { status: 503, headers: noStore }) : NextResponse.json({ settings: data, public_enabled: firstFitPublic }, { headers: noStore });
 }
 
 export async function PUT(request: Request) {
@@ -28,5 +28,5 @@ export async function PUT(request: Request) {
   if (settings.first_fit_enabled && (!firstFitPublic || !settings.first_fit_request_window_days || settings.first_fit_return_postage === "pending" || settings.first_fit_replacement_postage === "pending"))
     return NextResponse.json({ error: "Approve all terms and deploy the public launch flag before enabling requests." }, { status: 409, headers: noStore });
   const { error } = await adminDb().from("return_settings").update({ ...settings, updated_at: new Date().toISOString() }).eq("id", true);
-  return error ? NextResponse.json({ error: "Could not save First Fit settings." }, { status: 503, headers: noStore }) : NextResponse.json({ ok: true }, { headers: noStore });
+  return error ? NextResponse.json({ error: "Could not save IGNYTE Fit Guarantee settings." }, { status: 503, headers: noStore }) : NextResponse.json({ ok: true }, { headers: noStore });
 }

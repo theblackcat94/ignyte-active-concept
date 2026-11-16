@@ -13,7 +13,7 @@ export default function SizeGuidePage() {
     <span className="eyebrow">IGNYTE / FIND YOUR FIT</span>
     <h1>SIZE GUIDE<span>.</span></h1>
     <p className="size-guide-intro">Choose a category for the measurements that matter to your fit.</p>
-    {firstFitReassuranceVisible && <p className="size-guide-intro"><strong>FIRST TIME SHOPPING IGNYTE?_</strong> One complimentary size exchange on your first eligible full-price order. <Link href="/first-fit-promise/">Explore The First Fit Promise™ ↗</Link></p>}
+    {firstFitReassuranceVisible && <p className="size-guide-intro"><strong>FIRST TIME SHOPPING IGNYTE?_</strong> One complimentary size exchange on your first eligible full-price order. <Link href="/ignyte-fit-guarantee/">Explore The IGNYTE Fit Guarantee™ ↗</Link></p>}
     <div className="size-guide-layout">
       <SizeGuideContent showTabs />
       <aside className="size-guide-editorial" aria-label="Explore Ignyte products">

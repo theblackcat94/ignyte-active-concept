@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { adminDb, verifiedStaff } from "@/lib/commerce";
-import { firstFitRequestsEnabled } from "@/lib/first-fit-promise";
+import { firstFitRequestsEnabled, fitGuaranteeError } from "@/lib/first-fit-promise";
 import { firstFitApprovedEmail, firstFitDispatchedEmail } from "@/lib/first-fit-emails";
 import { queueReturnEmail } from "@/lib/return-outbox";
 import type { ReturnItem } from "@/lib/returns";
@@ -18,7 +18,7 @@ const schema = z.object({
 export async function POST(request: Request) {
   const staff = await verifiedStaff(request);
   if (!staff || staff.role !== "admin") return NextResponse.json({ error: "Administrators only" }, { status: 403, headers: noStore });
-  if (!firstFitRequestsEnabled) return NextResponse.json({ error: "First Fit exchange management is inactive." }, { status: 409, headers: noStore });
+  if (!firstFitRequestsEnabled) return NextResponse.json({ error: "IGNYTE Fit Guarantee exchange management is inactive." }, { status: 409, headers: noStore });
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Check the action, note, fulfilment reference and tracking URL." }, { status: 400, headers: noStore });
   const values = parsed.data;
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   if (!exchange) return NextResponse.json({ error: "Exchange details are unavailable." }, { status: 404, headers: noStore });
   const { error } = await db.rpc("record_first_fit_step", { p_return_id: record.id, p_actor: staff.user.id,
     p_action: values.action, p_note: values.note, p_replacement_reference: values.replacement_reference, p_tracking_url: values.tracking_url });
-  if (error) return NextResponse.json({ error: error.message || "Exchange update failed." }, { status: 409, headers: noStore });
+  if (error) return NextResponse.json({ error: error.message ? fitGuaranteeError(error.message) : "Exchange update failed." }, { status: 409, headers: noStore });
   const item = (record.items as ReturnItem[])[0];
   if (item && ["instructions_provided", "record_dispatch"].includes(values.action)) {
     const mailRecord = { customer_name: record.customer_name, reference: record.reference, product_name: item.product_name, current_size: item.size, requested_size: exchange.requested_size };
