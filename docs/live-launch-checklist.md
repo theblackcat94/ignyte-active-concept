@@ -2,9 +2,13 @@
 
 Status at 17 November 2026: **do not accept live Stripe payments yet**. The
 existing `ignyteactive.com` resolves to the current store, not the new release.
-The new code is on `dev.ignyteactive.com`; the separate production server still
-serves `ignyte.theblackcat94.com`. Production has no selected Stripe provider,
-live Stripe API key, or live webhook signing secret. The test client 30 order,
+The combined website/Mintsoft commit `a740c7a` is healthy on both
+`dev.ignyteactive.com` and the separate `ignyte.theblackcat94.com` production
+preview. The latter still uses its preview URL; it has no selected Stripe
+provider, live Stripe API key, or live webhook signing secret. Its disk is 96%
+full, with 92 release directories counted before this deploy; review obsolete
+ones before public cutover. The
+test client 30 order,
 Standard-to-AusPost mapping, Mintsoft despatch callback, tracking number and
 dispatch email have passed isolated tests. Client 51 has not received a paid
 website order. No courier delivered signal is available for the post-purchase
@@ -12,12 +16,16 @@ journey, which remains disabled.
 
 ## Prepare without taking payments
 
-1. Merge the currently deployed website design with the Mintsoft integration,
-   build an exact clean commit, and verify the combined release on dev.
-2. Deploy that exact commit to the separate production server with checkout
-   inactive. Set `NEXT_PUBLIC_SITE_URL=https://ignyteactive.com` for the final
-   production build only when ready for the canonical domain. Verify the
-   server, database migrations, live client-51 stock and order-export timers.
+1. The latest website design and Mintsoft integration have been merged,
+   built, and deployed as `a740c7a` to dev and the production preview.
+   TypeScript, 14 Mintsoft tests, endpoint smoke checks and deployment health
+   checks passed. A read-only client-51 check matched all 48 active website
+   SKUs with zero raw-level differences and found zero orders awaiting export.
+2. Before the canonical-domain build, free production disk space while
+   preserving the current release and rollback copies. Set
+   `NEXT_PUBLIC_SITE_URL=https://ignyteactive.com` only for the final
+   production build. Verify the server, database migrations, stock and
+   order-export timers again after deployment.
 3. Arrange the live restricted Stripe server key and a **separate live webhook
    signing secret** through a secure credential channel. Configure the live
    Stripe event destination at
