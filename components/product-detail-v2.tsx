@@ -30,7 +30,6 @@ import PdpEditShortcut from "./pdp-edit-shortcut";
 import BrowseRecoveryPrompt from "./browse-recovery-prompt";
 import { SUPPORT_LEVELS, supportGuidance, supportLevel } from "@/lib/support-level";
 import ProductQuestionDrawer from "./product-question-drawer";
-import { firstFitPublic } from "@/lib/first-fit-promise";
 import "@/app/product-detail-v2.css";
 import "@/app/browse-recovery.css";
 
@@ -190,7 +189,6 @@ export default function ProductDetail({ product: initialProduct }: { product: Pr
       <div className="size-heading"><span>SELECT SIZE</span><button type="button" onClick={() => setGuideOpen(true)}>SIZE GUIDE ↗</button></div>
       <div className="size-grid" ref={sizeRef}>{sizes.map(variant => <button type="button" className={size === variant.size ? "selected" : ""} aria-pressed={size === variant.size} aria-label={`${variant.size}${variant.stock <= 0 ? ", out of stock" : ""}`} disabled={variant.stock <= 0} onClick={() => setSelection({ slug: product.slug, size: variant.size })} key={variant.id}>{variant.size}</button>)}</div>
       {isSock ? <p className="pdp-sock-size-note">{sockSizing.productText}</p> : fitPosition !== null && <div className="pdp-fit-confidence"><span>Our fit advice</span><strong>{fitLabels[fitPosition]}</strong><span ref={fitTipRef} className={`pdp-fit-info ${fitTipOpen ? "is-open" : ""}`}><button type="button" aria-label="About our fit advice" aria-describedby="pdp-fit-tooltip" aria-expanded={fitTipOpen} onClick={() => setFitTipSlug(open => open === product.slug ? null : product.slug)}>ⓘ</button><span id="pdp-fit-tooltip" className="pdp-fit-tooltip" role="tooltip">IGNYTE&apos;s own product fit guidance, based on our assessment, not customer reviews.</span></span></div>}
-      {firstFitPublic && !saleOriginalPrice && !isSock && <div className="pdp-first-fit"><span>THE FIRST FIT PROMISE™_</span><strong>Your first fit. Our promise.</strong><p>First time shopping IGNYTE? Get one complimentary size exchange on your first eligible full-price order.</p><Link href="/first-fit-promise/">HOW IT WORKS ↗</Link></div>}
       <button type="button" ref={addRef} className={`button button-orange detail-add${added ? " is-added" : ""}`} onClick={addSelected} disabled={!canAdd}>{addLabel}<span>↗</span></button>
       <PurchaseReassurance />
       <BuildYourSet bra={product} braSize={size} />

@@ -1,6 +1,9 @@
-.bag-recommendations{border-top:2px solid #0B1020;padding-top:32px;margin-top:28px}
+.bag-list>.bag-row:last-of-type{border-bottom:0;margin-bottom:0;padding-bottom:0}
+.bag-recommendations{border-top:1px solid var(--bag-line);padding-top:20px;margin-top:20px}
 .bag-recommendations h3{font-size:18px;letter-spacing:-.025em;margin:0 0 23px}
 .bag-recommendation{display:grid;grid-template-columns:70px minmax(0,1fr);gap:14px;padding:0 0 20px;margin-bottom:20px;border-bottom:1px solid var(--line)}
+.bag-recommendation.is-matching{padding:12px;margin-bottom:12px;border:0;background:var(--bag-option)}
+.bag-recommendation.is-matching .bag-recommendation-add{margin-top:3px;padding:9px 12px;border:0;background:var(--bag-action);color:var(--bag-action-ink)}
 .bag-recommendation>a img{width:70px;height:90px;object-fit:cover}
 .bag-recommendation>div{min-width:0;display:flex;align-items:flex-start;flex-direction:column;gap:7px}
 .bag-recommendation>div>a strong{font-size:13px}
@@ -21,7 +24,7 @@
 .bag-quantity button:hover:not(:disabled),.bag-quantity button:focus-visible{background:var(--ink);color:#fff}
 .bag-quantity button:disabled{opacity:.35;cursor:not-allowed}
 .bag-quantity span{min-width:33px;text-align:center;color:var(--ink);font-size:13px;font-weight:800}
-@media(max-width:600px){.bag-drawer .drawer-head{padding:16px 18px}.bag-drawer .drawer-head h2{font-size:24px}.bag-drawer .bag-list{min-height:0;padding:18px;overscroll-behavior:contain}.bag-drawer .drawer-foot{padding:12px 18px max(14px,env(safe-area-inset-bottom));max-height:40dvh;overflow-y:auto}.bag-drawer .drawer-foot p{display:none}.bag-drawer .bag-shipping-track{height:7px;margin:8px 0 0}.bag-drawer .drawer-foot .button{margin-top:10px}.bag-recommendations{margin-top:24px;padding-top:22px}.bag-recommendations h3{margin-bottom:16px}}
+@media(max-width:600px){.bag-drawer .drawer-head{padding:16px 18px}.bag-drawer .drawer-head h2{font-size:24px}.bag-drawer .bag-list{min-height:0;padding:18px;overscroll-behavior:contain}.bag-drawer .drawer-foot{padding:12px 18px max(14px,env(safe-area-inset-bottom));max-height:40dvh;overflow-y:auto}.bag-drawer .drawer-foot p{display:none}.bag-drawer .bag-shipping-track{height:7px;margin:8px 0 0}.bag-drawer .drawer-foot .button{margin-top:10px}.bag-recommendations{margin-top:18px;padding-top:18px}.bag-recommendations h3{margin-bottom:16px}.bag-recommendation.is-matching{padding:10px}}
 
 /* Drawer colours are scoped to the drawer so every state shares one palette. */
 .bag-drawer{
