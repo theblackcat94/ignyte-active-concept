@@ -178,6 +178,41 @@ Mintsoft.
   30 lacks those three SKUs. This is why the stocked, single-SKU retest above
   was required.
 
+## Automatic Standard shipping retest on 16 November 2026
+
+- A fresh Stripe sandbox payment of A$85 for one `IGN-LVR-SHTS-JAC-L` item
+  created website order `615ee484-7595-435a-a57e-b2ed869fc2a9` as paid and
+  stock reserved. Checkout charged A$15 for Standard Australian delivery.
+  The genuine Stripe webhook returned HTTP 200, and the payment and order
+  request emails were recorded as sent.
+- The isolated exporter dry run passed, and its apply run created Mintsoft
+  client-30 order **152818** with one exact-SKU unit in warehouse 5. Mintsoft
+  automatically assigned **AusPost service 2058** from the `Standard` shipping
+  term; no courier edit was made. An immediate repeated exporter call exposed
+  a bug: it checked remaining stock before looking up the already-created
+  order, so it failed when test stock was exhausted. The exporter now checks
+  for the existing order first. The repeated call then returned order 152818
+  without creating another order.
+- Mintsoft `MarkDespatched` succeeded with synthetic tracking
+  `IGNYTE-TEST-152818`. Mintsoft's own ConnectAction 148447 returned HTTP 200
+  to staging. The website became `dispatched` with carrier `AusPost`, the
+  tracking number, and its AusPost link; the dispatch email was recorded as
+  sent. A signed duplicate callback returned `changed: false`, and there was
+  still exactly one sent dispatch email record.
+- The live client-51 stock dry run covered all 48 active website SKUs with
+  zero raw-level differences. The live stock and order-export timers were
+  completing successfully. After cleaning up the marked sandbox order, the
+  website briefly showed 52 units for the tested SKU while Mintsoft held 51:
+  a stock sync during the test had already ignored the sandbox reservation,
+  and the old cleanup function added another unit. Applying the authoritative
+  client-51 snapshot restored **51 website / 51 Mintsoft**. Migration
+  `202611160001_sandbox_stock_cleanup.sql` was applied to the matching Ignyte
+  Supabase project. A readback confirmed the function is snapshot aware,
+  executable by `service_role` and not executable by `anon`.
+- This proves the website-to-Mintsoft Standard order, genuine despatch
+  callback, tracking and dispatch email. A real courier-originated delivered
+  event remains unverified; the prior delivered test was a simulation.
+
 On the build machine, place only the test API key in an owner-only
 `/home/internetremovals/.config/ignyte/mintsoft-test.env`:
 

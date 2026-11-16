@@ -71,6 +71,10 @@ database stores Mintsoft's raw level and sync timestamp separately. Sellable
 an order awaiting payment on the website cannot be sold twice. Once Mintsoft
 acknowledges a paid order, its returned ID is saved in `orders.mintsoft_order_id`;
 Mintsoft's available OnHand quantity then accounts for its own allocation.
+The shared-database sandbox cleanup must use
+`supabase/migrations/202611160001_sandbox_stock_cleanup.sql` so it restores
+stock from Mintsoft's latest snapshot rather than adding a test quantity after
+a scheduled sync. This migration was applied on 16 November 2026.
 
 After a successful dry run and live reconciliation, place the script and its
 `lib/mintsoft-stock.mjs` helper in the owner-only stable
@@ -104,11 +108,13 @@ the Ignyte client (51) and its current API key are live. Mintsoft's client
 `TestMode - Auto Print and Despatch Orders` setting is for webhook tests and
 automatically prints and despatches orders; do not enable it on live client 51.
 
-Before calling the integration end-to-end verified, check the website reservation
-handoff, courier mapping, shipping callbacks, and failure recovery. Coordinate one marked
-live order with Fulfilpackers before production traffic relies on the feed.
-Confirm courier mapping and Tracking Events support, then verify dispatch and
-delivery callbacks, email deduplication, and the review trigger. The minute
+The isolated test now verifies Stripe sandbox payment, website reservation,
+the exact-SKU order handoff, automatic Standard-to-AusPost mapping, a genuine
+Mintsoft despatch callback, tracking, and dispatch-email deduplication. Before
+production traffic relies on the feed, coordinate one marked live order with
+Fulfilpackers, confirm Tracking Events support and a courier-originated
+delivered callback, then verify the review trigger after its URL is supplied.
+The minute
 order-export timer currently logs failures to the user
 systemd journal; add an operational failure alert before treating the flow as
 unattended.
