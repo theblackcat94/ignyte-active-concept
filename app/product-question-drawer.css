@@ -1,11 +1,6 @@
 .product-question-backdrop{position:fixed;inset:0;z-index:150;border:0;background:#0009}
 .pdp-question-trigger{display:inline-flex;align-items:center;min-height:44px;margin:15px 0 2px;padding:0;border:0;background:none;color:var(--ink);font:700 11px/1.4 var(--font-ignyte-mono),monospace;letter-spacing:.045em;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
 .pdp-question-trigger:focus-visible{outline:2px solid #FF4533;outline-offset:3px}
-.pdp-first-fit{padding:15px 18px;margin:15px 0;background:#1F2A44;color:#fff}
-.pdp-first-fit span{display:block;color:#ff9478;font:700 10px/1.4 var(--font-ignyte-mono),monospace;letter-spacing:.06em}
-.pdp-first-fit strong{display:block;margin:5px 0;font:700 16px/1.3 var(--font-ignyte-sans),sans-serif}
-.pdp-first-fit p{font:400 12px/1.5 var(--font-ignyte-sans),sans-serif;margin:0 0 8px}
-.pdp-first-fit a{color:#fff;font:700 11px/1.4 var(--font-ignyte-mono),monospace;text-decoration:underline;text-underline-offset:3px}
 .product-question-drawer{z-index:151;max-width:100vw;background:var(--paper);color:var(--ink)}
 .product-question-content{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:25px 28px max(32px,env(safe-area-inset-bottom));font:400 14px/1.55 var(--font-ignyte-sans),sans-serif}
 .product-question-content>p{margin:0 0 22px}
@@ -17,6 +12,10 @@
 .product-question-category,.product-question-form label{display:grid;gap:8px;font:700 11px/1.4 var(--font-ignyte-mono),monospace;letter-spacing:.05em}
 .product-question-category{margin:22px 0}
 .product-question-category select,.product-question-form input,.product-question-form select,.product-question-form textarea{width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:0;background:var(--paper);color:var(--ink);font:400 14px/1.4 var(--font-ignyte-sans),sans-serif;letter-spacing:0}
+.product-question-category select,.product-question-form input,.product-question-form select,.product-question-form textarea{background:#fff;color:#0B1020;border-color:#777b82;color-scheme:light}
+.product-question-form :is(input,textarea)::placeholder{color:#5c6068;opacity:1}
+.product-question-drawer select option{background:#fff;color:#0B1020}
+.product-question-drawer :is(input,select,textarea):focus{border-color:#FF4533;box-shadow:0 0 0 1px #FF4533}
 .product-question-form textarea{resize:vertical}
 .product-question-help,.product-question-invite{border-top:1px solid var(--line);padding:18px 0}
 .product-question-help h3,.product-question-invite h3,.product-question-success h3{margin:0 0 8px;font:700 12px/1.35 var(--font-ignyte-mono),monospace;letter-spacing:.08em}

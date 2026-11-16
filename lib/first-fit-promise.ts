@@ -2,3 +2,6 @@
 // commercial terms and 3PL exchange process have been approved.
 export const firstFitPublic = process.env.NEXT_PUBLIC_FIRST_FIT_PROMISE_ENABLED === "true";
 export const firstFitRequestsEnabled = firstFitPublic && process.env.FIRST_FIT_REQUESTS_ENABLED === "true";
+// Show the programme name and review page on development without activating exchanges.
+export const firstFitDevelopmentPreview = process.env.NEXT_PUBLIC_SITE_URL === "https://dev.ignyteactive.com";
+export const firstFitReassuranceVisible = firstFitPublic || firstFitDevelopmentPreview;
