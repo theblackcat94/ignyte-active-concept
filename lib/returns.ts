@@ -38,14 +38,14 @@ export const returnInputSchema = z.object({
   website: z.string().max(0),
 });
 
-export type PurchasedItem = { id: string; product_name: string; sku: string; size: string; colour: string; quantity: number; unit_price_cents: number; list_price_at_purchase_cents: number | null; sale_at_purchase: boolean | null; paid_value_cents: number };
-export type ReturnOrder = { id: string; customer_email: string; customer_name: string; created_at: string; paid_at: string | null; shipping_cents: number; items: PurchasedItem[] };
+export type PurchasedItem = { id: string; variant_id: string | null; product_name: string; sku: string; size: string; colour: string; quantity: number; unit_price_cents: number; list_price_at_purchase_cents: number | null; sale_at_purchase: boolean | null; paid_value_cents: number };
+export type ReturnOrder = { id: string; customer_email: string; customer_name: string; created_at: string; paid_at: string | null; delivered_at: string | null; shipping_cents: number; items: PurchasedItem[] };
 
 export async function accessibleReturnOrder(request: NextRequest, orderId: string): Promise<ReturnOrder | null> {
   if (!z.uuid().safeParse(orderId).success) return null;
   const user = await verifiedUser(request);
   const db = adminDb();
-  const query = db.from("orders").select("id,user_id,customer_email,shipping_details,created_at,paid_at,status,shipping_cents,subtotal_cents,discount_cents,guest_token_hash,guest_token_expires_at,order_items(id,variant_id,product_name,sku,size,quantity,unit_price_cents,list_price_at_purchase_cents,sale_at_purchase)").eq("id", orderId);
+  const query = db.from("orders").select("id,user_id,customer_email,shipping_details,created_at,paid_at,delivered_at,status,shipping_cents,subtotal_cents,discount_cents,guest_token_hash,guest_token_expires_at,order_items(id,variant_id,product_name,sku,size,quantity,unit_price_cents,list_price_at_purchase_cents,sale_at_purchase)").eq("id", orderId);
   const { data: order, error } = await query.maybeSingle();
   if (error || !order || !["paid", "shipped", "fulfilled", "refunded"].includes(order.status)) return null;
   const owned = Boolean(user && order.user_id === user.id && user.email?.toLowerCase() === order.customer_email?.toLowerCase());
@@ -61,8 +61,8 @@ export async function accessibleReturnOrder(request: NextRequest, orderId: strin
     const gross = item.unit_price_cents * item.quantity;
     const allocated = index === purchased.length - 1 ? remainingDiscount : Math.min(remainingDiscount, Math.floor((order.discount_cents || 0) * gross / Math.max(1, order.subtotal_cents)));
     remainingDiscount -= allocated;
-    return { id: item.id, product_name: item.product_name, sku: item.sku, size: item.size, colour: colours.get(item.variant_id) || "Colour as ordered", quantity: item.quantity, unit_price_cents: item.unit_price_cents, list_price_at_purchase_cents: item.list_price_at_purchase_cents, sale_at_purchase: item.sale_at_purchase, paid_value_cents: Math.max(0, gross - allocated) };
+    return { id: item.id, variant_id: item.variant_id, product_name: item.product_name, sku: item.sku, size: item.size, colour: colours.get(item.variant_id) || "Colour as ordered", quantity: item.quantity, unit_price_cents: item.unit_price_cents, list_price_at_purchase_cents: item.list_price_at_purchase_cents, sale_at_purchase: item.sale_at_purchase, paid_value_cents: Math.max(0, gross - allocated) };
   });
-  return { id: order.id, customer_email: order.customer_email ?? "", customer_name: (order.shipping_details as { name?: string } | null)?.name ?? "", created_at: order.created_at, paid_at: order.paid_at, shipping_cents: order.shipping_cents,
+  return { id: order.id, customer_email: order.customer_email ?? "", customer_name: (order.shipping_details as { name?: string } | null)?.name ?? "", created_at: order.created_at, paid_at: order.paid_at, delivered_at: order.delivered_at, shipping_cents: order.shipping_cents,
     items: calculated };
 }

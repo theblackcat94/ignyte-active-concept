@@ -4,6 +4,8 @@ import { adminDb, verifiedStaff } from "@/lib/commerce";
 import { returnStatuses, type ReturnItem } from "@/lib/returns";
 import { returnApprovalEmail, returnInstructionsEmail, returnRefundEmail, type ReturnMailRecord } from "@/lib/return-emails";
 import { queueReturnEmail, returnMailEnabled } from "@/lib/return-outbox";
+import { firstFitApprovedEmail, firstFitDispatchedEmail, firstFitReceivedEmail } from "@/lib/first-fit-emails";
+import { firstFitRequestsEnabled } from "@/lib/first-fit-promise";
 
 export const runtime = "nodejs";
 const settingsSchema = z.object({ return_address: z.string().trim().max(500), shipping_instructions: z.string().trim().max(2000), refund_processing_copy: z.string().trim().max(1000), instructions_email_intro: z.string().trim().max(500), notification_emails: z.array(z.email()).max(10) });
@@ -24,10 +26,19 @@ export async function GET(request: Request) {
     const { data: order } = record.order_id ? await db.from("orders").select("id,status,created_at,paid_at,total_cents,order_items(product_name,sku,size,quantity)").eq("id", record.order_id).maybeSingle() : { data: null };
     const preview = settings ? returnInstructionsEmail(record as ReturnMailRecord, settings) : null;
     const { data: emails } = await db.from("return_email_outbox").select("event_key,recipient,sent_at,attempt_count,last_error,created_at").eq("return_id", id).order("created_at");
-    return NextResponse.json({ record, events: events ?? [], photos, order, settings, instructions_preview: preview, emails: emails ?? [], mail_enabled: returnMailEnabled() }, { headers: { "Cache-Control": "private, no-store" } });
+    const { data: exchange } = record.request_type === "first_fit" ? await db.from("first_fit_exchanges").select("*").eq("return_id", id).maybeSingle() : { data: null };
+    const item = (record.items as ReturnItem[])[0];
+    const firstFitMail = exchange && item ? { customer_name: record.customer_name, reference: record.reference, product_name: item.product_name, current_size: item.size, requested_size: exchange.requested_size } : null;
+    const first_fit_email_previews = firstFitMail ? {
+      received: firstFitReceivedEmail(firstFitMail),
+      approved: firstFitApprovedEmail(firstFitMail, "Approved packaging and postage instructions will be supplied after fulfilment approval."),
+      dispatched: firstFitDispatchedEmail(firstFitMail, "https://dev.ignyteactive.com/"),
+    } : null;
+    return NextResponse.json({ record, events: events ?? [], photos, order, settings, instructions_preview: record.request_type === "first_fit" ? null : preview, exchange, first_fit_email_previews, emails: emails ?? [], mail_enabled: returnMailEnabled(), first_fit_management_enabled: firstFitRequestsEnabled }, { headers: { "Cache-Control": "private, no-store" } });
   }
-  const { data, error } = await db.from("return_requests").select("id,reference,order_number,order_verified,customer_name,customer_email,items,status,submitted_at,updated_at").order("submitted_at", { ascending: false }).limit(500);
-  return error ? NextResponse.json({ error: "Could not load returns" }, { status: 503 }) : NextResponse.json({ returns: data ?? [], settings, mail_enabled: returnMailEnabled() }, { headers: { "Cache-Control": "private, no-store" } });
+  const { data, error } = await db.from("return_requests").select("id,reference,order_number,order_verified,customer_name,customer_email,items,status,request_type,submitted_at,updated_at").order("submitted_at", { ascending: false }).limit(500);
+  const firstFitRows = (data ?? []).filter(row => row.request_type === "first_fit");
+  return error ? NextResponse.json({ error: "Could not load returns" }, { status: 503 }) : NextResponse.json({ returns: data ?? [], settings, first_fit_summary: { requests: firstFitRows.length, under_review: firstFitRows.filter(row => ["new_request", "under_review"].includes(row.status)).length, approved: firstFitRows.filter(row => row.status === "approved").length, declined: firstFitRows.filter(row => row.status === "declined").length }, mail_enabled: returnMailEnabled() }, { headers: { "Cache-Control": "private, no-store" } });
 }
 
 export async function PATCH(request: Request) {
