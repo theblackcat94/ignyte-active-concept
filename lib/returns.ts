@@ -43,10 +43,12 @@ export type ReturnOrder = { id: string; customer_email: string; customer_name: s
 
 export async function accessibleReturnOrder(request: NextRequest, orderId: string): Promise<ReturnOrder | null> {
   const byId = z.uuid().safeParse(orderId).success;
-  if (!byId && !/^IGN:[0-9]{5,}$/.test(orderId)) return null;
+  const legacyReference = /^IGN:([0-9]{5,})$/.exec(orderId);
+  if (!byId && !legacyReference && !/^IGNY-[0-9]{4,}$/.test(orderId)) return null;
+  const reference = legacyReference ? `IGNY-${BigInt(legacyReference[1]).toString().padStart(4, "0")}` : orderId;
   const user = await verifiedUser(request);
   const db = adminDb();
-  const query = db.from("orders").select("id,user_id,customer_email,shipping_details,created_at,paid_at,delivered_at,status,shipping_cents,subtotal_cents,discount_cents,guest_token_hash,guest_token_expires_at,order_items(id,variant_id,product_name,sku,size,quantity,unit_price_cents,list_price_at_purchase_cents,sale_at_purchase)").eq(byId ? "id" : "order_reference", orderId);
+  const query = db.from("orders").select("id,user_id,customer_email,shipping_details,created_at,paid_at,delivered_at,status,shipping_cents,subtotal_cents,discount_cents,guest_token_hash,guest_token_expires_at,order_items(id,variant_id,product_name,sku,size,quantity,unit_price_cents,list_price_at_purchase_cents,sale_at_purchase)").eq(byId ? "id" : "order_reference", reference);
   const { data: order, error } = await query.maybeSingle();
   if (error || !order || !["paid", "shipped", "fulfilled", "refunded"].includes(order.status)) return null;
   const owned = Boolean(user && order.user_id === user.id && user.email?.toLowerCase() === order.customer_email?.toLowerCase());
