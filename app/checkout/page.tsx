@@ -28,6 +28,7 @@ export default function CheckoutPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [orderId, setOrderId] = useState("");
+  const [orderReference, setOrderReference] = useState("");
   const [step, setStep] = useState<"delivery" | "payment">("delivery");
   const [amountDueCents, setAmountDueCents] = useState<number | null>(null);
   const [couponCode, setCouponCode] = useState("");
@@ -158,6 +159,7 @@ export default function CheckoutPage() {
         return;
       }
       setOrderId(result.orderId);
+      setOrderReference(result.orderReference ?? result.orderId);
       setGuestOrder(Boolean(result.guest));
       setAmountDueCents(result.amountDueCents ?? null);
       clearBag();
@@ -169,7 +171,7 @@ export default function CheckoutPage() {
 
   if (orderId) return <div className="checkout-page section-wrap checkout-confirmation">
     <span className="eyebrow">CHECKOUT / PAYMENT</span><h1>PAYMENT PENDING<span>.</span></h1>
-    <div className="checkout-panel"><h2>Order saved</h2><p>Order <strong>{orderId}</strong> is ready for payment. {amountDueCents === null ? "Shipping is awaiting a final quote." : `Estimated total including delivery: ${money(amountDueCents / 100)}.`}</p>{newsletterWarning && <p role="status">{newsletterWarning}</p>}<div className="checkout-payment-notice"><strong>Card payment is being connected</strong><p>No card details are collected here and your order has not been charged. The Ignyte team will confirm the amount and payment method before fulfilment.</p></div>{guestOrder && <p>Stock for guest orders will be confirmed by the team.</p>}<Link className="button button-dark" href={guestOrder ? `/guest/orders/${orderId}` : `/account/orders/${orderId}`}>VIEW ORDER & PAYMENT STATUS ↗</Link></div>
+    <div className="checkout-panel"><h2>Order saved</h2><p>Order <strong>{orderReference || orderId}</strong> is ready for payment. {amountDueCents === null ? "Shipping is awaiting a final quote." : `Estimated total including delivery: ${money(amountDueCents / 100)}.`}</p>{newsletterWarning && <p role="status">{newsletterWarning}</p>}<div className="checkout-payment-notice"><strong>Card payment is being connected</strong><p>No card details are collected here and your order has not been charged. The Ignyte team will confirm the amount and payment method before fulfilment.</p></div>{guestOrder && <p>Stock for guest orders will be confirmed by the team.</p>}<Link className="button button-dark" href={guestOrder ? `/guest/orders/${orderId}` : `/account/orders/${orderId}`}>VIEW ORDER & PAYMENT STATUS ↗</Link></div>
   </div>;
 
   return <div className="checkout-page section-wrap">

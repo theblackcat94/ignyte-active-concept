@@ -9,6 +9,7 @@ export type OrderItem = {
 
 export type OrderDetail = {
   id: string;
+  order_reference: string | null;
   user_id: string | null;
   stock_reserved: boolean;
   status: string;
@@ -42,4 +43,4 @@ export type OrderDetail = {
   order_items: OrderItem[];
 };
 
-export const orderSelect = "id,user_id,stock_reserved,status,customer_email,subtotal_cents,discount_cents,coupon_code,shipping_cents,total_cents,created_at,paid_at,shipping_status,carrier_name,tracking_number,tracking_url,dispatched_at,delivered_at,shipping_details,order_items(variant_id,product_name,sku,size,quantity,unit_price_cents)";
+export const orderSelect = "id,order_reference,user_id,stock_reserved,status,customer_email,subtotal_cents,discount_cents,coupon_code,shipping_cents,total_cents,created_at,paid_at,shipping_status,carrier_name,tracking_number,tracking_url,dispatched_at,delivered_at,shipping_details,order_items(variant_id,product_name,sku,size,quantity,unit_price_cents)";

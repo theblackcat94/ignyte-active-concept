@@ -96,7 +96,6 @@ export async function POST(request: NextRequest) {
           product_data: { name: `${item.product_name} / ${item.size}`, metadata: { sku: item.sku } } },
       })),
       ...(discounts.length ? { discounts } : {}),
-      shipping_address_collection: { allowed_countries: ["AU"] },
       shipping_options: [{ shipping_rate_data: {
         type: "fixed_amount", display_name: order.shipping_cents === 0 ? "Free Australian delivery" : "Standard Australian delivery",
         fixed_amount: { amount: order.shipping_cents, currency: "aud" },

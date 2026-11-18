@@ -42,14 +42,15 @@ export type PurchasedItem = { id: string; variant_id: string | null; product_nam
 export type ReturnOrder = { id: string; customer_email: string; customer_name: string; created_at: string; paid_at: string | null; delivered_at: string | null; shipping_cents: number; items: PurchasedItem[] };
 
 export async function accessibleReturnOrder(request: NextRequest, orderId: string): Promise<ReturnOrder | null> {
-  if (!z.uuid().safeParse(orderId).success) return null;
+  const byId = z.uuid().safeParse(orderId).success;
+  if (!byId && !/^IGN:[0-9]{5,}$/.test(orderId)) return null;
   const user = await verifiedUser(request);
   const db = adminDb();
-  const query = db.from("orders").select("id,user_id,customer_email,shipping_details,created_at,paid_at,delivered_at,status,shipping_cents,subtotal_cents,discount_cents,guest_token_hash,guest_token_expires_at,order_items(id,variant_id,product_name,sku,size,quantity,unit_price_cents,list_price_at_purchase_cents,sale_at_purchase)").eq("id", orderId);
+  const query = db.from("orders").select("id,user_id,customer_email,shipping_details,created_at,paid_at,delivered_at,status,shipping_cents,subtotal_cents,discount_cents,guest_token_hash,guest_token_expires_at,order_items(id,variant_id,product_name,sku,size,quantity,unit_price_cents,list_price_at_purchase_cents,sale_at_purchase)").eq(byId ? "id" : "order_reference", orderId);
   const { data: order, error } = await query.maybeSingle();
   if (error || !order || !["paid", "shipped", "fulfilled", "refunded"].includes(order.status)) return null;
   const owned = Boolean(user && order.user_id === user.id && user.email?.toLowerCase() === order.customer_email?.toLowerCase());
-  const cookie = request.cookies.get(`ignyte_guest_order_${orderId.replaceAll("-", "")}`)?.value;
+  const cookie = request.cookies.get(`ignyte_guest_order_${order.id.replaceAll("-", "")}`)?.value;
   const guest = Boolean(!order.user_id && cookie && /^[a-f0-9]{64}$/.test(cookie) && order.guest_token_hash === createHash("sha256").update(cookie).digest("hex") && order.guest_token_expires_at && new Date(order.guest_token_expires_at).getTime() > Date.now());
   if (!owned && !guest) return null;
   const ids = (order.order_items ?? []).map(item => item.variant_id).filter((id): id is string => Boolean(id));

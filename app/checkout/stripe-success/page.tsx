@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useStore } from "@/components/store-provider";
 import "../checkout.css";
 
-type Result = { orderId: string; orderStatus: string; paymentStatus: string | null; guest: boolean };
+type Result = { orderId: string; orderReference: string; orderStatus: string; paymentStatus: string | null; guest: boolean };
 
 function StripeSuccessContent() {
   const params = useSearchParams();
@@ -30,7 +30,7 @@ function StripeSuccessContent() {
     <div className="checkout-panel">
       {failed || invalidSession ? <><h2>We could not load this payment</h2><p>Check your account or contact support before trying again.</p><Link className="button button-dark" href="/support">CONTACT SUPPORT ↗</Link></>
         : !result ? <><h2>Confirming your order</h2><p>Please wait while we retrieve your secure payment result.</p></>
-        : <><h2>{paid ? "Your payment is confirmed" : "Your payment is processing"}</h2><p>Order <strong>{result.orderId}</strong>. {paid ? "A confirmation email will be sent shortly." : "Stripe has returned you to Ignyte. Your order status will update as soon as the payment confirmation is received."}</p><Link className="button button-dark" href={orderUrl}>VIEW ORDER ↗</Link></>}
+        : <><h2>{paid ? "Your payment is confirmed" : "Your payment is processing"}</h2><p>Order <strong>{result.orderReference}</strong>. {paid ? "A confirmation email will be sent shortly." : "Stripe has returned you to Ignyte. Your order status will update as soon as the payment confirmation is received."}</p><Link className="button button-dark" href={orderUrl}>VIEW ORDER ↗</Link></>}
     </div>
   </div>;
 }

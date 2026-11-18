@@ -41,24 +41,31 @@ export async function POST(request: Request) {
     return NextResponse.json({ received: true });
   }
   if (event.type === "checkout.session.completed") {
+    // Older open sessions collected shipping in Stripe; new sessions use the
+    // Australian delivery address validated and saved by our checkout.
     const shippingDetails = session.collected_information?.shipping_details;
+    const originalDetails = order.shipping_details as { name?: string; phone?: string; address?: {
+      line1?: string; line2?: string; city?: string; state?: string; postal_code?: string; country?: string;
+    } } | null;
+    const address = shippingDetails?.address ?? originalDetails?.address;
+    const name = shippingDetails?.name ?? originalDetails?.name;
     const shippingCents = session.total_details?.amount_shipping;
     const discountCents = session.total_details?.amount_discount ?? 0;
     if (session.metadata?.payment_environment !== environment || session.payment_status !== "paid" || session.currency !== "aud" ||
         typeof session.amount_subtotal !== "number" || session.amount_subtotal !== order.subtotal_cents ||
         discountCents !== order.discount_cents || typeof shippingCents !== "number" || shippingCents !== order.shipping_cents ||
         typeof session.amount_total !== "number" || session.amount_total !== order.total_cents ||
-        !shippingDetails?.name || shippingDetails.address?.country !== "AU") {
+        !name || address?.country !== "AU" || !address.line1 || !address.city || !address.state ||
+        !/^\d{4}$/.test(address.postal_code ?? "")) {
       return NextResponse.json({ error: "Payment amount or status mismatch" }, { status: 400 });
     }
-    const originalDetails = order.shipping_details as { name?: string; phone?: string } | null;
     const verifiedShipping = {
-      name: shippingDetails.name,
+      name,
       phone: session.customer_details?.phone ?? originalDetails?.phone ?? "",
       address: {
-        line1: shippingDetails.address.line1 ?? "", line2: shippingDetails.address.line2 ?? "",
-        city: shippingDetails.address.city ?? "", state: shippingDetails.address.state ?? "",
-        postal_code: shippingDetails.address.postal_code ?? "", country: "AU",
+        line1: address.line1, line2: address.line2 ?? "",
+        city: address.city, state: address.state,
+        postal_code: address.postal_code, country: "AU",
       },
       ...(environment === "sandbox" ? { test_order: true } : {}),
     };

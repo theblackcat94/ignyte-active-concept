@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   const orderId = session.metadata?.order_id;
   if (!orderId) return NextResponse.json({ error: "Payment session not found." }, { status: 404 });
   const db = adminDb();
-  const { data: order, error } = await db.from("orders").select("id,user_id,status,stripe_session_id,guest_token_hash,guest_token_expires_at")
+  const { data: order, error } = await db.from("orders").select("id,order_reference,user_id,status,stripe_session_id,guest_token_hash,guest_token_expires_at")
     .eq("id", orderId).maybeSingle();
   if (error || !order || order.stripe_session_id !== session.id) return NextResponse.json({ error: "Payment session not found." }, { status: 404 });
   const user = await verifiedUser(request);
@@ -30,6 +30,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Payment session not found." }, { status: 404 });
     }
   }
-  return NextResponse.json({ orderId: order.id, orderStatus: order.status, paymentStatus: session.payment_status,
+  return NextResponse.json({ orderId: order.id, orderReference: order.order_reference ?? order.id, orderStatus: order.status, paymentStatus: session.payment_status,
     guest: !order.user_id }, { headers: { "Cache-Control": "no-store" } });
 }

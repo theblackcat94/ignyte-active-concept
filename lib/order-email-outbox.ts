@@ -5,6 +5,7 @@ import { sendSesMail, sesMailConfigured } from "@/lib/ses-mailer";
 
 type OrderRow = {
   id: string;
+  order_reference: string | null;
   user_id: string | null;
   status: string;
   shipping_status: "not_dispatched" | "dispatched" | "delivered";
@@ -22,6 +23,7 @@ type OrderRow = {
 function orderEmailData(row: OrderRow, siteUrl: string): EmailOrder {
   return {
     id: row.id,
+    reference: row.order_reference ?? row.id,
     items: (row.order_items ?? []).map(item => ({ name: item.product_name, size: item.size,
       quantity: item.quantity, unitPriceCents: item.unit_price_cents })),
     subtotalCents: row.subtotal_cents,
@@ -34,7 +36,7 @@ function orderEmailData(row: OrderRow, siteUrl: string): EmailOrder {
 
 async function loadOrder(db: SupabaseClient, orderId: string): Promise<OrderRow> {
   const { data, error } = await db.from("orders").select(
-    "id,user_id,status,shipping_status,carrier_name,tracking_number,tracking_url,customer_email,subtotal_cents,discount_cents,shipping_cents,total_cents,order_items(product_name,size,quantity,unit_price_cents)"
+    "id,order_reference,user_id,status,shipping_status,carrier_name,tracking_number,tracking_url,customer_email,subtotal_cents,discount_cents,shipping_cents,total_cents,order_items(product_name,size,quantity,unit_price_cents)"
   ).eq("id", orderId).single();
   if (error || !data) throw new Error("Order email data could not be loaded");
   return data as unknown as OrderRow;
@@ -112,8 +114,8 @@ export async function queueMintsoftShippingEmail(orderId: string, event: "dispat
   if (event === "delivered" && row.shipping_status !== "delivered") return;
   const viewUrl = orderEmailData(row, siteUrl).viewUrl!;
   const message = event === "dispatched"
-    ? orderDispatchedEmail(row.id, row.carrier_name, row.tracking_number, row.tracking_url, viewUrl, siteUrl)
-    : orderDeliveredEmail(row.id, viewUrl, siteUrl);
+    ? orderDispatchedEmail(row.order_reference ?? row.id, row.carrier_name, row.tracking_number, row.tracking_url, viewUrl, siteUrl)
+    : orderDeliveredEmail(row.order_reference ?? row.id, viewUrl, siteUrl);
   await enqueue(db, orderId, `mintsoft-${event}`, row.customer_email, message);
   await dispatchOrderOutbox(db, orderId);
 }

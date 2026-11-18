@@ -70,6 +70,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "That discount code is no longer available. Please review your order and try again." }, { status: 400 });
     }
   }
+  const liveSite = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") === "https://ignyteactive.com";
+  const { data: orderReference, error: referenceError } = await db.rpc("assign_order_reference", {
+    p_order_id: orderId, p_live: liveSite,
+  });
+  if (referenceError || (liveSite && !orderReference)) {
+    console.error("Could not assign order reference", referenceError?.message ?? "No reference returned");
+    return NextResponse.json({ error: "Your order could not be finalised. Please retry." }, { status: 503 });
+  }
   const { data: order, error: orderError } = await db.from("orders").select("subtotal_cents,discount_cents").eq("id", orderId).single();
   if (orderError) console.error("Could not load order total", orderError.message);
   const { data: rate, error: rateError } = await db.from("shipping_rates").select("rate_cents,free_threshold_cents,active").eq("state", shipping.state).maybeSingle();
@@ -85,7 +93,7 @@ export async function POST(request: Request) {
   await db.from("site_events").insert({ event_name: "order_requested", page_path: "/checkout/" });
   try { await queueOrderRequestEmails(orderId); }
   catch (emailError) { console.error("Could not queue order request emails", emailError instanceof Error ? emailError.message : "Unknown error"); }
-  const response = NextResponse.json({ orderId, status: "awaiting_payment", guest: !user, shippingCents,
+  const response = NextResponse.json({ orderId, orderReference: orderReference ?? orderId, status: "awaiting_payment", guest: !user, shippingCents,
     amountDueCents: shippingCents === null || !order ? null : order.subtotal_cents - order.discount_cents + shippingCents });
   if (guestToken) response.cookies.set(`ignyte_guest_order_${orderId.replaceAll("-", "")}`, guestToken, {
     httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax",
