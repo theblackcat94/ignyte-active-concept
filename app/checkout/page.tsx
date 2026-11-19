@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { money } from "@/lib/catalog";
@@ -9,6 +9,7 @@ import { useStore } from "@/components/store-provider";
 import { track } from "@/lib/analytics-client";
 import FreeShippingProgress from "@/components/free-shipping-progress";
 import PurchaseReassurance from "@/components/purchase-reassurance";
+import AddressAutocomplete from "@/components/address-autocomplete";
 import { loadEwayModal, openEwayModal } from "@/lib/eway-modal";
 import "./checkout.css";
 
@@ -38,6 +39,9 @@ export default function CheckoutPage() {
   const [shippingQuote, setShippingQuote] = useState<{ state: string; subtotalCents: number; amount: number | null } | null>(null);
   const request = useRef<{ id: string; fingerprint: string } | null>(null);
   const previousView = useRef<string | null>(null);
+  const onAddressSelect = useCallback((address: Pick<Shipping, "line1" | "line2" | "city" | "state" | "postal_code">) => {
+    setShipping(current => ({ ...current, ...address }));
+  }, []);
 
   useEffect(() => {
     const view = orderId ? "confirmation" : step;
@@ -187,6 +191,7 @@ export default function CheckoutPage() {
           <label className="wide checkout-newsletter"><input type="checkbox" checked={newsletterOptIn} onChange={event => setNewsletterOptIn(event.target.checked)} /><span className="checkout-newsletter-copy"><strong>Join the fire. Get the good stuff. 🔥</strong><small>New drops, exclusive offers &amp; shopping reminders. Unsubscribe anytime. See our <Link href="/privacy/">Privacy Policy</Link>.</small></span></label>
           <label className="wide">FULL NAME<input required autoComplete="name" maxLength={120} value={shipping.name} onChange={event => setShipping({ ...shipping, name: event.target.value })} /></label>
           <div className="checkout-address-head"><h3>DELIVERY ADDRESS</h3><p>Australia only. We’ll calculate shipping from your state and postcode.</p></div>
+          <AddressAutocomplete onSelect={onAddressSelect} />
           <label>PHONE<input required type="tel" autoComplete="tel" minLength={8} maxLength={30} value={shipping.phone} onChange={event => setShipping({ ...shipping, phone: event.target.value })} /></label>
           <label className="wide">ADDRESS LINE 1<input required autoComplete="address-line1" maxLength={150} value={shipping.line1} onChange={event => setShipping({ ...shipping, line1: event.target.value })} /></label>
           <label className="wide">ADDRESS LINE 2<input autoComplete="address-line2" maxLength={150} value={shipping.line2} onChange={event => setShipping({ ...shipping, line2: event.target.value })} /></label>
