@@ -49,7 +49,7 @@ if [[ -f "$build_env_file" ]]; then
     name="${line%%=*}"
     value="${line#*=}"
     case "$name" in
-      NEXT_PUBLIC_SUPABASE_URL|NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY|NEXT_PUBLIC_SITE_URL)
+      NEXT_PUBLIC_SUPABASE_URL|NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY|NEXT_PUBLIC_SITE_URL|NEXT_PUBLIC_GOOGLE_MAPS_API_KEY)
         export "$name=$value" ;;
       SUPABASE_SECRET_KEY)
         [[ -n "$value" ]] && has_secret_key=true ;;
