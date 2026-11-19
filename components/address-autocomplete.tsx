@@ -8,6 +8,7 @@ type Place = { addressComponents?: AddressComponent[]; fetchFields: (options: { 
 type SelectionEvent = Event & { placePrediction: { toPlace: () => Place } };
 type AutocompleteElement = HTMLElement & { includedRegionCodes: string[]; placeholder: string };
 type MapsWindow = Window & {
+  __ignyteMapsReady?: () => void;
   google?: { maps: { importLibrary: (name: string) => Promise<{ PlaceAutocompleteElement: new () => AutocompleteElement }> } };
 };
 
@@ -20,10 +21,22 @@ function loadMaps(): Promise<void> {
     const browser = window as MapsWindow;
     if (browser.google?.maps?.importLibrary) { resolve(); return; }
     const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey ?? "")}&v=weekly&loading=async&libraries=places`;
+    let settled = false;
+    const finish = (error?: Error) => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timeout);
+      delete browser.__ignyteMapsReady;
+      if (error) { script.remove(); reject(error); }
+      else resolve();
+    };
+    const timeout = window.setTimeout(() => finish(new Error("Maps load timed out")), 15000);
+    browser.__ignyteMapsReady = () => browser.google?.maps?.importLibrary
+      ? finish()
+      : finish(new Error("Maps did not initialise"));
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey ?? "")}&v=weekly&loading=async&libraries=places&callback=__ignyteMapsReady`;
     script.async = true;
-    script.onload = () => browser.google?.maps?.importLibrary ? resolve() : reject(new Error("Maps did not initialise"));
-    script.onerror = () => reject(new Error("Maps could not load"));
+    script.onerror = () => finish(new Error("Maps could not load"));
     document.head.appendChild(script);
   }).catch(error => { mapsScript = null; throw error; });
   return mapsScript;
