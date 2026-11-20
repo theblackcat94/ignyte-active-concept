@@ -33,6 +33,9 @@ remote_install=(bash -s -- "$expected_sha")
 if [[ "$deploy_remote_prefix" == "sudo" ]]; then
   remote_install=(sudo "${remote_install[@]}")
 fi
+selected_payment_provider=""
+has_live_stripe_key=false
+has_stripe_webhook_secret=false
 if [[ -f "$build_env_file" ]]; then
   if [[ -L "$build_env_file" || ! -O "$build_env_file" ]]; then
     echo "Ignyte build env must be a regular file owned by the build user" >&2
@@ -56,11 +59,14 @@ if [[ -f "$build_env_file" ]]; then
       EWAY_API_KEY|EWAY_API_PASSWORD|EWAY_ENVIRONMENT)
         # Server-only settings are copied to the target env file, never exported to the build.
         ;;
-      PAYMENT_PROVIDER|STRIPE_SECRET_KEY|STRIPE_WEBHOOK_SECRET|GUEST_ORDER_LIMIT_DISABLED|MINTSOFT_WEBHOOK_SECRET)
+      PAYMENT_PROVIDER)
+        selected_payment_provider="$value" ;;
+      STRIPE_SECRET_KEY)
+        [[ "$value" == sk_live_* || "$value" == rk_live_* ]] && has_live_stripe_key=true ;;
+      STRIPE_WEBHOOK_SECRET)
+        [[ "$value" == whsec_* ]] && has_stripe_webhook_secret=true ;;
+      GUEST_ORDER_LIMIT_DISABLED|MINTSOFT_WEBHOOK_SECRET)
         # Server-only commerce settings are copied to the target env file, never exported to the build.
-        ;;
-      MINTSOFT_WEBHOOK_SECRET)
-        # Server-only callback authentication; never exported to browser code.
         ;;
       SES_AWS_ACCESS_KEY_ID|SES_AWS_SECRET_ACCESS_KEY|SES_AWS_SESSION_TOKEN|SES_AWS_REGION|SES_FROM_EMAIL|ORDER_NOTIFICATION_EMAIL)
         # Server-only mail settings are copied to the target env file, never exported to the build.
@@ -71,13 +77,19 @@ if [[ -f "$build_env_file" ]]; then
       META_INSTAGRAM_APP_ID|META_INSTAGRAM_APP_SECRET|INSTAGRAM_OAUTH_REDIRECT_URI)
         # Server-only Meta OAuth settings are copied to the target env file, never exported to the build.
         ;;
-      GUEST_ORDER_LIMIT_DISABLED)
-        # Server-only staging convenience. Production must keep the guest request limit enabled.
-        ;;
       *) echo "Unexpected build setting name: $name" >&2; exit 1 ;;
     esac
   done < "$build_env_file"
   unset line name value
+fi
+if [[ "$deploy_target" == root@172.105.186.242 ]] &&
+   { [[ -z "${BUILD_ENV_FILE:-}" ]] ||
+     [[ "${NEXT_PUBLIC_SITE_URL:-}" != https://ignyteactive.com ]] ||
+     [[ "$selected_payment_provider" != stripe ]] ||
+     [[ "$has_live_stripe_key" != true ]] ||
+     [[ "$has_stripe_webhook_secret" != true ]]; }; then
+  echo "Production requires an explicit live-domain env with the real site URL and live Stripe settings" >&2
+  exit 1
 fi
 export NEXT_PUBLIC_SITE_URL="${NEXT_PUBLIC_SITE_URL:-https://ignyte.theblackcat94.com}"
 if [[ -f "$build_env_file" ]] &&
